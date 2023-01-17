@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html
+  lang="en-US"
+  dir="ltr"
+  translate="yes">
+
+  <head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>HTML Caption & Subtitles Example</title>
+    <meta name="author" content="Jason James" />
+
+    <meta
+      name="description"
+      content="An example showcasing captions in the html video element" />
+
+    <meta
+      name="keywords"
+      content="html, video, captions, subtitles, accessibility, a11y, media" />
+
+    <!--
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="" />
+
+    -->
+
+    <style></style>
+
+  </head>
+
+  <body>
+    <main>
+      <article>
+        <header>
+          <h2>Example 1: HTML Video with Captions</h2>
+        </header>
+        <footer>
+          <p><i>Created <time datetime="2023-01-17">January 17, 2023</time>.</i></p>
+        </footer>
+        <section>
+          <video
+          width="100%"
+          poster=""
+          controls
+          muted
+          loop>
+            <source>
+            <track>
+          Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
+          </video>
+          <p><em>Note</em> If you clone this repository and load the page locally, the captions might not display properly due to the default <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"><abbr title="Cross-Origin Resource Sharing">CORS</abbr></a> restrictions of your browser.  (I learned this the hard way.)</p>
+          <p>If you're having this issue, one option is to <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server">run a simple local HTTP server</a> with python.</p>
+          <p contenteditable="true" spellcheck="true">Just for fun, here's a paragraph that you can edit directly.  Try it out!</p>
+        </section>
+        <section>
+          <h3>References</h3>
+          <ul>
+            <li>mdn web docs: <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_delivery/Adding_captions_and_subtitles_to_HTML5_video">Adding captions and subtitles to HTML video</a></li>
+            <li>mdn web docs: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track">The Embed Text Track element</a></li>
+            <li>mdn web docs: <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API">Web Video Text Tracks Format (WebVTT)</a></li>
+            <li>W3C Web Accessibility Initiative: <a href="https://www.w3.org/WAI/media/av/captions/#captions-and-subtitles">Captions/Subtitles</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </body>
+
+</html>
