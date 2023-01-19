@@ -45,35 +45,36 @@
         </footer>
         <section>
           <video
-          width="100%"
-          poster="/media/IMG_0034.png"
+          width="50%"
+          poster="media/IMG_0034.png"
           controls
           muted
           loop>
             <source
-              src="/media/IMG_0032.MOV"
-              type="video/quicktime" />
-            <source
-              src="/media/IMG_0032.mp4"
+              src="media/IMG_0032.mp4"
               type="video/mp4" />
+            <!--
+              <source
+              src="media/IMG_0032.MOV"
+              type="video/quicktime" />
+            -->
+            <!-- Note: The quicktime video only works in safari.  Firefox shows a still image. -->
             <track
               default
               kind="captions"
               label="English"
               srclang="en-US"
-              src="/media/captions/IMG_0032_en.vtt" />
+              src="media/captions/IMG_0032_en.vtt" />
             <track
-              default
               kind="descriptions"
               label="English Descriptions"
               srclang="en-US"
-              src="/media/captions/IMG_0032_en_descriptions.vtt" />
+              src="media/captions/IMG_0032_en_descriptions.vtt" />
             <track
-              default
               kind="subtitles"
               label="Spanish"
               srclang="es"
-              src="/media/captions/IMG_0032_es.vtt" />
+              src="media/captions/IMG_0032_es.vtt" />
           Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
           </video>
           <p><em>Note</em> If you clone this repository and load the page locally, the captions might not display properly due to the default <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"><abbr title="Cross-Origin Resource Sharing">CORS</abbr></a> restrictions of your browser.  (I learned this the hard way.)</p>
@@ -89,6 +90,19 @@
             <li>W3C Web Accessibility Initiative: <a href="https://www.w3.org/WAI/media/av/captions/#captions-and-subtitles">Captions/Subtitles</a></li>
           </ul>
         </section>
+
+        <!--
+        <section>
+          <br>
+          <hr>
+          <img
+            src="media/IMG_0034.png"
+            alt="A lake is in view. The water calmly ripples under a mostly clear, blue South Florida winter sky. The other green, tree-lined shoreline is about a quarter of a mile away. Remote controlled boats can be identified by the small, white jets of water in their wake."
+            width="50%"
+            height="auto" />
+        </section>
+        -->
+
       </article>
     </main>
   </body>
