@@ -46,12 +46,34 @@
         <section>
           <video
           width="100%"
-          poster=""
+          poster="/media/IMG_0034.png"
           controls
           muted
           loop>
-            <source src="/media/IMG_0032.MOV">
-            <track>
+            <source
+              src="/media/IMG_0032.MOV"
+              type="video/quicktime" />
+            <source
+              src="/media/IMG_0032.mp4"
+              type="video/mp4" />
+            <track
+              default
+              kind="captions"
+              label="English"
+              srclang="en-US"
+              src="/media/captions/IMG_0032_en.vtt" />
+            <track
+              default
+              kind="descriptions"
+              label="English Descriptions"
+              srclang="en-US"
+              src="/media/captions/IMG_0032_en_descriptions.vtt" />
+            <track
+              default
+              kind="subtitles"
+              label="Spanish"
+              srclang="es"
+              src="/media/captions/IMG_0032_es.vtt" />
           Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
           </video>
           <p><em>Note</em> If you clone this repository and load the page locally, the captions might not display properly due to the default <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"><abbr title="Cross-Origin Resource Sharing">CORS</abbr></a> restrictions of your browser.  (I learned this the hard way.)</p>
