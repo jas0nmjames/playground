@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html
+  lang="en-US"
+  dir="ltr"
+  translate="yes">
+
+  <head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Notes from Advance Your Skills in HTML by Jen Simmons (LinkedIn Learning)</title>
+    <meta name="author" content="Jason James" />
+
+    <meta
+      name="description"
+      content="This is HTML I wrote to help me remember Jen Simmon's teaching.  I learn best by doing." />
+
+    <meta
+      name="keywords"
+      content="html, learning, JenSimmons, LinkedIn" />
+
+    <!--
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="" />
+
+    -->
+
+    <style>
+      /*
+      html {
+        margin: 0 1em;
+      }
+
+      img .jen {
+      	display: block;
+      	margin: 2rem 0;
+        width: 100%;
+      	height: auto;
+      }
+      .half-width .jen {
+        width: 50%;
+      }
+      */
+    </style>
+
+  </head>
+
+
+<!-- This was originally a CodePen here: https://codepen.io/jas0nmjames/pen/jOxWLbz -->
+
+<body lang="en-US" dir="ltr">
+  <!-- Putting 'lang' on the body instead of the 'html' element because of codepen -->
+  <h1>Notes from HTML Essential Training</h1>
+  <p>The first level headline above is the title: "Notes from HTML Essential Training". See <a href="https://www.linkedin.com/learning/html-essential-training-4">HTML Essential Training</a>, from the LinkedIn Learning Path: Advance Your Skills in HTML.</p>
+  <section>
+    <h2>This section (and second level headline) is about HTML</h2>
+    <h3>The role of HTML</h3>
+    <p><i>No notes.</i></p>
+  </section>
+  <section>
+    <h2>Formatting Text</h2>
+    <h3>The syntax of HTML elements</h3>
+    <p><i>No notes.</i></p>
+    <article>
+      <h3>This is an article (and third level headline)</h3>
+      <p>This is a paragraph. Here's a tip: use the <code>&lt;em&gt;</code> element when writing content you'd <em>emphasize verbally</em>. Use the <code>&lt;i&gt;</code> element when writing content you'd still italicize, but wouldn't emphasize verbally, such as the <i>title of a book</i>.</p>
+      <p>Here's another tip. Use the <code>&lt;strong&gt;</code> element when writing content that's <strong>important</strong>. Use the <code>&lt;b&gt;</code> element for anything else you want to <b>bold</b>, without denoting importance.</p>
+    </article>
+    <article>
+      <h3>This article is about lists</h3>
+        <h4>Unordered List Example</h4>
+          <ul>
+            <li>list item 1</li>
+            <li>list item 2</li>
+            <li>list item 3</li>
+          </ul>
+        <h4>Ordered List Example</h4>
+          <ol>
+            <li>list item 1</li>
+            <li>list item 2</li>
+            <li>list item 3</li>
+          </ol>
+        <h4>Definition List Example</h4>
+          <dl>
+            <dt>term 1</dt>
+            <dd>term 1's definition</dd>
+            <dt>term 2</dt>
+            <dd>term 2's definition</dd>
+            <dd>term 2's second definition</dd>
+            <dt>this is a key</dt>
+            <dd>this is the value, in a key-value pair</dd>
+          </dl>
+    </article>
+    <article>
+      <h3>Quotes</h3>
+        <h4>This is a blockquote</h4>
+          <blockquote>
+          <p>When -- A lot of years passed since 1832, and during that time it would have been most unusual for any national political party to ask a Barbara Jordan to deliver a keynote address. But tonight, here I am. And I feel -- I feel that notwithstanding the past that my presence here is one additional bit of evidence that the American Dream need not forever be deferred.</p>
+          <p>Now -- Now that I have this grand distinction, what in the world am I supposed to say? I could easily spend this time praising the accomplishments of this party and attacking the Republicans -- but I don't choose to do that. I could list the many problems which Americans have. I could list the problems which cause people to feel cynical, angry, frustrated: problems which include lack of integrity in government; the feeling that the individual no longer counts; the reality of material and spiritual poverty; the feeling that the grand American experiment is failing or has failed. I could recite these problems, and then I could sit down and offer no solutions. But I don't choose to do that either. The citizens of America expect more. They deserve and they want more than a recital of problems.</p>
+          <p>We are a people in a quandary about the present. We are a people in search of our future. We are a people in search of a national community. We are a people trying not only to solve the problems of the present, unemployment, inflation, but we are attempting on a larger scale to fulfill the promise of America. We are attempting to fulfill our national purpose, to create and sustain a society in which all of us are equal.</p>
+          <cite>Excerpt from Barbara Jordan's <a href="https://www.americanrhetoric.com/speeches/barbarajordan1976dnc.html">1976 Democratic Convention Keynote Address</a></cite>
+          </blockquote>
+        <h4>Inline quotes</h4>
+          <p><q>This is an inline quote.</q></p>
+    </article>
+    <article>
+      <h3>Dates and times</h3>
+        <p><time datetime="2022-11-27">November 27, 2022</time></p>
+        <p><time datetime="2023-01-01 08:00-0500">8 a.m. on New Year's Day</time> (in Miami).</p>
+        <p><time datetime="14:00">2:00 p.m.</time><p>
+    </article>
+    <article>
+      <h3>Code, pre, and br</h3>
+        <h4>Code</h4>
+          <p>Inserting code into your HTML? Use the <code>&lt;code&gt; element.</code></p>
+        <h4>Display preformatted text with <code>&lt;Pre&gt;</code></h4>
+          <p><pre>
+        A B C
+        Drip drop
+           Booyah
+           
+    Keep the pop
+      Watch the soup
+ Bee the bop
+           Faux pas
+ 
+                        Fin.
+          </pre></p>
+        <h4>Br</h4>
+          <p>This is a line of text.<br>This is another line.</p>
+    </article>
+    <article>
+      <h3>Superscripts, subscripts, and small text</h3>
+        <p>E = mc<sup>2</sup></p>
+        <p>H<sub>2</sub>O</p>
+        <p>Use <code>&lt;small&gt;</code> to convey text of minimal importance: <small>&copy; Jason James 2023</small></p>
+    </article>
+  </section>
+<section>
+  <h2>Understanding the Power of HTML</h2>
+  <article>
+      <h3>"Debugging HTML"</h3>
+      <p>See your favorite browser's Dev Tools.</p>
+    </article>
+    <article>
+      <h3>HTML attributes</h3>
+      <dl>
+        <dt><code>class</code></dt>
+        <dd>An attribute to define styling for a whole family of elements.</dd>
+        <dt><code>id</code></dt>
+        <dd>An attribute for targeted styling.</dd>
+        <dt><code>lang</code></dt>
+        <dd>Define the language for the page.</dd>
+        <dt><code>dir</code></dt>
+        <dd>Define the direction of text: "ltr" for left-to-right.  "rtl" for right-to-left.</dd>
+      </dl>
+    </article>
+    <article>
+      <h3>"ARIA roles"</h3>
+      <p aria-label:"Hello!">
+        <pre aria-hidden:"true">
+ H
+ ello<span>!</span>
+        </pre>
+      </p>
+    </article>
+    <article>
+      <h3>"Formatting HTML"</h3>
+      <h4>Inserting comments</h4>
+      <p>You won't see this comment:</p>
+      <!-- This is a comment ;-) -->
+      <h4>Capitalization</h4>
+      <p><i>No notes.</i></p>
+      <h4>HTML Entities w/o Closing Tags</h4>
+      <p>See <code>img</code>, for example. There's not a single convention on whether an element without a closing tag should have a slash at the end of the opening tag to 'close' it or not.  I think it's something I'm going to start doing though.</p>
+      <h4></h4>
+    </article>
+    <article>
+      <h3>"Weird characters"</h3>
+      <h4>Character Entities</h4>
+      <p>I've been using them throughout already.  See above :-).</p>
+      <h4>Non-Breaking Spaces</h4>
+      <p>If, for example, I want my first and last name to always appear together on the same line, I can use a non-breaking space: Jason&nbsp;James</p>
+    </article>
+</section>
+<section>
+  <h2>Linking and Navigation</h2>
+  <article>
+    <h3>Links</h3>
+    <h4>The Anchor Element</h4>
+    <p><a href="https://example.com/">This is a link to an absolute URL.</a> <small>(HTTPS stands for Hypertext Transport Protocol Secure.)</small></p>
+  </article>
+  <article>
+    <h3>URL Paths</h3>
+    <p>Conversations about relative URLs.</p>
+  </article>
+  <article>
+    <h3>Navigation</h3>
+    <p>This is a test navigation area:</p>
+    <nav role="navigation" aria-label="main navigation">
+      <ul>
+        <li>Home</li>
+        <li>Page One</li>
+        <li>Page Two</li>
+      </ul>
+    </nav>
+    <p>Obviously, it'd help if I had made them buttons.  Here are some buttonless breadcrumbs:</p>
+    <nav role="navigation" aria-label="breadcrumbs">
+       <ul>
+        <li>Home</li>
+        <li>Page One</li>
+        <li>Section A</li>
+      </ul>
+    </nav>
+  </article>
+</section>
+<section>
+  <h2>Images and Graphics</h2>
+    <h3>Images</h3>
+      <figure>
+        <img src="https://images.nappy.co/uploads/large/high-res-0373-21592076399byx0mklkiqwfmzs61mr1ee1jlp9r3b4fzpkk5uneorbnasgrsqekpxcdvkijunrlum0um2pcgmpdgaktyy1cv0dwinnnqfngyixb.jpg" alt="A man hiking" width="320" height="auto">
+        <figcaption>The image above is from <a href="https://nappy.co/photo/90">https://nappy.co/photo/90</a>, first accessed on January 4, 2022.</figcaption>
+      </figure>
+    <h3>Image Formats</h3>
+      <p>The goal is to have the highest quality possible and the smallest file size possible.</p>
+      <dl>
+        <dt>GIF</dt>
+        <dd>Graphics Interchange Format</dd>
+        <dd>Good at compressing illustrations with large areas of a single color.</dd>
+        <dd>One of the oldest formats.  Limited color space of 256 colors.  A favorite for making small movies.</dd>
+        <dt>SVG</dt>
+        <dd>Scalable Vector Graphic</dd>
+        <dd>Good for logos, icons, etc.</dd>
+        <dd>As a vector graphic, it's infinately scalable.  File sizes can be very small.  SVG is its own coding language that deserves a closer look.  It instructs the browser how to draw the image.</dd>
+        <dt>JPG</dt>
+        <dd>this is the value, in a key-value pair</dd>
+        <dd>Known for being good at compressing photos.</dd>
+        <dd>You'll need to compress the potentially very large file sizes.  The files can be compressed.</dd>
+        <dt>PNG</dt>
+        <dd></dd>
+        <dd>Good for images with transparency.</dd>
+      </dl>
+    <h3>Responsive Images</h3>
+      <p>Create multiple copies of an image at different resolutions and then have the browser decide which image to use.  See the <code>srcset</code> attribute.</p>
+    <h3>Responsive width</h>
+      <p>See the <code>sizes</code> attribute.</p>
+    <h3>Responsive pictures</h3>
+      <!-- Image below is from Jen Simmons' CodePen:  https://codepen.io/jensimmons/pres/wvwXLQa -->
+      <picture>
+      <source media="(min-width:600px)"
+              srcset="https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-320.jpg  320w,
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-480.jpg  480w, 
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-720.jpg  720w,
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-960.jpg  960w, 
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-1440.jpg 1440w, 
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-1920.jpg 1920w" >
+      <source srcset="https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-cropped-320.jpg 320w,
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-cropped-480.jpg 480w, 
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-cropped-720.jpg 720w,
+                      https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-cropped-960.jpg 960w" >
+      <img class="jen" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/10558/dog2-480.jpg" 
+           alt="smiling black dog"
+           height="360px" width="480px">
+    </picture>
+        <p><i>Note</i>: There's another course just on Responsive Images.</p>
+    <h3>Figure and figcaption</h3>
+    <p>See the first image on this page for an example.</p>
+</section>
+<section>
+  <h2>Media</h2>
+    <h3>Audio</h3>
+      <audio controls loop src="https://sampleswap.org/samples-ghost/LOOPING%20AMBIENCE/1489[kb]sleeping-with-elephants-pads.wav.mp3"></audio>
+  <br>
+      <audio controls>
+        <source src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg" type="audio/ogg">
+        <source src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Bass_loop_2_%28Carrai_Pass%29.wav" type="audio/wav">
+      Sorry!  Your browser does not support this audio element.
+      </audio>
+  <br>
+  <audio controls>
+        <source src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Bass_loop_2_%28Carrai_Pass%29.wav" type="audio/wav">
+      </audio>
+  <br>
+  <audio controls>
+        <source src="" type="audio/ogg">
+        <source src="" type="audio/wav">
+      Sorry!  Your browser does not support this audio element.
+      </audio>
+  <h3>Video</h3>
+    <video src="https://download.samplelib.com/mp4/sample-5s.mp4" controls width="50%"></video>
+  <p><i>Adaptive bitrate streaming</i> requires a service, but is how most video today is delivered on the web.</p>
+  <h3>Captions and subtitles</h3>
+    <video controls>
+      <source src="https://www.iandevlin.com/html5test/webvtt/v/upc-tobymanley.theora.ogg" type="video/ogg">
+      <track src="https://www.iandevlin.com/html5test/webvtt/upc-video-subtitles-en.vtt"
+             kind="captions"
+             label ="English"
+             srclang="en"
+             default>
+      <p>This is a test.</p>
+    </video>
+    <!-- The video above is available here: https://www.iandevlin.com/html5test/webvtt/html5-video-webvtt-sample.html Found via Google Search on January 5, 2022 -->
+  <h3>Embedding other media through iframes</h3>
+    <p><i>No comments.</i></p>
+</section>
+<section>
+  <header><h2>"More ways to identify content"</h2></header>
+    <h3>Supporting languages</h3>
+      <p>lang, dir and charset</p>
+    <h3>Generic elements: div and span</h3>
+      <p><code>div</code> is a block element.  <code>span</code> is inline. Use them as a last resort with there's not another appropriate element.</p>
+</section>
+
+<section>
+  <h2>"Putting it all together"</h2>
+    <h3>The HTML page</h3>
+      <ul>
+        <li>Doctype declaration</li>
+        <li>HTML element</li>
+        <li>Head element</li>
+        <li>Body element</li>
+      </ul>
+    <h3>Document head</h3>
+      <ul>
+        <li>meta charset UTF-8</li>
+        <li>title</li>
+        <li>meta viewport</li>
+        <li>meta description</li>
+        <li>meta application-name, msapplication-TileImage, theme-color</li>
+        <li>link</li>
+        <li>script (but it doesn't have to go in the head)</li>
+      </ul>
+    <h3>Structuring content</h3>
+      <ul>
+        <li>main</li>
+        <li>header (can be used inside of articles and sections too)</li>
+        <li>footer (you can put it at the top if you want)</li>
+        <li>article</li>
+        <li>section</li>
+        <li>aside (it's the semantic meaning, not the layout)</li>
+      </ul>
+    <h3>Examples of putting it all together</h3>
+</section>
+
+<section>
+  <h2>"Forms and Interactive Elements"</h2>
+  <article>
+    <header><h3>HTML Form basics</h3></header>
+    <p></p>
+    <form>
+      <label for="name">Name</label>
+      <input name="name" type="text" placeholder="Devonte Smith" id="name">
+      <label>E-mail
+        <input name="email" type="email" placeholder="example@aol.com" required> 
+      </label>
+      <button type="submit">Click Here</button>
+    </form>
+  </article>
+  <article>
+    <header><h3>More on forms</h3></header>
+    <p>See above.</p>
+  </article>
+  <article>
+    <header><h3>Additional form element types</h3></header>
+    <ul>
+      <li>password type</li>
+      <li>search type</li>
+      <li>phone type</li>
+      <li>textarea element</i>
+      <li>date</li>
+      <li>color</li>
+      <li>file</li>
+      <li>checkbox</li>
+      <li>fieldsets & radio elements</li>
+      <li>select list</li>
+    </ul>
+  </article>
+</section>
+<section>
+  <h2>Structuring Tabular Data</h2>
+  <article>
+    <header><h3>When to use tables</h3></header>
+    <p>Use tables for tabular data.  Suggestion: When you decide to use 'numbers' or 'excel' instead of 'pages' or 'word', use a table.</p>
+  </article>
+  <article>
+    <header><h3>Building table rows</h3></header>
+    <table>
+      <tr>
+        <th>Item</th>
+        <th>Price</th>
+      </tr>
+      <tr>
+        <td>Apple</td>
+        <td>$1.09</td>
+      </tr>
+      <tr>
+        <td>Carrot</td>
+        <td>$0.49</td>
+      </tr>
+    </table>
+  </article>
+</section>
+<section>
+  <h2>Conclusion</h2>
+    <article>
+      <header><h3>How to keep learning and HTML specifications</h3></header>
+      <ul>
+        <li>MDN Web Docs</li>
+        <li>Web <a href="https://html.spec.whatwg.org/multipage/">Specifications</a> (HTML 5)</li>
+        <li><a href="ttps://www.w3.org/WAI/standards-guidelines/wcag/">WCAG</a></li>
+        <li>ARIA</li>
+      </ul>
+  </article>
+</section>
+<section>
+    <h2>References</h2>
+    <article>
+      <h3>"The role of HTML"</h3>
+    </article>
+    <article>
+      <h3>HTML Elements</h3>
+    </article>
+  </section>
+</body>
+
+</html>
