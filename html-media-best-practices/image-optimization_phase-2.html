@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html
+  lang="en-US"
+  dir="ltr"
+  translate="yes">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Image Optimization, Phase 2</title>
+    <meta name="author" content="Jason James" />
+
+    <meta
+      name="description"
+      content="Exploring the best practices of writing html, css and javascript with images and video." />
+
+    <meta
+      name="keywords"
+      content="html, video, captions, subtitles, accessibility, a11y, media, image, images" />
+
+    <link rel="stylesheet" href="styles.css">
+    
+  </head>
+
+  <body>
+    <main>
+      <h1>Image Optimization, Phase 2</h1>
+      <p>We use a less peformance friendly jpeg format image than in <a href="image-optimization_phase-1.html">Image Optimization, Phase 1</a>, but this time we provide images at multiple resolutions and then let the browser decide the best image for the screen size and resolution.</p>
+
+      <img
+        src="media/IMG_5082-max-small.jpeg"
+        srcset="
+          media/IMG_5082-max-small.jpeg 320w,
+          media/IMG_5082-max-medium.jpeg 640w,
+          media/IMG_5082-max-large.jpeg 1280w,
+          media/IMG_5082-max-full-size.jpeg 4032w"
+        sizes="80vw"
+        alt="A Florida residential backyard with green trees set against a mostly blue sky on a summer afternoon.  A small, an elongated pond is behind a white fence, with trees lining the other side of the pond.  A portion of a wooden swing set with green plastic joints and the top of a green rope swing is also visible." />
+
+      <p>Reference the MDN Web Docs:<a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images">Responsive Images</a></p>
+
+    </main>
+  </body>
+</html>
