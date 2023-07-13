@@ -9,7 +9,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+<<<<<<<< HEAD:html-media-best-practices/image-optimization_phase-2.html
+    <title>Image Optimization, Phase 2</title>
+========
     <title>Three Images</title>
+>>>>>>>> f7ca74d (Video content upload):html-media-best-practices/three-images.html
     <meta name="author" content="Jason James" />
 
     <meta
@@ -22,34 +26,25 @@
 
     <link rel="stylesheet" href="styles.css">
     
-    <!--
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="" />
-    -->
   </head>
 
   <body>
     <main>
-      <h1>Three Images</h1>
-      <p>Three images.  The first two are exported to PNG at maximum resolution and full-size.  The third is a jpg of lower resolution.</p>
-      <p>We put each image in a <code>div</code> container with double the height of the viewport.</p>
-      <div class="full-vh">
-        <img
-          src="media/IMG_5082-full-size.png"
-          alt="A Florida residential backyard with green trees set against a mostly blue sky on a summer afternoon.  A small, an elongated pond is behind a white fence, with trees lining the other side of the pond.  A portion of a wooden swing set with green plastic joints and the top of a green rope swing is also visible." />
-      </div>
-      <div class="full-vh">
-        <img
-          src="media/IMG_0034.png"
-          alt="A lake is in view. The water calmly ripples under a mostly clear, blue South Florida winter sky. The other green, tree-lined shoreline is about a quarter of a mile away. Remote controlled boats can be identified by the small, white jets of water in their wake." />
-      </div>
-      <div class="full-vh">
-        <img
-          src="media/sidney.jpg"
-          alt="A photo portrait of Sidney Poitier." />
-      </div>
+      <h1>Image Optimization, Phase 2</h1>
+      <p>We use a less peformance friendly jpeg format image than in <a href="image-optimization_phase-1.html">Image Optimization, Phase 1</a>, but this time we provide images at multiple resolutions and then let the browser decide the best image for the screen size and resolution.</p>
+
+      <img
+        src="media/IMG_5082-max-small.jpeg"
+        srcset="
+          media/IMG_5082-max-small.jpeg 320w,
+          media/IMG_5082-max-medium.jpeg 640w,
+          media/IMG_5082-max-large.jpeg 1280w,
+          media/IMG_5082-max-full-size.jpeg 4032w"
+        sizes="80vw"
+        alt="A Florida residential backyard with green trees set against a mostly blue sky on a summer afternoon.  A small, an elongated pond is behind a white fence, with trees lining the other side of the pond.  A portion of a wooden swing set with green plastic joints and the top of a green rope swing is also visible." />
+
+      <p>Reference the MDN Web Docs:<a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images">Responsive Images</a></p>
+
     </main>
   </body>
 </html>
