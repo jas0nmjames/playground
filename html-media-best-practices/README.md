@@ -10,8 +10,8 @@
 8. [One video](video-test-1a_no-poster_mp4-only.html) (no poster. no webm; mp4 only)
 7. Three videos
 8. Three videos lazy loaded
-4. Embedded Video: YouTube
-5. Embedded Video: Vimeo
+4. [Embedded Video: YouTube](youtube-embed-testing.html)
+5. [Embedded Video: Vimeo](vimeo-embed-testing.html)
 
 ## Notes
 
@@ -113,43 +113,4 @@ Example of what to do:
 
 - 512 x 288 GIF by <a href="https://pixabay.com/users/nickype-10327513/?utm_source=link-attribution&utm_medium=referral&utm_campaign=animation&utm_content=1782">Nicky ❤️🌿🐞🌿❤️</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=animation&utm_content=1782">Pixabay</a>
 
-- Thank you cloud convert: https://cloudconvert.com/mov-to-webm 
-
-YouTube
-
-video test 1a - player controls
-
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-video test 1a - no player controls
-
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-video test 1b
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/802gU03LH0g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-video test 1c
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/HXiJMnqlpv4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-Vimeo
-
-video test 1a
-direct link: https://vimeo.com/844425239
-embed
-<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/844425239?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Video Test 1a"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
-gif direct link
-https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/b39f4ef2-f555-4a96-aabb-7c4112745789.gif?ClientID=vimeo-core-prod&Date=1689216128&Signature=e42ce0ab1b54f02be9a02da6dcc9882bcb111dd5
-
-
-video test 1b
-direct link: https://vimeo.com/844427272
-embed:
-<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/844427272?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Video Test 1b"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
-
-
-video test 1c
-direct link: https://vimeo.com/844427398
-embed:
-<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/844427398?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Video Test 1c"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+- Thank you cloud convert: https://cloudconvert.com/mov-to-webm

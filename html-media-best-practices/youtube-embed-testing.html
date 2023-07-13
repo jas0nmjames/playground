@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html
+  lang="en-US"
+  dir="ltr"
+  translate="yes">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Embed Testing</title>
+    <meta name="author" content="Jason James" />
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body>
+    <main>
+      <h1>Testing YouTube Video Embeds</h1>
+
+      <h2>Standard Embed with Player Controls</h2>
+      <p>Exported and uploaded as 1080p @ 30fps.</p>
+      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+      <h2>Standard Embed wihout Player Controls</h2>
+      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+      <h2>Standard Embed: 1080p @ 60fps</h2>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/802gU03LH0g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+      <h2>Standard Embed: 4k @ 60fps</h2>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/HXiJMnqlpv4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+      <h2>Modified Embed</h2>
+      <ul>
+        <li>Removed related links</li>
+        <li>Removed YouTube branding</li>
+        <li>Adjusted iframe width and height</li>
+        <li>Forced controls to be displayed. (They are already displayed by default.)</li>
+        <li>Lazy loaded iframe (thank you <a href="https://web.dev/iframe-lazy-loading/">web.dev)</a></li>
+      </ul>
+      <p>Reference <a href="https://developers.google.com/youtube/player_parameters">YouTube Embedded Players and Player Parameters</a> thanks to <a href="https://youtu.be/R60uXUNL-ow">Mike Hobbs</a>.</p>
+      <iframe
+        width="100%"
+        height="auto"
+        src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc?rel=0&modestbranding=1&controls=1"
+        loading="lazy"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </main>
+  </body>
+</html>
