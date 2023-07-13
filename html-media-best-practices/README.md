@@ -2,21 +2,24 @@
 
 ## Index
 
-1. One image
-2. Three images
-3. Three images lazy loaded
-4. Embedded Video: YouTube
-5. Embedded Video: Vimeo
-6. One video
+1. [One image](html-media-best-practices/one-image.html)
+2. [Three images](/html-media-best-practices/three-images.html)
+3. [Three images lazy loaded](/html-media-best-practices/three-images-lazy-loaded.html)
+4. [One video](/html-media-best-practices/video-test-1a.html)
+7. [One video](/html-media-best-practices/video-test-1a_no-poster.html) (no poster image)
+8. [One video](/html-media-best-practices/video-test-1a_no-poster_mp4-only.html) (no poster. no webm; mp4 only)
 7. Three videos
 8. Three videos lazy loaded
+4. Embedded Video: YouTube
+5. Embedded Video: Vimeo
 
 ## Notes
 
 Videos and moving images should:
 
 1. be captioned (unless there is no audio).
-2. 
+2. if five seconds or longer, should have pause, stop or hide controls
+3. be keyboard operable
 
 ## References
 
@@ -34,6 +37,7 @@ WCAG 2.1 was published on June 5, 2018.  WCAG 2.2 Draft is scheduled to be final
     Moving, blinking, scrolling
 
         For any moving, blinking or scrolling information that (1) starts automatically, (2) lasts more than five seconds, and (3) is presented in parallel with other content, there is a mechanism for the user to pause, stop, or hide it unless the movement, blinking, or scrolling is part of an activity where it is essential; and
+
     Auto-updating
 
         For any auto-updating information that (1) starts automatically and (2) is presented in parallel with other content, there is a mechanism for the user to pause, stop, or hide it or to control the frequency of the update unless the auto-updating is part of an activity where it is essential.
@@ -79,6 +83,8 @@ Example of what to do:
 
 ### Lazy-Loading
 
+- MDN Docs: [Lazy Loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+
 #### Images
 
 - [Browser-level image lazy loading for the web](https://web.dev/browser-level-image-lazy-loading/)
@@ -99,6 +105,51 @@ Example of what to do:
 - Codepen: [Responsive CSS Grid Layout](https://codepen.io/SitePoint/pen/NWOGvvN?editors=1100)
 - Codepen: Andy Bell's [Responsive Grid Layout](https://codepen.io/andy-set-studio/pen/vMMYKJ)
 
+### Benchmarking
+
+- https://www.webpagetest.org/ 
+
 ## Thanks & Credits
 
 - 512 x 288 GIF by <a href="https://pixabay.com/users/nickype-10327513/?utm_source=link-attribution&utm_medium=referral&utm_campaign=animation&utm_content=1782">Nicky ❤️🌿🐞🌿❤️</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=animation&utm_content=1782">Pixabay</a>
+
+- Thank you cloud convert: https://cloudconvert.com/mov-to-webm 
+
+YouTube
+
+video test 1a - player controls
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+video test 1a - no player controls
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/yrhVI3zqjBc?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+video test 1b
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/802gU03LH0g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+video test 1c
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/HXiJMnqlpv4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+Vimeo
+
+video test 1a
+direct link: https://vimeo.com/844425239
+embed
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/844425239?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Video Test 1a"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+gif direct link
+https://videoapi-muybridge.vimeocdn.com/animated-thumbnails/image/b39f4ef2-f555-4a96-aabb-7c4112745789.gif?ClientID=vimeo-core-prod&Date=1689216128&Signature=e42ce0ab1b54f02be9a02da6dcc9882bcb111dd5
+
+
+video test 1b
+direct link: https://vimeo.com/844427272
+embed:
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/844427272?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Video Test 1b"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+
+
+video test 1c
+direct link: https://vimeo.com/844427398
+embed:
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/844427398?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Video Test 1c"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>

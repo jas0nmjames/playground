@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html
+  lang="en-US"
+  dir="ltr"
+  translate="yes">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Test 1a (No Poster)</title>
+    <meta name="author" content="Jason James" />
+    <link rel="stylesheet" href="styles.css">
+    <!--
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="" />
+    -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📹</text></svg>">
+    <!-- See "How To Use an Emoji as a Favicon Easily" by Chris Coyier: https://css-tricks.com/emoji-as-a-favicon/"-->
+  </head>
+
+  <body>
+    <main>
+      <h1>Video Test 1a</h1>
+      <video
+          controls
+          muted
+          width="100%">
+          <source
+            src="media/IMG_5083-1080p-30fps.webm"
+            type="video/webm" />
+          <source
+            src="media/IMG_5083-1080p-30fps.mov"
+            type="video/quicktime" />
+          <source
+            src="media/IMG_5083-1080p-30fps.mp4"
+            type="video/mp4" />
+            <track
+              default
+              kind="captions"
+              label="English"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en.vtt" />
+            <track
+              kind="descriptions"
+              label="English Descriptions"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en_descriptions.vtt" />
+            <track
+              kind="subtitles"
+              label="Spanish"
+              srclang="es"
+              src="media/captions/IMG_5083_es.vtt" />
+          Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
+          </video>
+    </main>
+  </body>
+</html>
