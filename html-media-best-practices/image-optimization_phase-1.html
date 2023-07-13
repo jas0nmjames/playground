@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Three Images</title>
+    <title>Image Optimization, Phase 1</title>
     <meta name="author" content="Jason James" />
 
     <meta
@@ -22,39 +22,23 @@
 
     <link rel="stylesheet" href="styles.css">
     
-    <!--
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="" />
-    -->
   </head>
 
   <body>
     <main>
-      <h1>Three Images</h1>
-      <p>Three images.  The first two are exported to PNG at maximum resolution and full-size.  The third is a jpg of lower resolution.</p>
-      <div class="full-vh">
+      <h1>Image Optimization, Phase 1</h1>
+      <p>A single image, but this time in a format and resolution that is web-friendly.</p>
+      <p>Using the <code>picture</code> element, we include fallbacks for the webp image format for older browser support.  We also include a fixed width & height to prevent content on the page from jumping around as it calculates a % width and auto height.</p>
+
+      <picture>
+        <source type="image/webp" srcset="media/IMG_5082-full-size.webp">
         <img
           src="media/IMG_5082-full-size.png"
           alt="A Florida residential backyard with green trees set against a mostly blue sky on a summer afternoon.  A small, an elongated pond is behind a white fence, with trees lining the other side of the pond.  A portion of a wooden swing set with green plastic joints and the top of a green rope swing is also visible."
-          width="50%"
-          height="auto" />
-      </div>
-      <div class="full-vh">
-        <img
-          src="media/IMG_0034.png"
-          alt="A lake is in view. The water calmly ripples under a mostly clear, blue South Florida winter sky. The other green, tree-lined shoreline is about a quarter of a mile away. Remote controlled boats can be identified by the small, white jets of water in their wake."
-          width="50%"
-          height="auto" />
-      </div>
-      <div class="full-vh">
-        <img
-          src="media/sidney.jpg"
-          alt="A photo portrait of Sidney Poitier."
-          width="50%"
-          height="auto" />
-      </div>
+          width="4032"
+          height="2268" />
+      </picture>
+
     </main>
   </body>
 </html>
