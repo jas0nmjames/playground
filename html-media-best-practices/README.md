@@ -2,12 +2,12 @@
 
 ## Index
 
-1. [One image](html-media-best-practices/one-image.html)
-2. [Three images](/html-media-best-practices/three-images.html)
-3. [Three images lazy loaded](/html-media-best-practices/three-images-lazy-loaded.html)
-4. [One video](/html-media-best-practices/video-test-1a.html)
-7. [One video](/html-media-best-practices/video-test-1a_no-poster.html) (no poster image)
-8. [One video](/html-media-best-practices/video-test-1a_no-poster_mp4-only.html) (no poster. no webm; mp4 only)
+1. [One image](one-image.html)
+2. [Three images](three-images.html)
+3. [Three images lazy loaded](three-images-lazy-loaded.html)
+4. [One video](video-test-1a.html)
+7. [One video](video-test-1a_no-poster.html) (no poster image)
+8. [One video](video-test-1a_no-poster_mp4-only.html) (no poster. no webm; mp4 only)
 7. Three videos
 8. Three videos lazy loaded
 4. Embedded Video: YouTube
