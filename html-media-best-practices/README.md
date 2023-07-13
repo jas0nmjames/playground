@@ -3,6 +3,8 @@
 ## Index
 
 1. [One image](one-image.html)
+2. [Responsive Images - Phase 1](image-optimization_phase-1.html)
+3. [Responsive Images - Phase 2](image-optimization_phase-2.html)
 2. [Three images](three-images.html)
 3. [Three images lazy loaded](three-images-lazy-loaded.html)
 4. [One video](video-test-1a.html)
