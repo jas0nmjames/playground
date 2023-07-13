@@ -1,8 +1,9 @@
-# fonts-playground
+# typography
 
 A playground to explore &amp; experiment in the world of typography.
 
 Created February 2023.
+Last Updated July 2023.
 
 ## Thanks
 
