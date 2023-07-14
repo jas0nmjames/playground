@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html
+  lang="en-US"
+  dir="ltr"
+  translate="yes">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Three Videos, No Lazy Loading</title>
+    <meta name="author" content="Jason James" />
+
+    <meta
+      name="description"
+      content="Exploring the best practices of writing html, css and javascript with images and video." />
+
+    <meta
+      name="keywords"
+      content="html, video, captions, subtitles, accessibility, a11y, media, image, images" />
+
+    <link rel="stylesheet" href="styles.css">
+    
+    <!--
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="" />
+    --> 
+  </head>
+
+  <body>
+    <main>
+      <h1>Three Videos, No Lazy Loading</h1>
+      <p>This page is created with the following:</p>
+      <ol>
+        <li>Each video includes captions, audio descriptions and subtitles.</li>
+        <li>Each video includes a poster image, which loads first before the video itself is loaded.  We use the webp format for the poster image to ensure the best performance.</li>
+      </ol>
+      <div class="full-vh">
+        <h2>Video 1</h2>
+        <p>1080p @ 30fps</p>
+        <video
+          controls
+          muted
+          width="100%"
+          poster="media/IMG_5082-full-size.webp" >
+          <source
+            src="media/IMG_5083-1080p-30fps.mov"
+            type="video/quicktime" />
+          <source
+            src="media/IMG_5083-1080p-30fps.mp4"
+            type="video/mp4" />
+            <track
+              default
+              kind="captions"
+              label="English"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en.vtt" />
+            <track
+              kind="descriptions"
+              label="English Descriptions"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en_descriptions.vtt" />
+            <track
+              kind="subtitles"
+              label="Spanish"
+              srclang="es"
+              src="media/captions/IMG_5083_es.vtt" />
+          Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
+          </video>
+      </div>
+      <div class="full-vh">
+        <h2>Video 2</h2>
+        <p>1080p @ 60fps</p>
+        <video
+          preload="none"
+          controls
+          muted
+          width="100%"
+          poster="media/IMG_5082-full-size.webp" >
+          <source
+            src="media/IMG_5084-1080p-60fps.mov"
+            type="video/quicktime" />
+          <source
+            src="media/IMG_5084-1080p-60fps.mp4"
+            type="video/mp4" />
+            <track
+              default
+              kind="captions"
+              label="English"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en.vtt" />
+            <track
+              kind="descriptions"
+              label="English Descriptions"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en_descriptions.vtt" />
+            <track
+              kind="subtitles"
+              label="Spanish"
+              srclang="es"
+              src="media/captions/IMG_5083_es.vtt" />
+          Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
+          </video>
+      </div>
+      <div class="full-vh">
+        <h2>Video 3</h2>
+        <p>4k @ 60fps</p>
+        <p>This video is only available as a .mov (quicktime) file.  .mp4 and .webm formats are not available.</p>
+        <video
+          preload="none"
+          controls
+          muted
+          width="100%"
+          poster="media/IMG_5082-full-size.webp" >
+          <source
+            src="media/IMG_5085-4k-60fps.mov"
+            type="video/quicktime" />
+            <track
+              default
+              kind="captions"
+              label="English"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en.vtt" />
+            <track
+              kind="descriptions"
+              label="English Descriptions"
+              srclang="en-US"
+              src="media/captions/IMG_5083_en_descriptions.vtt" />
+            <track
+              kind="subtitles"
+              label="Spanish"
+              srclang="es"
+              src="media/captions/IMG_5083_es.vtt" />
+          Oh no!  Your browser doesn't support the html &lt;video&gt; element or 'tag'.  You should write your congressperson.
+          </video>
+      </div>
+    </main>
+  </body>
+</html>

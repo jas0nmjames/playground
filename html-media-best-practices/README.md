@@ -5,13 +5,15 @@
 1. [One image](one-image.html)
 2. [Responsive Images - Phase 1](image-optimization_phase-1.html)
 3. [Responsive Images - Phase 2](image-optimization_phase-2.html)
-2. [Three images](three-images.html)
-3. [Three images lazy loaded](three-images-lazy-loaded.html)
-4. [One video](video-test-1a.html)
+4. [Three images](three-images.html)
+5. [Three images lazy loaded](three-images-lazy-loaded.html)
+6. [One video](video-test-1a.html)
 7. [One video](video-test-1a_no-poster.html) (no poster image)
 8. [One video](video-test-1a_no-poster_mp4-only.html) (no poster. no webm; mp4 only)
-7. Three videos
-8. Three videos lazy loaded
+9. Three Videos: [Best Practice](three-videos-lazy-loaded.html)
+12. Three Videos: [No Lazy Loading](three-videos-no-lazy-loading.html)
+10. Three Videos: [Lazy Loaded, but without the .webm format](three-videos-lazy-loaded_no-webm.html)
+11. Three Videos: [No lazy loading, but without the .webm format, nor a poster](three-videos-no-lazy-loading-no-poster.html)
 4. [Embedded Video: YouTube](youtube-embed-testing.html)
 5. [Embedded Video: Vimeo](vimeo-embed-testing.html)
 
