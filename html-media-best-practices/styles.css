@@ -1,12 +1,26 @@
 /* Thank you https://web.dev/learn/design/responsive-images/ */
 
 .full-vh {
-  height:100vh;
+  height:200vh;
 }
 
+/*
 img,
 video,
 iframe {
   max-inline-size: 100%;
   block-size: auto;
+}
+*/
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+main {
+  max-width: 80%;
+  margin: 0 auto;
 }
