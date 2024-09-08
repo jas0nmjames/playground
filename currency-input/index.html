@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Input Field</title>
+    <style>
+        input {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="currency-form">
+        <label for="currency">Amount:</label>
+        <input type="text" id="currency" name="currency" placeholder="$0.00">
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        const input = document.getElementById('currency');
+        const form = document.getElementById('currency-form');
+
+        input.addEventListener('input', function () {
+            let value = input.value.replace(/[^\d]/g, ''); // Remove non-digit characters
+
+            if (value.length === 0) {
+                input.value = '';
+                return;
+            }
+
+            let formattedValue = (value / 100).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            });
+
+            input.value = formattedValue;
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form submission for demo purposes
+
+            // Remove all non-numeric characters except for decimal
+            let rawValue = input.value.replace(/[^0-9.]/g, '');
+
+            alert('Form submitted with value: ' + rawValue);
+
+            // Proceed with actual form submission here, or handle the value as needed
+        });
+    </script>
+
+    <br>
+    <p>Code generated with the help of ChatGPT in September 2024.</p>
+    <p>Citation: <cite>OpenAI. (2024). ChatGPT (Sept 5 version) [Large language model]. <a href="https://chat.openai.com/">https://chat.openai.com/</a></cite></p>
+
+</body>
+</html>
