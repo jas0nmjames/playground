@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Example</title>
+    <style>
+        .prompt-container {
+            position: relative;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .prompt-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .prompt-answer .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .prompt-answer .word:nth-child(1) { transition-delay: 0.3s; }
+        .prompt-answer .word:nth-child(2) { transition-delay: 0.6s; }
+        .prompt-answer .word:nth-child(3) { transition-delay: 0.9s; }
+        .prompt-answer .word:nth-child(4) { transition-delay: 1.2s; }
+        .prompt-answer .word:nth-child(5) { transition-delay: 1.5s; }
+    </style>
+</head>
+<body>
+    <div class="prompt-container">
+        <div class="prompt-title">Plan a trip</div>
+        <div class="prompt-answer">
+            <span class="word">to</span>
+            <span class="word">see</span>
+            <span class="word">the</span>
+            <span class="word">northern</span>
+            <span class="word">lights</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let words = document.querySelectorAll('.prompt-answer .word');
+            words.forEach(word => {
+                setTimeout(() => {
+                    word.style.opacity = "1";
+                    word.style.transform = "translateY(0)";
+                }, 100); // This delay ensures the CSS transition takes effect
+            });
+        });
+    </script>
+</body>
+</html>

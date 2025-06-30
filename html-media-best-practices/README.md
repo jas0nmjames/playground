@@ -2,7 +2,7 @@
 
 ## Index
 
-1. [One image](one-image.html)
+1. [One image](01_one-image.html): A single image, exported to PNG at maximum resolution and full-size.
 2. [Responsive Images - Phase 1](image-optimization_phase-1.html)
 3. [Responsive Images - Phase 2](image-optimization_phase-2.html)
 4. [Three images](three-images.html)
