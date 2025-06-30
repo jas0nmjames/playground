@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>My Tiny World</title>
+  <style>
+    /* Basic reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth; /* Smooth scroll */
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* Lock to Apple Watch size */
+    body {
+      width: 184px;   /* Adjust for your model */
+      height: 224px;
+      margin: 0 auto;
+      border: 2px solid #000; /* Optional: visualize watch frame */
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory; /* Snap! */
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .panel {
+      width: 100%;
+      height: 224px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      text-align: center;
+      padding: 10px;
+
+      /* Animation starting state */
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+      scroll-snap-align: start; /* Snap to start of each panel */
+    }
+
+    .panel.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Colors */
+    .page1 {
+      background: #000;
+      color: #fff;
+    }
+
+    .page2 {
+      background: #222;
+      color: #0f0;
+    }
+
+    .page3 {
+      background: #fff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel page1">
+      <h1>Hello, my name is Jason</h1>
+    </section>
+    <section class="panel page2">
+      <h1>I'm a designer.</h1>
+    </section>
+    <section class="panel page3">
+      <h1>Welcome to my tiny world.</h1>
+    </section>
+  </main>
+  <script>
+    // Fade in each panel when visible
+    const panels = document.querySelectorAll('.panel');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.5
+    });
+
+    panels.forEach(panel => {
+      observer.observe(panel);
+    });
+
+    // Optional: support arrow keys for demo on desktop
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        window.scrollBy({ top: 224, behavior: 'smooth' });
+      }
+      if (e.key === 'ArrowUp') {
+        window.scrollBy({ top: -224, behavior: 'smooth' });
+      }
+    });
+  </script>
+</body>
+</html>
