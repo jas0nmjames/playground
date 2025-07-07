@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+</head>
+<body>
+    <header>
+        <h1>Onboarding Product Selection Page</h1>
+    </header>
+    <nav>
+       <a href="index.html">Go to the marketing page</a>
+    </nav>
+    <main>
+        <p>This is the second page.</p>
+        <div>
+            <label for="options">Choose an option:</label>
+            <select id="options" name="options">
+                <option value="default">Choose an option</option>
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+            </select>
+        </div>
+    </main>
+
+    <script>
+        // Get the query string from the URL
+        const queryString = window.location.search;
+
+        // Parse the query string into a URLSearchParams object
+        const urlParams = new URLSearchParams(queryString);
+
+        // Get the "selected" parameter from the query string
+        const selectedValue = urlParams.get('selected');
+
+        // If a valid value is present, find and select it in the dropdown
+        if (selectedValue) {
+            const dropdown = document.getElementById('options');
+            const optionToSelect = dropdown.querySelector(`option[value="${selectedValue}"]`);
+            if (optionToSelect) {
+                optionToSelect.selected = true;
+            }
+        }
+    </script>
+</body>
+</html>
