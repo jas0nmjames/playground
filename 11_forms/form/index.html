@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KYC Banking Questionnaire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+    }
+    .hidden {
+      display: none;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+    }
+    .close {
+      float: right; font-size: 28px; font-weight: bold; cursor: pointer;
+    }
+    pre {
+      overflow: auto;
+      background: #f4f4f4;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>KYC Banking Questionnaire</h1>
+
+  <form id="kycForm">
+    <!-- Q1: Employment Status -->
+    <div class="question" id="q1">
+      <label>1. Employment Status</label>
+      <div id="employmentStatusOptions"></div>
+    </div>
+
+    <!-- Q2: Occupation -->
+    <div class="question hidden" id="q2">
+      <label for="occupation">2. Occupation</label>
+      <select name="occupation" id="occupation">
+        <option value="">--Select Occupation--</option>
+      </select>
+    </div>
+
+    <!-- Q3: Income -->
+    <div class="question" id="q3">
+      <label for="income">3. Annual Income (USD)</label>
+      <input type="text" name="income" id="income" placeholder="e.g. 50000" required>
+    </div>
+
+    <!-- Q4: Use -->
+    <div class="question" id="q4">
+      <label>4. Use of Account</label>
+      <div id="useOptions"></div>
+    </div>
+
+    <!-- Q5: International Use Countries -->
+    <div class="question hidden" id="q5">
+      <label for="countryInput">5. Countries for International Use</label>
+      <input type="text" id="countryInput" name="country" list="countriesList" placeholder="Start typing country name..." />
+      <datalist id="countriesList"></datalist>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Modal -->
+  <div id="apiModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>API Submission Preview</h2>
+      <pre id="apiOutput"></pre>
+    </div>
+  </div>
+
+  <script>
+    let logicTree = {};
+
+    fetch('logic.json')
+      .then(response => response.json())
+      .then(data => {
+        logicTree = data;
+
+        // Populate Employment Status
+        const employmentDiv = document.getElementById('employmentStatusOptions');
+        logicTree.employmentStatuses.forEach(status => {
+          const label = document.createElement('label');
+          label.innerHTML = `<input type="radio" name="employmentStatus" value="${status}" required> ${status}`;
+          employmentDiv.appendChild(label);
+        });
+
+        // Populate Occupations
+        const occupationSelect = document.getElementById('occupation');
+        logicTree.occupations.forEach(occ => {
+          const option = document.createElement('option');
+          option.value = occ;
+          option.textContent = occ;
+          occupationSelect.appendChild(option);
+        });
+
+        // Populate Use Options
+        const useDiv = document.getElementById('useOptions');
+        logicTree.useOptions.forEach(use => {
+          const label = document.createElement('label');
+          label.innerHTML = `<input type="checkbox" name="use" value="${use}"> ${use}`;
+          useDiv.appendChild(label);
+        });
+
+        // Populate Countries
+        const countriesList = document.getElementById('countriesList');
+        logicTree.countries.forEach(c => {
+          const option = document.createElement('option');
+          option.value = c.name;
+          countriesList.appendChild(option);
+        });
+
+        setupListeners();
+      });
+
+    function setupListeners() {
+      const employmentRadios = document.querySelectorAll('input[name="employmentStatus"]');
+      const useCheckboxes = document.querySelectorAll('input[name="use"]');
+
+      // Show/hide Occupation
+      employmentRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const show = logicTree.showOccupation.includes(radio.value);
+          document.getElementById('q2').classList.toggle('hidden', !show);
+        });
+      });
+
+      // Show/hide International Countries
+      useCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const selected = Array.from(useCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+          const showIntl = selected.includes('International');
+          document.getElementById('q5').classList.toggle('hidden', !showIntl);
+        });
+      });
+
+      // Income currency formatting on blur
+      const incomeInput = document.getElementById('income');
+      incomeInput.addEventListener('blur', () => {
+        let raw = incomeInput.value.replace(/[^0-9.]/g, '');
+        let num = parseFloat(raw);
+        if (isNaN(num)) {
+          incomeInput.value = '';
+          return;
+        }
+        incomeInput.value = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(num);
+      });
+
+      // Form submission
+      const form = document.getElementById('kycForm');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const selectedUse = Array.from(useCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+        const includeCountry = selectedUse.includes('International');
+
+        // Only include occupation if Q2 is visible
+        const occupationField = document.getElementById('q2');
+        const occupationValue = !occupationField.classList.contains('hidden')
+          ? document.getElementById('occupation').value || null
+          : null;
+
+        // Clean currency to numeric
+        let incomeRaw = document.getElementById('income').value.replace(/[^0-9.]/g, '');
+        let incomeValue = parseFloat(incomeRaw) || 0;
+
+        // Map country name to ISO code
+        let countryValue = null;
+        if (includeCountry) {
+          const countryInput = document.getElementById('countryInput').value.trim();
+          if (countryInput) {
+            const match = logicTree.countries.find(c => c.name === countryInput);
+            countryValue = match ? match.code : null;
+          }
+        }
+
+        const data = {
+          employmentStatus: form.employmentStatus.value,
+          occupation: occupationValue,
+          income: incomeValue,
+          use: selectedUse,
+          country: countryValue
+        };
+
+        showModal(JSON.stringify(data, null, 2));
+      });
+    }
+
+    // Modal logic
+    const modal = document.getElementById("apiModal");
+    const span = document.getElementsByClassName("close")[0];
+    function showModal(data) {
+      document.getElementById('apiOutput').textContent = data;
+      modal.style.display = "block";
+    }
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+  </script>
+</body>
+</html>

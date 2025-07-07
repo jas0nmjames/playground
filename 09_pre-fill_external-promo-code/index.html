@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-fill Promotional Code</title>
+</head>
+<body>
+  <h1>Enter Your Promotional Code</h1>
+  <form>
+    <label for="promoCode">Promotional Code:</label>
+    <input type="text" id="promoCode" name="promoCode" placeholder="Enter promo code">
+  </form>
+
+  <script>
+    // Extract URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Get the 'promo' parameter and pre-fill the input
+    const promoCode = urlParams.get('promo');
+
+    if (promoCode) {
+      document.getElementById('promoCode').value = promoCode;
+    }
+  </script>
+</body>
+</html>
+
+<!-- 
+Here's an example of the url with the embedded code:
+
+https://example.com?promo=MD5689K4
+-->

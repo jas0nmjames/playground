@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KYC Multi-Step Form with Review</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>KYC Banking Questionnaire</h1>
+
+  <form id="kycForm">
+    <!-- Q1: Employment Status -->
+    <div class="question" id="q1">
+      <label>1. Employment Status</label>
+      <div id="employmentStatusOptions"></div>
+    </div>
+
+    <!-- Q2: Occupation -->
+    <div class="question hidden" id="q2">
+      <label for="occupation">2. Occupation</label>
+      <select name="occupation" id="occupation">
+        <option value="">--Select Occupation--</option>
+      </select>
+    </div>
+
+    <!-- Q3: Income -->
+    <div class="question hidden" id="q3">
+      <label for="income">3. Annual Income (USD)</label>
+      <input type="text" name="income" id="income" placeholder="e.g. 50000" required>
+    </div>
+
+    <!-- Q4: Use -->
+    <div class="question hidden" id="q4">
+      <label>4. Use of Account</label>
+      <div id="useOptions"></div>
+    </div>
+
+    <!-- Q5: International Use Countries -->
+    <div class="question hidden" id="q5">
+      <label for="countriesSelect">5. Countries for International Use</label>
+      <select id="countriesSelect" name="countries" multiple size="8"></select>
+    </div>
+
+    <!-- Final Review Step -->
+    <div class="question hidden" id="reviewStep">
+      <h2>Review Your Answers</h2>
+      <div id="summaryOutput"></div>
+      <button type="button" id="editButton">Go Back and Edit</button>
+      <button type="button" id="submitButton">Submit</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+      <button type="button" id="backButton" class="hidden">Back</button>
+      <button type="button" id="continueButton">Continue</button>
+    </div>
+  </form>
+
+  <!-- Modal -->
+  <div id="apiModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>API Submission Preview</h2>
+      <pre id="apiOutput"></pre>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

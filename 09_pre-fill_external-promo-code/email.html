@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promo Code Button</title>
+  <style>
+    /* Style for the button */
+    .promo-button {
+      background-color: red; /* Red background */
+      color: white;         /* White text */
+      border: none;         /* No border */
+      padding: 10px 20px;   /* Padding for the button */
+      font-size: 16px;      /* Font size */
+      border-radius: 5px;   /* Rounded corners */
+      cursor: pointer;      /* Pointer cursor on hover */
+    }
+
+    /* Add hover effect */
+    .promo-button:hover {
+      background-color: darkred; /* Darker red on hover */
+    }
+  </style>
+  <script>
+    // Function to navigate to index.html with the promo code
+    function navigateWithPromoCode() {
+      const promoCode = "MD5689K4";
+      window.location.href = `index.html?promo=${promoCode}`;
+    }
+  </script>
+</head>
+<body>
+  <h1>Special Offer</h1>
+  <button class="promo-button" onclick="navigateWithPromoCode()">Use Promo Code MD5689K4</button>
+</body>
+</html>
