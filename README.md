@@ -7,17 +7,23 @@ Welcome to my playground.
 
 ## Directory
 
-- [Captions](a-captions): exploring html video captions
-- [Typography](b-typography)
-- [Exit Modals](c-exit-modals)
-- [HTML Media Best Practices](d-html-media-best-practices/)
-- LinkedIn Learning
-    - [Advance Your Skills in HTML](e-linkedin-learning/advance-your-skills-in-html/)
-- [Currency Input](f-currency-input)
-- [Shapes](g-shapes)
-- [Pre-selected Dropdown](h-pre-select-external-dropdown)
-- [Pre-filled External Promo Code](i-pre-fill-external-promo-code)
-- [Tiny](j-tiny)
+- [Captions](captions): exploring html video captions
+- **[Chatbots](chatbots)**
+    - [Tawkto](chatbots/tawkto)
+    - [Tidio](chatbots/tidio)
+- [Currency Input](currency-input)
+- [Exit Modals](exit-modals)
 - Forms
-    - [Generic KYC Form w/ JSON Logic](k-forms/form-with-json-logic)
-    - [Generic KYC Wizard Form w/ JSON Logic](k-forms/wizard-form-with-json-logic)
+    - [Generic KYC Form w/ JSON Logic](forms/form-with-json-logic)
+    - [Generic KYC Wizard Form w/ JSON Logic](forms/wizard-form-with-json-logic)
+- **[Generative Experiments](generative-experiments)**
+    - [Arrival](generative-experiments/arrival): An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016)
+    - [Shapes](generative-experiments/shapes)
+    - [Tiny](generative-experiments/tiny)
+- [HTML Media Best Practices](html-media-best-practices)
+- **[IA for Banking for AI](ia-for-banking-for-ai)**
+- LinkedIn Learning
+    - [Advance Your Skills in HTML](linkedin-learning/advance-your-skills-in-html)
+- [Pre-filled External Promo Code](pre-fill-external-promo-code)
+- [Pre-selected Dropdown](pre-select-external-dropdown)
+- [Typography](typography)
