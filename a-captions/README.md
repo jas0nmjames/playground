@@ -2,7 +2,7 @@
 
 Experimenting with HTML5's baked in captions.
 
-Created February 2023
+*Created February 2023*
 
 ## TIL
 

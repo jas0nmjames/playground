@@ -1,9 +1,9 @@
 # typography
 
-A playground to explore &amp; experiment in the world of typography.
+*Created November 2022*
+*Last Updated July 2023*
 
-Created February 2023.
-Last Updated July 2023.
+A playground to explore &amp; experiment in the world of typography.
 
 ## Thanks
 
