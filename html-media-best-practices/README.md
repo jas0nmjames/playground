@@ -1,5 +1,7 @@
 # HTML Media Best Practices README
 
+*Created July 2023*
+
 ## Index
 
 1. [One image](01_one-image.html): A single image, exported to PNG at maximum resolution and full-size.
