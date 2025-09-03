@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Velocity.js</title>
+    <meta name="description" content="A Terminal Velocity–style web prototype built with Three.js" />
+    <link rel="stylesheet" href="./styles.css" />
+    <!-- Import map pins exact library versions for stability -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/",
+        "simplex-noise": "https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/dist/esm/simplex-noise.js"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="game" class="game-root" aria-label="Velocity.js game canvas"></div>
+
+    <div class="hud">
+      <div class="hud-row">
+        <span id="hudSpeed">SPD 0</span>
+        <span id="hudHealth">HP 100</span>
+        <span id="hudScore">SCORE 0</span>
+        <span id="hudFps">FPS --</span>
+      </div>
+      <div class="hud-center">
+        <div class="crosshair"></div>
+      </div>
+      <div id="hudMessage" class="hud-message">
+        Click to start · WASD move · Mouse look · Space/Click fire · Shift boost · P pause
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+:root {
+  --hud-bg: rgba(0,0,0,0.35);
+  --hud-fg: #e7f3ff;
+  --accent: #69e1ff;
+  --danger: #ff6b6b;
+  --ok: #9cff6e;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: var(--hud-fg);
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-root, canvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+.hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.hud-row {
+  display: flex;
+  gap: 1rem;
+  padding: .5rem .75rem;
+  background: var(--hud-bg);
+  backdrop-filter: blur(2px);
+  align-items: center;
+  font-weight: 600;
+  letter-spacing: .03em;
+  user-select: none;
+}
+
+.hud-row span { opacity: .95; }
+
+.hud-center {
+  place-self: center;
+}
+
+.crosshair {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent), inset 0 0 8px var(--accent);
+  position: relative;
+}
+.crosshair::before, .crosshair::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px; height: 26px;
+  background: var(--accent);
+}
+.crosshair::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+.hud-message {
+  position: fixed;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  background: var(--hud-bg);
+  padding: .5rem .75rem;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  backdrop-filter: blur(2px);
+  font-size: .95rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hud .danger { color: var(--danger); }
+.hud .ok { color: var(--ok); }
