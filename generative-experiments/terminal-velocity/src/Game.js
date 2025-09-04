@@ -5,6 +5,7 @@ import { Player } from './Player.js';
 import { Terrain } from './Terrain.js';
 import { Enemy } from './Enemy.js';
 import { Bullet } from './Bullet.js';
+import { Sky } from 'three/addons/objects/Sky.js';
 
 export class Game {
   constructor(rootEl) {
@@ -21,10 +22,27 @@ export class Game {
     // Scene & Camera
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x02121f);
-    this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 2500);
+this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 5000);
+
+// Sky & Fog
+this.scene.fog = new THREE.Fog(0x6fb8ff, 450, 2600);
+this.sky = new Sky();
+this.sky.scale.setScalar(4500);
+this.scene.add(this.sky);
+const skyUniforms = this.sky.material.uniforms;
+skyUniforms['turbidity'].value = 10;
+skyUniforms['rayleigh'].value = 2;
+skyUniforms['mieCoefficient'].value = 0.005;
+skyUniforms['mieDirectionalG'].value = 0.8;
+// Sun position
+const phi = THREE.MathUtils.degToRad(80);
+const theta = THREE.MathUtils.degToRad(10);
+const sun = new THREE.Vector3();
+sun.setFromSphericalCoords(1, phi, theta);
+skyUniforms['sunPosition'].value.copy(sun);
 
     // Lighting
-    const hemi = new THREE.HemisphereLight(0xaadfff, 0x223344, 0.6);
+    const hemi = new THREE.HemisphereLight(0xcfe9ff, 0x334455, 0.9);
     this.scene.add(hemi);
     const dir = new THREE.DirectionalLight(0xffffff, 0.9);
     dir.position.set(50, 100, -30);

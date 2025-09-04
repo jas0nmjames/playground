@@ -2,8 +2,8 @@
 
 A lightweight first-person flying/shooter prototype built with **Three.js** (ES modules).It runs entirely in the browser and is deployable to **Netlify** from a GitHub repo.
 
-## Features (v0.1)
-- Forward flight over infinite, noise-deformed terrain
+## Features (v0.2)
+- Forward flight over infinite, altitude-colored terrain (grass/rock/snow) + soft fog + distant mountain ring + realistic blue sky
 - Mouse look (Pointer Lock) + WASD strafe, Shift boost
 - Simple enemies that spawn ahead and move toward you
 - Firing bullets (click/Space) with collision + scoring
