@@ -2,3 +2,6 @@
 
 # MacOS Desktop Services Store
 .DS_Store
+
+# Node Modules
+node_modules

@@ -1,0 +1,30 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velocity (Textured v1.1.3)</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <meta name="color-scheme" content="dark light">
+  </head>
+  <body>
+    <div id="game" class="game-root"></div>
+    <div class="hud">
+      <div class="hud-row">
+        <span id="hudSpeed">SPD 0</span>
+        <span id="hudAlt">ALT 0</span>
+        <span id="hudHdg">HDG 0</span>
+        <span id="hudHealth">HP 100</span>
+        <span class="meter">AB <span class="bar"><i id="hudAB" style="width:100%"></i></span></span>
+        <span id="hudScore">SCORE 0</span>
+        <span id="hudFps">FPS --</span>
+      </div>
+      <div class="hud-center"><div class="crosshair"></div></div>
+      <div id="hudMessage" class="hud-message">
+        Click to start · WASD · Mouse look · Space/Click fire · Shift afterburner · P pause
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
