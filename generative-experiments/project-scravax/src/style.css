@@ -1,0 +1,256 @@
+:root {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #eaf0ff;
+  background: #070b12;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+
+canvas#game {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#hud {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#hud .row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pill {
+  pointer-events: none;
+  background: rgba(16, 22, 35, 0.62);
+  border: 1px solid rgba(120, 160, 255, 0.22);
+  backdrop-filter: blur(10px);
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pill .label {
+  color: rgba(234, 240, 255, 0.7);
+  margin-right: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.btn {
+  pointer-events: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(120, 160, 255, 0.3);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #09101f;
+  background: linear-gradient(180deg, #8fb2ff, #5d82ff);
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn.secondary {
+  background: rgba(16, 22, 35, 0.62);
+  color: #eaf0ff;
+}
+
+.btn.small {
+  padding: 8px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.status {
+  pointer-events: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(16, 22, 35, 0.62);
+  border: 1px solid rgba(120, 160, 255, 0.22);
+  color: rgba(234, 240, 255, 0.85);
+}
+
+#touchControls {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.leverWrap {
+  position: absolute;
+  bottom: 18px;
+  width: min(40vw, 240px);
+  pointer-events: none;
+}
+
+.leverWrap.left {
+  left: 18px;
+}
+.leverWrap.right {
+  right: 18px;
+}
+
+.leverLabel {
+  margin: 0 0 8px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(234, 240, 255, 0.7);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.lever {
+  pointer-events: auto;
+  position: relative;
+  height: 110px;
+  border-radius: 18px;
+  background: rgba(16, 22, 35, 0.55);
+  border: 1px solid rgba(120, 160, 255, 0.22);
+  backdrop-filter: blur(10px);
+  touch-action: none;
+}
+
+.lever .knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 20;
+  padding: 18px;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modalCard {
+  width: min(920px, 100%);
+  background: rgba(16, 22, 35, 0.82);
+  border: 1px solid rgba(120, 160, 255, 0.26);
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px;
+  border-bottom: 1px solid rgba(120, 160, 255, 0.16);
+}
+
+.modalTitle {
+  font-weight: 950;
+  letter-spacing: 0.02em;
+}
+
+.modalBody {
+  padding: 14px;
+}
+
+.help {
+  margin: 0 0 10px 0;
+  color: rgba(234, 240, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.help.tiny {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 820px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.subhead {
+  font-weight: 950;
+  margin-bottom: 8px;
+}
+
+.ta {
+  width: 100%;
+  min-height: 108px;
+  resize: vertical;
+  border-radius: 14px;
+  border: 1px solid rgba(120, 160, 255, 0.22);
+  background: rgba(8, 10, 16, 0.55);
+  color: #eaf0ff;
+  padding: 10px;
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 8px 0;
+}
+
+@media (pointer: fine) and (min-width: 960px) {
+  #touchControls {
+    display: none;
+  }
+}
