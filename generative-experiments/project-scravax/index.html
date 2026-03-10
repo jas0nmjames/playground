@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scravax Drift Derby (Georgia)</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="hud">
+        <div class="row">
+          <div class="pill"><span class="label">Speed</span> <span id="speed">0</span> mph</div>
+          <div class="pill"><span class="label">Points</span> <span id="points">0</span></div>
+          <div class="pill"><span class="label">Place</span> <span id="place">-</span>/<span id="total">-</span></div>
+          <div class="pill"><span class="label">Lap</span> <span id="lap">1</span></div>
+        </div>
+        <div class="row">
+          <button id="btnDrift" class="btn">Drift</button>
+          <button id="btnReset" class="btn secondary">Reset</button>
+          <button id="btnMultiplayer" class="btn secondary">Multiplayer</button>
+          <div id="netStatus" class="status">Solo</div>
+        </div>
+      </div>
+
+      <canvas id="game" tabindex="0" aria-label="Scravax Drift Derby track view"></canvas>
+
+      <div id="touchControls" aria-hidden="false">
+        <div class="leverWrap left">
+          <div class="leverLabel">Steer</div>
+          <div class="lever" id="leverSteer">
+            <div class="knob"></div>
+          </div>
+        </div>
+        <div class="leverWrap right">
+          <div class="leverLabel">Gas / Brake</div>
+          <div class="lever" id="leverThrottle">
+            <div class="knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Multiplayer">
+        <div class="modalCard">
+          <div class="modalHeader">
+            <div class="modalTitle">Multiplayer (peer-to-peer)</div>
+            <button id="btnCloseModal" class="btn secondary small">Close</button>
+          </div>
+          <div class="modalBody">
+            <p class="help">
+              This prototype uses a copy/paste handshake (WebRTC). Share the text with your friend
+              (you can still send it via Messages/AirDrop).
+            </p>
+            <div class="grid">
+              <div>
+                <div class="subhead">Host</div>
+                <button id="btnHost" class="btn">Create offer</button>
+                <textarea id="outOffer" class="ta" readonly placeholder="Offer will appear here"></textarea>
+                <textarea id="inAnswer" class="ta" placeholder="Paste answer here"></textarea>
+                <button id="btnSetAnswer" class="btn secondary">Set answer</button>
+              </div>
+              <div>
+                <div class="subhead">Join</div>
+                <textarea id="inOffer" class="ta" placeholder="Paste offer here"></textarea>
+                <button id="btnJoin" class="btn">Create answer</button>
+                <textarea id="outAnswer" class="ta" readonly placeholder="Answer will appear here"></textarea>
+              </div>
+            </div>
+            <p class="help tiny">
+              When connected, you’ll see the other car on your screen. First place at the finish line wins.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
