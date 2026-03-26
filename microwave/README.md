@@ -2,6 +2,7 @@
 published: 2025-09-02
 updated: 2025-09-02
 tags: generative
+nosite: true
 ---
 
 # Microwave

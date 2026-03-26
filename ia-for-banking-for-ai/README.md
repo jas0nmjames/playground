@@ -1,6 +1,7 @@
 ---
 published: 2025-08-04
 updated: 2025-09-02
+nosite: true
 ---
 
 # ia-for-banking-for-ai

@@ -10,7 +10,7 @@ Welcome to my playground.
 <!-- BEGIN DIRECTORY -->
 | Project | Site | Description | Tags | Published | Updated |
 |---|---|---|---|---|---|
-| [typography](./typography/) | [↗](https://jas0nmjames.github.io/playground/typography/) | A playground to explore &amp; experiment in the world of typography. |  | Nov 2022 | Sep 2025 |
+| [typography](./typography/) | [↗](https://jas0nmjames.github.io/playground/typography/bungee.html) | A playground to explore &amp; experiment in the world of typography. |  | Nov 2022 | Sep 2025 |
 | [captions](./captions/) | [↗](https://jas0nmjames.github.io/playground/captions/) | Experimenting with HTML5's baked in captions. |  | Jan 2023 | Sep 2025 |
 | [playground-chatbots](./chatbots/) | [↗](https://jas0nmjames.github.io/playground/chatbots/) | This is a playground to experiment with chatbots and live chat: traditional dialog chatbots, natural language processing and understanding (NLPs &amp; NLUs), large language models (LLMs), live chat integration and conversation design best practices in general. |  | Mar 2023 | Sep 2025 |
 | [Exit Modals Demo](./exit-modals/) | [↗](https://jas0nmjames.github.io/playground/exit-modals/) |  |  | Apr 2023 | Sep 2025 |
@@ -18,12 +18,12 @@ Welcome to my playground.
 | [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) |  |  | Sep 2024 | Sep 2025 |
 | [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
 | [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) |  |  | Jul 2025 | Sep 2025 |
-| [ia-for-banking-for-ai](./ia-for-banking-for-ai/) | [↗](https://jas0nmjames.github.io/playground/ia-for-banking-for-ai/) | Exploring digital banking experience information architecture and artificial intelligence opportunities |  | Aug 2025 | Sep 2025 |
+| [ia-for-banking-for-ai](./ia-for-banking-for-ai/) | — | Exploring digital banking experience information architecture and artificial intelligence opportunities |  | Aug 2025 | Sep 2025 |
 | [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
-| [Microwave](./microwave/) | [↗](https://jas0nmjames.github.io/playground/microwave/) | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
+| [Microwave](./microwave/) | — | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
 | [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
 | [Velocity — Textured v1.1.0](./terminal-velocity/) | [↗](https://jas0nmjames.github.io/playground/terminal-velocity/) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
-| [Rock and Bop](./rock-and-bop/) | [↗](https://jas0nmjames.github.io/playground/rock-and-bop/) | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
+| [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 <!-- END DIRECTORY -->
 
@@ -36,10 +36,10 @@ Building things I couldn't before, [at great expense](https://www.youtube.com/wa
 |---|---|---|---|---|---|
 | [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
 | [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
-| [Microwave](./microwave/) | [↗](https://jas0nmjames.github.io/playground/microwave/) | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
+| [Microwave](./microwave/) | — | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
 | [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
 | [Velocity — Textured v1.1.0](./terminal-velocity/) | [↗](https://jas0nmjames.github.io/playground/terminal-velocity/) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
-| [Rock and Bop](./rock-and-bop/) | [↗](https://jas0nmjames.github.io/playground/rock-and-bop/) | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
+| [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 <!-- END GENERATIVE -->
 
