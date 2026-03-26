@@ -2,6 +2,7 @@
 published: 2026-03-10
 updated: 2026-03-12
 tags: generative
+url: https://project-scravax.netlify.app/
 ---
 
 # Scravax Drift Derby (Georgia)

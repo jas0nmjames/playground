@@ -8,23 +8,23 @@ Welcome to my playground.
 ## Directory
 
 <!-- BEGIN DIRECTORY -->
-| Project | Description | Tags | Published | Updated |
-|---|---|---|---|---|
-| [typography](typography) | A playground to explore &amp; experiment in the world of typography. |  | Nov 2022 | Sep 2025 |
-| [captions](captions) | Experimenting with HTML5's baked in captions. |  | Jan 2023 | Sep 2025 |
-| [playground-chatbots](chatbots) | This is a playground to experiment with chatbots and live chat: traditional dialog chatbots, natural language processing and understanding (NLPs &amp; NLUs), large language models (LLMs), live chat integration and conversation design best practices in general. |  | Mar 2023 | Sep 2025 |
-| [Exit Modals Demo](exit-modals) |  |  | Apr 2023 | Sep 2025 |
-| [HTML Media Best Practices README](html-media-best-practices) |  |  | Jul 2023 | Sep 2025 |
-| [Currency Input](currency-input) |  |  | Sep 2024 | Sep 2025 |
-| [Tiny](tiny) |  | `generative` | Jun 2025 | Sep 2025 |
-| [Forms](forms) |  |  | Jul 2025 | Sep 2025 |
-| [ia-for-banking-for-ai](ia-for-banking-for-ai) | Exploring digital banking experience information architecture and artificial intelligence opportunities |  | Aug 2025 | Sep 2025 |
-| [Arrival](arrival) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
-| [Microwave](microwave) | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
-| [Shapes](shapes) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
-| [Velocity — Textured v1.1.0](terminal-velocity) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
-| [Rock and Bop](rock-and-bop) | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
-| [Scravax Drift Derby (Georgia)](project-scravax) |  | `generative` | Mar 2026 | Mar 2026 |
+| Project | Site | Description | Tags | Published | Updated |
+|---|---|---|---|---|---|
+| [typography](./typography/) | [↗](https://jas0nmjames.github.io/playground/typography/) | A playground to explore &amp; experiment in the world of typography. |  | Nov 2022 | Sep 2025 |
+| [captions](./captions/) | [↗](https://jas0nmjames.github.io/playground/captions/) | Experimenting with HTML5's baked in captions. |  | Jan 2023 | Sep 2025 |
+| [playground-chatbots](./chatbots/) | [↗](https://jas0nmjames.github.io/playground/chatbots/) | This is a playground to experiment with chatbots and live chat: traditional dialog chatbots, natural language processing and understanding (NLPs &amp; NLUs), large language models (LLMs), live chat integration and conversation design best practices in general. |  | Mar 2023 | Sep 2025 |
+| [Exit Modals Demo](./exit-modals/) | [↗](https://jas0nmjames.github.io/playground/exit-modals/) |  |  | Apr 2023 | Sep 2025 |
+| [HTML Media Best Practices README](./html-media-best-practices/) | [↗](https://jas0nmjames.github.io/playground/html-media-best-practices/) |  |  | Jul 2023 | Sep 2025 |
+| [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) |  |  | Sep 2024 | Sep 2025 |
+| [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
+| [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) |  |  | Jul 2025 | Sep 2025 |
+| [ia-for-banking-for-ai](./ia-for-banking-for-ai/) | [↗](https://jas0nmjames.github.io/playground/ia-for-banking-for-ai/) | Exploring digital banking experience information architecture and artificial intelligence opportunities |  | Aug 2025 | Sep 2025 |
+| [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
+| [Microwave](./microwave/) | [↗](https://jas0nmjames.github.io/playground/microwave/) | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
+| [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
+| [Velocity — Textured v1.1.0](./terminal-velocity/) | [↗](https://jas0nmjames.github.io/playground/terminal-velocity/) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
+| [Rock and Bop](./rock-and-bop/) | [↗](https://jas0nmjames.github.io/playground/rock-and-bop/) | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
+| [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 <!-- END DIRECTORY -->
 
 ## Generative Experiments
@@ -32,15 +32,15 @@ Welcome to my playground.
 Building things I couldn't before, [at great expense](https://www.youtube.com/watch?v=8enXRDlWguU "YouTube - Novara Media: Aaron Bastani Meets Karen Hao").
 
 <!-- BEGIN GENERATIVE -->
-| Project | Description | Tags | Published | Updated |
-|---|---|---|---|---|
-| [Tiny](tiny) |  | `generative` | Jun 2025 | Sep 2025 |
-| [Arrival](arrival) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
-| [Microwave](microwave) | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
-| [Shapes](shapes) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
-| [Velocity — Textured v1.1.0](terminal-velocity) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
-| [Rock and Bop](rock-and-bop) | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
-| [Scravax Drift Derby (Georgia)](project-scravax) |  | `generative` | Mar 2026 | Mar 2026 |
+| Project | Site | Description | Tags | Published | Updated |
+|---|---|---|---|---|---|
+| [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
+| [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
+| [Microwave](./microwave/) | [↗](https://jas0nmjames.github.io/playground/microwave/) | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
+| [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
+| [Velocity — Textured v1.1.0](./terminal-velocity/) | [↗](https://jas0nmjames.github.io/playground/terminal-velocity/) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
+| [Rock and Bop](./rock-and-bop/) | [↗](https://jas0nmjames.github.io/playground/rock-and-bop/) | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
+| [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 <!-- END GENERATIVE -->
 
 ## Maintaining the Directory
@@ -57,8 +57,11 @@ The Directory and Generative Experiments tables are auto-generated by `scripts/b
 published: YYYY-MM-DD
 updated: YYYY-MM-DD
 tags: generative        # optional — omit if not a generative experiment
+url: https://example.com  # optional — only needed if deployed somewhere other than GitHub Pages
 ---
 ```
+
+By default the **Site** link in the directory table points to `https://jas0nmjames.github.io/playground/<folder>/`. Set `url` only if the project is deployed elsewhere (e.g. Netlify).
 
 3. Run the build script locally to update this README before committing:
 
@@ -86,11 +89,13 @@ Directory automation built with [Claude](https://claude.ai) (claude-sonnet-4-6) 
 
 - `scripts/build-readme.js` — reads each subfolder's frontmatter, sorts by `published` date, regenerates the Directory and Generative Experiments tables
 - `.github/workflows/update-readme.yml` — runs the build script automatically on push to `main`
-- Frontmatter schema (`published`, `updated`, `tags`) added to all subfolder READMEs
+- Frontmatter schema (`published`, `updated`, `tags`, `url`) added to all subfolder READMEs
 - Repo restructured from nested `generative-experiments/` subfolders to flat root-level structure
+- **Site column added** — each table row now links to both the project README and the live GitHub Pages (or external) URL; `url` frontmatter overrides the default GitHub Pages link (used for `project-scravax` → Netlify)
 
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.54 kWh | 0.208 kg CO₂ | 0.27 L |
+| March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.09 kWh | 0.035 kg CO₂ | 0.045 L |
 
 [^claude]: assuming 18 Wh per prompt; does not include estimate for foundation model training
