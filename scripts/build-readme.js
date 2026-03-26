@@ -66,7 +66,7 @@ function formatDate(dateStr) {
 function buildTable(projects) {
   const rows = projects.map(p => {
     const readme = `[${p.title}](./${p.dir}/)`;
-    const site = `[↗](${p.siteUrl})`;
+    const site = p.siteUrl ? `[↗](${p.siteUrl})` : '—';
     const desc = p.description || '';
     const tag = p.tags.length ? p.tags.map(t => `\`${t}\``).join(' ') : '';
     const pub = formatDate(p.published);
@@ -113,8 +113,10 @@ for (const dir of entries) {
   const title = extractTitle(body) || dir;
   const description = extractDescription(body);
   const tags = fm.tags ? fm.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+  // nosite: true → no live site link (docs/design-only projects)
+  const nosite = fm.nosite === 'true';
   // url: explicit frontmatter override (e.g. external deployment); otherwise GitHub Pages
-  const siteUrl = fm.url ? fm.url.trim() : `${GITHUB_PAGES_BASE}${dir}/`;
+  const siteUrl = nosite ? null : (fm.url ? fm.url.trim() : `${GITHUB_PAGES_BASE}${dir}/`);
 
   projects.push({
     dir,
