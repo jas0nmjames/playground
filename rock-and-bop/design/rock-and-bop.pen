@@ -1,0 +1,116 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "iKbn4",
+      "x": 0,
+      "y": 0,
+      "name": "Treble Clef Staff",
+      "width": 700,
+      "height": 260,
+      "fill": "#FFFFFF",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "J0oV8",
+          "x": 40,
+          "y": 60,
+          "name": "Staff Line 1",
+          "fill": "#1A1A1A",
+          "width": 620,
+          "height": 2
+        },
+        {
+          "type": "rectangle",
+          "id": "9WM6x",
+          "x": 40,
+          "y": 95,
+          "name": "Staff Line 2",
+          "fill": "#1A1A1A",
+          "width": 620,
+          "height": 2
+        },
+        {
+          "type": "rectangle",
+          "id": "czJqp",
+          "x": 40,
+          "y": 130,
+          "name": "Staff Line 3",
+          "fill": "#1A1A1A",
+          "width": 620,
+          "height": 2
+        },
+        {
+          "type": "rectangle",
+          "id": "pPEwv",
+          "x": 40,
+          "y": 165,
+          "name": "Staff Line 4",
+          "fill": "#1A1A1A",
+          "width": 620,
+          "height": 2
+        },
+        {
+          "type": "rectangle",
+          "id": "eUuha",
+          "x": 40,
+          "y": 200,
+          "name": "Staff Line 5",
+          "fill": "#1A1A1A",
+          "width": 620,
+          "height": 2
+        },
+        {
+          "type": "path",
+          "id": "BmuCx",
+          "x": 48,
+          "y": 14,
+          "name": "Treble Clef",
+          "geometry": "M28 0c2 0 4 2 4 6 0 6-2 14-6 24-4 12-8 26-8 40 0 14 4 26 10 36 4 6 8 12 10 20 2 8 4 18 2 28-2 10-8 18-16 24l0 0c4 4 6 10 6 16 0 12-8 20-16 20-6 0-10-4-10-10 0-6 4-10 10-10 4 0 8 4 8 10 0 4-2 6-6 6 2 2 6 0 8-4 2-4 2-8 0-12-2-4-6-8-8-12-8-4-14-12-16-22-2-12 2-24 8-34 6-10 14-18 20-28 6-10 10-22 10-34 0-14-4-26-10-38-4-8-6-14-4-20 0-4 2-6 4-6z m-6 110c-6 10-12 22-14 34-2 10 0 20 6 28l0 0c0 0 4-4 8-10 6-10 10-22 10-34 0-8-2-14-6-20l-4 2z",
+          "fill": "#1A1A1A",
+          "width": 56,
+          "height": 232
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "j1uG0",
+      "x": 0,
+      "y": 774,
+      "name": "Frame 1",
+      "clip": true,
+      "width": 243,
+      "height": 54,
+      "fill": "#add8e6",
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "WkDpv",
+          "x": 44,
+          "y": 17,
+          "fill": "#000000",
+          "content": "New Instrument CTA",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PEGTR",
+      "x": 0,
+      "y": 523,
+      "name": "Sound 1",
+      "clip": true,
+      "width": 700,
+      "height": 138,
+      "fill": "#FFFFFF",
+      "layout": "none"
+    }
+  ]
+}

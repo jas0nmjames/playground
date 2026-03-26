@@ -1,11 +1,12 @@
 ---
-published: 2023-04-11
+published: 2025-09-02
 updated: 2025-09-02
+tags: generative
 ---
 
-# Exit Modals Demo
+# Microwave
 
-*Created April 2023*
+**Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food.
 
 ## Claude
 

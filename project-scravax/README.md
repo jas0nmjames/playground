@@ -1,3 +1,9 @@
+---
+published: 2026-03-10
+updated: 2026-03-12
+tags: generative
+---
+
 # Scravax Drift Derby (Georgia)
 
 ![gameplay screenshot of a violet blue car that the player is controlling racing against other color cars controlled by bots](assets/gameplay-screenshot-3.png)
@@ -89,3 +95,13 @@ To get two devices connected:
 2. Click **Set answer**.
 
 If everything worked, the small status pill in the HUD (top right of the buttons) should change from **Solo → Connecting → Connected**, and each player will see the other car.
+
+## Claude (README)
+
+Frontmatter (`published`, `updated`, `tags`) added with [Claude](https://claude.ai) (claude-sonnet-4-6) on March 26, 2026. (The game code itself was built with Claude via Cursor AI — see Credits above.)
+
+| Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
+|---|---|---|---|---|---|
+| March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.036 kWh | 0.014 kg CO₂ | 0.018 L |
+
+[^claude]: assuming 18 Wh per prompt; does not include estimate for foundation model training
