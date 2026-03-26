@@ -1,15 +1,16 @@
 ---
-published: 2023-04-11
+published: 2025-09-02
 updated: 2025-09-02
+tags: generative
 ---
 
-# Exit Modals Demo
+# Shapes
 
-*Created April 2023*
+Generative shape experiments.
 
 ## Claude
 
-Frontmatter (`published`, `updated`, `tags`) added with [Claude](https://claude.ai) (claude-sonnet-4-6) on March 26, 2026.
+Placeholder README created with [Claude](https://claude.ai) (claude-sonnet-4-6) on March 26, 2026. Frontmatter (`published`, `updated`, `tags`) also added.
 
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|

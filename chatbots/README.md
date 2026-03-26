@@ -1,3 +1,8 @@
+---
+published: 2023-03-15
+updated: 2025-09-02
+---
+
 # playground-chatbots
 
 *Last updated March 15, 2023*
@@ -48,3 +53,13 @@ See Google Fonts' [FAQs](https://developers.google.com/fonts/faq) for more infor
 - [Tidio](https://www.tidio.com/)
 
 Another idea: [Integrate a custom live agent with IBM Watson Assistant](https://developer.ibm.com/tutorials/integrate-a-custom-live-agent-with-ibm-watson-assistant/)
+
+## Claude
+
+Frontmatter (`published`, `updated`, `tags`) added with [Claude](https://claude.ai) (claude-sonnet-4-6) on March 26, 2026.
+
+| Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
+|---|---|---|---|---|---|
+| March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.036 kWh | 0.014 kg CO₂ | 0.018 L |
+
+[^claude]: assuming 18 Wh per prompt; does not include estimate for foundation model training

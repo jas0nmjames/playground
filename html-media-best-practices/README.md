@@ -1,3 +1,8 @@
+---
+published: 2023-07-12
+updated: 2025-09-02
+---
+
 # HTML Media Best Practices README
 
 *Created July 2023*
@@ -120,3 +125,13 @@ Example of what to do:
 - 512 x 288 GIF by <a href="https://pixabay.com/users/nickype-10327513/?utm_source=link-attribution&utm_medium=referral&utm_campaign=animation&utm_content=1782">Nicky ❤️🌿🐞🌿❤️</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=animation&utm_content=1782">Pixabay</a>
 
 - Thank you cloud convert: https://cloudconvert.com/mov-to-webm
+
+## Claude
+
+Frontmatter (`published`, `updated`, `tags`) added with [Claude](https://claude.ai) (claude-sonnet-4-6) on March 26, 2026.
+
+| Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
+|---|---|---|---|---|---|
+| March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.036 kWh | 0.014 kg CO₂ | 0.018 L |
+
+[^claude]: assuming 18 Wh per prompt; does not include estimate for foundation model training

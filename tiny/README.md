@@ -1,11 +1,12 @@
 ---
-published: 2023-04-11
+published: 2025-06-01
 updated: 2025-09-02
+tags: generative
 ---
 
-# Exit Modals Demo
+# Tiny
 
-*Created April 2023*
+*Created June 2025*
 
 ## Claude
 
