@@ -16,6 +16,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const ROOT_README = path.join(ROOT, 'README.md');
+const GITHUB_PAGES_BASE = 'https://jas0nmjames.github.io/playground/';
 
 function parseFrontmatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
@@ -64,17 +65,18 @@ function formatDate(dateStr) {
 
 function buildTable(projects) {
   const rows = projects.map(p => {
-    const name = `[${p.title}](${p.dir})`;
+    const readme = `[${p.title}](./${p.dir}/)`;
+    const site = `[↗](${p.siteUrl})`;
     const desc = p.description || '';
     const tag = p.tags.length ? p.tags.map(t => `\`${t}\``).join(' ') : '';
     const pub = formatDate(p.published);
     const upd = formatDate(p.updated);
-    return `| ${name} | ${desc} | ${tag} | ${pub} | ${upd} |`;
+    return `| ${readme} | ${site} | ${desc} | ${tag} | ${pub} | ${upd} |`;
   });
 
   return [
-    '| Project | Description | Tags | Published | Updated |',
-    '|---|---|---|---|---|',
+    '| Project | Site | Description | Tags | Published | Updated |',
+    '|---|---|---|---|---|---|',
     ...rows,
   ].join('\n');
 }
@@ -111,6 +113,8 @@ for (const dir of entries) {
   const title = extractTitle(body) || dir;
   const description = extractDescription(body);
   const tags = fm.tags ? fm.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+  // url: explicit frontmatter override (e.g. external deployment); otherwise GitHub Pages
+  const siteUrl = fm.url ? fm.url.trim() : `${GITHUB_PAGES_BASE}${dir}/`;
 
   projects.push({
     dir,
@@ -119,6 +123,7 @@ for (const dir of entries) {
     published: fm.published || null,
     updated: fm.updated || null,
     tags,
+    siteUrl,
   });
 }
 
