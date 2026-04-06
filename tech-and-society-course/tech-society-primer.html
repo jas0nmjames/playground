@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technology & Society — A Primer for Designers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cormorant+SC:wght@400;600&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --parchment: #f2ead8;
+    --warm-white: #faf6ec;
+    --rust: #b84c2c;
+    --rust-light: #d4603a;
+    --gold: #c9a84c;
+    --muted: #7a6e60;
+    --rule: #d4c9b0;
+    --deep: #2a2018;
+    --green-dark: #1e2b20;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+    background: var(--deep);
+    border-bottom: 1px solid var(--gold);
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 40%, rgba(184,76,44,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 80% at 10% 70%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .cover-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    opacity: 0.8;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant SC', serif;
+    font-size: clamp(48px, 8vw, 100px);
+    font-weight: 600;
+    line-height: 0.95;
+    color: var(--warm-white);
+    max-width: 820px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--rust-light);
+    font-weight: 300;
+    font-size: 0.9em;
+  }
+
+  .cover-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--rule);
+    max-width: 560px;
+    margin: 28px 0 60px;
+    line-height: 1.6;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .cover-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cover-meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .cover-meta-value {
+    font-size: 14px;
+    color: var(--rule);
+    font-style: italic;
+  }
+
+  .cover-rule {
+    position: absolute;
+    right: 60px;
+    top: 80px;
+    bottom: 80px;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+    opacity: 0.3;
+  }
+
+  .cover-number {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    opacity: 0.4;
+    white-space: nowrap;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* ── NAV / TOC ── */
+  .toc {
+    background: #141008;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 48px 60px;
+  }
+
+  .toc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 28px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 6px 48px;
+    max-width: 860px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 6px 0;
+    text-decoration: none;
+    color: var(--rule);
+    font-size: 15px;
+    font-style: italic;
+    border-bottom: 1px solid rgba(212,201,176,0.1);
+    transition: color 0.2s;
+  }
+
+  .toc-item:hover { color: var(--parchment); }
+
+  .toc-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--rust);
+    font-style: normal;
+    flex-shrink: 0;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 80px 60px;
+    border-bottom: 1px solid rgba(212,201,176,0.1);
+    position: relative;
+  }
+
+  .section:nth-child(even) {
+    background: rgba(255,255,255,0.015);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--rust);
+    letter-spacing: 0.1em;
+    margin-top: 8px;
+    flex-shrink: 0;
+    width: 40px;
+  }
+
+  .section-title-block { flex: 1; }
+
+  .section-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant SC', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 600;
+    line-height: 1.05;
+    color: var(--warm-white);
+    letter-spacing: -0.01em;
+  }
+
+  .section-body {
+    max-width: 680px;
+    margin-left: 72px;
+  }
+
+  .section-body p {
+    margin-bottom: 22px;
+    font-weight: 300;
+    color: var(--parchment);
+    font-size: 18px;
+  }
+
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* ── PULLQUOTE ── */
+  .pullquote {
+    margin: 48px 0 48px -24px;
+    padding: 0 0 0 32px;
+    border-left: 3px solid var(--rust);
+  }
+
+  .pullquote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--warm-white);
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }
+
+  .pullquote-attr {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    opacity: 0.75;
+    text-transform: uppercase;
+  }
+
+  /* ── CONCEPT CARDS ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2px;
+    margin: 48px 0;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,201,176,0.12);
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+
+  .card:hover { background: rgba(255,255,255,0.06); }
+
+  .card::before {
+    content: attr(data-glyph);
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    font-size: 64px;
+    color: var(--rust);
+    opacity: 0.07;
+    font-family: serif;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--rust);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.9;
+  }
+
+  .card-title {
+    font-family: 'Cormorant SC', serif;
+    font-size: 20px;
+    color: var(--warm-white);
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .card-body {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  .card-body strong {
+    color: var(--rule);
+    font-weight: 400;
+  }
+
+  /* ── THINKERS ROW ── */
+  .thinkers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    margin: 48px 0;
+  }
+
+  .thinker {
+    padding: 24px 0;
+    border-top: 2px solid var(--rust);
+  }
+
+  .thinker-name {
+    font-family: 'Cormorant SC', serif;
+    font-size: 18px;
+    color: var(--warm-white);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .thinker-dates {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    opacity: 0.6;
+    margin-bottom: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .thinker-work {
+    font-size: 13px;
+    color: var(--rust-light);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .thinker-note {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ── DESIGN QUESTIONS ── */
+  .questions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 48px 0;
+  }
+
+  .question-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(212,201,176,0.1);
+  }
+
+  .question-row:first-child { border-top: 1px solid rgba(212,201,176,0.1); }
+
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--rust);
+    flex-shrink: 0;
+    width: 28px;
+  }
+
+  .q-text {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--parchment);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ── SPECTRUM ── */
+  .spectrum {
+    margin: 48px 0;
+    padding: 36px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(212,201,176,0.1);
+  }
+
+  .spectrum-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 24px;
+  }
+
+  .spectrum-bar {
+    height: 4px;
+    background: linear-gradient(to right, var(--green-dark), var(--rust));
+    border-radius: 2px;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .spectrum-ends {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .spectrum-end {
+    max-width: 260px;
+  }
+
+  .spectrum-end-label {
+    font-family: 'Cormorant SC', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--warm-white);
+    margin-bottom: 8px;
+  }
+
+  .spectrum-end-note {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .spectrum-end.right { text-align: right; }
+
+  /* ── ELLUL SPECIAL ── */
+  .ellul-section {
+    background: var(--deep);
+  }
+
+  /* ── TECHNIQUE BOX ── */
+  .technique-box {
+    border: 1px solid var(--rust);
+    padding: 36px;
+    margin: 48px 0;
+    position: relative;
+  }
+
+  .technique-box::before {
+    content: 'LA TECHNIQUE';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--deep);
+    padding: 0 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--rust);
+  }
+
+  .technique-traits {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    margin-top: 8px;
+  }
+
+  .trait {
+    padding: 16px 0;
+    border-top: 1px solid rgba(212,201,176,0.15);
+  }
+
+  .trait-name {
+    font-family: 'Cormorant SC', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--warm-white);
+    margin-bottom: 6px;
+  }
+
+  .trait-def {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ── CODA ── */
+  .coda {
+    background: var(--deep);
+    padding: 100px 60px;
+    text-align: center;
+    border-top: 1px solid var(--gold);
+  }
+
+  .coda-title {
+    font-family: 'Cormorant SC', serif;
+    font-size: 38px;
+    color: var(--warm-white);
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .coda-body {
+    max-width: 580px;
+    margin: 0 auto 48px;
+    font-size: 19px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--rule);
+    line-height: 1.6;
+  }
+
+  .reading-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .reading-item {
+    padding: 8px 16px;
+    border: 1px solid rgba(212,201,176,0.2);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--rule);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .reading-item span {
+    font-style: normal;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+
+  /* ── INLINE EM/STRONG ── */
+  em { font-style: italic; }
+  strong {
+    font-weight: 600;
+    color: var(--warm-white);
+  }
+
+  .highlight {
+    color: var(--rust-light);
+    font-style: italic;
+  }
+
+  /* ── RULE ORNAMENT ── */
+  .ornament {
+    text-align: center;
+    color: var(--gold);
+    font-size: 20px;
+    opacity: 0.4;
+    margin: 40px 0 32px;
+    letter-spacing: 0.5em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 60px;
+    background: #0e0c08;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-top: 1px solid rgba(212,201,176,0.1);
+  }
+
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .cover, .section, .toc, .coda, footer { padding-left: 24px; padding-right: 24px; }
+    .section-body { margin-left: 0; }
+    .pullquote { margin-left: 0; }
+    .cover-rule, .cover-number { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-rule"></div>
+  <div class="cover-number">TECHNOLOGY & SOCIETY — A PRIMER</div>
+  <div class="cover-eyebrow">For UX Designers & Product People</div>
+  <h1 class="cover-title">The <em>Machine</em><br>& Its Makers</h1>
+  <p class="cover-subtitle">
+    On what technology does to us, through us, and in spite of us — 
+    and why the people who build products must reckon with it.
+  </p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Tradition</span>
+      <span class="cover-meta-value">Jacques Ellul · Wendell Berry · Simone Weil</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Contemporary</span>
+      <span class="cover-meta-value">Paul Kingsnorth · The New Atlantis</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Discipline</span>
+      <span class="cover-meta-value">Human-Centered Design · Product Craft · Ethics</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-label">Contents</div>
+  <div class="toc-grid">
+    <a href="#s1" class="toc-item"><span class="toc-num">01</span> What Is "The Machine"?</a>
+    <a href="#s2" class="toc-item"><span class="toc-num">02</span> Ellul's Warning: La Technique</a>
+    <a href="#s3" class="toc-item"><span class="toc-num">03</span> Technology Is Never Neutral</a>
+    <a href="#s4" class="toc-item"><span class="toc-num">04</span> The Autonomy of Technology</a>
+    <a href="#s5" class="toc-item"><span class="toc-num">05</span> The Designer's Complicity</a>
+    <a href="#s6" class="toc-item"><span class="toc-num">06</span> Attention, Desire & the Self</a>
+    <a href="#s7" class="toc-item"><span class="toc-num">07</span> The New Atlantis Tradition</a>
+    <a href="#s8" class="toc-item"><span class="toc-num">08</span> Thinkers You Should Know</a>
+    <a href="#s9" class="toc-item"><span class="toc-num">09</span> Questions for Your Practice</a>
+    <a href="#s10" class="toc-item"><span class="toc-num">10</span> Toward Humane Design</a>
+  </div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-title-block">
+      <div class="section-kicker">Foundations</div>
+      <h2 class="section-title">What Is<br>"The Machine"?</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      When critics of technology invoke <em>The Machine</em>, they don't simply mean your laptop, your app, or even the internet. They mean something more unsettling: a <strong>totalizing system</strong> — an interlocking complex of industrial capitalism, digital infrastructure, algorithmic logic, and cultural aspiration that has become the primary organizing force of modern life.
+    </p>
+    <p>
+      Paul Kingsnorth, writing in 2025's <em>Against the Machine</em>, describes it as "a force that's hard to name, but which we all feel." It shapes what we consider progress, what we measure, what we build — and crucially, <strong>who we become in the process of building it.</strong>
+    </p>
+    <p>
+      For designers and product people, this matters acutely. You are not merely solving problems. You are <em>instantiating a vision of the human.</em> Every interaction model you design encodes assumptions: about what people want, how attention works, what relationship looks like, what is worth optimizing.
+    </p>
+
+    <div class="pullquote">
+      <div class="pullquote-text">"The Machine, in the name of progress, has been hollowing out humanity — and this has been a long game."</div>
+      <div class="pullquote-attr">Paul Kingsnorth · Against the Machine, 2025</div>
+    </div>
+
+    <p>
+      This primer is an invitation to sit with uncomfortable questions. Not to abandon technology, but to approach it with the gravity it deserves. The critics collected here — from Ellul to Kingsnorth, from The New Atlantis to Wendell Berry — are not technophobes. They are people who loved the human enough to push back on what diminishes it.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section ellul-section" id="s2">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-title-block">
+      <div class="section-kicker">The Foundational Critique</div>
+      <h2 class="section-title">Ellul's Warning:<br><em>La Technique</em></h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      Jacques Ellul (1912–1994), the French sociologist and theologian, published <em>La Technique, ou l'enjeu du siècle</em> in 1954. Translated as <em>The Technological Society</em>, it remains the most rigorous philosophical account of how technology transforms civilization — and the most disturbing.
+    </p>
+    <p>
+      Ellul's central insight is this: the real threat is not any particular technology. It is <span class="highlight">Technique</span> — the disposition to optimize, rationalize, and systematize everything. Technique is the "totality of methods rationally arrived at and having absolute efficiency in every field of human activity." It is not a tool. It is a <strong>logic.</strong>
+    </p>
+
+    <div class="technique-box">
+      <div class="technique-traits">
+        <div class="trait">
+          <div class="trait-name">Rationality</div>
+          <div class="trait-def">Every process is broken down and reassembled for maximum efficiency. The irrational, the ritual, the beautiful — all are waste to be eliminated.</div>
+        </div>
+        <div class="trait">
+          <div class="trait-name">Artificiality</div>
+          <div class="trait-def">Technique replaces the natural with the constructed. The mediated experience displaces the direct one. The interface becomes the world.</div>
+        </div>
+        <div class="trait">
+          <div class="trait-name">Self-Augmentation</div>
+          <div class="trait-def">Technology generates new technologies. The system grows from within, not from outside human need. Progress becomes its own justification.</div>
+        </div>
+        <div class="trait">
+          <div class="trait-name">Monism</div>
+          <div class="trait-def">All domains — medicine, education, art, religion, politics — are colonized by technical logic. Nothing remains outside the system.</div>
+        </div>
+        <div class="trait">
+          <div class="trait-name">Universalism</div>
+          <div class="trait-def">Technique crosses all cultures and borders. It is the first truly global civilization — and it looks the same everywhere.</div>
+        </div>
+        <div class="trait">
+          <div class="trait-name">Autonomy</div>
+          <div class="trait-def">The system operates according to its own internal rules. Humans set it in motion; they cannot stop or redirect it without becoming anti-social.</div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      For Ellul, the designer who believes they are "solving problems for users" may in fact be <strong>extending the reach of Technique</strong> into new territories of human experience. Education is "disrupted." Relationships are "optimized." Health is turned into data. Each advance looks like liberation. Each advance tightens the net.
+    </p>
+    <p>
+      This is not pessimism for its own sake. Ellul believed clarity was the first act of resistance. <em>You cannot push back on what you cannot name.</em>
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-title-block">
+      <div class="section-kicker">Core Principle</div>
+      <h2 class="section-title">Technology Is<br>Never Neutral</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      The dominant ideology of Silicon Valley has long held that technology is a neutral tool — good or bad depending only on how it's used. A hammer can build a house or break a skull. The hammer doesn't care. This view is seductive, and it is <strong>wrong.</strong>
+    </p>
+    <p>
+      Technologies carry values, biases, and affordances baked into their structure. A highway system doesn't just move cars — it shapes where people live, which communities are severed, how long people spend alone. A social media feed doesn't just distribute content — it determines what emotions spread, which voices are amplified, how identity is performed.
+    </p>
+
+    <div class="cards">
+      <div class="card" data-glyph="⚙">
+        <div class="card-label">Medium Theory</div>
+        <div class="card-title">The Medium Is the Message</div>
+        <div class="card-body">Marshall McLuhan's insight: the medium itself — not its content — reshapes cognition and social life. <strong>Print made individualism possible. TV made politics emotional. Smartphones made attention scarce.</strong></div>
+      </div>
+      <div class="card" data-glyph="◈">
+        <div class="card-label">Affordance Theory</div>
+        <div class="card-title">What the Interface Suggests</div>
+        <div class="card-body">Every design affords certain behaviors and forecloses others. An infinite scroll <strong>affords compulsion.</strong> A notification badge <strong>affords anxiety.</strong> These are not bugs — they are choices with consequences.</div>
+      </div>
+      <div class="card" data-glyph="∞">
+        <div class="card-label">Systems Thinking</div>
+        <div class="card-title">Second-Order Effects</div>
+        <div class="card-body">The harm of a technology is rarely in its intended use. It's in what it does to adjacent systems: to relationships, to institutions, to <strong>the fabric of trust and time.</strong></div>
+      </div>
+      <div class="card" data-glyph="⊕">
+        <div class="card-label">Value Encoding</div>
+        <div class="card-title">Who Gets to Define "Better"?</div>
+        <div class="card-body">Every optimization implies a metric. Every metric implies a value. Every value implies a politics. <strong>To ship a product is to take a stance</strong> — whether you acknowledge it or not.</div>
+      </div>
+    </div>
+
+    <p>
+      The UX framework of "user needs" is not innocent either. Whose definition of a need? Determined how? By what process? When Airbnb "meets the need" for affordable lodging, it simultaneously transforms the character of neighborhoods. When LinkedIn "meets the need" for professional connection, it simultaneously turns identity into a performance metric.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div class="section-title-block">
+      <div class="section-kicker">Ellul's Deepest Challenge</div>
+      <h2 class="section-title">The Autonomy<br>of Technology</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      Ellul's most provocative — and most contested — claim is that technology has become <strong>autonomous.</strong> Not in the science-fiction sense of sentient machines, but in a more subtle sense: the technological system now develops according to its own internal imperatives, not according to human choice.
+    </p>
+    <p>
+      Consider: no one chose algorithmic engagement optimization as a social good. It emerged from competitive pressure, from technical possibility, from investor expectations. Each actor in the system made locally rational choices. The aggregate outcome — billions of people spending their evenings in a state of manufactured outrage — was chosen by no one.
+    </p>
+
+    <div class="pullquote">
+      <div class="pullquote-text">"Everywhere, increasing mechanization is destroying the social structures that were patiently built up over centuries."</div>
+      <div class="pullquote-attr">Jacques Ellul · The Technological Society, 1954</div>
+    </div>
+
+    <div class="spectrum">
+      <div class="spectrum-label">The Autonomy Debate — Where do you stand?</div>
+      <div class="spectrum-ends">
+        <div class="spectrum-end">
+          <div class="spectrum-end-label">Instrumentalism</div>
+          <div class="spectrum-end-note">Technology is a tool. Humans are in control. Bad outcomes reflect bad choices by identifiable actors.</div>
+        </div>
+        <div class="spectrum-end right">
+          <div class="spectrum-end-label">Technological Determinism</div>
+          <div class="spectrum-end-note">Technology has its own logic. Once introduced, it shapes society in ways humans cannot meaningfully redirect.</div>
+        </div>
+      </div>
+      <div class="spectrum-bar"></div>
+      <p style="text-align:center; font-size:14px; color:var(--muted); font-style:italic; margin-top:16px;">Ellul sits near the determinist end — not fatalism, but a strong claim about systemic pressure. Most thoughtful critics occupy the middle, arguing that human agency is real but severely constrained by technological momentum.</p>
+    </div>
+
+    <p>
+      For product designers, the autonomy argument is personally uncomfortable. It suggests that even well-intentioned designers, working within the competitive logic of growth-driven product development, may be unable to meaningfully resist the directions the system is pulling. The honest response is not paralysis but humility — and a more rigorous political imagination about the conditions under which good design becomes possible.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div class="section-title-block">
+      <div class="section-kicker">For Designers Specifically</div>
+      <h2 class="section-title">The Designer's<br>Complicity</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      The UX and product design field has built its professional identity around a flattering self-image: <em>we are the user's advocates, the humanizers of technology, the ones who push back against pure engineering logic.</em> There is truth in this. And there is also a comfortable evasion.
+    </p>
+    <p>
+      When you optimize an onboarding funnel to reduce drop-off, you are making the product more addictive — or more accessible. <strong>Both things are true simultaneously.</strong> When you A/B test notification copy to improve open rates, you are applying Ellul's Technique directly to the human psyche. When you design a "social" feature to increase DAUs, you are instrumentalizing human connection.
+    </p>
+
+    <div class="cards">
+      <div class="card" data-glyph="△">
+        <div class="card-label">The Problem</div>
+        <div class="card-title">Dark Patterns as a Mirror</div>
+        <div class="card-body">Dark patterns aren't aberrations — they're the logical endpoint of optimizing for metrics that misalign with user flourishing. <strong>They reveal what happens when technique serves the system instead of the person.</strong></div>
+      </div>
+      <div class="card" data-glyph="◻">
+        <div class="card-label">The Problem</div>
+        <div class="card-title">Human-Centered, But For Whom?</div>
+        <div class="card-body">Human-centered design centers <em>the user session.</em> It rarely centers the non-user, the community, the slow accumulation of effects across time. <strong>Centering the human requires a longer, wider view.</strong></div>
+      </div>
+      <div class="card" data-glyph="○">
+        <div class="card-label">The Opportunity</div>
+        <div class="card-title">Craft as Resistance</div>
+        <div class="card-body">Attention to craft — to the dignity of the person using your thing — is a real form of resistance. So is slow design, and saying no, and <strong>arguing for metrics that don't reduce users to behavior.</strong></div>
+      </div>
+      <div class="card" data-glyph="⬟">
+        <div class="card-label">The Opportunity</div>
+        <div class="card-title">Designing for Finitude</div>
+        <div class="card-body">What if the goal was not more time-in-app but better-time-in-life? Design for completion, for exit, for the user who leaves well. <strong>The best product may be one that needs you less.</strong></div>
+      </div>
+    </div>
+
+    <p>
+      None of this means you are personally villainous. It means the professional situation is <strong>morally serious</strong> in ways that "I follow best practices and user research" does not fully address. The critics in this tradition don't ask you to stop designing. They ask you to carry the weight of what you are doing.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 6 -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div class="section-title-block">
+      <div class="section-kicker">The Psyche in the System</div>
+      <h2 class="section-title">Attention, Desire<br>& the Self</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      Paul Kingsnorth identifies four cultural idols that the Machine has installed at the center of contemporary life: <strong>screen, science, self, and sex.</strong> These are not random vices. They are, he argues, what is left when a civilization loses its deeper sources of meaning and roots.
+    </p>
+    <p>
+      From a design perspective, the most immediate is the <em>self.</em> The modern digital experience is built around radical personalization — the curated feed, the profile, the personal brand. Every product says, in effect: <em>this is for you, specifically you, your preferences, your identity.</em> This flatters. It also isolates.
+    </p>
+
+    <div class="pullquote">
+      <div class="pullquote-text">"We moderns have every gadget available to us — but we lack the two things we most desperately need: meaning and roots."</div>
+      <div class="pullquote-attr">Paul Kingsnorth · Against the Machine, 2025</div>
+    </div>
+
+    <p>
+      The attention economy is not simply about monetizing eyeballs. It is about the <strong>colonization of the will.</strong> When a system is designed to maximize time-on-platform, it is optimizing against whatever else might occupy that time: rest, presence, conversation, thought, prayer, boredom. Boredom, notably, is where creativity and self-knowledge live.
+    </p>
+    <p>
+      Simone Weil's concept of <em>attention</em> offers a counter-weight: true attention is a moral act. It requires stillness, receptivity, and a willingness to be changed by what you attend to. The designed environment of most digital products is structured to make this impossible — producing instead what Weil would call <em>distraction</em>, which she considered a spiritual harm.
+    </p>
+    <p>
+      For designers: when you think about "user engagement," ask honestly what <em>kind</em> of engagement. Engagement that leads somewhere — to learning, to connection, to action, to rest — is different in kind from engagement that merely continues itself.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 7 -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div class="section-title-block">
+      <div class="section-kicker">A Living Conversation</div>
+      <h2 class="section-title">The New Atlantis<br>Tradition</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      <em>The New Atlantis: A Journal of Technology & Society</em>, founded in 2003, represents the most sustained intellectual venue for thinking carefully — and without ideological predictability — about what technology does to human life. Named after Francis Bacon's utopian fable about a society organized by scientific mastery, the journal interrogates whether that dream has gone wrong, and how.
+    </p>
+    <p>
+      The journal occupies an unusual position: it draws from both conservative and liberal intellectual traditions, is unafraid of empirical data, and refuses the optimism of both Silicon Valley techno-utopianism and reflexive Luddism. It takes <strong>science and technology seriously as human activities</strong> — meaning they are shaped by human values, subject to human failure, and answerable to human flourishing.
+    </p>
+
+    <div class="cards">
+      <div class="card" data-glyph="◉">
+        <div class="card-label">Core Concern</div>
+        <div class="card-title">The Medicated Mind</div>
+        <div class="card-body">How do psychotropic drugs, ADHD diagnoses, and psychiatric categories reshape our understanding of the self? <strong>Is chemical management of consciousness a form of technological mediation of the soul?</strong></div>
+      </div>
+      <div class="card" data-glyph="⊗">
+        <div class="card-label">Core Concern</div>
+        <div class="card-title">The Biotechnology Horizon</div>
+        <div class="card-body">Genetic editing, enhancement, and life extension raise the question: <strong>if we can redesign the human, should we?</strong> And who decides what the improved human looks like?</div>
+      </div>
+      <div class="card" data-glyph="⦿">
+        <div class="card-label">Core Concern</div>
+        <div class="card-title">Screen Life & the Young</div>
+        <div class="card-body">The journal has published some of the most rigorous early investigations of social media's effects on adolescent mental health — before it became mainstream consensus. <strong>Data-driven humanism.</strong></div>
+      </div>
+      <div class="card" data-glyph="◈">
+        <div class="card-label">Core Concern</div>
+        <div class="card-title">AI & the Meaning of Mind</div>
+        <div class="card-body">What do large language models reveal about — or conceal from — our understanding of consciousness, creativity, and what it means to think? <strong>The epistemological stakes of AI are profound.</strong></div>
+      </div>
+    </div>
+
+    <p>
+      What designers can take from The New Atlantis tradition is a commitment to <strong>rigor without cynicism</strong> — the insistence that we can study the effects of technology carefully, hold complexity, resist easy narratives, and still arrive at judgments. The alternative — perpetual agnosticism in the face of mounting evidence — is its own ethical failure.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 8 -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">08</div>
+    <div class="section-title-block">
+      <div class="section-kicker">The Intellectual Lineage</div>
+      <h2 class="section-title">Thinkers You<br>Should Know</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="thinkers">
+      <div class="thinker">
+        <div class="thinker-name">Jacques Ellul</div>
+        <div class="thinker-dates">1912 – 1994</div>
+        <div class="thinker-work">The Technological Society · Propaganda</div>
+        <div class="thinker-note">The foundational critic. Technique as totalizing system, autonomous and self-generating. Also a theologian — his ethics of resistance is rooted in a radical reading of grace.</div>
+      </div>
+      <div class="thinker">
+        <div class="thinker-name">Simone Weil</div>
+        <div class="thinker-dates">1909 – 1943</div>
+        <div class="thinker-work">The Need for Roots · Attention and Will</div>
+        <div class="thinker-note">On rootedness, attention as moral act, and the dehumanization of industrial work. Her concept of affliction (malheur) maps disturbingly onto platform experiences.</div>
+      </div>
+      <div class="thinker">
+        <div class="thinker-name">Lewis Mumford</div>
+        <div class="thinker-dates">1895 – 1990</div>
+        <div class="thinker-work">Technics and Civilization · The Myth of the Machine</div>
+        <div class="thinker-note">Distinguished between democratic "polytechnics" and authoritarian "monotechnics." The megamachine — vast, centralized, inhuman — as recurring civilizational danger.</div>
+      </div>
+      <div class="thinker">
+        <div class="thinker-name">Wendell Berry</div>
+        <div class="thinker-dates">1934 – present</div>
+        <div class="thinker-work">The Unsettling of America · Life Is a Miracle</div>
+        <div class="thinker-note">On the value of limits, local knowledge, and the body. A farmer-philosopher whose critique of abstraction is directly applicable to product work that loses touch with real lives.</div>
+      </div>
+      <div class="thinker">
+        <div class="thinker-name">Neil Postman</div>
+        <div class="thinker-dates">1931 – 2003</div>
+        <div class="thinker-work">Amusing Ourselves to Death · Technopoly</div>
+        <div class="thinker-note">Television turned politics into entertainment. Every new medium changes what ideas can be expressed and which minds can hold them. Prophetic about what smartphones would do to discourse.</div>
+      </div>
+      <div class="thinker">
+        <div class="thinker-name">Paul Kingsnorth</div>
+        <div class="thinker-dates">1972 – present</div>
+        <div class="thinker-work">Against the Machine · The Wake</div>
+        <div class="thinker-note">The contemporary inheritor of the tradition. Synthesizes Ellul, Berry, Tolkien, and Weil into a spiritual and cultural critique of AI, transhumanism, and techno-capitalism.</div>
+      </div>
+    </div>
+
+    <div class="ornament">· · ·</div>
+
+    <p style="font-style:italic; color:var(--muted); font-size:16px;">
+      Notable adjacents: Albert Borgmann (device paradigm vs. focal practices), Ivan Illich (counterproductive institutions), Marshall McLuhan (media as environment), Albert Camus (on absurdity and resistance), Alasdair MacIntyre (on virtue after modernity), C.S. Lewis (The Abolition of Man — on the consequences of reducing humanity to its manipulable surface).
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 9 -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-num">09</div>
+    <div class="section-title-block">
+      <div class="section-kicker">Applied Reflection</div>
+      <h2 class="section-title">Questions for<br>Your Practice</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>These are not rhetorical. They are genuine design research questions that the critics in this tradition would pose to any practitioner willing to take the work seriously.</p>
+
+    <div class="questions">
+      <div class="question-row">
+        <span class="q-num">Q1</span>
+        <span class="q-text">What is the product <em>actually</em> optimizing for — and who benefits from that metric? Is "engagement" a proxy for something good, or a stand-in that avoids harder questions?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q2</span>
+        <span class="q-text">What human activities does this product <em>displace</em>? Not just "what does it replace" but what forms of attention, skill, relationship, or practice does it crowd out?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q3</span>
+        <span class="q-text">If the product works exactly as designed, what kind of person does the user become over five years of use? Is that person better off — by whose account?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q4</span>
+        <span class="q-text">What does this product do to people who are <em>not</em> its users? To their neighbors, their communities, their non-digital relationships?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q5</span>
+        <span class="q-text">Who set the goals that your work is in service of? Are those goals yours? Were they arrived at through a process you'd defend? Can you name them honestly?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q6</span>
+        <span class="q-text">Where in the system do you have actual leverage? What would it take — institutionally, politically, professionally — to use it? And what is the cost of not using it?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q7</span>
+        <span class="q-text">Ellul argued that Technique tends toward monism — it colonizes every domain. In your product, what remains genuinely outside its logic? What are you protecting?</span>
+      </div>
+      <div class="question-row">
+        <span class="q-num">Q8</span>
+        <span class="q-text">If you could not measure its success — no analytics, no data — how would you know the product was good? What would that goodness even look like?</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 10 -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <div class="section-title-block">
+      <div class="section-kicker">A Constructive Horizon</div>
+      <h2 class="section-title">Toward Humane<br>Design</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>
+      The critics surveyed here are not prescribing a return to pre-industrial life. Kingsnorth himself acknowledges the contradiction of writing about the Machine on the Machine. Ellul did not stop using electricity. The question is not whether to participate in technological society — there is little choice — but <strong>how to participate with clarity, limits, and conscience.</strong>
+    </p>
+    <p>
+      Albert Borgmann, a philosopher working in the tradition of Ellul and Heidegger, offers a useful distinction: <em>device paradigm</em> vs. <em>focal practices.</em> A device delivers a commodity (warmth, entertainment, connection) while concealing the means of its delivery and reducing the user to a consumer. A focal practice — a meal cooked together, a fire tended, a craft practiced — gathers life around it, requiring engagement and offering meaning in return.
+    </p>
+    <p>
+      The design question becomes: <strong>does this product operate as a device, or does it support focal practices?</strong> Does it deliver a commodity and push the user toward passivity, or does it scaffold genuine engagement with something that matters?
+    </p>
+
+    <div class="cards">
+      <div class="card" data-glyph="✦">
+        <div class="card-label">Orientation</div>
+        <div class="card-title">Design for Finitude</div>
+        <div class="card-body">Human life is finite. Products that honor this are designed to <strong>release the user</strong> — toward rest, presence, the non-digital. The well-designed product ends gracefully.</div>
+      </div>
+      <div class="card" data-glyph="⬡">
+        <div class="card-label">Orientation</div>
+        <div class="card-title">Texture Over Frictionlessness</div>
+        <div class="card-body">Friction is not always a bug. Resistance can build capacity, slow consumption, foster presence. <strong>The relentless removal of friction is the relentless removal of the human.</strong></div>
+      </div>
+      <div class="card" data-glyph="⌘">
+        <div class="card-label">Orientation</div>
+        <div class="card-title">Accountability Structures</div>
+        <div class="card-body">Who is the product accountable to beyond its growth metrics? Who can say "this caused harm, and here's how"? <strong>Accountability is a design problem, not just a policy one.</strong></div>
+      </div>
+      <div class="card" data-glyph="◫">
+        <div class="card-label">Orientation</div>
+        <div class="card-title">Subsidiarity & Scale</div>
+        <div class="card-body">Mumford and Berry both valued human-scale institutions. Bigger is not better by default. <strong>What is the right scale for this product?</strong> Not all goods are improved by network effects.</div>
+      </div>
+    </div>
+
+    <div class="pullquote">
+      <div class="pullquote-text">"It takes effort to remain truly human in the age of the Machine. That effort — quiet, daily, particular — is the only thing that has ever worked."</div>
+      <div class="pullquote-attr">Paul Kingsnorth · Against the Machine, 2025</div>
+    </div>
+
+    <p>
+      The effort Kingsnorth describes is not dramatic or heroic. It is small: a choice not to instrument this interaction; a decision to let the user leave; an argument in a sprint review for a metric that measures something true. These things require clarity — the clarity that comes from having sat with critics who loved the human enough to be honest about what threatens it.
+    </p>
+    <p>
+      That is why this tradition matters for designers. Not as a counsel of despair, but as an act of orientation. <em>You are working on something that matters. Work on it accordingly.</em>
+    </p>
+  </div>
+</div>
+
+<!-- CODA -->
+<div class="coda">
+  <div class="coda-title">Further Reading</div>
+  <p class="coda-body">Enter this conversation through any of these — they are all, in different ways, the same conversation.</p>
+  <div class="reading-list">
+    <div class="reading-item"><span>Ellul</span>The Technological Society</div>
+    <div class="reading-item"><span>Ellul</span>Propaganda</div>
+    <div class="reading-item"><span>Kingsnorth</span>Against the Machine</div>
+    <div class="reading-item"><span>Postman</span>Amusing Ourselves to Death</div>
+    <div class="reading-item"><span>Postman</span>Technopoly</div>
+    <div class="reading-item"><span>Borgmann</span>Technology and the Character of Contemporary Life</div>
+    <div class="reading-item"><span>Mumford</span>Technics and Civilization</div>
+    <div class="reading-item"><span>Weil</span>The Need for Roots</div>
+    <div class="reading-item"><span>Berry</span>The Unsettling of America</div>
+    <div class="reading-item"><span>Lewis</span>The Abolition of Man</div>
+    <div class="reading-item"><span>McLuhan</span>Understanding Media</div>
+    <div class="reading-item"><span>Illich</span>Tools for Conviviality</div>
+    <div class="reading-item"><span>Magazine</span>The New Atlantis — newatlantis.com</div>
+    <div class="reading-item"><span>Magazine</span>Dark Mountain — dark-mountain.net</div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-note">Technology & Society: A Primer for UX Designers & Product People</div>
+  <div class="footer-note">Inspired by Ellul · Kingsnorth · The New Atlantis</div>
+</footer>
+
+</body>
+</html>
