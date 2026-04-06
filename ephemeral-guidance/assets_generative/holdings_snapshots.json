@@ -1,0 +1,5154 @@
+{
+  "acct_marcus_401k": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 43936.84,
+      "total_cost_basis": 39899.22,
+      "total_gain_loss": 4037.62,
+      "total_gain_loss_pct": 10.12,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 120.07629999999999,
+          "price_per_share": 183.6317,
+          "market_value": 22049.82,
+          "cost_basis": 19949.620000000003,
+          "gain_loss": 2100.2,
+          "gain_loss_pct": 10.53,
+          "allocation_pct": 50.19
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 28.7303,
+          "price_per_share": 228.4184,
+          "market_value": 6562.53,
+          "cost_basis": 5984.879999999999,
+          "gain_loss": 577.65,
+          "gain_loss_pct": 9.65,
+          "allocation_pct": 14.94
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 22.1592,
+          "price_per_share": 201.0682,
+          "market_value": 4455.51,
+          "cost_basis": 3989.9199999999996,
+          "gain_loss": 465.59,
+          "gain_loss_pct": 11.67,
+          "allocation_pct": 10.14
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 73.8724,
+          "price_per_share": 117.6691,
+          "market_value": 8692.5,
+          "cost_basis": 7979.839999999999,
+          "gain_loss": 712.66,
+          "gain_loss_pct": 8.93,
+          "allocation_pct": 19.78
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 36.4508,
+          "price_per_share": 59.7101,
+          "market_value": 2176.48,
+          "cost_basis": 1994.9599999999998,
+          "gain_loss": 181.52,
+          "gain_loss_pct": 9.1,
+          "allocation_pct": 4.95
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 44211.58,
+      "total_cost_basis": 40422.44,
+      "total_gain_loss": 3789.14,
+      "total_gain_loss_pct": 9.37,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 121.49249999999999,
+          "price_per_share": 182.0414,
+          "market_value": 22116.67,
+          "cost_basis": 20211.240000000005,
+          "gain_loss": 1905.43,
+          "gain_loss_pct": 9.43,
+          "allocation_pct": 50.02
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 29.0719,
+          "price_per_share": 226.8634,
+          "market_value": 6595.35,
+          "cost_basis": 6063.359999999999,
+          "gain_loss": 531.99,
+          "gain_loss_pct": 8.77,
+          "allocation_pct": 14.92
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 22.4178,
+          "price_per_share": 197.9061,
+          "market_value": 4436.62,
+          "cost_basis": 4042.2399999999993,
+          "gain_loss": 394.38,
+          "gain_loss_pct": 9.76,
+          "allocation_pct": 10.03
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 74.75639999999999,
+          "price_per_share": 118.3726,
+          "market_value": 8849.11,
+          "cost_basis": 8084.479999999999,
+          "gain_loss": 764.63,
+          "gain_loss_pct": 9.46,
+          "allocation_pct": 20.02
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 36.8862,
+          "price_per_share": 60.0178,
+          "market_value": 2213.83,
+          "cost_basis": 2021.1199999999997,
+          "gain_loss": 192.71,
+          "gain_loss_pct": 9.53,
+          "allocation_pct": 5.01
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 45462.17,
+      "total_cost_basis": 41126.06,
+      "total_gain_loss": 4336.11,
+      "total_gain_loss_pct": 10.54,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 123.28879999999998,
+          "price_per_share": 185.1078,
+          "market_value": 22821.719999999998,
+          "cost_basis": 20541.120000000006,
+          "gain_loss": 2280.6,
+          "gain_loss_pct": 11.1,
+          "allocation_pct": 50.2
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 29.4157,
+          "price_per_share": 229.1117,
+          "market_value": 6739.48,
+          "cost_basis": 6141.839999999998,
+          "gain_loss": 597.64,
+          "gain_loss_pct": 9.73,
+          "allocation_pct": 14.82
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 22.6806,
+          "price_per_share": 201.7067,
+          "market_value": 4574.83,
+          "cost_basis": 4094.559999999999,
+          "gain_loss": 480.27,
+          "gain_loss_pct": 11.73,
+          "allocation_pct": 10.06
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 76.3841,
+          "price_per_share": 118.5768,
+          "market_value": 9057.380000000001,
+          "cost_basis": 8278.799999999997,
+          "gain_loss": 778.58,
+          "gain_loss_pct": 9.4,
+          "allocation_pct": 19.92
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 37.68910000000001,
+          "price_per_share": 60.1967,
+          "market_value": 2268.76,
+          "cost_basis": 2069.7399999999993,
+          "gain_loss": 199.02,
+          "gain_loss_pct": 9.62,
+          "allocation_pct": 4.99
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 46366.5,
+      "total_cost_basis": 41649.28,
+      "total_gain_loss": 4717.22,
+      "total_gain_loss_pct": 11.33,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 124.69399999999999,
+          "price_per_share": 186.6519,
+          "market_value": 23274.37,
+          "cost_basis": 20802.74000000001,
+          "gain_loss": 2471.63,
+          "gain_loss_pct": 11.88,
+          "allocation_pct": 50.2
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 29.756300000000003,
+          "price_per_share": 233.1325,
+          "market_value": 6937.16,
+          "cost_basis": 6220.319999999998,
+          "gain_loss": 716.84,
+          "gain_loss_pct": 11.52,
+          "allocation_pct": 14.96
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 22.9386,
+          "price_per_share": 202.4605,
+          "market_value": 4644.16,
+          "cost_basis": 4146.879999999999,
+          "gain_loss": 497.28,
+          "gain_loss_pct": 11.99,
+          "allocation_pct": 10.02
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 77.2615,
+          "price_per_share": 119.1625,
+          "market_value": 9206.67,
+          "cost_basis": 8383.439999999997,
+          "gain_loss": 823.23,
+          "gain_loss_pct": 9.82,
+          "allocation_pct": 19.86
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 38.12110000000001,
+          "price_per_share": 60.4426,
+          "market_value": 2304.14,
+          "cost_basis": 2095.899999999999,
+          "gain_loss": 208.24,
+          "gain_loss_pct": 9.94,
+          "allocation_pct": 4.97
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 47712.37,
+      "total_cost_basis": 42434.11,
+      "total_gain_loss": 5278.26,
+      "total_gain_loss_pct": 12.44,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 126.78469999999999,
+          "price_per_share": 189.5849,
+          "market_value": 24036.47,
+          "cost_basis": 21195.170000000013,
+          "gain_loss": 2841.3,
+          "gain_loss_pct": 13.41,
+          "allocation_pct": 50.38
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 30.258500000000005,
+          "price_per_share": 234.8395,
+          "market_value": 7105.89,
+          "cost_basis": 6338.039999999997,
+          "gain_loss": 767.85,
+          "gain_loss_pct": 12.11,
+          "allocation_pct": 14.89
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 23.324099999999998,
+          "price_per_share": 206.7248,
+          "market_value": 4821.67,
+          "cost_basis": 4225.359999999999,
+          "gain_loss": 596.31,
+          "gain_loss_pct": 14.11,
+          "allocation_pct": 10.11
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 78.5713,
+          "price_per_share": 119.5948,
+          "market_value": 9396.72,
+          "cost_basis": 8540.399999999996,
+          "gain_loss": 856.32,
+          "gain_loss_pct": 10.03,
+          "allocation_pct": 19.69
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 38.76670000000002,
+          "price_per_share": 60.6608,
+          "market_value": 2351.62,
+          "cost_basis": 2135.139999999999,
+          "gain_loss": 216.48,
+          "gain_loss_pct": 10.14,
+          "allocation_pct": 4.93
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 48316.92,
+      "total_cost_basis": 43148.95,
+      "total_gain_loss": 5167.97,
+      "total_gain_loss_pct": 11.98,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 128.54039999999998,
+          "price_per_share": 188.54,
+          "market_value": 24235.010000000002,
+          "cost_basis": 21529.280000000017,
+          "gain_loss": 2705.73,
+          "gain_loss_pct": 12.57,
+          "allocation_pct": 50.16
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 30.590900000000005,
+          "price_per_share": 235.693,
+          "market_value": 7210.06,
+          "cost_basis": 6416.519999999997,
+          "gain_loss": 793.54,
+          "gain_loss_pct": 12.37,
+          "allocation_pct": 14.92
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 23.5759,
+          "price_per_share": 205.2812,
+          "market_value": 4839.69,
+          "cost_basis": 4277.6799999999985,
+          "gain_loss": 562.01,
+          "gain_loss_pct": 13.14,
+          "allocation_pct": 10.02
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 80.22810000000001,
+          "price_per_share": 119.9608,
+          "market_value": 9624.230000000001,
+          "cost_basis": 8740.329999999996,
+          "gain_loss": 883.9,
+          "gain_loss_pct": 10.11,
+          "allocation_pct": 19.92
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 39.58360000000002,
+          "price_per_share": 60.8315,
+          "market_value": 2407.9300000000003,
+          "cost_basis": 2185.139999999999,
+          "gain_loss": 222.79,
+          "gain_loss_pct": 10.2,
+          "allocation_pct": 4.98
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 49721.8,
+      "total_cost_basis": 43672.17,
+      "total_gain_loss": 6049.63,
+      "total_gain_loss_pct": 13.85,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 129.92059999999998,
+          "price_per_share": 193.616,
+          "market_value": 25154.71,
+          "cost_basis": 21790.90000000002,
+          "gain_loss": 3363.81,
+          "gain_loss_pct": 15.44,
+          "allocation_pct": 50.59
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 30.922100000000007,
+          "price_per_share": 238.0401,
+          "market_value": 7360.7,
+          "cost_basis": 6494.999999999996,
+          "gain_loss": 865.7,
+          "gain_loss_pct": 13.33,
+          "allocation_pct": 14.8
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 23.8293,
+          "price_per_share": 210.49,
+          "market_value": 5015.83,
+          "cost_basis": 4329.999999999998,
+          "gain_loss": 685.83,
+          "gain_loss_pct": 15.84,
+          "allocation_pct": 10.09
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 81.09570000000002,
+          "price_per_share": 120.2108,
+          "market_value": 9748.58,
+          "cost_basis": 8844.969999999996,
+          "gain_loss": 903.61,
+          "gain_loss_pct": 10.22,
+          "allocation_pct": 19.61
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 40.01140000000002,
+          "price_per_share": 61.0321,
+          "market_value": 2441.98,
+          "cost_basis": 2211.299999999999,
+          "gain_loss": 230.68,
+          "gain_loss_pct": 10.43,
+          "allocation_pct": 4.91
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 50588.92,
+      "total_cost_basis": 44195.39,
+      "total_gain_loss": 6393.53,
+      "total_gain_loss_pct": 14.47,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 131.26479999999998,
+          "price_per_share": 195.6985,
+          "market_value": 25688.32,
+          "cost_basis": 22052.520000000022,
+          "gain_loss": 3635.8,
+          "gain_loss_pct": 16.49,
+          "allocation_pct": 50.78
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 31.25010000000001,
+          "price_per_share": 236.8012,
+          "market_value": 7400.06,
+          "cost_basis": 6573.479999999996,
+          "gain_loss": 826.58,
+          "gain_loss_pct": 12.57,
+          "allocation_pct": 14.63
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 24.0765,
+          "price_per_share": 213.0139,
+          "market_value": 5128.63,
+          "cost_basis": 4382.319999999998,
+          "gain_loss": 746.31,
+          "gain_loss_pct": 17.03,
+          "allocation_pct": 10.14
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 81.96150000000003,
+          "price_per_share": 120.6785,
+          "market_value": 9890.99,
+          "cost_basis": 8949.609999999995,
+          "gain_loss": 941.38,
+          "gain_loss_pct": 10.52,
+          "allocation_pct": 19.55
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 40.437800000000024,
+          "price_per_share": 61.3515,
+          "market_value": 2480.92,
+          "cost_basis": 2237.4599999999987,
+          "gain_loss": 243.46,
+          "gain_loss_pct": 10.88,
+          "allocation_pct": 4.9
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 50590.38,
+      "total_cost_basis": 44920.37,
+      "total_gain_loss": 5670.01,
+      "total_gain_loss_pct": 12.62,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 132.99139999999997,
+          "price_per_share": 191.6657,
+          "market_value": 25489.890000000003,
+          "cost_basis": 22390.380000000026,
+          "gain_loss": 3099.51,
+          "gain_loss_pct": 13.84,
+          "allocation_pct": 50.38
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 31.57970000000001,
+          "price_per_share": 234.6365,
+          "market_value": 7409.75,
+          "cost_basis": 6651.9599999999955,
+          "gain_loss": 757.79,
+          "gain_loss_pct": 11.39,
+          "allocation_pct": 14.65
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 24.320899999999998,
+          "price_per_share": 206.1499,
+          "market_value": 5013.75,
+          "cost_basis": 4434.639999999998,
+          "gain_loss": 579.11,
+          "gain_loss_pct": 13.06,
+          "allocation_pct": 9.91
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 83.64420000000001,
+          "price_per_share": 121.18,
+          "market_value": 10136.0,
+          "cost_basis": 9154.609999999995,
+          "gain_loss": 981.39,
+          "gain_loss_pct": 10.72,
+          "allocation_pct": 20.04
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 41.266600000000025,
+          "price_per_share": 61.575,
+          "market_value": 2540.99,
+          "cost_basis": 2288.7799999999984,
+          "gain_loss": 252.21,
+          "gain_loss_pct": 11.02,
+          "allocation_pct": 5.02
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 51836.36,
+      "total_cost_basis": 45705.2,
+      "total_gain_loss": 6131.16,
+      "total_gain_loss_pct": 13.41,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 135.02839999999998,
+          "price_per_share": 193.7896,
+          "market_value": 26167.1,
+          "cost_basis": 22782.81000000003,
+          "gain_loss": 3384.29,
+          "gain_loss_pct": 14.85,
+          "allocation_pct": 50.48
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 32.07890000000001,
+          "price_per_share": 236.6955,
+          "market_value": 7592.93,
+          "cost_basis": 6769.679999999995,
+          "gain_loss": 823.25,
+          "gain_loss_pct": 12.16,
+          "allocation_pct": 14.65
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 24.6995,
+          "price_per_share": 209.4439,
+          "market_value": 5173.16,
+          "cost_basis": 4513.119999999997,
+          "gain_loss": 660.04,
+          "gain_loss_pct": 14.62,
+          "allocation_pct": 9.98
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 84.93270000000003,
+          "price_per_share": 121.457,
+          "market_value": 10315.67,
+          "cost_basis": 9311.569999999994,
+          "gain_loss": 1004.1,
+          "gain_loss_pct": 10.78,
+          "allocation_pct": 19.9
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 41.90050000000003,
+          "price_per_share": 61.7534,
+          "market_value": 2587.5,
+          "cost_basis": 2328.019999999998,
+          "gain_loss": 259.48,
+          "gain_loss_pct": 11.15,
+          "allocation_pct": 4.99
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 53220.54,
+      "total_cost_basis": 46228.42,
+      "total_gain_loss": 6992.12,
+      "total_gain_loss_pct": 15.13,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 136.37179999999995,
+          "price_per_share": 198.1934,
+          "market_value": 27027.99,
+          "cost_basis": 23044.430000000033,
+          "gain_loss": 3983.56,
+          "gain_loss_pct": 17.29,
+          "allocation_pct": 50.78
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 32.40870000000002,
+          "price_per_share": 239.5456,
+          "market_value": 7763.36,
+          "cost_basis": 6848.159999999994,
+          "gain_loss": 915.2,
+          "gain_loss_pct": 13.36,
+          "allocation_pct": 14.59
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 24.948100000000004,
+          "price_per_share": 215.3759,
+          "market_value": 5373.22,
+          "cost_basis": 4565.439999999997,
+          "gain_loss": 807.78,
+          "gain_loss_pct": 17.69,
+          "allocation_pct": 10.1
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 85.78990000000003,
+          "price_per_share": 121.6459,
+          "market_value": 10435.99,
+          "cost_basis": 9416.209999999994,
+          "gain_loss": 1019.78,
+          "gain_loss_pct": 10.83,
+          "allocation_pct": 19.61
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 42.321900000000035,
+          "price_per_share": 61.906,
+          "market_value": 2619.98,
+          "cost_basis": 2354.179999999998,
+          "gain_loss": 265.8,
+          "gain_loss_pct": 11.29,
+          "allocation_pct": 4.92
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_marcus_401k",
+      "total_value": 54492.12,
+      "total_cost_basis": 46966.79,
+      "total_gain_loss": 7525.33,
+      "total_gain_loss_pct": 16.02,
+      "holdings": [
+        {
+          "ticker": "FXAIX",
+          "name": "Fidelity 500 Index Fund",
+          "asset_class": "us_large_cap",
+          "shares": 138.09719999999996,
+          "price_per_share": 200.5598,
+          "market_value": 27696.75,
+          "cost_basis": 23388.890000000036,
+          "gain_loss": 4307.86,
+          "gain_loss_pct": 18.42,
+          "allocation_pct": 50.83
+        },
+        {
+          "ticker": "FSPSX",
+          "name": "Fidelity International Index",
+          "asset_class": "international",
+          "shares": 32.73470000000001,
+          "price_per_share": 241.4566,
+          "market_value": 7904.01,
+          "cost_basis": 6926.639999999994,
+          "gain_loss": 977.37,
+          "gain_loss_pct": 14.11,
+          "allocation_pct": 14.5
+        },
+        {
+          "ticker": "FSSNX",
+          "name": "Fidelity Small Cap Index",
+          "asset_class": "us_small_cap",
+          "shares": 25.1899,
+          "price_per_share": 219.4733,
+          "market_value": 5528.51,
+          "cost_basis": 4617.759999999997,
+          "gain_loss": 910.75,
+          "gain_loss_pct": 19.72,
+          "allocation_pct": 10.15
+        },
+        {
+          "ticker": "FXNAX",
+          "name": "Fidelity US Bond Index",
+          "asset_class": "bonds",
+          "shares": 87.50380000000003,
+          "price_per_share": 122.046,
+          "market_value": 10679.49,
+          "cost_basis": 9626.589999999993,
+          "gain_loss": 1052.9,
+          "gain_loss_pct": 10.94,
+          "allocation_pct": 19.6
+        },
+        {
+          "ticker": "FDRXX",
+          "name": "Fidelity Government Money Market",
+          "asset_class": "money_market",
+          "shares": 43.16550000000004,
+          "price_per_share": 62.1645,
+          "market_value": 2683.36,
+          "cost_basis": 2406.909999999998,
+          "gain_loss": 276.45,
+          "gain_loss_pct": 11.49,
+          "allocation_pct": 4.92
+        }
+      ]
+    }
+  ],
+  "acct_jasmine_401k": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 29523.33,
+      "total_cost_basis": 26780.79,
+      "total_gain_loss": 2742.54,
+      "total_gain_loss_pct": 10.24,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 80.0261,
+          "price_per_share": 167.0496,
+          "market_value": 13368.33,
+          "cost_basis": 12051.360000000002,
+          "gain_loss": 1316.97,
+          "gain_loss_pct": 10.93,
+          "allocation_pct": 45.28
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 21.139100000000003,
+          "price_per_share": 278.1353,
+          "market_value": 5879.53,
+          "cost_basis": 5356.170000000001,
+          "gain_loss": 523.36,
+          "gain_loss_pct": 9.77,
+          "allocation_pct": 19.91
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 38.5476,
+          "price_per_share": 189.1161,
+          "market_value": 7289.97,
+          "cost_basis": 6695.189999999999,
+          "gain_loss": 594.78,
+          "gain_loss_pct": 8.88,
+          "allocation_pct": 24.69
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 12.5036,
+          "price_per_share": 238.7712,
+          "market_value": 2985.5,
+          "cost_basis": 2678.07,
+          "gain_loss": 307.43,
+          "gain_loss_pct": 11.48,
+          "allocation_pct": 10.11
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 29629.5,
+      "total_cost_basis": 27154.65,
+      "total_gain_loss": 2474.85,
+      "total_gain_loss_pct": 9.11,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 81.0269,
+          "price_per_share": 164.5652,
+          "market_value": 13334.21,
+          "cost_basis": 12219.600000000004,
+          "gain_loss": 1114.61,
+          "gain_loss_pct": 9.12,
+          "allocation_pct": 45.0
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 21.406300000000005,
+          "price_per_share": 275.61,
+          "market_value": 5899.79,
+          "cost_basis": 5430.950000000002,
+          "gain_loss": 468.84,
+          "gain_loss_pct": 8.63,
+          "allocation_pct": 19.91
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 39.0386,
+          "price_per_share": 190.3355,
+          "market_value": 7430.43,
+          "cost_basis": 6788.649999999998,
+          "gain_loss": 641.78,
+          "gain_loss_pct": 9.45,
+          "allocation_pct": 25.08
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 12.6592,
+          "price_per_share": 234.2225,
+          "market_value": 2965.07,
+          "cost_basis": 2715.4500000000003,
+          "gain_loss": 249.62,
+          "gain_loss_pct": 9.19,
+          "allocation_pct": 10.01
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 30488.07,
+      "total_cost_basis": 27645.04,
+      "total_gain_loss": 2843.03,
+      "total_gain_loss_pct": 10.28,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 82.28829999999999,
+          "price_per_share": 167.123,
+          "market_value": 13752.269999999999,
+          "cost_basis": 12428.970000000005,
+          "gain_loss": 1323.3,
+          "gain_loss_pct": 10.65,
+          "allocation_pct": 45.11
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 21.675900000000002,
+          "price_per_share": 279.0445,
+          "market_value": 6048.54,
+          "cost_basis": 5505.730000000002,
+          "gain_loss": 542.81,
+          "gain_loss_pct": 9.86,
+          "allocation_pct": 19.84
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 39.9179,
+          "price_per_share": 190.7846,
+          "market_value": 7615.719999999999,
+          "cost_basis": 6957.509999999997,
+          "gain_loss": 658.21,
+          "gain_loss_pct": 9.46,
+          "allocation_pct": 24.98
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 12.8178,
+          "price_per_share": 239.6308,
+          "market_value": 3071.54,
+          "cost_basis": 2752.8300000000004,
+          "gain_loss": 318.71,
+          "gain_loss_pct": 11.58,
+          "allocation_pct": 10.07
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 31112.68,
+      "total_cost_basis": 28018.9,
+      "total_gain_loss": 3093.78,
+      "total_gain_loss_pct": 11.04,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 83.28889999999998,
+          "price_per_share": 168.4636,
+          "market_value": 14031.15,
+          "cost_basis": 12597.210000000006,
+          "gain_loss": 1433.94,
+          "gain_loss_pct": 11.38,
+          "allocation_pct": 45.1
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 21.9423,
+          "price_per_share": 283.1576,
+          "market_value": 6213.13,
+          "cost_basis": 5580.510000000003,
+          "gain_loss": 632.62,
+          "gain_loss_pct": 11.34,
+          "allocation_pct": 19.97
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 40.404700000000005,
+          "price_per_share": 191.7373,
+          "market_value": 7747.09,
+          "cost_basis": 7050.969999999996,
+          "gain_loss": 696.12,
+          "gain_loss_pct": 9.87,
+          "allocation_pct": 24.9
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 12.972800000000001,
+          "price_per_share": 240.6042,
+          "market_value": 3121.31,
+          "cost_basis": 2790.2100000000005,
+          "gain_loss": 331.1,
+          "gain_loss_pct": 11.87,
+          "allocation_pct": 10.03
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 31952.63,
+      "total_cost_basis": 28392.76,
+      "total_gain_loss": 3559.87,
+      "total_gain_loss_pct": 12.54,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 84.28169999999997,
+          "price_per_share": 172.0734,
+          "market_value": 14502.64,
+          "cost_basis": 12765.450000000008,
+          "gain_loss": 1737.19,
+          "gain_loss_pct": 13.61,
+          "allocation_pct": 45.39
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 22.2049,
+          "price_per_share": 285.4397,
+          "market_value": 6338.16,
+          "cost_basis": 5655.290000000004,
+          "gain_loss": 682.87,
+          "gain_loss_pct": 12.07,
+          "allocation_pct": 19.84
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 40.889300000000006,
+          "price_per_share": 192.4036,
+          "market_value": 7867.25,
+          "cost_basis": 7144.429999999995,
+          "gain_loss": 722.82,
+          "gain_loss_pct": 10.12,
+          "allocation_pct": 24.62
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 13.1272,
+          "price_per_share": 247.1647,
+          "market_value": 3244.58,
+          "cost_basis": 2827.5900000000006,
+          "gain_loss": 416.99,
+          "gain_loss_pct": 14.75,
+          "allocation_pct": 10.15
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 32405.87,
+      "total_cost_basis": 28890.38,
+      "total_gain_loss": 3515.49,
+      "total_gain_loss_pct": 12.17,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 85.50869999999998,
+          "price_per_share": 171.257,
+          "market_value": 14643.96,
+          "cost_basis": 12977.490000000009,
+          "gain_loss": 1666.47,
+          "gain_loss_pct": 12.84,
+          "allocation_pct": 45.19
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 22.465299999999996,
+          "price_per_share": 286.5063,
+          "market_value": 6436.45,
+          "cost_basis": 5730.070000000004,
+          "gain_loss": 706.38,
+          "gain_loss_pct": 12.33,
+          "allocation_pct": 19.86
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 41.7817,
+          "price_per_share": 193.2832,
+          "market_value": 8075.7,
+          "cost_basis": 7317.849999999994,
+          "gain_loss": 757.85,
+          "gain_loss_pct": 10.36,
+          "allocation_pct": 24.92
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 13.277600000000001,
+          "price_per_share": 244.7551,
+          "market_value": 3249.76,
+          "cost_basis": 2864.9700000000007,
+          "gain_loss": 384.79,
+          "gain_loss_pct": 13.43,
+          "allocation_pct": 10.03
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 33377.62,
+      "total_cost_basis": 29264.24,
+      "total_gain_loss": 4113.38,
+      "total_gain_loss_pct": 14.06,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 86.48549999999997,
+          "price_per_share": 176.056,
+          "market_value": 15226.29,
+          "cost_basis": 13145.73000000001,
+          "gain_loss": 2080.56,
+          "gain_loss_pct": 15.83,
+          "allocation_pct": 45.62
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 22.724699999999995,
+          "price_per_share": 289.4348,
+          "market_value": 6577.32,
+          "cost_basis": 5804.850000000005,
+          "gain_loss": 772.47,
+          "gain_loss_pct": 13.31,
+          "allocation_pct": 19.71
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 42.2625,
+          "price_per_share": 193.5728,
+          "market_value": 8180.87,
+          "cost_basis": 7411.309999999993,
+          "gain_loss": 769.56,
+          "gain_loss_pct": 10.38,
+          "allocation_pct": 24.51
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 13.429400000000003,
+          "price_per_share": 252.665,
+          "market_value": 3393.14,
+          "cost_basis": 2902.350000000001,
+          "gain_loss": 490.79,
+          "gain_loss_pct": 16.91,
+          "allocation_pct": 10.17
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 34167.62,
+      "total_cost_basis": 29825.03,
+      "total_gain_loss": 4342.59,
+      "total_gain_loss_pct": 14.56,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 87.91109999999998,
+          "price_per_share": 178.2373,
+          "market_value": 15669.04,
+          "cost_basis": 13398.090000000013,
+          "gain_loss": 2270.95,
+          "gain_loss_pct": 16.95,
+          "allocation_pct": 45.86
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 23.110199999999992,
+          "price_per_share": 287.7863,
+          "market_value": 6650.8,
+          "cost_basis": 5917.020000000006,
+          "gain_loss": 733.78,
+          "gain_loss_pct": 12.4,
+          "allocation_pct": 19.47
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 42.98250000000001,
+          "price_per_share": 194.2097,
+          "market_value": 8347.62,
+          "cost_basis": 7551.499999999992,
+          "gain_loss": 796.12,
+          "gain_loss_pct": 10.54,
+          "allocation_pct": 24.43
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 13.650200000000005,
+          "price_per_share": 256.4182,
+          "market_value": 3500.16,
+          "cost_basis": 2958.420000000001,
+          "gain_loss": 541.74,
+          "gain_loss_pct": 18.31,
+          "allocation_pct": 10.24
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 34232.3,
+      "total_cost_basis": 30330.26,
+      "total_gain_loss": 3902.04,
+      "total_gain_loss_pct": 12.87,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 89.11559999999996,
+          "price_per_share": 174.5787,
+          "market_value": 15557.69,
+          "cost_basis": 13612.860000000015,
+          "gain_loss": 1944.83,
+          "gain_loss_pct": 14.29,
+          "allocation_pct": 45.45
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 23.368599999999994,
+          "price_per_share": 284.2725,
+          "market_value": 6643.05,
+          "cost_basis": 5991.800000000007,
+          "gain_loss": 651.25,
+          "gain_loss_pct": 10.87,
+          "allocation_pct": 19.41
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 43.89140000000001,
+          "price_per_share": 195.2202,
+          "market_value": 8568.49,
+          "cost_basis": 7729.799999999991,
+          "gain_loss": 838.69,
+          "gain_loss_pct": 10.85,
+          "allocation_pct": 25.03
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 13.795200000000005,
+          "price_per_share": 251.0344,
+          "market_value": 3463.07,
+          "cost_basis": 2995.800000000001,
+          "gain_loss": 467.27,
+          "gain_loss_pct": 15.6,
+          "allocation_pct": 10.12
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 34901.81,
+      "total_cost_basis": 30704.12,
+      "total_gain_loss": 4197.69,
+      "total_gain_loss_pct": 13.67,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 90.07419999999995,
+          "price_per_share": 176.325,
+          "market_value": 15882.33,
+          "cost_basis": 13781.100000000017,
+          "gain_loss": 2101.23,
+          "gain_loss_pct": 15.25,
+          "allocation_pct": 45.51
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 23.630199999999995,
+          "price_per_share": 286.2045,
+          "market_value": 6763.07,
+          "cost_basis": 6066.580000000007,
+          "gain_loss": 696.49,
+          "gain_loss_pct": 11.48,
+          "allocation_pct": 19.38
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 44.36760000000002,
+          "price_per_share": 195.8682,
+          "market_value": 8690.2,
+          "cost_basis": 7823.25999999999,
+          "gain_loss": 866.94,
+          "gain_loss_pct": 11.08,
+          "allocation_pct": 24.9
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 13.943400000000004,
+          "price_per_share": 255.7633,
+          "market_value": 3566.21,
+          "cost_basis": 3033.180000000001,
+          "gain_loss": 533.03,
+          "gain_loss_pct": 17.57,
+          "allocation_pct": 10.22
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 36023.09,
+      "total_cost_basis": 31077.98,
+      "total_gain_loss": 4945.11,
+      "total_gain_loss_pct": 15.91,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 91.02339999999994,
+          "price_per_share": 181.944,
+          "market_value": 16561.16,
+          "cost_basis": 13949.340000000018,
+          "gain_loss": 2611.82,
+          "gain_loss_pct": 18.72,
+          "allocation_pct": 45.97
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 23.889999999999993,
+          "price_per_share": 290.6974,
+          "market_value": 6944.76,
+          "cost_basis": 6141.360000000008,
+          "gain_loss": 803.4,
+          "gain_loss_pct": 13.08,
+          "allocation_pct": 19.28
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 44.84220000000001,
+          "price_per_share": 196.159,
+          "market_value": 8796.2,
+          "cost_basis": 7916.719999999989,
+          "gain_loss": 879.48,
+          "gain_loss_pct": 11.11,
+          "allocation_pct": 24.42
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 14.088800000000003,
+          "price_per_share": 264.1084,
+          "market_value": 3720.97,
+          "cost_basis": 3070.5600000000013,
+          "gain_loss": 650.41,
+          "gain_loss_pct": 21.18,
+          "allocation_pct": 10.33
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_jasmine_401k",
+      "total_value": 36870.7,
+      "total_cost_basis": 31591.81,
+      "total_gain_loss": 5278.89,
+      "total_gain_loss_pct": 16.71,
+      "holdings": [
+        {
+          "ticker": "VFIAX",
+          "name": "Vanguard 500 Index Fund Admiral",
+          "asset_class": "us_large_cap",
+          "shares": 92.21839999999993,
+          "price_per_share": 183.88,
+          "market_value": 16957.120000000003,
+          "cost_basis": 14168.30000000002,
+          "gain_loss": 2788.82,
+          "gain_loss_pct": 19.68,
+          "allocation_pct": 45.99
+        },
+        {
+          "ticker": "VTIAX",
+          "name": "Vanguard Total Intl Stock Index Admiral",
+          "asset_class": "international",
+          "shares": 24.145799999999994,
+          "price_per_share": 293.2332,
+          "market_value": 7080.35,
+          "cost_basis": 6216.1400000000085,
+          "gain_loss": 864.21,
+          "gain_loss_pct": 13.9,
+          "allocation_pct": 19.2
+        },
+        {
+          "ticker": "VBTLX",
+          "name": "Vanguard Total Bond Market Index Admiral",
+          "asset_class": "bonds",
+          "shares": 45.76490000000002,
+          "price_per_share": 196.9787,
+          "market_value": 9014.71,
+          "cost_basis": 8099.4299999999885,
+          "gain_loss": 915.28,
+          "gain_loss_pct": 11.3,
+          "allocation_pct": 24.45
+        },
+        {
+          "ticker": "VSCIX",
+          "name": "Vanguard Small-Cap Index Institutional",
+          "asset_class": "us_small_cap",
+          "shares": 14.229600000000001,
+          "price_per_share": 268.3505,
+          "market_value": 3818.52,
+          "cost_basis": 3107.9400000000014,
+          "gain_loss": 710.58,
+          "gain_loss_pct": 22.86,
+          "allocation_pct": 10.36
+        }
+      ]
+    }
+  ],
+  "acct_jasmine_ira": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 11572.02,
+      "total_cost_basis": 10554.0,
+      "total_gain_loss": 1018.02,
+      "total_gain_loss_pct": 9.65,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 37.1827,
+          "price_per_share": 156.1605,
+          "market_value": 5806.47,
+          "cost_basis": 5277.0,
+          "gain_loss": 529.47,
+          "gain_loss_pct": 10.03,
+          "allocation_pct": 50.18
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 13.6631,
+          "price_per_share": 169.1519,
+          "market_value": 2311.14,
+          "cost_basis": 2110.8,
+          "gain_loss": 200.34,
+          "gain_loss_pct": 9.49,
+          "allocation_pct": 19.97
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 16.7311,
+          "price_per_share": 102.8904,
+          "market_value": 1721.47,
+          "cost_basis": 1583.1,
+          "gain_loss": 138.37,
+          "gain_loss_pct": 8.74,
+          "allocation_pct": 14.88
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 5.7693,
+          "price_per_share": 200.9533,
+          "market_value": 1159.36,
+          "cost_basis": 1055.4,
+          "gain_loss": 103.96,
+          "gain_loss_pct": 9.85,
+          "allocation_pct": 10.02
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 7.813899999999999,
+          "price_per_share": 73.4051,
+          "market_value": 573.58,
+          "cost_basis": 527.7,
+          "gain_loss": 45.88,
+          "gain_loss_pct": 8.69,
+          "allocation_pct": 4.96
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 11743.66,
+      "total_cost_basis": 10804.0,
+      "total_gain_loss": 939.66,
+      "total_gain_loss_pct": 8.7,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 37.9663,
+          "price_per_share": 154.4133,
+          "market_value": 5862.5,
+          "cost_basis": 5402.0,
+          "gain_loss": 460.5,
+          "gain_loss_pct": 8.52,
+          "allocation_pct": 49.92
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 13.9524,
+          "price_per_share": 168.2083,
+          "market_value": 2346.91,
+          "cost_basis": 2160.8,
+          "gain_loss": 186.11,
+          "gain_loss_pct": 8.61,
+          "allocation_pct": 19.98
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 17.0878,
+          "price_per_share": 103.4159,
+          "market_value": 1767.15,
+          "cost_basis": 1620.6,
+          "gain_loss": 146.55,
+          "gain_loss_pct": 9.04,
+          "allocation_pct": 15.05
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 5.891100000000001,
+          "price_per_share": 200.2597,
+          "market_value": 1179.75,
+          "cost_basis": 1080.4,
+          "gain_loss": 99.35,
+          "gain_loss_pct": 9.2,
+          "allocation_pct": 10.05
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 7.980599999999999,
+          "price_per_share": 73.5972,
+          "market_value": 587.35,
+          "cost_basis": 540.2,
+          "gain_loss": 47.15,
+          "gain_loss_pct": 8.73,
+          "allocation_pct": 5.0
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 12157.18,
+      "total_cost_basis": 11098.76,
+      "total_gain_loss": 1058.42,
+      "total_gain_loss_pct": 9.54,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 38.8748,
+          "price_per_share": 156.4412,
+          "market_value": 6081.62,
+          "cost_basis": 5545.19,
+          "gain_loss": 536.43,
+          "gain_loss_pct": 9.67,
+          "allocation_pct": 50.02
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 14.243400000000001,
+          "price_per_share": 170.3947,
+          "market_value": 2427.0,
+          "cost_basis": 2210.8,
+          "gain_loss": 216.2,
+          "gain_loss_pct": 9.78,
+          "allocation_pct": 19.96
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 17.6156,
+          "price_per_share": 103.6695,
+          "market_value": 1826.1999999999998,
+          "cost_basis": 1676.1799999999998,
+          "gain_loss": 150.02,
+          "gain_loss_pct": 8.95,
+          "allocation_pct": 15.02
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.055100000000001,
+          "price_per_share": 201.6697,
+          "market_value": 1221.13,
+          "cost_basis": 1113.89,
+          "gain_loss": 107.24,
+          "gain_loss_pct": 9.63,
+          "allocation_pct": 10.04
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 8.146899999999999,
+          "price_per_share": 73.7986,
+          "market_value": 601.23,
+          "cost_basis": 552.7,
+          "gain_loss": 48.53,
+          "gain_loss_pct": 8.78,
+          "allocation_pct": 4.95
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 12517.96,
+      "total_cost_basis": 11348.76,
+      "total_gain_loss": 1169.2,
+      "total_gain_loss_pct": 10.3,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 39.6577,
+          "price_per_share": 157.9439,
+          "market_value": 6263.69,
+          "cost_basis": 5670.19,
+          "gain_loss": 593.5,
+          "gain_loss_pct": 10.47,
+          "allocation_pct": 50.04
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 14.5309,
+          "price_per_share": 172.5289,
+          "market_value": 2507.0,
+          "cost_basis": 2260.8,
+          "gain_loss": 246.2,
+          "gain_loss_pct": 10.89,
+          "allocation_pct": 20.03
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 17.97,
+          "price_per_share": 104.2204,
+          "market_value": 1872.84,
+          "cost_basis": 1713.6799999999998,
+          "gain_loss": 159.16,
+          "gain_loss_pct": 9.29,
+          "allocation_pct": 14.96
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.176600000000001,
+          "price_per_share": 203.8824,
+          "market_value": 1259.3,
+          "cost_basis": 1138.89,
+          "gain_loss": 120.41,
+          "gain_loss_pct": 10.57,
+          "allocation_pct": 10.06
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 8.3128,
+          "price_per_share": 73.9979,
+          "market_value": 615.13,
+          "cost_basis": 565.2,
+          "gain_loss": 49.93,
+          "gain_loss_pct": 8.83,
+          "allocation_pct": 4.91
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 12895.26,
+      "total_cost_basis": 11598.76,
+      "total_gain_loss": 1296.5,
+      "total_gain_loss_pct": 11.18,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 40.4336,
+          "price_per_share": 160.2056,
+          "market_value": 6477.69,
+          "cost_basis": 5795.19,
+          "gain_loss": 682.5,
+          "gain_loss_pct": 11.78,
+          "allocation_pct": 50.23
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 14.815000000000001,
+          "price_per_share": 174.0243,
+          "market_value": 2578.17,
+          "cost_basis": 2310.8,
+          "gain_loss": 267.37,
+          "gain_loss_pct": 11.57,
+          "allocation_pct": 19.99
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 18.322799999999997,
+          "price_per_share": 104.5965,
+          "market_value": 1916.5,
+          "cost_basis": 1751.1799999999998,
+          "gain_loss": 165.32,
+          "gain_loss_pct": 9.44,
+          "allocation_pct": 14.86
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.296800000000001,
+          "price_per_share": 205.4949,
+          "market_value": 1293.96,
+          "cost_basis": 1163.89,
+          "gain_loss": 130.07,
+          "gain_loss_pct": 11.18,
+          "allocation_pct": 10.03
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 8.478399999999999,
+          "price_per_share": 74.1814,
+          "market_value": 628.94,
+          "cost_basis": 577.7,
+          "gain_loss": 51.24,
+          "gain_loss_pct": 8.87,
+          "allocation_pct": 4.88
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 13208.56,
+      "total_cost_basis": 11897.41,
+      "total_gain_loss": 1311.15,
+      "total_gain_loss_pct": 11.02,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 41.3223,
+          "price_per_share": 159.8907,
+          "market_value": 6607.05,
+          "cost_basis": 5939.95,
+          "gain_loss": 667.1,
+          "gain_loss_pct": 11.23,
+          "allocation_pct": 50.02
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 15.096900000000002,
+          "price_per_share": 175.126,
+          "market_value": 2643.86,
+          "cost_basis": 2360.8,
+          "gain_loss": 283.06,
+          "gain_loss_pct": 11.99,
+          "allocation_pct": 20.02
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 18.859299999999998,
+          "price_per_share": 105.1147,
+          "market_value": 1982.39,
+          "cost_basis": 1808.31,
+          "gain_loss": 174.08,
+          "gain_loss_pct": 9.63,
+          "allocation_pct": 15.01
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.460800000000001,
+          "price_per_share": 206.1107,
+          "market_value": 1331.64,
+          "cost_basis": 1198.15,
+          "gain_loss": 133.49,
+          "gain_loss_pct": 11.14,
+          "allocation_pct": 10.08
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 8.6436,
+          "price_per_share": 74.462,
+          "market_value": 643.62,
+          "cost_basis": 590.2,
+          "gain_loss": 53.42,
+          "gain_loss_pct": 9.05,
+          "allocation_pct": 4.87
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 13683.93,
+      "total_cost_basis": 12147.41,
+      "total_gain_loss": 1536.52,
+      "total_gain_loss_pct": 12.65,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 42.0896,
+          "price_per_share": 163.9711,
+          "market_value": 6901.48,
+          "cost_basis": 6064.95,
+          "gain_loss": 836.53,
+          "gain_loss_pct": 13.79,
+          "allocation_pct": 50.43
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 15.377100000000002,
+          "price_per_share": 177.499,
+          "market_value": 2729.42,
+          "cost_basis": 2410.8,
+          "gain_loss": 318.62,
+          "gain_loss_pct": 13.22,
+          "allocation_pct": 19.95
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 19.2094,
+          "price_per_share": 105.3417,
+          "market_value": 2023.55,
+          "cost_basis": 1845.81,
+          "gain_loss": 177.74,
+          "gain_loss_pct": 9.63,
+          "allocation_pct": 14.79
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.579900000000001,
+          "price_per_share": 208.4819,
+          "market_value": 1371.79,
+          "cost_basis": 1223.15,
+          "gain_loss": 148.64,
+          "gain_loss_pct": 12.15,
+          "allocation_pct": 10.02
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 8.8083,
+          "price_per_share": 74.6671,
+          "market_value": 657.69,
+          "cost_basis": 602.7,
+          "gain_loss": 54.99,
+          "gain_loss_pct": 9.12,
+          "allocation_pct": 4.81
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 13968.35,
+      "total_cost_basis": 12397.41,
+      "total_gain_loss": 1570.94,
+      "total_gain_loss_pct": 12.67,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 42.8384,
+          "price_per_share": 165.1584,
+          "market_value": 7075.12,
+          "cost_basis": 6189.95,
+          "gain_loss": 885.17,
+          "gain_loss_pct": 14.3,
+          "allocation_pct": 50.65
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 15.653700000000002,
+          "price_per_share": 176.4369,
+          "market_value": 2761.89,
+          "cost_basis": 2460.8,
+          "gain_loss": 301.09,
+          "gain_loss_pct": 12.24,
+          "allocation_pct": 19.77
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 19.558899999999998,
+          "price_per_share": 105.6598,
+          "market_value": 2066.59,
+          "cost_basis": 1883.31,
+          "gain_loss": 183.28,
+          "gain_loss_pct": 9.73,
+          "allocation_pct": 14.79
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.697700000000001,
+          "price_per_share": 207.9639,
+          "market_value": 1392.88,
+          "cost_basis": 1248.15,
+          "gain_loss": 144.73,
+          "gain_loss_pct": 11.6,
+          "allocation_pct": 9.97
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 8.9726,
+          "price_per_share": 74.8802,
+          "market_value": 671.87,
+          "cost_basis": 615.2,
+          "gain_loss": 56.67,
+          "gain_loss_pct": 9.21,
+          "allocation_pct": 4.81
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 14129.13,
+      "total_cost_basis": 12699.66,
+      "total_gain_loss": 1429.47,
+      "total_gain_loss_pct": 11.26,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 43.712399999999995,
+          "price_per_share": 162.3176,
+          "market_value": 7095.29,
+          "cost_basis": 6336.17,
+          "gain_loss": 759.12,
+          "gain_loss_pct": 11.98,
+          "allocation_pct": 50.22
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 15.932000000000002,
+          "price_per_share": 175.1086,
+          "market_value": 2789.83,
+          "cost_basis": 2510.8,
+          "gain_loss": 279.03,
+          "gain_loss_pct": 11.11,
+          "allocation_pct": 19.75
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 20.104599999999998,
+          "price_per_share": 106.3687,
+          "market_value": 2138.5,
+          "cost_basis": 1941.98,
+          "gain_loss": 196.52,
+          "gain_loss_pct": 10.12,
+          "allocation_pct": 15.14
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.863200000000001,
+          "price_per_share": 206.749,
+          "market_value": 1418.9599999999998,
+          "cost_basis": 1283.01,
+          "gain_loss": 135.95,
+          "gain_loss_pct": 10.6,
+          "allocation_pct": 10.04
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 9.1365,
+          "price_per_share": 75.1437,
+          "market_value": 686.55,
+          "cost_basis": 627.7,
+          "gain_loss": 58.85,
+          "gain_loss_pct": 9.38,
+          "allocation_pct": 4.86
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 14507.43,
+      "total_cost_basis": 12949.66,
+      "total_gain_loss": 1557.77,
+      "total_gain_loss_pct": 12.03,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 44.469199999999994,
+          "price_per_share": 164.2481,
+          "market_value": 7303.98,
+          "cost_basis": 6461.17,
+          "gain_loss": 842.81,
+          "gain_loss_pct": 13.04,
+          "allocation_pct": 50.35
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 16.212500000000002,
+          "price_per_share": 176.9542,
+          "market_value": 2868.87,
+          "cost_basis": 2560.8,
+          "gain_loss": 308.07,
+          "gain_loss_pct": 12.03,
+          "allocation_pct": 19.78
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 20.451099999999997,
+          "price_per_share": 106.7053,
+          "market_value": 2182.24,
+          "cost_basis": 1979.48,
+          "gain_loss": 202.76,
+          "gain_loss_pct": 10.24,
+          "allocation_pct": 15.04
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 6.982000000000001,
+          "price_per_share": 207.992,
+          "market_value": 1452.2,
+          "cost_basis": 1308.01,
+          "gain_loss": 144.19,
+          "gain_loss_pct": 11.02,
+          "allocation_pct": 10.01
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 9.2999,
+          "price_per_share": 75.2847,
+          "market_value": 700.14,
+          "cost_basis": 640.2,
+          "gain_loss": 59.94,
+          "gain_loss_pct": 9.36,
+          "allocation_pct": 4.83
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 14971.13,
+      "total_cost_basis": 13199.66,
+      "total_gain_loss": 1771.47,
+      "total_gain_loss_pct": 13.42,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 45.21739999999999,
+          "price_per_share": 167.3911,
+          "market_value": 7568.99,
+          "cost_basis": 6586.17,
+          "gain_loss": 982.82,
+          "gain_loss_pct": 14.92,
+          "allocation_pct": 50.56
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 16.4902,
+          "price_per_share": 180.1834,
+          "market_value": 2971.26,
+          "cost_basis": 2610.8,
+          "gain_loss": 360.46,
+          "gain_loss_pct": 13.81,
+          "allocation_pct": 19.85
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 20.796599999999998,
+          "price_per_share": 106.966,
+          "market_value": 2224.53,
+          "cost_basis": 2016.98,
+          "gain_loss": 207.55,
+          "gain_loss_pct": 10.29,
+          "allocation_pct": 14.86
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 7.100200000000001,
+          "price_per_share": 210.1307,
+          "market_value": 1491.97,
+          "cost_basis": 1333.01,
+          "gain_loss": 158.96,
+          "gain_loss_pct": 11.92,
+          "allocation_pct": 9.97
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 9.463,
+          "price_per_share": 75.4919,
+          "market_value": 714.38,
+          "cost_basis": 652.7,
+          "gain_loss": 61.68,
+          "gain_loss_pct": 9.45,
+          "allocation_pct": 4.77
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_jasmine_ira",
+      "total_value": 15416.87,
+      "total_cost_basis": 13506.39,
+      "total_gain_loss": 1910.48,
+      "total_gain_loss_pct": 14.15,
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "name": "Vanguard Total Stock Market ETF",
+          "asset_class": "us_total_market",
+          "shares": 46.089499999999994,
+          "price_per_share": 169.1275,
+          "market_value": 7795.0,
+          "cost_basis": 6734.49,
+          "gain_loss": 1060.51,
+          "gain_loss_pct": 15.75,
+          "allocation_pct": 50.56
+        },
+        {
+          "ticker": "VXUS",
+          "name": "Vanguard Total International Stock ETF",
+          "asset_class": "international",
+          "shares": 16.7631,
+          "price_per_share": 182.5289,
+          "market_value": 3059.75,
+          "cost_basis": 2660.8,
+          "gain_loss": 398.95,
+          "gain_loss_pct": 14.99,
+          "allocation_pct": 19.85
+        },
+        {
+          "ticker": "BND",
+          "name": "Vanguard Total Bond Market ETF",
+          "asset_class": "bonds",
+          "shares": 21.350699999999996,
+          "price_per_share": 107.5403,
+          "market_value": 2296.06,
+          "cost_basis": 2077.21,
+          "gain_loss": 218.85,
+          "gain_loss_pct": 10.54,
+          "allocation_pct": 14.89
+        },
+        {
+          "ticker": "VNQ",
+          "name": "Vanguard Real Estate ETF",
+          "asset_class": "real_estate",
+          "shares": 7.267400000000001,
+          "price_per_share": 211.4222,
+          "market_value": 1536.49,
+          "cost_basis": 1368.69,
+          "gain_loss": 167.8,
+          "gain_loss_pct": 12.26,
+          "allocation_pct": 9.97
+        },
+        {
+          "ticker": "VTIP",
+          "name": "Vanguard Short-Term Inflation-Protected ETF",
+          "asset_class": "tips",
+          "shares": 9.625699999999998,
+          "price_per_share": 75.794,
+          "market_value": 729.57,
+          "cost_basis": 665.2,
+          "gain_loss": 64.37,
+          "gain_loss_pct": 9.68,
+          "allocation_pct": 4.73
+        }
+      ]
+    }
+  ],
+  "acct_529_darius": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_529_darius",
+      "total_value": 19090.56,
+      "total_cost_basis": 17350.0,
+      "total_gain_loss": 1740.56,
+      "total_gain_loss_pct": 10.03,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 82.1057,
+          "price_per_share": 162.8072,
+          "market_value": 13367.4,
+          "cost_basis": 12145.0,
+          "gain_loss": 1222.4,
+          "gain_loss_pct": 10.07,
+          "allocation_pct": 70.02
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 25.7897,
+          "price_per_share": 221.9165,
+          "market_value": 5723.16,
+          "cost_basis": 5205.0,
+          "gain_loss": 518.16,
+          "gain_loss_pct": 9.96,
+          "allocation_pct": 29.98
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_529_darius",
+      "total_value": 19005.7,
+      "total_cost_basis": 17450.0,
+      "total_gain_loss": 1555.7,
+      "total_gain_loss_pct": 8.92,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 82.5334,
+          "price_per_share": 161.2422,
+          "market_value": 13307.87,
+          "cost_basis": 12215.0,
+          "gain_loss": 1092.87,
+          "gain_loss_pct": 8.95,
+          "allocation_pct": 70.02
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 25.9242,
+          "price_per_share": 219.7881,
+          "market_value": 5697.83,
+          "cost_basis": 5235.0,
+          "gain_loss": 462.83,
+          "gain_loss_pct": 8.84,
+          "allocation_pct": 29.98
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_529_darius",
+      "total_value": 19289.34,
+      "total_cost_basis": 17550.0,
+      "total_gain_loss": 1739.34,
+      "total_gain_loss_pct": 9.91,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 82.9653,
+          "price_per_share": 162.6042,
+          "market_value": 13490.51,
+          "cost_basis": 12285.0,
+          "gain_loss": 1205.51,
+          "gain_loss_pct": 9.81,
+          "allocation_pct": 69.94
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.06,
+          "price_per_share": 222.5184,
+          "market_value": 5798.83,
+          "cost_basis": 5265.0,
+          "gain_loss": 533.83,
+          "gain_loss_pct": 10.14,
+          "allocation_pct": 30.06
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_529_darius",
+      "total_value": 19590.18,
+      "total_cost_basis": 17650.0,
+      "total_gain_loss": 1940.18,
+      "total_gain_loss_pct": 10.99,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 83.39359999999999,
+          "price_per_share": 164.5113,
+          "market_value": 13719.19,
+          "cost_basis": 12355.0,
+          "gain_loss": 1364.19,
+          "gain_loss_pct": 11.04,
+          "allocation_pct": 70.03
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.1941,
+          "price_per_share": 224.1341,
+          "market_value": 5870.99,
+          "cost_basis": 5295.0,
+          "gain_loss": 575.99,
+          "gain_loss_pct": 10.88,
+          "allocation_pct": 29.97
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_529_darius",
+      "total_value": 19986.33,
+      "total_cost_basis": 17750.0,
+      "total_gain_loss": 2236.33,
+      "total_gain_loss_pct": 12.6,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 83.81689999999999,
+          "price_per_share": 167.2231,
+          "market_value": 14016.12,
+          "cost_basis": 12425.0,
+          "gain_loss": 1591.12,
+          "gain_loss_pct": 12.81,
+          "allocation_pct": 70.13
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.327299999999997,
+          "price_per_share": 226.7688,
+          "market_value": 5970.21,
+          "cost_basis": 5325.0,
+          "gain_loss": 645.21,
+          "gain_loss_pct": 12.12,
+          "allocation_pct": 29.87
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_529_darius",
+      "total_value": 20041.78,
+      "total_cost_basis": 17850.0,
+      "total_gain_loss": 2191.78,
+      "total_gain_loss_pct": 12.28,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 84.23339999999999,
+          "price_per_share": 166.8399,
+          "market_value": 14053.49,
+          "cost_basis": 12495.0,
+          "gain_loss": 1558.49,
+          "gain_loss_pct": 12.47,
+          "allocation_pct": 70.12
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.458899999999996,
+          "price_per_share": 226.3242,
+          "market_value": 5988.29,
+          "cost_basis": 5355.0,
+          "gain_loss": 633.29,
+          "gain_loss_pct": 11.83,
+          "allocation_pct": 29.88
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_529_darius",
+      "total_value": 20484.93,
+      "total_cost_basis": 17950.0,
+      "total_gain_loss": 2534.93,
+      "total_gain_loss_pct": 14.12,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 84.6509,
+          "price_per_share": 169.9271,
+          "market_value": 14384.48,
+          "cost_basis": 12565.0,
+          "gain_loss": 1819.48,
+          "gain_loss_pct": 14.48,
+          "allocation_pct": 70.22
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.590799999999998,
+          "price_per_share": 229.4196,
+          "market_value": 6100.45,
+          "cost_basis": 5385.0,
+          "gain_loss": 715.45,
+          "gain_loss_pct": 13.29,
+          "allocation_pct": 29.78
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_529_darius",
+      "total_value": 20707.77,
+      "total_cost_basis": 18050.0,
+      "total_gain_loss": 2657.77,
+      "total_gain_loss_pct": 14.72,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 85.06079999999999,
+          "price_per_share": 170.9188,
+          "market_value": 14538.49,
+          "cost_basis": 12635.0,
+          "gain_loss": 1903.49,
+          "gain_loss_pct": 15.07,
+          "allocation_pct": 70.21
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.720899999999997,
+          "price_per_share": 230.8785,
+          "market_value": 6169.28,
+          "cost_basis": 5415.0,
+          "gain_loss": 754.28,
+          "gain_loss_pct": 13.93,
+          "allocation_pct": 29.79
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_529_darius",
+      "total_value": 20555.14,
+      "total_cost_basis": 18150.0,
+      "total_gain_loss": 2405.14,
+      "total_gain_loss_pct": 13.25,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 85.46839999999999,
+          "price_per_share": 168.6202,
+          "market_value": 14411.7,
+          "cost_basis": 12705.0,
+          "gain_loss": 1706.7,
+          "gain_loss_pct": 13.43,
+          "allocation_pct": 70.11
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.850199999999997,
+          "price_per_share": 228.8043,
+          "market_value": 6143.44,
+          "cost_basis": 5445.0,
+          "gain_loss": 698.44,
+          "gain_loss_pct": 12.83,
+          "allocation_pct": 29.89
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_529_darius",
+      "total_value": 20841.08,
+      "total_cost_basis": 18250.0,
+      "total_gain_loss": 2591.08,
+      "total_gain_loss_pct": 14.2,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 85.88149999999999,
+          "price_per_share": 170.2629,
+          "market_value": 14622.43,
+          "cost_basis": 12775.0,
+          "gain_loss": 1847.43,
+          "gain_loss_pct": 14.46,
+          "allocation_pct": 70.16
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 26.9807,
+          "price_per_share": 230.4851,
+          "market_value": 6218.65,
+          "cost_basis": 5475.0,
+          "gain_loss": 743.65,
+          "gain_loss_pct": 13.58,
+          "allocation_pct": 29.84
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_529_darius",
+      "total_value": 21309.27,
+      "total_cost_basis": 18350.0,
+      "total_gain_loss": 2959.27,
+      "total_gain_loss_pct": 16.13,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 86.29069999999999,
+          "price_per_share": 172.8133,
+          "market_value": 14912.18,
+          "cost_basis": 12845.0,
+          "gain_loss": 2067.18,
+          "gain_loss_pct": 16.09,
+          "allocation_pct": 69.98
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 27.1102,
+          "price_per_share": 235.9662,
+          "market_value": 6397.09,
+          "cost_basis": 5505.0,
+          "gain_loss": 892.09,
+          "gain_loss_pct": 16.21,
+          "allocation_pct": 30.02
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_529_darius",
+      "total_value": 21656.46,
+      "total_cost_basis": 18450.0,
+      "total_gain_loss": 3206.46,
+      "total_gain_loss_pct": 17.38,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 86.69389999999999,
+          "price_per_share": 175.0158,
+          "market_value": 15172.8,
+          "cost_basis": 12915.0,
+          "gain_loss": 2257.8,
+          "gain_loss_pct": 17.48,
+          "allocation_pct": 70.06
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 27.2367,
+          "price_per_share": 238.0487,
+          "market_value": 6483.66,
+          "cost_basis": 5535.0,
+          "gain_loss": 948.66,
+          "gain_loss_pct": 17.14,
+          "allocation_pct": 29.94
+        }
+      ]
+    }
+  ],
+  "acct_529_amara": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_529_amara",
+      "total_value": 9403.24,
+      "total_cost_basis": 8564.0,
+      "total_gain_loss": 839.24,
+      "total_gain_loss_pct": 9.8,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 43.3504,
+          "price_per_share": 151.7721,
+          "market_value": 6579.38,
+          "cost_basis": 5994.8,
+          "gain_loss": 584.58,
+          "gain_loss_pct": 9.75,
+          "allocation_pct": 69.97
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 35.514,
+          "price_per_share": 79.514,
+          "market_value": 2823.86,
+          "cost_basis": 2569.2,
+          "gain_loss": 254.66,
+          "gain_loss_pct": 9.91,
+          "allocation_pct": 30.03
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_529_amara",
+      "total_value": 9429.04,
+      "total_cost_basis": 8664.0,
+      "total_gain_loss": 765.04,
+      "total_gain_loss_pct": 8.83,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 43.8068,
+          "price_per_share": 150.6798,
+          "market_value": 6600.8,
+          "cost_basis": 6064.8,
+          "gain_loss": 536.0,
+          "gain_loss_pct": 8.84,
+          "allocation_pct": 70.01
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 35.8873,
+          "price_per_share": 78.8089,
+          "market_value": 2828.24,
+          "cost_basis": 2599.2,
+          "gain_loss": 229.04,
+          "gain_loss_pct": 8.81,
+          "allocation_pct": 29.99
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_529_amara",
+      "total_value": 9622.06,
+      "total_cost_basis": 8764.0,
+      "total_gain_loss": 858.06,
+      "total_gain_loss_pct": 9.79,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 44.2665,
+          "price_per_share": 151.9944,
+          "market_value": 6728.26,
+          "cost_basis": 6134.8,
+          "gain_loss": 593.46,
+          "gain_loss_pct": 9.67,
+          "allocation_pct": 69.93
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 36.264,
+          "price_per_share": 79.7981,
+          "market_value": 2893.8,
+          "cost_basis": 2629.2,
+          "gain_loss": 264.6,
+          "gain_loss_pct": 10.06,
+          "allocation_pct": 30.07
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_529_amara",
+      "total_value": 9826.41,
+      "total_cost_basis": 8864.0,
+      "total_gain_loss": 962.41,
+      "total_gain_loss_pct": 10.86,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 44.722300000000004,
+          "price_per_share": 153.8076,
+          "market_value": 6878.63,
+          "cost_basis": 6204.8,
+          "gain_loss": 673.83,
+          "gain_loss_pct": 10.86,
+          "allocation_pct": 70.0
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 36.636100000000006,
+          "price_per_share": 80.4611,
+          "market_value": 2947.78,
+          "cost_basis": 2659.2,
+          "gain_loss": 288.58,
+          "gain_loss_pct": 10.85,
+          "allocation_pct": 30.0
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_529_amara",
+      "total_value": 10094.02,
+      "total_cost_basis": 8964.0,
+      "total_gain_loss": 1130.02,
+      "total_gain_loss_pct": 12.61,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 45.1728,
+          "price_per_share": 156.3773,
+          "market_value": 7064.0,
+          "cost_basis": 6274.8,
+          "gain_loss": 789.2,
+          "gain_loss_pct": 12.58,
+          "allocation_pct": 69.98
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 37.00520000000001,
+          "price_per_share": 81.8809,
+          "market_value": 3030.02,
+          "cost_basis": 2689.2,
+          "gain_loss": 340.82,
+          "gain_loss_pct": 12.67,
+          "allocation_pct": 30.02
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_529_amara",
+      "total_value": 10175.72,
+      "total_cost_basis": 9064.0,
+      "total_gain_loss": 1111.72,
+      "total_gain_loss_pct": 12.27,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 45.616,
+          "price_per_share": 156.0915,
+          "market_value": 7120.27,
+          "cost_basis": 6344.8,
+          "gain_loss": 775.47,
+          "gain_loss_pct": 12.22,
+          "allocation_pct": 69.97
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 37.36800000000001,
+          "price_per_share": 81.7665,
+          "market_value": 3055.45,
+          "cost_basis": 2719.2,
+          "gain_loss": 336.25,
+          "gain_loss_pct": 12.37,
+          "allocation_pct": 30.03
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_529_amara",
+      "total_value": 10447.19,
+      "total_cost_basis": 9164.0,
+      "total_gain_loss": 1283.19,
+      "total_gain_loss_pct": 14.0,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 46.0601,
+          "price_per_share": 158.4788,
+          "market_value": 7299.55,
+          "cost_basis": 6414.8,
+          "gain_loss": 884.75,
+          "gain_loss_pct": 13.79,
+          "allocation_pct": 69.87
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 37.73130000000001,
+          "price_per_share": 83.4225,
+          "market_value": 3147.64,
+          "cost_basis": 2749.2,
+          "gain_loss": 398.44,
+          "gain_loss_pct": 14.49,
+          "allocation_pct": 30.13
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_529_amara",
+      "total_value": 10597.63,
+      "total_cost_basis": 9264.0,
+      "total_gain_loss": 1333.63,
+      "total_gain_loss_pct": 14.4,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 46.4976,
+          "price_per_share": 159.1917,
+          "market_value": 7402.03,
+          "cost_basis": 6484.8,
+          "gain_loss": 917.23,
+          "gain_loss_pct": 14.14,
+          "allocation_pct": 69.85
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 38.08750000000001,
+          "price_per_share": 83.9015,
+          "market_value": 3195.6,
+          "cost_basis": 2779.2,
+          "gain_loss": 416.4,
+          "gain_loss_pct": 14.98,
+          "allocation_pct": 30.15
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_529_amara",
+      "total_value": 10542.16,
+      "total_cost_basis": 9364.0,
+      "total_gain_loss": 1178.16,
+      "total_gain_loss_pct": 12.58,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 46.9332,
+          "price_per_share": 156.762,
+          "market_value": 7357.34,
+          "cost_basis": 6554.8,
+          "gain_loss": 802.54,
+          "gain_loss_pct": 12.24,
+          "allocation_pct": 69.79
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 38.44170000000001,
+          "price_per_share": 82.8481,
+          "market_value": 3184.82,
+          "cost_basis": 2809.2,
+          "gain_loss": 375.62,
+          "gain_loss_pct": 13.37,
+          "allocation_pct": 30.21
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_529_amara",
+      "total_value": 10733.2,
+      "total_cost_basis": 9464.0,
+      "total_gain_loss": 1269.2,
+      "total_gain_loss_pct": 13.41,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 47.3755,
+          "price_per_share": 157.9829,
+          "market_value": 7484.52,
+          "cost_basis": 6624.8,
+          "gain_loss": 859.72,
+          "gain_loss_pct": 12.98,
+          "allocation_pct": 69.73
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 38.80040000000001,
+          "price_per_share": 83.728,
+          "market_value": 3248.68,
+          "cost_basis": 2839.2,
+          "gain_loss": 409.48,
+          "gain_loss_pct": 14.42,
+          "allocation_pct": 30.27
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_529_amara",
+      "total_value": 11068.48,
+      "total_cost_basis": 9564.0,
+      "total_gain_loss": 1504.48,
+      "total_gain_loss_pct": 15.73,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 47.8145,
+          "price_per_share": 161.941,
+          "market_value": 7743.13,
+          "cost_basis": 6694.8,
+          "gain_loss": 1048.33,
+          "gain_loss_pct": 15.66,
+          "allocation_pct": 69.96
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 39.15540000000001,
+          "price_per_share": 84.927,
+          "market_value": 3325.35,
+          "cost_basis": 2869.2,
+          "gain_loss": 456.15,
+          "gain_loss_pct": 15.9,
+          "allocation_pct": 30.04
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_529_amara",
+      "total_value": 11276.67,
+      "total_cost_basis": 9664.0,
+      "total_gain_loss": 1612.67,
+      "total_gain_loss_pct": 16.69,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 48.242900000000006,
+          "price_per_share": 163.3169,
+          "market_value": 7878.88,
+          "cost_basis": 6764.8,
+          "gain_loss": 1114.08,
+          "gain_loss_pct": 16.47,
+          "allocation_pct": 69.87
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 39.505500000000005,
+          "price_per_share": 86.008,
+          "market_value": 3397.79,
+          "cost_basis": 2899.2,
+          "gain_loss": 498.59,
+          "gain_loss_pct": 17.2,
+          "allocation_pct": 30.13
+        }
+      ]
+    }
+  ],
+  "acct_529_elijah": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 2513.82,
+      "total_cost_basis": 2283.0,
+      "total_gain_loss": 230.82,
+      "total_gain_loss_pct": 10.11,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 6.7842,
+          "price_per_share": 259.6798,
+          "market_value": 1761.72,
+          "cost_basis": 1598.1,
+          "gain_loss": 163.62,
+          "gain_loss_pct": 10.24,
+          "allocation_pct": 70.08
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 3.8893999999999997,
+          "price_per_share": 193.3717,
+          "market_value": 752.1,
+          "cost_basis": 684.9,
+          "gain_loss": 67.2,
+          "gain_loss_pct": 9.81,
+          "allocation_pct": 29.92
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 2568.27,
+      "total_cost_basis": 2358.0,
+      "total_gain_loss": 210.27,
+      "total_gain_loss_pct": 8.92,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 6.9805,
+          "price_per_share": 257.6105,
+          "market_value": 1798.25,
+          "cost_basis": 1650.6,
+          "gain_loss": 147.65,
+          "gain_loss_pct": 8.95,
+          "allocation_pct": 70.02
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.0024,
+          "price_per_share": 192.3896,
+          "market_value": 770.02,
+          "cost_basis": 707.4,
+          "gain_loss": 62.62,
+          "gain_loss_pct": 8.85,
+          "allocation_pct": 29.98
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 2671.74,
+      "total_cost_basis": 2433.0,
+      "total_gain_loss": 238.74,
+      "total_gain_loss_pct": 9.81,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 7.1785000000000005,
+          "price_per_share": 260.4583,
+          "market_value": 1869.7,
+          "cost_basis": 1703.1,
+          "gain_loss": 166.6,
+          "gain_loss_pct": 9.78,
+          "allocation_pct": 69.98
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.116,
+          "price_per_share": 194.8591,
+          "market_value": 802.04,
+          "cost_basis": 729.9,
+          "gain_loss": 72.14,
+          "gain_loss_pct": 9.88,
+          "allocation_pct": 30.02
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 2777.49,
+      "total_cost_basis": 2508.0,
+      "total_gain_loss": 269.49,
+      "total_gain_loss_pct": 10.75,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 7.374600000000001,
+          "price_per_share": 263.4868,
+          "market_value": 1943.11,
+          "cost_basis": 1755.6,
+          "gain_loss": 187.51,
+          "gain_loss_pct": 10.68,
+          "allocation_pct": 69.96
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.2283,
+          "price_per_share": 197.3323,
+          "market_value": 834.38,
+          "cost_basis": 752.4,
+          "gain_loss": 81.98,
+          "gain_loss_pct": 10.9,
+          "allocation_pct": 30.04
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 2893.92,
+      "total_cost_basis": 2583.0,
+      "total_gain_loss": 310.92,
+      "total_gain_loss_pct": 12.04,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 7.568600000000001,
+          "price_per_share": 267.4259,
+          "market_value": 2024.04,
+          "cost_basis": 1808.1,
+          "gain_loss": 215.94,
+          "gain_loss_pct": 11.94,
+          "allocation_pct": 69.94
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.3393,
+          "price_per_share": 200.4655,
+          "market_value": 869.88,
+          "cost_basis": 774.9,
+          "gain_loss": 94.98,
+          "gain_loss_pct": 12.26,
+          "allocation_pct": 30.06
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 2962.88,
+      "total_cost_basis": 2658.0,
+      "total_gain_loss": 304.88,
+      "total_gain_loss_pct": 11.47,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 7.760000000000001,
+          "price_per_share": 267.0722,
+          "market_value": 2072.48,
+          "cost_basis": 1860.6,
+          "gain_loss": 211.88,
+          "gain_loss_pct": 11.39,
+          "allocation_pct": 69.95
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.4487,
+          "price_per_share": 200.1484,
+          "market_value": 890.4,
+          "cost_basis": 797.4,
+          "gain_loss": 93.0,
+          "gain_loss_pct": 11.66,
+          "allocation_pct": 30.05
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 3092.88,
+      "total_cost_basis": 2733.0,
+      "total_gain_loss": 359.88,
+      "total_gain_loss_pct": 13.17,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 7.951700000000001,
+          "price_per_share": 272.343,
+          "market_value": 2165.59,
+          "cost_basis": 1913.1,
+          "gain_loss": 252.49,
+          "gain_loss_pct": 13.2,
+          "allocation_pct": 70.02
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.5583,
+          "price_per_share": 203.4289,
+          "market_value": 927.29,
+          "cost_basis": 819.9,
+          "gain_loss": 107.39,
+          "gain_loss_pct": 13.1,
+          "allocation_pct": 29.98
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 3183.35,
+      "total_cost_basis": 2808.0,
+      "total_gain_loss": 375.35,
+      "total_gain_loss_pct": 13.37,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 8.1399,
+          "price_per_share": 273.7859,
+          "market_value": 2228.59,
+          "cost_basis": 1965.6,
+          "gain_loss": 262.99,
+          "gain_loss_pct": 13.38,
+          "allocation_pct": 70.01
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.6663,
+          "price_per_share": 204.6075,
+          "market_value": 954.76,
+          "cost_basis": 842.4,
+          "gain_loss": 112.36,
+          "gain_loss_pct": 13.34,
+          "allocation_pct": 29.99
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 3219.96,
+      "total_cost_basis": 2883.0,
+      "total_gain_loss": 336.96,
+      "total_gain_loss_pct": 11.69,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 8.327200000000001,
+          "price_per_share": 270.5051,
+          "market_value": 2252.55,
+          "cost_basis": 2018.1,
+          "gain_loss": 234.45,
+          "gain_loss_pct": 11.62,
+          "allocation_pct": 69.96
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.7737,
+          "price_per_share": 202.6541,
+          "market_value": 967.41,
+          "cost_basis": 864.9,
+          "gain_loss": 102.51,
+          "gain_loss_pct": 11.85,
+          "allocation_pct": 30.04
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 3328.45,
+      "total_cost_basis": 2958.0,
+      "total_gain_loss": 370.45,
+      "total_gain_loss_pct": 12.52,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 8.516900000000001,
+          "price_per_share": 273.2485,
+          "market_value": 2327.23,
+          "cost_basis": 2070.6,
+          "gain_loss": 256.63,
+          "gain_loss_pct": 12.39,
+          "allocation_pct": 69.92
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.8822,
+          "price_per_share": 205.0756,
+          "market_value": 1001.22,
+          "cost_basis": 887.4,
+          "gain_loss": 113.82,
+          "gain_loss_pct": 12.83,
+          "allocation_pct": 30.08
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 3475.08,
+      "total_cost_basis": 3033.0,
+      "total_gain_loss": 442.08,
+      "total_gain_loss_pct": 14.58,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 8.704800000000002,
+          "price_per_share": 279.1609,
+          "market_value": 2430.04,
+          "cost_basis": 2123.1,
+          "gain_loss": 306.94,
+          "gain_loss_pct": 14.46,
+          "allocation_pct": 69.93
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 4.9895000000000005,
+          "price_per_share": 209.4478,
+          "market_value": 1045.04,
+          "cost_basis": 909.9,
+          "gain_loss": 135.14,
+          "gain_loss_pct": 14.85,
+          "allocation_pct": 30.07
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_529_elijah",
+      "total_value": 3591.51,
+      "total_cost_basis": 3108.0,
+      "total_gain_loss": 483.51,
+      "total_gain_loss_pct": 15.56,
+      "holdings": [
+        {
+          "ticker": "GAAAX",
+          "name": "Path2College Age-Based Aggressive",
+          "asset_class": "target_allocation",
+          "shares": 8.888900000000003,
+          "price_per_share": 282.5929,
+          "market_value": 2511.94,
+          "cost_basis": 2175.6,
+          "gain_loss": 336.34,
+          "gain_loss_pct": 15.46,
+          "allocation_pct": 69.94
+        },
+        {
+          "ticker": "GABAX",
+          "name": "Path2College Age-Based Moderate",
+          "asset_class": "target_allocation",
+          "shares": 5.0947000000000005,
+          "price_per_share": 211.9006,
+          "market_value": 1079.57,
+          "cost_basis": 932.4,
+          "gain_loss": 147.17,
+          "gain_loss_pct": 15.78,
+          "allocation_pct": 30.06
+        }
+      ]
+    }
+  ],
+  "acct_brokerage": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_brokerage",
+      "total_value": 7130.69,
+      "total_cost_basis": 6456.0,
+      "total_gain_loss": 674.69,
+      "total_gain_loss_pct": 10.45,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 22.9859,
+          "price_per_share": 92.6994,
+          "market_value": 2130.78,
+          "cost_basis": 1936.8,
+          "gain_loss": 193.98,
+          "gain_loss_pct": 10.02,
+          "allocation_pct": 29.88
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 5.3223,
+          "price_per_share": 163.0179,
+          "market_value": 867.63,
+          "cost_basis": 774.72,
+          "gain_loss": 92.91,
+          "gain_loss_pct": 11.99,
+          "allocation_pct": 12.17
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.3548999999999998,
+          "price_per_share": 303.6435,
+          "market_value": 715.05,
+          "cost_basis": 645.6,
+          "gain_loss": 69.45,
+          "gain_loss_pct": 10.76,
+          "allocation_pct": 10.03
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 6.5039,
+          "price_per_share": 218.7949,
+          "market_value": 1423.02,
+          "cost_basis": 1291.2,
+          "gain_loss": 131.82,
+          "gain_loss_pct": 10.21,
+          "allocation_pct": 19.96
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 18.5437,
+          "price_per_share": 57.8234,
+          "market_value": 1072.26,
+          "cost_basis": 968.4,
+          "gain_loss": 103.86,
+          "gain_loss_pct": 10.72,
+          "allocation_pct": 15.04
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.3543,
+          "price_per_share": 170.1219,
+          "market_value": 570.64,
+          "cost_basis": 516.48,
+          "gain_loss": 54.16,
+          "gain_loss_pct": 10.49,
+          "allocation_pct": 8.0
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 1.9549,
+          "price_per_share": 179.7074,
+          "market_value": 351.31,
+          "cost_basis": 322.8,
+          "gain_loss": 28.51,
+          "gain_loss_pct": 8.83,
+          "allocation_pct": 4.93
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_brokerage",
+      "total_value": 7236.54,
+      "total_cost_basis": 6656.0,
+      "total_gain_loss": 580.54,
+      "total_gain_loss_pct": 8.72,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 23.6154,
+          "price_per_share": 91.6529,
+          "market_value": 2164.42,
+          "cost_basis": 1996.8,
+          "gain_loss": 167.62,
+          "gain_loss_pct": 8.39,
+          "allocation_pct": 29.91
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 5.4656,
+          "price_per_share": 160.5643,
+          "market_value": 877.58,
+          "cost_basis": 798.72,
+          "gain_loss": 78.86,
+          "gain_loss_pct": 9.87,
+          "allocation_pct": 12.13
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.4189999999999996,
+          "price_per_share": 298.2183,
+          "market_value": 721.39,
+          "cost_basis": 665.6,
+          "gain_loss": 55.79,
+          "gain_loss_pct": 8.38,
+          "allocation_pct": 9.97
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 6.6817,
+          "price_per_share": 216.7068,
+          "market_value": 1447.97,
+          "cost_basis": 1331.2,
+          "gain_loss": 116.77,
+          "gain_loss_pct": 8.77,
+          "allocation_pct": 20.01
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 19.0484,
+          "price_per_share": 56.6804,
+          "market_value": 1079.67,
+          "cost_basis": 998.4,
+          "gain_loss": 81.27,
+          "gain_loss_pct": 8.14,
+          "allocation_pct": 14.92
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.4457999999999998,
+          "price_per_share": 168.199,
+          "market_value": 579.58,
+          "cost_basis": 532.48,
+          "gain_loss": 47.1,
+          "gain_loss_pct": 8.85,
+          "allocation_pct": 8.01
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.009,
+          "price_per_share": 182.1453,
+          "market_value": 365.93,
+          "cost_basis": 332.8,
+          "gain_loss": 33.13,
+          "gain_loss_pct": 9.95,
+          "allocation_pct": 5.06
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_brokerage",
+      "total_value": 7570.67,
+      "total_cost_basis": 6874.84,
+      "total_gain_loss": 695.83,
+      "total_gain_loss_pct": 10.12,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 24.324900000000003,
+          "price_per_share": 93.4499,
+          "market_value": 2273.1600000000003,
+          "cost_basis": 2063.6000000000004,
+          "gain_loss": 209.56,
+          "gain_loss_pct": 10.16,
+          "allocation_pct": 30.03
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 5.6111,
+          "price_per_share": 163.5134,
+          "market_value": 917.49,
+          "cost_basis": 822.72,
+          "gain_loss": 94.77,
+          "gain_loss_pct": 11.52,
+          "allocation_pct": 12.12
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.4842999999999997,
+          "price_per_share": 303.184,
+          "market_value": 753.2,
+          "cost_basis": 685.6,
+          "gain_loss": 67.6,
+          "gain_loss_pct": 9.86,
+          "allocation_pct": 9.95
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 6.9157,
+          "price_per_share": 219.4051,
+          "market_value": 1517.34,
+          "cost_basis": 1383.24,
+          "gain_loss": 134.1,
+          "gain_loss_pct": 9.69,
+          "allocation_pct": 20.04
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 19.5634,
+          "price_per_share": 57.9858,
+          "market_value": 1134.4,
+          "cost_basis": 1028.4,
+          "gain_loss": 106.0,
+          "gain_loss_pct": 10.31,
+          "allocation_pct": 14.98
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.5383999999999998,
+          "price_per_share": 170.0119,
+          "market_value": 601.57,
+          "cost_basis": 548.48,
+          "gain_loss": 53.09,
+          "gain_loss_pct": 9.68,
+          "allocation_pct": 7.95
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.0624,
+          "price_per_share": 181.1045,
+          "market_value": 373.51,
+          "cost_basis": 342.8,
+          "gain_loss": 30.71,
+          "gain_loss_pct": 8.96,
+          "allocation_pct": 4.93
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_brokerage",
+      "total_value": 7841.41,
+      "total_cost_basis": 7074.84,
+      "total_gain_loss": 766.57,
+      "total_gain_loss_pct": 10.84,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 24.950400000000002,
+          "price_per_share": 94.2778,
+          "market_value": 2352.27,
+          "cost_basis": 2123.6000000000004,
+          "gain_loss": 228.67,
+          "gain_loss_pct": 10.77,
+          "allocation_pct": 30.0
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 5.7541,
+          "price_per_share": 165.2317,
+          "market_value": 950.76,
+          "cost_basis": 846.72,
+          "gain_loss": 104.04,
+          "gain_loss_pct": 12.29,
+          "allocation_pct": 12.12
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.5485999999999995,
+          "price_per_share": 306.7174,
+          "market_value": 781.7,
+          "cost_basis": 705.6,
+          "gain_loss": 76.1,
+          "gain_loss_pct": 10.79,
+          "allocation_pct": 9.97
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 7.0933,
+          "price_per_share": 221.1383,
+          "market_value": 1568.6,
+          "cost_basis": 1423.24,
+          "gain_loss": 145.36,
+          "gain_loss_pct": 10.21,
+          "allocation_pct": 20.0
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 20.067400000000003,
+          "price_per_share": 58.5905,
+          "market_value": 1175.76,
+          "cost_basis": 1058.4,
+          "gain_loss": 117.36,
+          "gain_loss_pct": 11.09,
+          "allocation_pct": 14.99
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.6300999999999997,
+          "price_per_share": 172.425,
+          "market_value": 625.92,
+          "cost_basis": 564.48,
+          "gain_loss": 61.44,
+          "gain_loss_pct": 10.88,
+          "allocation_pct": 7.98
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.1161999999999996,
+          "price_per_share": 182.5914,
+          "market_value": 386.4,
+          "cost_basis": 352.8,
+          "gain_loss": 33.6,
+          "gain_loss_pct": 9.52,
+          "allocation_pct": 4.93
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_brokerage",
+      "total_value": 8207.36,
+      "total_cost_basis": 7274.84,
+      "total_gain_loss": 932.52,
+      "total_gain_loss_pct": 12.82,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 25.571,
+          "price_per_share": 96.3572,
+          "market_value": 2463.95,
+          "cost_basis": 2183.6000000000004,
+          "gain_loss": 280.35,
+          "gain_loss_pct": 12.84,
+          "allocation_pct": 30.02
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 5.8958,
+          "price_per_share": 170.1873,
+          "market_value": 1003.39,
+          "cost_basis": 870.72,
+          "gain_loss": 132.67,
+          "gain_loss_pct": 15.24,
+          "allocation_pct": 12.23
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.6121999999999996,
+          "price_per_share": 315.3625,
+          "market_value": 823.79,
+          "cost_basis": 725.6,
+          "gain_loss": 98.19,
+          "gain_loss_pct": 13.53,
+          "allocation_pct": 10.04
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 7.2697,
+          "price_per_share": 225.1235,
+          "market_value": 1636.58,
+          "cost_basis": 1463.24,
+          "gain_loss": 173.34,
+          "gain_loss_pct": 11.85,
+          "allocation_pct": 19.94
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 20.566700000000004,
+          "price_per_share": 59.7738,
+          "market_value": 1229.35,
+          "cost_basis": 1088.4,
+          "gain_loss": 140.95,
+          "gain_loss_pct": 12.95,
+          "allocation_pct": 14.98
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.7205999999999997,
+          "price_per_share": 174.144,
+          "market_value": 647.92,
+          "cost_basis": 580.48,
+          "gain_loss": 67.44,
+          "gain_loss_pct": 11.62,
+          "allocation_pct": 7.89
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.1695999999999995,
+          "price_per_share": 185.4628,
+          "market_value": 402.38,
+          "cost_basis": 362.8,
+          "gain_loss": 39.58,
+          "gain_loss_pct": 10.91,
+          "allocation_pct": 4.9
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_brokerage",
+      "total_value": 8394.15,
+      "total_cost_basis": 7495.77,
+      "total_gain_loss": 898.38,
+      "total_gain_loss_pct": 11.99,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 26.2572,
+          "price_per_share": 96.0087,
+          "market_value": 2520.92,
+          "cost_basis": 2251.1400000000003,
+          "gain_loss": 269.78,
+          "gain_loss_pct": 11.98,
+          "allocation_pct": 30.03
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.0335,
+          "price_per_share": 169.1158,
+          "market_value": 1020.36,
+          "cost_basis": 894.72,
+          "gain_loss": 125.64,
+          "gain_loss_pct": 14.04,
+          "allocation_pct": 12.16
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.6740999999999997,
+          "price_per_share": 313.642,
+          "market_value": 838.71,
+          "cost_basis": 745.6,
+          "gain_loss": 93.11,
+          "gain_loss_pct": 12.49,
+          "allocation_pct": 9.99
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 7.5022,
+          "price_per_share": 224.8367,
+          "market_value": 1686.7700000000002,
+          "cost_basis": 1516.63,
+          "gain_loss": 170.14,
+          "gain_loss_pct": 11.22,
+          "allocation_pct": 20.09
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 21.056600000000003,
+          "price_per_share": 59.2361,
+          "market_value": 1247.31,
+          "cost_basis": 1118.4,
+          "gain_loss": 128.91,
+          "gain_loss_pct": 11.53,
+          "allocation_pct": 14.86
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.8103,
+          "price_per_share": 175.9704,
+          "market_value": 670.5,
+          "cost_basis": 596.48,
+          "gain_loss": 74.02,
+          "gain_loss_pct": 12.41,
+          "allocation_pct": 7.99
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.2221999999999995,
+          "price_per_share": 184.3128,
+          "market_value": 409.58,
+          "cost_basis": 372.8,
+          "gain_loss": 36.78,
+          "gain_loss_pct": 9.87,
+          "allocation_pct": 4.88
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_brokerage",
+      "total_value": 8794.6,
+      "total_cost_basis": 7695.77,
+      "total_gain_loss": 1098.83,
+      "total_gain_loss_pct": 14.28,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 26.8676,
+          "price_per_share": 98.0184,
+          "market_value": 2633.52,
+          "cost_basis": 2311.1400000000003,
+          "gain_loss": 322.38,
+          "gain_loss_pct": 13.95,
+          "allocation_pct": 29.94
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.1722,
+          "price_per_share": 175.5241,
+          "market_value": 1083.37,
+          "cost_basis": 918.72,
+          "gain_loss": 164.65,
+          "gain_loss_pct": 17.92,
+          "allocation_pct": 12.32
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.7363999999999997,
+          "price_per_share": 324.3385,
+          "market_value": 887.52,
+          "cost_basis": 765.6,
+          "gain_loss": 121.92,
+          "gain_loss_pct": 15.92,
+          "allocation_pct": 10.09
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 7.676,
+          "price_per_share": 228.8992,
+          "market_value": 1757.03,
+          "cost_basis": 1556.63,
+          "gain_loss": 200.4,
+          "gain_loss_pct": 12.87,
+          "allocation_pct": 19.98
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 21.5512,
+          "price_per_share": 60.9381,
+          "market_value": 1313.29,
+          "cost_basis": 1148.4,
+          "gain_loss": 164.89,
+          "gain_loss_pct": 14.36,
+          "allocation_pct": 14.93
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.8991,
+          "price_per_share": 178.9285,
+          "market_value": 697.66,
+          "cost_basis": 612.48,
+          "gain_loss": 85.18,
+          "gain_loss_pct": 13.91,
+          "allocation_pct": 7.93
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.2751999999999994,
+          "price_per_share": 185.5705,
+          "market_value": 422.21,
+          "cost_basis": 382.8,
+          "gain_loss": 39.41,
+          "gain_loss_pct": 10.3,
+          "allocation_pct": 4.8
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_brokerage",
+      "total_value": 9076.95,
+      "total_cost_basis": 7895.77,
+      "total_gain_loss": 1181.18,
+      "total_gain_loss_pct": 14.96,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 27.4661,
+          "price_per_share": 98.8997,
+          "market_value": 2716.39,
+          "cost_basis": 2371.1400000000003,
+          "gain_loss": 345.25,
+          "gain_loss_pct": 14.56,
+          "allocation_pct": 29.93
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.306,
+          "price_per_share": 178.928,
+          "market_value": 1128.32,
+          "cost_basis": 942.72,
+          "gain_loss": 185.6,
+          "gain_loss_pct": 19.69,
+          "allocation_pct": 12.43
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.7966999999999995,
+          "price_per_share": 327.9794,
+          "market_value": 917.26,
+          "cost_basis": 785.6,
+          "gain_loss": 131.66,
+          "gain_loss_pct": 16.76,
+          "allocation_pct": 10.11
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 7.8469,
+          "price_per_share": 230.8568,
+          "market_value": 1811.51,
+          "cost_basis": 1596.63,
+          "gain_loss": 214.88,
+          "gain_loss_pct": 13.46,
+          "allocation_pct": 19.96
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 22.032500000000002,
+          "price_per_share": 61.599,
+          "market_value": 1357.18,
+          "cost_basis": 1178.4,
+          "gain_loss": 178.78,
+          "gain_loss_pct": 15.17,
+          "allocation_pct": 14.95
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 3.9865,
+          "price_per_share": 177.8854,
+          "market_value": 709.14,
+          "cost_basis": 628.48,
+          "gain_loss": 80.66,
+          "gain_loss_pct": 12.83,
+          "allocation_pct": 7.81
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.3277999999999994,
+          "price_per_share": 187.7953,
+          "market_value": 437.15,
+          "cost_basis": 392.8,
+          "gain_loss": 44.35,
+          "gain_loss_pct": 11.29,
+          "allocation_pct": 4.82
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_brokerage",
+      "total_value": 9150.56,
+      "total_cost_basis": 8118.55,
+      "total_gain_loss": 1032.01,
+      "total_gain_loss_pct": 12.71,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 28.1437,
+          "price_per_share": 97.2651,
+          "market_value": 2737.4,
+          "cost_basis": 2439.3300000000004,
+          "gain_loss": 298.07,
+          "gain_loss_pct": 12.22,
+          "allocation_pct": 29.92
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.4373000000000005,
+          "price_per_share": 175.3266,
+          "market_value": 1128.63,
+          "cost_basis": 966.72,
+          "gain_loss": 161.91,
+          "gain_loss_pct": 16.75,
+          "allocation_pct": 12.33
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.8563999999999994,
+          "price_per_share": 321.5551,
+          "market_value": 918.49,
+          "cost_basis": 805.6,
+          "gain_loss": 112.89,
+          "gain_loss_pct": 14.01,
+          "allocation_pct": 10.04
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 8.079999999999998,
+          "price_per_share": 227.4443,
+          "market_value": 1837.75,
+          "cost_basis": 1651.22,
+          "gain_loss": 186.53,
+          "gain_loss_pct": 11.3,
+          "allocation_pct": 20.08
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 22.509000000000004,
+          "price_per_share": 60.498,
+          "market_value": 1361.75,
+          "cost_basis": 1208.4,
+          "gain_loss": 153.35,
+          "gain_loss_pct": 12.69,
+          "allocation_pct": 14.88
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 4.0745,
+          "price_per_share": 175.4596,
+          "market_value": 714.91,
+          "cost_basis": 644.48,
+          "gain_loss": 70.43,
+          "gain_loss_pct": 10.93,
+          "allocation_pct": 7.81
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.3798999999999992,
+          "price_per_share": 189.7685,
+          "market_value": 451.63,
+          "cost_basis": 402.8,
+          "gain_loss": 48.83,
+          "gain_loss_pct": 12.12,
+          "allocation_pct": 4.94
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_brokerage",
+      "total_value": 9470.36,
+      "total_cost_basis": 8318.55,
+      "total_gain_loss": 1151.81,
+      "total_gain_loss_pct": 13.85,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 28.7473,
+          "price_per_share": 98.6277,
+          "market_value": 2835.28,
+          "cost_basis": 2499.3300000000004,
+          "gain_loss": 335.95,
+          "gain_loss_pct": 13.44,
+          "allocation_pct": 29.94
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.571300000000001,
+          "price_per_share": 178.2631,
+          "market_value": 1171.42,
+          "cost_basis": 990.72,
+          "gain_loss": 180.7,
+          "gain_loss_pct": 18.24,
+          "allocation_pct": 12.37
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.9172999999999996,
+          "price_per_share": 329.2976,
+          "market_value": 960.66,
+          "cost_basis": 825.6,
+          "gain_loss": 135.06,
+          "gain_loss_pct": 16.36,
+          "allocation_pct": 10.14
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 8.252099999999999,
+          "price_per_share": 229.2629,
+          "market_value": 1891.9,
+          "cost_basis": 1691.22,
+          "gain_loss": 200.68,
+          "gain_loss_pct": 11.87,
+          "allocation_pct": 19.98
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 22.994200000000003,
+          "price_per_share": 61.5294,
+          "market_value": 1414.82,
+          "cost_basis": 1238.4,
+          "gain_loss": 176.42,
+          "gain_loss_pct": 14.25,
+          "allocation_pct": 14.94
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 4.1636999999999995,
+          "price_per_share": 177.1597,
+          "market_value": 737.64,
+          "cost_basis": 660.48,
+          "gain_loss": 77.16,
+          "gain_loss_pct": 11.68,
+          "allocation_pct": 7.79
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.4314999999999993,
+          "price_per_share": 188.6243,
+          "market_value": 458.64,
+          "cost_basis": 412.8,
+          "gain_loss": 45.84,
+          "gain_loss_pct": 11.1,
+          "allocation_pct": 4.84
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_brokerage",
+      "total_value": 9919.62,
+      "total_cost_basis": 8518.55,
+      "total_gain_loss": 1401.07,
+      "total_gain_loss_pct": 16.45,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 29.343,
+          "price_per_share": 101.8747,
+          "market_value": 2989.31,
+          "cost_basis": 2559.3300000000004,
+          "gain_loss": 429.98,
+          "gain_loss_pct": 16.8,
+          "allocation_pct": 30.14
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.703200000000001,
+          "price_per_share": 183.9718,
+          "market_value": 1233.2,
+          "cost_basis": 1014.72,
+          "gain_loss": 218.48,
+          "gain_loss_pct": 21.53,
+          "allocation_pct": 12.43
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 2.9767999999999994,
+          "price_per_share": 337.1775,
+          "market_value": 1003.71,
+          "cost_basis": 845.6,
+          "gain_loss": 158.11,
+          "gain_loss_pct": 18.7,
+          "allocation_pct": 10.12
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 8.422999999999998,
+          "price_per_share": 234.033,
+          "market_value": 1971.26,
+          "cost_basis": 1731.22,
+          "gain_loss": 240.04,
+          "gain_loss_pct": 13.87,
+          "allocation_pct": 19.87
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 23.471600000000002,
+          "price_per_share": 63.3387,
+          "market_value": 1486.66,
+          "cost_basis": 1268.4,
+          "gain_loss": 218.26,
+          "gain_loss_pct": 17.21,
+          "allocation_pct": 14.99
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 4.2520999999999995,
+          "price_per_share": 179.556,
+          "market_value": 763.49,
+          "cost_basis": 676.48,
+          "gain_loss": 87.01,
+          "gain_loss_pct": 12.86,
+          "allocation_pct": 7.7
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.483399999999999,
+          "price_per_share": 190.058,
+          "market_value": 471.99,
+          "cost_basis": 422.8,
+          "gain_loss": 49.19,
+          "gain_loss_pct": 11.63,
+          "allocation_pct": 4.76
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_brokerage",
+      "total_value": 10289.93,
+      "total_cost_basis": 8744.02,
+      "total_gain_loss": 1545.91,
+      "total_gain_loss_pct": 17.68,
+      "holdings": [
+        {
+          "ticker": "VOO",
+          "name": "Vanguard S&P 500 ETF",
+          "asset_class": "us_large_cap",
+          "shares": 30.009800000000002,
+          "price_per_share": 103.4389,
+          "market_value": 3104.1800000000003,
+          "cost_basis": 2628.6100000000006,
+          "gain_loss": 475.57,
+          "gain_loss_pct": 18.09,
+          "allocation_pct": 30.17
+        },
+        {
+          "ticker": "AAPL",
+          "name": "Apple Inc.",
+          "asset_class": "us_individual",
+          "shares": 6.831200000000001,
+          "price_per_share": 188.1587,
+          "market_value": 1285.35,
+          "cost_basis": 1038.72,
+          "gain_loss": 246.63,
+          "gain_loss_pct": 23.74,
+          "allocation_pct": 12.49
+        },
+        {
+          "ticker": "MSFT",
+          "name": "Microsoft Corp.",
+          "asset_class": "us_individual",
+          "shares": 3.0349999999999993,
+          "price_per_share": 344.2867,
+          "market_value": 1044.91,
+          "cost_basis": 865.6,
+          "gain_loss": 179.31,
+          "gain_loss_pct": 20.72,
+          "allocation_pct": 10.15
+        },
+        {
+          "ticker": "SCHD",
+          "name": "Schwab U.S. Dividend Equity ETF",
+          "asset_class": "us_dividend",
+          "shares": 8.658699999999998,
+          "price_per_share": 235.6139,
+          "market_value": 2040.1100000000001,
+          "cost_basis": 1787.41,
+          "gain_loss": 252.7,
+          "gain_loss_pct": 14.14,
+          "allocation_pct": 19.83
+        },
+        {
+          "ticker": "QQQ",
+          "name": "Invesco QQQ Trust",
+          "asset_class": "us_growth",
+          "shares": 23.935900000000004,
+          "price_per_share": 64.448,
+          "market_value": 1542.62,
+          "cost_basis": 1298.4,
+          "gain_loss": 244.22,
+          "gain_loss_pct": 18.81,
+          "allocation_pct": 14.99
+        },
+        {
+          "ticker": "VWO",
+          "name": "Vanguard FTSE Emerging Markets ETF",
+          "asset_class": "emerging_markets",
+          "shares": 4.3393999999999995,
+          "price_per_share": 181.5504,
+          "market_value": 787.82,
+          "cost_basis": 692.48,
+          "gain_loss": 95.34,
+          "gain_loss_pct": 13.77,
+          "allocation_pct": 7.66
+        },
+        {
+          "ticker": "GLD",
+          "name": "SPDR Gold Shares",
+          "asset_class": "commodities",
+          "shares": 2.534899999999999,
+          "price_per_share": 191.3054,
+          "market_value": 484.94,
+          "cost_basis": 432.8,
+          "gain_loss": 52.14,
+          "gain_loss_pct": 12.05,
+          "allocation_pct": 4.71
+        }
+      ]
+    }
+  ],
+  "acct_crypto": [
+    {
+      "date": "2025-01-28",
+      "account_id": "acct_crypto",
+      "total_value": 1409.64,
+      "total_cost_basis": 1200.0,
+      "total_gain_loss": 209.64,
+      "total_gain_loss_pct": 17.47,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 5.077800000000001,
+          "price_per_share": 194.1786,
+          "market_value": 986.0,
+          "cost_basis": 840.0,
+          "gain_loss": 146.0,
+          "gain_loss_pct": 17.38,
+          "allocation_pct": 69.95
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 1.7304,
+          "price_per_share": 244.822,
+          "market_value": 423.64,
+          "cost_basis": 360.0,
+          "gain_loss": 63.64,
+          "gain_loss_pct": 17.68,
+          "allocation_pct": 30.05
+        }
+      ]
+    },
+    {
+      "date": "2025-02-28",
+      "account_id": "acct_crypto",
+      "total_value": 1402.39,
+      "total_cost_basis": 1250.0,
+      "total_gain_loss": 152.39,
+      "total_gain_loss_pct": 12.19,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 5.251900000000001,
+          "price_per_share": 187.5854,
+          "market_value": 985.18,
+          "cost_basis": 875.0,
+          "gain_loss": 110.18,
+          "gain_loss_pct": 12.59,
+          "allocation_pct": 70.25
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 1.7895999999999999,
+          "price_per_share": 233.1303,
+          "market_value": 417.21,
+          "cost_basis": 375.0,
+          "gain_loss": 42.21,
+          "gain_loss_pct": 11.26,
+          "allocation_pct": 29.75
+        }
+      ]
+    },
+    {
+      "date": "2025-03-28",
+      "account_id": "acct_crypto",
+      "total_value": 1602.76,
+      "total_cost_basis": 1300.0,
+      "total_gain_loss": 302.76,
+      "total_gain_loss_pct": 23.29,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 5.432100000000001,
+          "price_per_share": 207.2532,
+          "market_value": 1125.82,
+          "cost_basis": 910.0,
+          "gain_loss": 215.82,
+          "gain_loss_pct": 23.72,
+          "allocation_pct": 70.24
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 1.8517,
+          "price_per_share": 257.5687,
+          "market_value": 476.94,
+          "cost_basis": 390.0,
+          "gain_loss": 86.94,
+          "gain_loss_pct": 22.29,
+          "allocation_pct": 29.76
+        }
+      ]
+    },
+    {
+      "date": "2025-04-28",
+      "account_id": "acct_crypto",
+      "total_value": 1598.71,
+      "total_cost_basis": 1350.0,
+      "total_gain_loss": 248.71,
+      "total_gain_loss_pct": 18.42,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 5.595900000000001,
+          "price_per_share": 200.1447,
+          "market_value": 1119.99,
+          "cost_basis": 945.0,
+          "gain_loss": 174.99,
+          "gain_loss_pct": 18.52,
+          "allocation_pct": 70.06
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 1.9082,
+          "price_per_share": 250.8752,
+          "market_value": 478.72,
+          "cost_basis": 405.0,
+          "gain_loss": 73.72,
+          "gain_loss_pct": 18.2,
+          "allocation_pct": 29.94
+        }
+      ]
+    },
+    {
+      "date": "2025-05-28",
+      "account_id": "acct_crypto",
+      "total_value": 1743.32,
+      "total_cost_basis": 1400.0,
+      "total_gain_loss": 343.32,
+      "total_gain_loss_pct": 24.52,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 5.765500000000001,
+          "price_per_share": 211.4578,
+          "market_value": 1219.16,
+          "cost_basis": 980.0,
+          "gain_loss": 239.16,
+          "gain_loss_pct": 24.4,
+          "allocation_pct": 69.93
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 1.9662,
+          "price_per_share": 266.5853,
+          "market_value": 524.16,
+          "cost_basis": 420.0,
+          "gain_loss": 104.16,
+          "gain_loss_pct": 24.8,
+          "allocation_pct": 30.07
+        }
+      ]
+    },
+    {
+      "date": "2025-06-28",
+      "account_id": "acct_crypto",
+      "total_value": 1637.64,
+      "total_cost_basis": 1450.0,
+      "total_gain_loss": 187.64,
+      "total_gain_loss_pct": 12.94,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 5.926400000000001,
+          "price_per_share": 193.5003,
+          "market_value": 1146.76,
+          "cost_basis": 1015.0,
+          "gain_loss": 131.76,
+          "gain_loss_pct": 12.98,
+          "allocation_pct": 70.03
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.0209,
+          "price_per_share": 242.9017,
+          "market_value": 490.88,
+          "cost_basis": 435.0,
+          "gain_loss": 55.88,
+          "gain_loss_pct": 12.85,
+          "allocation_pct": 29.97
+        }
+      ]
+    },
+    {
+      "date": "2025-07-28",
+      "account_id": "acct_crypto",
+      "total_value": 1944.82,
+      "total_cost_basis": 1500.0,
+      "total_gain_loss": 444.82,
+      "total_gain_loss_pct": 29.65,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 6.1019000000000005,
+          "price_per_share": 224.7874,
+          "market_value": 1371.63,
+          "cost_basis": 1050.0,
+          "gain_loss": 321.63,
+          "gain_loss_pct": 30.63,
+          "allocation_pct": 70.53
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.0808,
+          "price_per_share": 275.4662,
+          "market_value": 573.19,
+          "cost_basis": 450.0,
+          "gain_loss": 123.19,
+          "gain_loss_pct": 27.38,
+          "allocation_pct": 29.47
+        }
+      ]
+    },
+    {
+      "date": "2025-08-28",
+      "account_id": "acct_crypto",
+      "total_value": 2065.84,
+      "total_cost_basis": 1550.0,
+      "total_gain_loss": 515.84,
+      "total_gain_loss_pct": 33.28,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 6.2537,
+          "price_per_share": 232.9117,
+          "market_value": 1456.56,
+          "cost_basis": 1085.0,
+          "gain_loss": 371.56,
+          "gain_loss_pct": 34.25,
+          "allocation_pct": 70.51
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.1339,
+          "price_per_share": 285.5242,
+          "market_value": 609.28,
+          "cost_basis": 465.0,
+          "gain_loss": 144.28,
+          "gain_loss_pct": 31.03,
+          "allocation_pct": 29.49
+        }
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "account_id": "acct_crypto",
+      "total_value": 1891.68,
+      "total_cost_basis": 1600.0,
+      "total_gain_loss": 291.68,
+      "total_gain_loss_pct": 18.23,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 6.4004,
+          "price_per_share": 205.4934,
+          "market_value": 1315.24,
+          "cost_basis": 1120.0,
+          "gain_loss": 195.24,
+          "gain_loss_pct": 17.43,
+          "allocation_pct": 69.53
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.1852,
+          "price_per_share": 263.7928,
+          "market_value": 576.44,
+          "cost_basis": 480.0,
+          "gain_loss": 96.44,
+          "gain_loss_pct": 20.09,
+          "allocation_pct": 30.47
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "account_id": "acct_crypto",
+      "total_value": 2072.26,
+      "total_cost_basis": 1650.0,
+      "total_gain_loss": 422.26,
+      "total_gain_loss_pct": 25.59,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 6.5663,
+          "price_per_share": 220.8824,
+          "market_value": 1450.38,
+          "cost_basis": 1155.0,
+          "gain_loss": 295.38,
+          "gain_loss_pct": 25.57,
+          "allocation_pct": 69.99
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.2406,
+          "price_per_share": 277.5507,
+          "market_value": 621.88,
+          "cost_basis": 495.0,
+          "gain_loss": 126.88,
+          "gain_loss_pct": 25.63,
+          "allocation_pct": 30.01
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "account_id": "acct_crypto",
+      "total_value": 2649.94,
+      "total_cost_basis": 1700.0,
+      "total_gain_loss": 949.94,
+      "total_gain_loss_pct": 55.88,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 6.721,
+          "price_per_share": 278.3261,
+          "market_value": 1870.63,
+          "cost_basis": 1190.0,
+          "gain_loss": 680.63,
+          "gain_loss_pct": 57.2,
+          "allocation_pct": 70.59
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.2934,
+          "price_per_share": 339.8055,
+          "market_value": 779.31,
+          "cost_basis": 510.0,
+          "gain_loss": 269.31,
+          "gain_loss_pct": 52.81,
+          "allocation_pct": 29.41
+        }
+      ]
+    },
+    {
+      "date": "2025-12-28",
+      "account_id": "acct_crypto",
+      "total_value": 2825.83,
+      "total_cost_basis": 1750.0,
+      "total_gain_loss": 1075.83,
+      "total_gain_loss_pct": 61.48,
+      "holdings": [
+        {
+          "ticker": "BTC",
+          "name": "Bitcoin",
+          "asset_class": "cryptocurrency",
+          "shares": 6.8444,
+          "price_per_share": 291.1008,
+          "market_value": 1992.41,
+          "cost_basis": 1225.0,
+          "gain_loss": 767.41,
+          "gain_loss_pct": 62.65,
+          "allocation_pct": 70.51
+        },
+        {
+          "ticker": "ETH",
+          "name": "Ethereum",
+          "asset_class": "cryptocurrency",
+          "shares": 2.3367,
+          "price_per_share": 356.6654,
+          "market_value": 833.42,
+          "cost_basis": 525.0,
+          "gain_loss": 308.42,
+          "gain_loss_pct": 58.75,
+          "allocation_pct": 29.49
+        }
+      ]
+    }
+  ]
+}

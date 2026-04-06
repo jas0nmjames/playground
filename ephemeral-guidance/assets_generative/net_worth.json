@@ -1,0 +1,32 @@
+{
+  "as_of": "2025-12-31",
+  "assets": {
+    "cash_and_checking": {
+      "acct_joint_chk": 13463.47,
+      "acct_joint_sav": 11050.0,
+      "acct_hysa": 14836.69,
+      "acct_teen_chk": 2069.58
+    },
+    "investments": {
+      "acct_marcus_401k": 54492.12,
+      "acct_jasmine_401k": 36870.7,
+      "acct_jasmine_ira": 15416.87,
+      "acct_529_darius": 21656.46,
+      "acct_529_amara": 11276.67,
+      "acct_529_elijah": 3591.51,
+      "acct_brokerage": 10289.93,
+      "acct_crypto": 2825.83
+    },
+    "total_liquid_assets": 197839.83
+  },
+  "liabilities": {
+    "credit_cards": {
+      "acct_joint_cc": 1274.15,
+      "acct_marcus_cc": 893.26
+    },
+    "mortgage_estimated": 245000,
+    "auto_loans_estimated": 30700,
+    "total_liabilities": 277867.41
+  },
+  "net_worth": -80027.58
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "member_id": "member_marcus",
+    "first_name": "Marcus",
+    "last_name": "Thompson",
+    "role": "husband",
+    "date_of_birth": "1987-03-14",
+    "age": 38,
+    "occupation": "Software Support Analyst",
+    "employer": "TechBridge Solutions",
+    "annual_salary": 68000,
+    "devices": [
+      "iPhone 15",
+      "MacBook Air"
+    ]
+  },
+  {
+    "member_id": "member_jasmine",
+    "first_name": "Jasmine",
+    "last_name": "Thompson",
+    "role": "wife",
+    "date_of_birth": "1989-06-22",
+    "age": 36,
+    "occupation": "Marketing Coordinator",
+    "employer": "Peachtree Media Group",
+    "annual_salary": 54000,
+    "devices": [
+      "Galaxy S24",
+      "Dell Laptop"
+    ]
+  },
+  {
+    "member_id": "member_darius",
+    "first_name": "Darius",
+    "last_name": "Thompson",
+    "role": "teenager",
+    "date_of_birth": "2010-01-08",
+    "age": 15,
+    "school": "Lakeside High School",
+    "grade": "10th",
+    "devices": [
+      "iPhone SE"
+    ]
+  },
+  {
+    "member_id": "member_amara",
+    "first_name": "Amara",
+    "last_name": "Thompson",
+    "role": "child",
+    "date_of_birth": "2017-04-15",
+    "age": 8,
+    "school": "Sagamore Hills Elementary",
+    "grade": "3rd",
+    "devices": []
+  },
+  {
+    "member_id": "member_elijah",
+    "first_name": "Elijah",
+    "last_name": "Thompson",
+    "role": "infant",
+    "date_of_birth": "2023-11-02",
+    "age": 1,
+    "daycare": "KinderCare Learning Center - Tucker",
+    "devices": []
+  }
+]
