@@ -3,6 +3,7 @@ import { GROUPS_META, TOOLS, COLORS } from '../constants.js';
 export default function BlocksPanel({
   style, isMobile, section, subs, sectionNotes, tool, setTool, tempo,
   muted, toggleMute, cycleBeatSub, cellDown, cellEnter, playheadPos,
+  tintByGroup = null, focusColor = null,
 }) {
   const beats = section.measures * 4;
   const beatW = isMobile ? 112 : 128;
@@ -99,6 +100,8 @@ export default function BlocksPanel({
                       return Array.from({ length: sc }, (_, s) => {
                         const v = sectionNotes[rowDef.id][b][s];
                         const isMeasureStart = b % 4 === 0 && s === 0;
+                        const baseBg = isMeasureStart ? 'oklch(91% 0.012 80)' : s === 0 ? 'oklch(93% 0.01 80)' : 'oklch(96% 0.007 80)';
+                        const hl = tintByGroup && tintByGroup[g.id] && tintByGroup[g.id].has(b);
                         return (
                           <div
                             key={`${b}-${s}`}
@@ -108,7 +111,7 @@ export default function BlocksPanel({
                             style={{
                               width: w,
                               height: cellH,
-                              background: isMeasureStart ? 'oklch(91% 0.012 80)' : s === 0 ? 'oklch(93% 0.01 80)' : 'oklch(96% 0.007 80)',
+                              background: hl ? `color-mix(in oklch, ${baseBg} 55%, ${focusColor})` : baseBg,
                             }}
                           >
                             {v === 3 && <div className="grace-dot" style={{ background: g.color }} />}

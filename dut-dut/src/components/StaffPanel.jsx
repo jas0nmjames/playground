@@ -19,6 +19,16 @@ function StaffSvg({ sg, showPlayhead, playheadX }) {
       {sg.measureNums.map(mn => (
         <text key={mn.n} x={mn.x} y={sg.numY} fill="oklch(55% 0.02 260)" style={{ font: 'italic 9px Georgia,serif' }}>{mn.n}</text>
       ))}
+      {sg.bands.map(bd => (
+        <rect
+          key={bd.key}
+          x={bd.x} y={bd.y} width={bd.w} height={bd.h} rx={5}
+          fill={bd.fill} opacity={bd.opacity}
+          style={{ cursor: 'help' }}
+          onMouseEnter={bd.enter}
+          onMouseLeave={bd.leave}
+        />
+      ))}
       {showPlayhead && (
         <line x1={playheadX} x2={playheadX} y1={0} y2={sg.height} stroke="oklch(58% 0.16 235)" strokeWidth={2} opacity={0.8} />
       )}
@@ -45,11 +55,11 @@ function StaffSvg({ sg, showPlayhead, playheadX }) {
       ))}
       {sg.notes.map(nt => nt.isX ? (
         <g key={nt.key}>
-          <line x1={nt.x1a} y1={nt.y1a} x2={nt.x2a} y2={nt.y2a} stroke={INK} strokeWidth={1.7} />
-          <line x1={nt.x1b} y1={nt.y1b} x2={nt.x2b} y2={nt.y2b} stroke={INK} strokeWidth={1.7} />
+          <line x1={nt.x1a} y1={nt.y1a} x2={nt.x2a} y2={nt.y2a} stroke={nt.fill} strokeWidth={1.7} />
+          <line x1={nt.x1b} y1={nt.y1b} x2={nt.x2b} y2={nt.y2b} stroke={nt.fill} strokeWidth={1.7} />
         </g>
       ) : (
-        <ellipse key={nt.key} cx={nt.x} cy={nt.y} rx={5.2} ry={3.9} transform={`rotate(-18 ${nt.x} ${nt.y})`} fill={INK} />
+        <ellipse key={nt.key} cx={nt.x} cy={nt.y} rx={5.2} ry={3.9} transform={`rotate(-18 ${nt.x} ${nt.y})`} fill={nt.fill} />
       ))}
     </svg>
   );
@@ -58,6 +68,8 @@ function StaffSvg({ sg, showPlayhead, playheadX }) {
 export default function StaffPanel({
   style, isMobile, isPreview, section, subs, sectionNotes, tempo,
   playing, onTogglePlay, playheadPos, resolvePos,
+  insights = [], showBands = false, focusId = null, focusColor = null, tintByGroup = null,
+  onBandEnter, onBandLeave,
 }) {
   const beatW = isMobile ? 112 : 128;
   const leftPad = 60;
@@ -68,10 +80,39 @@ export default function StaffPanel({
     playheadX = leftPad + beat * beatW + sub * (beatW / subCount) + (beatW / subCount) / 2;
   }
 
-  const staffGroups = GROUPS_META.map(g => ({
-    id: g.id, name: g.name, color: g.color,
-    shapes: buildStaffShapes(g, g.rowDefs.map(rd => sectionNotes[rd.id]), subs, section.measures, beatW, leftPad),
-  }));
+  const staffGroups = GROUPS_META.map(g => {
+    const shapes = buildStaffShapes(g, g.rowDefs.map(rd => sectionNotes[rd.id]), subs, section.measures, beatW, leftPad);
+
+    // Translucent hover bands over each insight's target beats
+    const bands = [];
+    if (showBands) {
+      for (const ins of insights) {
+        for (const tg of ins.targets) {
+          if (tg.sectionId !== section.id) continue;
+          if (tg.groupId && tg.groupId !== g.id) continue;
+          let run = null;
+          const sorted = [...new Set(tg.beats)].sort((x, y) => x - y);
+          const flush = () => {
+            if (!run) return;
+            bands.push({
+              key: ins.id + '-' + g.id + '-' + run[0],
+              x: leftPad + run[0] * beatW + 1.5, y: 4, w: (run[1] - run[0] + 1) * beatW - 3, h: shapes.height - 8,
+              fill: ins.color, opacity: focusId === ins.id ? 0.3 : 0.1,
+              enter: (e) => onBandEnter(ins, e), leave: onBandLeave,
+            });
+            run = null;
+          };
+          for (const bb of sorted) { if (run && bb === run[1] + 1) run[1] = bb; else { flush(); run = [bb, bb]; } }
+          flush();
+        }
+      }
+    }
+
+    const tintSet = tintByGroup ? tintByGroup[g.id] : null;
+    const notes = shapes.notes.map(n => ({ ...n, fill: tintSet && tintSet.has(n.b) ? focusColor : INK }));
+
+    return { id: g.id, name: g.name, color: g.color, shapes: { ...shapes, notes, bands } };
+  });
 
   return (
     <div className="staff-panel" style={style}>
