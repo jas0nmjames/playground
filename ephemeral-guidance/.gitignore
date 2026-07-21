@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# local build / packaging
+dist/
+build/
+*.egg-info/
+
+# analytics outputs
+data/

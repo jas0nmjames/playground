@@ -18,13 +18,15 @@ Welcome to my playground.
 | [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) |  |  | Sep 2024 | Sep 2025 |
 | [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
 | [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) |  |  | Jul 2025 | Sep 2025 |
-| [ia-for-banking-for-ai](./ia-for-banking-for-ai/) | — | Exploring digital banking experience information architecture and artificial intelligence opportunities |  | Aug 2025 | Sep 2025 |
+| [ephemeral guidance](./ephemeral-guidance/) | — | ~~Exploring digital banking experience information architecture and artificial intelligence opportunities~~ |  | Aug 2025 | Sep 2025 |
 | [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
 | [Microwave](./microwave/) | — | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
 | [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
 | [Velocity — Textured v1.1.0](./terminal-velocity/) | [↗](https://jas0nmjames.github.io/playground/terminal-velocity/) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
 | [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
+| [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
+| [dut dut](./dut-dut/) | [↗](https://jas0nmjames.github.io/playground/dut-dut/) | A web-based app to annotate, create, and preview drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. Work autosaves in the browser and can be saved/loaded as a JSON project file. |  | Jul 2026 | Jul 2026 |
 <!-- END DIRECTORY -->
 
 ## Generative Experiments
@@ -41,6 +43,7 @@ Building things I couldn't before, [at great expense](https://www.youtube.com/wa
 | [Velocity — Textured v1.1.0](./terminal-velocity/) | [↗](https://jas0nmjames.github.io/playground/terminal-velocity/) | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
 | [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
+| [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
 <!-- END GENERATIVE -->
 
 ## Maintaining the Directory

@@ -5,3 +5,9 @@
 
 # Node Modules
 node_modules
+
+# Build output
+dist
+
+# Local-only reference material (not licensed for redistribution — see dut-dut README)
+dut-dut/assets/references/

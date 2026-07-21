@@ -1,0 +1,1 @@
+Before we commit any code, please be sure to check for any new attributions we should add because of your contributions.  Thanks!

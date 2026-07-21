@@ -1,0 +1,187 @@
+[
+  {
+    "account_id": "acct_joint_chk",
+    "account_name": "Joint Checking",
+    "account_type": "checking",
+    "institution": "SunTrust / Truist",
+    "routing_number": "061000104",
+    "account_number_masked": "****4821",
+    "owners": [
+      "member_marcus",
+      "member_jasmine"
+    ],
+    "opening_balance": 3842.5,
+    "interest_rate": 0.01
+  },
+  {
+    "account_id": "acct_joint_sav",
+    "account_name": "Joint Savings",
+    "account_type": "savings",
+    "institution": "SunTrust / Truist",
+    "routing_number": "061000104",
+    "account_number_masked": "****4822",
+    "owners": [
+      "member_marcus",
+      "member_jasmine"
+    ],
+    "opening_balance": 8200.0,
+    "interest_rate": 0.05
+  },
+  {
+    "account_id": "acct_hysa",
+    "account_name": "Emergency Fund (HYSA)",
+    "account_type": "high_yield_savings",
+    "institution": "Marcus by Goldman Sachs",
+    "routing_number": "124085024",
+    "account_number_masked": "****7103",
+    "owners": [
+      "member_marcus",
+      "member_jasmine"
+    ],
+    "opening_balance": 12450.0,
+    "interest_rate": 4.25
+  },
+  {
+    "account_id": "acct_joint_cc",
+    "account_name": "Joint Credit Card",
+    "account_type": "credit_card",
+    "institution": "Chase",
+    "card_network": "Visa",
+    "card_type": "Chase Freedom Unlimited",
+    "account_number_masked": "****3390",
+    "credit_limit": 12000,
+    "owners": [
+      "member_marcus",
+      "member_jasmine"
+    ],
+    "opening_balance": -1243.67,
+    "interest_rate": 22.49
+  },
+  {
+    "account_id": "acct_marcus_cc",
+    "account_name": "Marcus's Credit Card",
+    "account_type": "credit_card",
+    "institution": "Capital One",
+    "card_network": "Mastercard",
+    "card_type": "Capital One Quicksilver",
+    "account_number_masked": "****8815",
+    "credit_limit": 8000,
+    "owners": [
+      "member_marcus"
+    ],
+    "opening_balance": -487.22,
+    "interest_rate": 24.99
+  },
+  {
+    "account_id": "acct_teen_chk",
+    "account_name": "Darius's Checking (Custodial)",
+    "account_type": "checking",
+    "institution": "SunTrust / Truist",
+    "routing_number": "061000104",
+    "account_number_masked": "****6155",
+    "owners": [
+      "member_darius"
+    ],
+    "custodian": "member_marcus",
+    "opening_balance": 245.0,
+    "interest_rate": 0.01
+  },
+  {
+    "account_id": "acct_marcus_401k",
+    "account_name": "Marcus's 401(k)",
+    "account_type": "401k",
+    "institution": "Fidelity",
+    "plan_name": "TechBridge Solutions 401(k) Plan",
+    "account_number_masked": "****9201",
+    "owners": [
+      "member_marcus"
+    ],
+    "opening_balance": 42800.0,
+    "employer_match": "100% up to 4%",
+    "contribution_rate_pct": 6
+  },
+  {
+    "account_id": "acct_jasmine_401k",
+    "account_name": "Jasmine's 401(k)",
+    "account_type": "401k",
+    "institution": "Vanguard",
+    "plan_name": "Peachtree Media 401(k) Plan",
+    "account_number_masked": "****9302",
+    "owners": [
+      "member_jasmine"
+    ],
+    "opening_balance": 28500.0,
+    "employer_match": "50% up to 6%",
+    "contribution_rate_pct": 6
+  },
+  {
+    "account_id": "acct_jasmine_ira",
+    "account_name": "Jasmine's Roth IRA",
+    "account_type": "roth_ira",
+    "institution": "Vanguard",
+    "account_number_masked": "****9401",
+    "owners": [
+      "member_jasmine"
+    ],
+    "opening_balance": 11200.0
+  },
+  {
+    "account_id": "acct_529_darius",
+    "account_name": "Darius's 529 Plan",
+    "account_type": "529",
+    "institution": "Path2College 529 Plan (Georgia)",
+    "account_number_masked": "****5291",
+    "owners": [
+      "member_darius"
+    ],
+    "custodian": "member_marcus",
+    "opening_balance": 18750.0
+  },
+  {
+    "account_id": "acct_529_amara",
+    "account_name": "Amara's 529 Plan",
+    "account_type": "529",
+    "institution": "Path2College 529 Plan (Georgia)",
+    "account_number_masked": "****5292",
+    "owners": [
+      "member_amara"
+    ],
+    "custodian": "member_jasmine",
+    "opening_balance": 9200.0
+  },
+  {
+    "account_id": "acct_529_elijah",
+    "account_name": "Elijah's 529 Plan",
+    "account_type": "529",
+    "institution": "Path2College 529 Plan (Georgia)",
+    "account_number_masked": "****5293",
+    "owners": [
+      "member_elijah"
+    ],
+    "custodian": "member_marcus",
+    "opening_balance": 2400.0
+  },
+  {
+    "account_id": "acct_brokerage",
+    "account_name": "Joint Brokerage",
+    "account_type": "brokerage",
+    "institution": "Fidelity",
+    "account_number_masked": "****7750",
+    "owners": [
+      "member_marcus",
+      "member_jasmine"
+    ],
+    "opening_balance": 6800.0
+  },
+  {
+    "account_id": "acct_crypto",
+    "account_name": "Marcus's Crypto",
+    "account_type": "crypto",
+    "institution": "Coinbase",
+    "account_number_masked": "****CB01",
+    "owners": [
+      "member_marcus"
+    ],
+    "opening_balance": 1250.0
+  }
+]
