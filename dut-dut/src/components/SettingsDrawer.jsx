@@ -130,6 +130,17 @@ export default function SettingsDrawer({
           <div className="small-note" style={{ marginTop: 6 }}>Exports include every section in order</div>
         </div>
 
+        <div>
+          <div className="drawer-section-title">About</div>
+          <div className="about-box">
+            <div className="about-title">dut dut</div>
+            <div className="about-text">Sketch drumline cadences as blocks and real notation — then hear, study, and export them.</div>
+            <div className="about-text">Created by <strong>Jason James</strong></div>
+            <div className="about-text">Designed in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude Design</a> · engineered with Claude Code, by Anthropic</div>
+            <div className="small-note">Rudiment references: <a href="https://pas.org/rudiments/" target="_blank" rel="noopener noreferrer">PAS</a> · <a href="https://ae.vicfirth.com/education/40-essential-rudiments/" target="_blank" rel="noopener noreferrer">Vic Firth</a></div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

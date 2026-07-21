@@ -7,6 +7,7 @@ import { buildStaffShapes } from './staff.js';
 import BlocksPanel from './components/BlocksPanel.jsx';
 import StaffPanel from './components/StaffPanel.jsx';
 import SettingsDrawer from './components/SettingsDrawer.jsx';
+import InsightsPanel, { InsightTooltip } from './components/InsightsPanel.jsx';
 
 export default class App extends Component {
   state = {
@@ -28,6 +29,14 @@ export default class App extends Component {
     painting: null,          // { value } while a drag-paint is in progress
     rendering: false,        // WAV export in progress
     projectStatus: 'Autosaves in this browser as you edit',
+    insightsOpen: true,
+    insightScope: 'section', // 'section' | 'cadence'
+    pinnedInsightId: null,
+    hoverInsightId: null,
+    tip: null,               // { id, x, y } for the staff-band hover tooltip
+    llmText: '',
+    llmLabel: '',
+    llmLoading: false,
   };
 
   constructor(props) {
@@ -45,10 +54,13 @@ export default class App extends Component {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) this._applyProject(JSON.parse(saved));
     } catch (e) { /* keep defaults */ }
+    this._llmOk = typeof window !== 'undefined' && window.claude && typeof window.claude.complete === 'function';
+    import('./insights-engine.js').then(m => { this._insights = m; this.forceUpdate(); }).catch(() => {});
   }
   componentWillUnmount() {
     window.removeEventListener('mouseup', this._mouseUpHandler);
     clearTimeout(this._saveT);
+    clearTimeout(this._tipT);
     this._scheduler?.stop();
   }
 
@@ -242,6 +254,46 @@ export default class App extends Component {
   setMobileTab = (t) => this.setState({ mobileTab: t });
   toggleSettings = () => this.setState({ settingsOpen: !this.state.settingsOpen });
 
+  toggleInsights = () => this.setState({ insightsOpen: !this.state.insightsOpen });
+  setInsightScope = (s) => this.setState({ insightScope: s });
+  hoverInsight = (id) => { clearTimeout(this._tipT); this.setState({ hoverInsightId: id }); };
+  unhoverInsight = () => {
+    clearTimeout(this._tipT);
+    this._tipT = setTimeout(() => this.setState({ hoverInsightId: null, tip: null }), 160);
+  };
+  tipKeep = () => clearTimeout(this._tipT);
+  bandEnter = (ins, e) => {
+    clearTimeout(this._tipT);
+    const x = Math.min(e.clientX + 14, (window.innerWidth || 1200) - 286);
+    const y = Math.min(e.clientY + 16, (window.innerHeight || 800) - 200);
+    this.setState({ hoverInsightId: ins.id, tip: { id: ins.id, x, y } });
+  };
+  pinInsight = (ins) => {
+    if (this.state.pinnedInsightId === ins.id) { this.setState({ pinnedInsightId: null }); return; }
+    const tg = (ins.targets || []).find(x => x.beats && x.beats.length);
+    if (tg && tg.sectionId !== this.state.activeSectionId) this.selectSection(tg.sectionId);
+    this.setState({ pinnedInsightId: ins.id });
+  };
+  _analysisOpts() {
+    return {
+      scope: this.state.insightScope, activeSectionId: this.state.activeSectionId,
+      groups: GROUPS_META.map(g => ({ id: g.id, name: g.name })),
+      rows: ALL_ROWS.map(r => ({ id: r.id, groupId: r.groupId })),
+    };
+  }
+  askClaude = async () => {
+    if (this.state.llmLoading || !this._llmOk || !this._insights) return;
+    const label = this.state.insightScope === 'cadence' ? 'Claude on the full cadence' : 'Claude on "' + this._activeSection().name + '"';
+    this.setState({ llmLoading: true });
+    try {
+      const prompt = this._insights.buildLLMPrompt({ sections: this.state.sections, beatSubs: this.state.beatSubs, notes: this.state.notes, tempo: this.state.tempo, swing: this.state.swing }, this._analysisOpts());
+      const text = await window.claude.complete(prompt);
+      this.setState({ llmText: String(text || '').trim(), llmLabel: label, llmLoading: false });
+    } catch (e) {
+      this.setState({ llmText: 'Could not reach Claude just now — try again in a moment.', llmLabel: 'Claude', llmLoading: false });
+    }
+  };
+
   onSaveProject = async () => {
     const u = await import('./export-utils.js');
     u.downloadBlob(new Blob([this._serializeProject()], { type: 'application/json' }), 'dut-dut-project.json');
@@ -297,6 +349,78 @@ export default class App extends Component {
 
     const tabStyle = (active) => ({ background: active ? accent : 'transparent', color: active ? onAccent : mutedText });
 
+    // ---- Insights ----
+    const insightsLayout = ['sidebar', 'bottom', 'inline'].includes(this.props.insightsLayout) ? this.props.insightsLayout : 'sidebar';
+    const showHighlights = this.props.insightHighlights ?? true;
+    let insights = [];
+    if (this._insights) {
+      try {
+        insights = this._insights.analyzeProject(
+          { sections, beatSubs: this.state.beatSubs, notes: this.state.notes, tempo, swing: this.state.swing },
+          this._analysisOpts(),
+        );
+      } catch (e) { insights = []; }
+    }
+    const focusId = this.state.hoverInsightId || this.state.pinnedInsightId;
+    const focusInsight = insights.find(ins => ins.id === focusId) || null;
+    let focusBeatByGroup = null;
+    if (isEditor && focusInsight) {
+      focusBeatByGroup = {};
+      for (const tg of focusInsight.targets) {
+        if (tg.sectionId !== section.id) continue;
+        const gids = tg.groupId ? [tg.groupId] : GROUPS_META.map(g => g.id);
+        for (const gid of gids) {
+          if (!focusBeatByGroup[gid]) focusBeatByGroup[gid] = new Set();
+          tg.beats.forEach(bb => focusBeatByGroup[gid].add(bb));
+        }
+      }
+    }
+
+    const sectionNameOf = (sid) => { const sx = sections.find(x => x.id === sid); return sx ? sx.name : ''; };
+    let prevCardSection = null;
+    const insightCards = insights.map(ins => {
+      const pinned = this.state.pinnedInsightId === ins.id;
+      const focused = focusId === ins.id;
+      const secLabel = this.state.insightScope === 'cadence' ? (ins.sectionId ? sectionNameOf(ins.sectionId) : 'Overall') : null;
+      const showSectionLabel = secLabel !== null && secLabel !== prevCardSection;
+      if (secLabel !== null) prevCardSection = secLabel;
+      return {
+        key: ins.id,
+        title: ins.title, body: ins.body, color: ins.color,
+        terms: ins.terms || [],
+        hasTerms: !!(ins.terms && ins.terms.length),
+        showSectionLabel, sectionLabel: secLabel || '',
+        border: focused || pinned ? ins.color : 'oklch(88% 0.01 80)',
+        bg: pinned ? 'color-mix(in oklch, oklch(98% 0.006 80) 86%, ' + ins.color + ')' : 'oklch(98% 0.006 80)',
+        enter: () => this.hoverInsight(ins.id),
+        leave: this.unhoverInsight,
+        pin: () => this.pinInsight(ins),
+      };
+    });
+    const tipIns = this.state.tip ? insights.find(ins => ins.id === this.state.tip.id) : null;
+    const tipData = tipIns ? {
+      x: this.state.tip.x, y: this.state.tip.y, color: tipIns.color,
+      title: tipIns.title, body: tipIns.body, terms: tipIns.terms || [],
+    } : null;
+
+    const sidebarInsightsDisplay = isEditor && this.state.insightsOpen && (isMobile ? mobileTab === 'learn' : insightsLayout === 'sidebar') ? 'flex' : 'none';
+    const bottomInsightsDisplay = isEditor && !isMobile && this.state.insightsOpen && insightsLayout === 'bottom' ? 'flex' : 'none';
+    const showLearnBtn = !isMobile && isEditor && insightsLayout !== 'inline';
+    const llmProps = {
+      llmAvailable: !!this._llmOk && !!this._insights,
+      onAskClaude: this.askClaude,
+      askClaudeLabel: this.state.llmLoading ? 'Asking Claude…' : 'Ask Claude to explain this pattern',
+      llmText: this.state.llmText,
+      llmLabel: this.state.llmLabel,
+    };
+    const insightsPanelProps = {
+      cards: insightCards,
+      scope: this.state.insightScope,
+      setScope: this.setInsightScope,
+      onClose: this.toggleInsights,
+      ...llmProps,
+    };
+
     return (
       <div className="app-shell" onMouseUp={this.cellUp}>
         <div
@@ -314,6 +438,17 @@ export default class App extends Component {
               </div>
             </div>
             <div className="header-right">
+              {showLearnBtn && (
+                <button
+                  className="learn-btn"
+                  onClick={this.toggleInsights}
+                  style={this.state.insightsOpen
+                    ? { background: accent, color: onAccent, borderColor: accent }
+                    : { background: 'oklch(96% 0.008 80)', color: mutedText, borderColor: border }}
+                >
+                  Learn
+                </button>
+              )}
               <button className="play-btn" onClick={this.togglePlay}>{playing ? '■ Stop' : '▶ Play'}</button>
               <button className="icon-btn" aria-label="Settings" onClick={this.toggleSettings}>⚙</button>
             </div>
@@ -338,46 +473,73 @@ export default class App extends Component {
               <div className="mode-toggle">
                 <button onClick={() => this.setMobileTab('blocks')} style={tabStyle(mobileTab === 'blocks')}>Blocks</button>
                 <button onClick={() => this.setMobileTab('staff')} style={tabStyle(mobileTab === 'staff')}>Staff</button>
+                <button onClick={() => this.setMobileTab('learn')} style={tabStyle(mobileTab === 'learn')}>Learn</button>
               </div>
             )}
           </div>
 
-          <div className="main-area" style={{ flexDirection: isEditor && !isMobile ? 'row' : 'column' }}>
-            <BlocksPanel
-              style={{
-                display: isEditor && (!isMobile || mobileTab === 'blocks') ? 'flex' : 'none',
-                flex: !isMobile ? '1.35 1 0%' : '1 1 auto',
-              }}
-              isMobile={isMobile}
-              section={section}
-              subs={subs}
-              sectionNotes={this.state.notes[section.id]}
-              tool={this.state.tool}
-              setTool={this.setTool}
-              tempo={tempo}
-              muted={this.state.muted}
-              toggleMute={this.toggleMute}
-              cycleBeatSub={this.cycleBeatSub}
-              cellDown={this.cellDown}
-              cellEnter={this.cellEnter}
-              playheadPos={playheadPos}
+          <div className="main-column">
+            <div className="main-area" style={{ flexDirection: isEditor && !isMobile ? 'row' : 'column' }}>
+              <BlocksPanel
+                style={{
+                  display: isEditor && (!isMobile || mobileTab === 'blocks') ? 'flex' : 'none',
+                  flex: !isMobile ? '1.35 1 0%' : '1 1 auto',
+                }}
+                isMobile={isMobile}
+                section={section}
+                subs={subs}
+                sectionNotes={this.state.notes[section.id]}
+                tool={this.state.tool}
+                setTool={this.setTool}
+                tempo={tempo}
+                muted={this.state.muted}
+                toggleMute={this.toggleMute}
+                cycleBeatSub={this.cycleBeatSub}
+                cellDown={this.cellDown}
+                cellEnter={this.cellEnter}
+                playheadPos={playheadPos}
+                tintByGroup={focusBeatByGroup}
+                focusColor={focusInsight ? focusInsight.color : null}
+              />
+              <StaffPanel
+                style={{
+                  display: isPreview || (isEditor && (!isMobile || mobileTab === 'staff')) ? 'flex' : 'none',
+                  flex: !isMobile && isEditor ? '1 1 0%' : '1 1 auto',
+                }}
+                isMobile={isMobile}
+                isPreview={isPreview}
+                section={section}
+                subs={subs}
+                sectionNotes={this.state.notes[section.id]}
+                tempo={tempo}
+                playing={playing}
+                onTogglePlay={this.togglePlay}
+                playheadPos={playheadPos}
+                resolvePos={(pos) => this._resolvePos(pos)}
+                insights={insights}
+                showBands={isEditor && showHighlights}
+                focusId={focusId}
+                focusColor={focusInsight ? focusInsight.color : null}
+                tintByGroup={focusBeatByGroup}
+                onBandEnter={this.bandEnter}
+                onBandLeave={this.unhoverInsight}
+              />
+              <InsightsPanel
+                variant="sidebar"
+                style={{ display: sidebarInsightsDisplay, flex: isMobile ? '1 1 auto' : '0 0 300px' }}
+                showClose={!isMobile}
+                {...insightsPanelProps}
+              />
+            </div>
+            <InsightsPanel
+              variant="bottom"
+              style={{ display: bottomInsightsDisplay }}
+              {...insightsPanelProps}
             />
-            <StaffPanel
-              style={{
-                display: isPreview || (isEditor && (!isMobile || mobileTab === 'staff')) ? 'flex' : 'none',
-                flex: !isMobile && isEditor ? '1 1 0%' : '1 1 auto',
-              }}
-              isMobile={isMobile}
-              isPreview={isPreview}
-              section={section}
-              subs={subs}
-              sectionNotes={this.state.notes[section.id]}
-              tempo={tempo}
-              playing={playing}
-              onTogglePlay={this.togglePlay}
-              playheadPos={playheadPos}
-              resolvePos={(pos) => this._resolvePos(pos)}
-            />
+          </div>
+
+          <div className="footer-bar">
+            <span>Created by Jason James · designed &amp; built with <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a></span>
           </div>
 
           {settingsOpen && <div className="settings-backdrop" onClick={this.toggleSettings} />}
@@ -408,6 +570,7 @@ export default class App extends Component {
             projectStatus={this.state.projectStatus}
             rendering={this.state.rendering}
           />
+          <InsightTooltip tip={tipData} tipKeep={this.tipKeep} tipLeave={this.unhoverInsight} />
         </div>
       </div>
     );

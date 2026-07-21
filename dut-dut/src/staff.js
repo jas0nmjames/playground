@@ -60,7 +60,7 @@ export function buildStaffShapes(g, rowsArr, subs, measures, beatW, leftPad) {
           const isX = g.id === 'cymbal';
           notes.push({
             key: g.id + '-n-' + b + '-' + p.s + '-' + l.laneIdx,
-            x: p.x, y, isX, isOval: !isX,
+            b, x: p.x, y, isX, isOval: !isX,
             x1a: p.x - 4.6, y1a: y - 4.6, x2a: p.x + 4.6, y2a: y + 4.6,
             x1b: p.x - 4.6, y1b: y + 4.6, x2b: p.x + 4.6, y2b: y - 4.6,
           });

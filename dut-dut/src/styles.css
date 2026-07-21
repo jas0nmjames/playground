@@ -703,3 +703,233 @@ a:hover {
   font-size: 10px;
   color: oklch(55% 0.02 260);
 }
+
+/* Layout wrapper: main row + optional bottom insights strip */
+.main-column {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Learn toggle in the header */
+.learn-btn {
+  border: 1px solid oklch(85% 0.012 80);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Insights panel */
+.insights-panel {
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  background: oklch(97% 0.007 80);
+}
+.insights-panel--sidebar {
+  border-left: 1px solid oklch(85% 0.012 80);
+}
+.insights-panel--bottom {
+  flex: 0 0 232px;
+  border-top: 1px solid oklch(85% 0.012 80);
+}
+.insights-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px 6px;
+}
+.insights-panel--bottom .insights-header {
+  padding: 8px 16px 4px;
+}
+.insights-close {
+  border: none;
+  background: transparent;
+  color: oklch(46% 0.02 260);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.scope-track {
+  display: flex;
+  background: oklch(94% 0.01 80);
+  border: 1px solid oklch(85% 0.012 80);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+.scope-track button {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.insights-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 2px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.insights-row {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 16px 12px;
+  align-items: stretch;
+}
+.insight-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: oklch(46% 0.02 260);
+}
+.insight-card {
+  flex: 0 0 auto;
+  border: 1.5px solid oklch(88% 0.01 80);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: oklch(98% 0.006 80);
+  cursor: pointer;
+}
+.insight-card--bottom {
+  flex: 0 0 280px;
+  overflow: auto;
+}
+.insight-card--bottom .insight-section-label {
+  font-size: 9px;
+}
+.insight-card-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+.insight-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.insight-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: oklch(20% 0.015 260);
+}
+.insight-body {
+  font-size: 11px;
+  line-height: 1.5;
+  color: oklch(35% 0.02 260);
+}
+.insight-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 10px;
+  margin-top: 6px;
+}
+.insight-terms a {
+  font-size: 10px;
+  font-weight: 600;
+}
+.ask-claude-btn {
+  flex: 0 0 auto;
+  border: 1px dashed oklch(65% 0.02 260);
+  border-radius: 10px;
+  padding: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: oklch(46% 0.02 260);
+}
+.llm-card {
+  flex: 0 0 auto;
+  border: 1.5px solid oklch(58% 0.16 235);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: oklch(96% 0.02 235);
+}
+.llm-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: oklch(42% 0.12 235);
+  margin-bottom: 4px;
+}
+.llm-text {
+  font-size: 11px;
+  line-height: 1.5;
+  color: oklch(30% 0.03 260);
+  white-space: pre-wrap;
+}
+.llm-note {
+  font-size: 9px;
+  color: oklch(55% 0.02 260);
+  margin-top: 6px;
+}
+
+/* Floating tooltip for staff highlight bands */
+.insight-tooltip {
+  position: fixed;
+  width: 262px;
+  background: oklch(99% 0.004 85);
+  border: 1.5px solid oklch(58% 0.16 235);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  z-index: 40;
+}
+
+/* Footer credit bar */
+.footer-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  border-top: 1px solid oklch(88% 0.01 80);
+  background: oklch(97% 0.007 80);
+}
+.footer-bar span {
+  font-size: 10px;
+  color: oklch(50% 0.02 260);
+}
+.footer-bar a {
+  font-weight: 600;
+}
+
+/* About box in settings */
+.about-box {
+  background: oklch(95% 0.008 80);
+  border: 1px solid oklch(85% 0.012 80);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.about-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: oklch(20% 0.015 260);
+}
+.about-text {
+  font-size: 11px;
+  line-height: 1.5;
+  color: oklch(35% 0.02 260);
+}
+.about-text a {
+  font-weight: 600;
+}

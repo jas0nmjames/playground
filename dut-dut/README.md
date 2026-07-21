@@ -5,7 +5,7 @@ updated: 2026-07-21
 
 # dut dut
 
-A web-based app to annotate, create, and preview drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. Work autosaves in the browser and can be saved/loaded as a JSON project file.
+A web-based app to annotate, create, preview, and learn from drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. An Insights panel analyzes what you've written — rudiments, syncopation, backbeats, hemiolas, call-and-response, and more — with hover-to-highlight on the score and links to learn each concept. Work autosaves in the browser and can be saved/loaded as a JSON project file.
 
 ## Getting started
 
@@ -30,7 +30,9 @@ React 19 + Vite. One class component owns all state; everything else is presenta
 - `src/App.jsx` — all state and actions (sections, notes, painting, transport, save/load/export), mirroring the Claude Design source almost line-for-line
 - `src/components/BlocksPanel.jsx` — the editable step grid: tool buttons, subdivision ruler (16th → triplet → 8th per beat), drag-to-paint cells
 - `src/components/StaffPanel.jsx` — percussion staff notation as SVG, with playhead
-- `src/components/SettingsDrawer.jsx` — tempo, metronome, swing, mutes, section management, project save/load, exports
+- `src/components/SettingsDrawer.jsx` — tempo, metronome, swing, mutes, section management, project save/load, exports, about
+- `src/components/InsightsPanel.jsx` — the Insights cards (sidebar or bottom-strip layout), scope toggle, and the floating tooltip shown when hovering score highlight bands
+- `src/insights-engine.js` — pure rule-based music-theory analysis (`analyzeProject`) producing insight cards with score-highlight targets and reference links, plus `buildLLMPrompt` for optional LLM commentary (the "Ask Claude" button appears only where a `window.claude.complete` runtime exists, e.g. inside a Claude artifact)
 - `src/staff.js` — pure staff-geometry function (noteheads, stems, beams, flags, tuplets, accents, grace notes, buzz z's); shared by the on-screen SVG staff and the PNG export
 - `src/audio-engine.js` — synthesized drum voices (oscillators + filtered noise) and a variable-duration lookahead scheduler, so beats can mix 16th/triplet/8th subdivisions in one loop
 - `src/export-utils.js` — MIDI file writer, offline WAV renderer, score-PNG renderer, download helper
@@ -58,6 +60,7 @@ Built with Claude across three passes, all in July 2026:
 1. **Scaffold** (July 20, claude-sonnet-5) — initial Vite + vanilla-JS project with a canvas step grid and Web Audio playback.
 2. **Design import** (July 20, claude-sonnet-5) — full app implemented from the Claude Design project `Drumline App v2.dc.html`, ported to vanilla JS with a hand-rolled DOM layer.
 3. **React rewrite from updated design** (July 20–21, claude-fable-5) — the design gained project save/load, localStorage autosave, and MIDI/WAV/PNG export; the app was reimplemented in React 19 (the design source is written as a React-style class component, so the port is nearly line-for-line) and the vanilla DOM layer, its focus-preservation workaround, and a drawer-transform workaround were all deleted. Design artifacts (`app` logic, `audio-engine.js`, `export-utils.js`, staff-geometry algorithm) come from the [Claude Design project](https://claude.ai/design/p/71d60cb1-de19-4900-b73f-0eb03a2a3519); Jason designed and iterated the app there.
+4. **Insights import** (July 21, claude-fable-5) — the design gained the Learn/Insights feature: `insights-engine.js` (rule-based music-theory analysis, ported verbatim), the Insights panel with hover-to-highlight and pinning, staff highlight bands with tooltips, the mobile Learn tab, a footer credit bar, and the About section in settings.
 
 ### Consumption
 
@@ -66,22 +69,23 @@ Built with Claude across three passes, all in July 2026:
 | July 20, 2026 | Claude Code | claude-sonnet-5 | 0.018 kWh | 0.007 kg CO₂ | 0.009 L |
 | July 20, 2026 | Claude Code | claude-sonnet-5 | 0.756 kWh | 0.292 kg CO₂ | 0.378 L |
 | July 20–21, 2026 | Claude Code | claude-fable-5 | 2.232 kWh | 0.861 kg CO₂ | 1.116 L |
+| July 21, 2026 | Claude Code | claude-fable-5 | 0.864 kWh | 0.334 kg CO₂ | 0.432 L |
 | July 2026 | Claude Design | (unknown) | not measurable from here | — | — |
 
-[^claude]: assuming 18 Wh per model API request; does not include estimate for foundation model training. Rows use the request counts from the measured token usage below (1, 42, and 124 requests respectively).
+[^claude]: assuming 18 Wh per model API request; does not include estimate for foundation model training. Rows use the request counts from the measured token usage below (1, 42, 124, and 48 requests respectively).
 
 ### Token usage
 
-Measured from the local Claude Code session transcripts for this project (one session, 9 user prompts, 167 API requests, July 20–21 2026):
+Measured from the local Claude Code session transcripts for this project (one session, 14 user prompts, 215 API requests, July 20–21 2026):
 
 | Category | Tokens |
 |---|---|
-| Input (uncached) | 327 |
-| Cache creation | 1,019,468 |
-| Cache read | 35,210,930 |
-| Output | 224,716 |
-| **Total** | **≈ 36.5M** |
+| Input (uncached) | 417 |
+| Cache creation | 1,753,781 |
+| Cache read | 50,417,174 |
+| Output | 288,883 |
+| **Total** | **≈ 52.5M** |
 
-Almost all of it is cache *reads* — the conversation context re-read on each of the 167 requests — which is far cheaper (in both cost and energy) than uncached input. The count excludes the final README-writing requests of the last session.
+Almost all of it is cache *reads* — the conversation context re-read on each of the 215 requests — which is far cheaper (in both cost and energy) than uncached input. The count excludes the final README-writing requests of the last session.
 
-**Claude Design usage is not measurable from this machine** — the claude.ai/design service doesn't expose per-project token counts. As a floor estimate: the four generated artifacts total ≈ 103 KB of code (≈ 29K output tokens) if each had been generated exactly once; with design iteration, realistic totals are plausibly 100K–500K output tokens plus a few million context-input tokens, depending on how many revisions were run. Your claude.ai account usage page (if your plan shows it) is the authoritative source.
+**Claude Design usage is not measurable from this machine** — the claude.ai/design service doesn't expose per-project token counts. As a floor estimate: the five generated artifacts total ≈ 128 KB of code (≈ 36K output tokens) if each had been generated exactly once; with design iteration, realistic totals are plausibly 100K–600K output tokens plus a few million context-input tokens, depending on how many revisions were run. Your claude.ai account usage page (if your plan shows it) is the authoritative source.
