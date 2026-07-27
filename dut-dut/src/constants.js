@@ -5,6 +5,8 @@ export const GROUPS_META = [
   { id: 'bass', name: 'Basses', color: 'oklch(50% 0.15 150)', single: false, rowDefs: [1, 2, 3, 4, 5].map(n => ({ id: 'bass' + n, label: 'B' + n })) },
 ];
 export const ALL_ROWS = GROUPS_META.flatMap(g => g.rowDefs.map(r => ({ ...r, groupId: g.id, color: g.color })));
+export const ROW_GROUP = {};
+for (const r of ALL_ROWS) ROW_GROUP[r.id] = r.groupId;
 
 // Vertical staff position (px) for each row within its group's staff SVG.
 export const LANE_Y = {
@@ -24,6 +26,10 @@ export const TOOLS = [
 ];
 
 export const STORAGE_KEY = 'dut-dut-project-v2';
+
+// Live-tap metadata per cell: 0 painted, 1 snapped to the grid, >=2 free timing
+// (the fractional offset into the cell is meta - 2).
+export const TAKE_DEFAULT = '#c4552b';
 
 export const COLORS = {
   text: 'oklch(20% 0.015 260)',
@@ -52,6 +58,13 @@ export function makeSectionNotes(section) {
 
 export function makeBeatSubs(section) { return new Array(beatCount(section)).fill(4); }
 
+// Per-part subdivision overrides: 0 means "inherit the beat ruler".
+export function makeGroupSubs(section) {
+  const g = {};
+  for (const gm of GROUPS_META) g[gm.id] = new Array(beatCount(section)).fill(0);
+  return g;
+}
+
 export function resizeBeatArray(arr, count, makeItem) {
   const out = arr.slice(0, count);
   while (out.length < count) out.push(makeItem(out.length));
@@ -66,33 +79,45 @@ export function normalizeProject(p) {
     name: String(s.name || 'Section ' + (i + 1)),
     measures: Math.max(1, Math.min(16, Math.round(Number(s.measures) || 4))),
   }));
-  const beatSubs = {}, notes = {};
+  const beatSubs = {}, groupSubs = {}, notes = {}, live = {};
   for (const s of sections) {
     const count = s.measures * 4;
     const rawSubs = (p.beatSubs && p.beatSubs[s.id]) || [];
     const subs = [];
     for (let i = 0; i < count; i++) subs.push([2, 3, 4].includes(rawSubs[i]) ? rawSubs[i] : 4);
     beatSubs[s.id] = subs;
-    const rows = {};
+    const rawG = (p.groupSubs && p.groupSubs[s.id]) || {};
+    const gs = {};
+    for (const gm of GROUPS_META) {
+      const arr = rawG[gm.id] || [];
+      gs[gm.id] = Array.from({ length: count }, (_, i) => ([2, 3, 4].includes(arr[i]) ? arr[i] : 0));
+    }
+    groupSubs[s.id] = gs;
+    const rows = {}, lrows = {};
     for (const row of ALL_ROWS) {
       const rawBeats = (p.notes && p.notes[s.id] && p.notes[s.id][row.id]) || [];
-      const beatsArr = [];
+      const rawLive = (p.live && p.live[s.id] && p.live[s.id][row.id]) || [];
+      const beatsArr = [], liveArr = [];
       for (let b = 0; b < count; b++) {
+        const sc = gs[row.groupId][b] || subs[b];
         const raw = Array.isArray(rawBeats[b]) ? rawBeats[b] : [];
-        const na = new Array(subs[b]).fill(0);
-        for (let i = 0; i < Math.min(na.length, raw.length); i++) {
+        const rawL = Array.isArray(rawLive[b]) ? rawLive[b] : [];
+        const na = new Array(sc).fill(0), la = new Array(sc).fill(0);
+        for (let i = 0; i < Math.min(sc, raw.length); i++) {
           const v = Math.round(Number(raw[i]) || 0);
           na[i] = v >= 0 && v <= 5 ? v : 0;
+          const m = Number(rawL[i]) || 0;
+          la[i] = m >= 0 && m < 3 ? m : 0;
         }
-        beatsArr.push(na);
+        beatsArr.push(na); liveArr.push(la);
       }
-      rows[row.id] = beatsArr;
+      rows[row.id] = beatsArr; lrows[row.id] = liveArr;
     }
-    notes[s.id] = rows;
+    notes[s.id] = rows; live[s.id] = lrows;
   }
   const activeSectionId = sections.some(s => s.id === p.activeSectionId) ? p.activeSectionId : sections[0].id;
   return {
-    sections, beatSubs, notes, activeSectionId,
+    sections, beatSubs, groupSubs, notes, live, activeSectionId,
     tempo: Math.max(40, Math.min(240, Math.round(Number(p.tempo) || 120))),
     swing: Math.max(0, Math.min(100, Math.round(Number(p.swing) || 0))),
   };

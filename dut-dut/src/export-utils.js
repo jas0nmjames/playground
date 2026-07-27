@@ -24,6 +24,21 @@ const GROUP_ROWS = {
   Tenors: ['tenor1', 'tenor2', 'tenor3', 'tenor4', 'tenor5', 'tenor6'],
   Basses: ['bass1', 'bass2', 'bass3', 'bass4', 'bass5'],
 };
+const ROW_GROUP = { cymbal: 'cymbal', snare: 'snare' };
+for (let i = 1; i <= 6; i++) ROW_GROUP['tenor' + i] = 'tenor';
+for (let i = 1; i <= 5; i++) ROW_GROUP['bass' + i] = 'bass';
+
+// Effective subdivision for one part on one beat: per-part override, else the measure setting.
+function subsFor(project, sectionId, rowId, beat) {
+  const master = (project.beatSubs[sectionId] || [])[beat] || 4;
+  const ov = project.groupSubs && project.groupSubs[sectionId] && project.groupSubs[sectionId][ROW_GROUP[rowId]];
+  return (ov && ov[beat]) || master;
+}
+// Live-tap metadata: 0 painted, 1 snapped to grid, >=2 free timing with offset (m - 2) of a subdivision.
+function liveOffset(project, sectionId, rowId, beat, sub) {
+  const m = project.live && project.live[sectionId] && project.live[sectionId][rowId] && project.live[sectionId][rowId][beat] ? (project.live[sectionId][rowId][beat][sub] || 0) : 0;
+  return m >= 2 ? m - 2 : 0;
+}
 
 function vlq(n) {
   n = Math.max(0, Math.round(n));
@@ -39,7 +54,7 @@ function trackChunk(events) {
 }
 
 export function buildMidi(project) {
-  const { sections, beatSubs, notes, tempo } = project;
+  const { sections, notes, tempo } = project;
   const tempoTrack = [
     0, 0xff, 0x51, 0x03, ...u32(Math.round(60000000 / tempo)).slice(1),
     0, 0xff, 0x58, 0x04, 4, 2, 24, 8,
@@ -50,13 +65,13 @@ export function buildMidi(project) {
     const evts = [];
     let tickOff = 0;
     for (const s of sections) {
-      const subs = beatSubs[s.id];
-      for (let b = 0; b < subs.length; b++) {
-        const sc = subs[b];
-        const subTicks = PPQ / sc;
-        for (let sub = 0; sub < sc; sub++) {
-          const t = tickOff + b * PPQ + sub * subTicks;
-          for (const rowId of rowIds) {
+      const beats = s.measures * 4;
+      for (let b = 0; b < beats; b++) {
+        for (const rowId of rowIds) {
+          const sc = subsFor(project, s.id, rowId, b);
+          const subTicks = PPQ / sc;
+          for (let sub = 0; sub < sc; sub++) {
+            const t = tickOff + b * PPQ + sub * subTicks + liveOffset(project, s.id, rowId, b, sub) * subTicks;
             const v = notes[s.id]?.[rowId]?.[b]?.[sub];
             if (!v) continue;
             const note = NOTE_MAP[rowId];
@@ -109,7 +124,7 @@ function encodeWav(audioBuffer) {
 }
 
 export async function renderWav(project) {
-  const { sections, beatSubs, notes, tempo, swing } = project;
+  const { sections, notes, tempo, swing } = project;
   const beatDur = 60 / tempo;
   let total = 0.1;
   for (const s of sections) total += s.measures * 4 * beatDur;
@@ -117,16 +132,18 @@ export async function renderWav(project) {
   const players = buildVoicePlayers();
   let off = 0.05;
   for (const s of sections) {
-    const subs = beatSubs[s.id];
-    for (let b = 0; b < subs.length; b++) {
-      const sc = subs[b];
-      const dur = beatDur / sc;
-      for (let sub = 0; sub < sc; sub++) {
-        let t = off + b * beatDur + sub * dur;
-        if (sc % 2 === 0 && sub % 2 === 1) t += dur * (swing / 100) * 0.5;
-        for (const rowId in players) {
+    const beats = s.measures * 4;
+    for (let b = 0; b < beats; b++) {
+      for (const rowId in players) {
+        const sc = subsFor(project, s.id, rowId, b);
+        const dur = beatDur / sc;
+        for (let sub = 0; sub < sc; sub++) {
           const v = notes[s.id]?.[rowId]?.[b]?.[sub];
           if (!v) continue;
+          let t = off + b * beatDur + sub * dur;
+          const lo = liveOffset(project, s.id, rowId, b, sub);
+          if (lo) t += lo * dur;
+          else if (sc % 2 === 0 && sub % 2 === 1) t += dur * (swing / 100) * 0.5;
           const play = players[rowId];
           if (v === 1) play(ctx, t, ctx.destination, 1);
           else if (v === 2) play(ctx, t, ctx.destination, 2);
@@ -146,6 +163,7 @@ export async function renderWav(project) {
 const INK = '#16181f';
 const GRAY = '#7a7f8c';
 const LINE = '#565b68';
+const TAKE = '#c4552b';
 
 function drawShapes(ctx, s, ox, oy) {
   ctx.strokeStyle = LINE; ctx.lineWidth = 1;
@@ -184,6 +202,8 @@ function drawShapes(ctx, s, ox, oy) {
     ctx.beginPath(); ctx.moveTo(ox + gr.k1x, oy + gr.k1y); ctx.lineTo(ox + gr.k2x, oy + gr.k2y); ctx.stroke();
   }
   for (const nt of s.notes) {
+    ctx.fillStyle = nt.live ? TAKE : INK;
+    ctx.strokeStyle = nt.live ? TAKE : INK;
     if (nt.isX) {
       ctx.lineWidth = 1.7;
       ctx.beginPath(); ctx.moveTo(ox + nt.x1a, oy + nt.y1a); ctx.lineTo(ox + nt.x2a, oy + nt.y2a); ctx.stroke();
@@ -192,6 +212,17 @@ function drawShapes(ctx, s, ox, oy) {
       ctx.beginPath(); ctx.ellipse(ox + nt.x, oy + nt.y, 5.2, 3.9, -18 * Math.PI / 180, 0, Math.PI * 2); ctx.fill();
     }
   }
+  for (const un of s.unisons || []) {
+    ctx.fillStyle = un.live ? TAKE : INK;
+    ctx.beginPath();
+    if (ctx.roundRect) { ctx.roundRect(ox + un.x, oy + un.y, un.w, un.h, un.rx); ctx.fill(); }
+    else ctx.fillRect(ox + un.x, oy + un.y, un.w, un.h);
+  }
+  ctx.strokeStyle = TAKE;
+  ctx.lineWidth = 1.4;
+  for (const tk of s.takeTicks || []) { ctx.beginPath(); ctx.moveTo(ox + tk.x, oy + tk.y1); ctx.lineTo(ox + tk.x, oy + tk.y2); ctx.stroke(); }
+  ctx.lineWidth = 2;
+  for (const sb of s.snapBars || []) { ctx.beginPath(); ctx.moveTo(ox + sb.x1, oy + sb.y); ctx.lineTo(ox + sb.x2, oy + sb.y); ctx.stroke(); }
   ctx.textAlign = 'left';
 }
 

@@ -3,12 +3,16 @@ import { GROUPS_META, COLORS } from '../constants.js';
 export default function SettingsDrawer({
   open, onClose, isMobile,
   tempo, setTempo, metronome, toggleMetronome, setViewport, clearSection,
+  selRow, tapMode, setTapMode, hasTake, clearTake, takeColor,
+  perPart, togglePerPart, anyOverride, resetAllSubs,
   swing, setSwing, muted, toggleMute,
   sections, addSection, renameSection, setSectionMeasures, deleteSection,
   onSaveProject, onLoadFile, onExportMidi, onExportWav, onExportPng, projectStatus, rendering,
 }) {
   const { accent, onAccent, mutedText, text } = COLORS;
   const canDelete = sections.length > 1;
+  const tapExactOn = tapMode === 'exact';
+  const tapStyle = (active) => ({ background: active ? takeColor : 'transparent', color: active ? onAccent : mutedText });
 
   return (
     <div
@@ -54,6 +58,49 @@ export default function SettingsDrawer({
             </div>
           </div>
           <button className="danger-btn" onClick={clearSection}>Clear active section</button>
+        </div>
+
+        <div>
+          <div className="drawer-section-title">Play along</div>
+          <div className="toggle-row">
+            <span>Space taps into</span>
+            <span className="tap-target-name" style={{ color: selRow ? takeColor : mutedText }}>{selRow ? selRow.label : 'nothing yet'}</span>
+          </div>
+          <div className="toggle-row">
+            <span>Timing</span>
+            <div className="mini-track">
+              <button onClick={() => setTapMode('exact')} style={tapStyle(tapExactOn)}>Exact</button>
+              <button onClick={() => setTapMode('quant')} style={tapStyle(!tapExactOn)}>Auto-rhythm</button>
+            </div>
+          </div>
+          <div className="small-note" style={{ marginBottom: 8 }}>
+            Hit Play, click a drum name in the grid, then tap Space in time. Exact keeps the moment you played;
+            auto-rhythm pulls each tap to the nearest subdivision. Taps use the current tool, so the accent tool taps accents.
+          </div>
+          <button className="file-btn full" disabled={!hasTake} style={{ opacity: hasTake ? 1 : 0.45 }} onClick={clearTake}>
+            Clear tapped notes in this section
+          </button>
+        </div>
+
+        <div>
+          <div className="drawer-section-title">Subdivisions</div>
+          <div className="toggle-row">
+            <span>Per-part row (÷)</span>
+            <button
+              className="pill-toggle"
+              onClick={togglePerPart}
+              style={{ background: perPart ? accent : 'transparent', color: perPart ? onAccent : mutedText }}
+            >
+              {perPart ? 'Shown' : 'Hidden'}
+            </button>
+          </div>
+          <div className="small-note" style={{ marginBottom: 8 }}>
+            The beat ruler sets every part at once. Turn this on to give the snares triplets while the basses stay
+            in sixteenths on the same beat.
+          </div>
+          <button className="file-btn full" disabled={!anyOverride} style={{ opacity: anyOverride ? 1 : 0.45 }} onClick={resetAllSubs}>
+            Reset all parts to the ruler
+          </button>
         </div>
 
         <div>

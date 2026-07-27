@@ -34,10 +34,11 @@ const NEUTRAL = 'oklch(60% 0.02 260)';
 // value bits: 1 hit, 2 accent, 4 flam, 8 diddle, 16 buzz
 const VBIT = { 1: 1, 2: 2, 3: 4, 4: 8, 5: 16 };
 
-function digest(sec, subs, notesForSec, groups, rows) {
+function digest(sec, subs, notesForSec, groups, rows, gsubs) {
   const beats = sec.measures * 4;
+  const scOf = (gid, b) => ((gsubs && gsubs[gid] && gsubs[gid][b]) || subs[b] || 4);
   const byGroup = {};
-  for (const g of groups) byGroup[g.id] = Array.from({ length: beats }, (_, b) => ({ sc: subs[b] || 4, m: new Array(subs[b] || 4).fill(0) }));
+  for (const g of groups) byGroup[g.id] = Array.from({ length: beats }, (_, b) => ({ sc: scOf(g.id, b), m: new Array(scOf(g.id, b)).fill(0) }));
   for (const r of rows) {
     const beatsArr = (notesForSec && notesForSec[r.id]) || [];
     for (let b = 0; b < beats; b++) {
@@ -59,8 +60,8 @@ function runs(beatIdxs) {
 }
 const t = (...keys) => keys.map(k => TERMS[k]);
 
-function analyzeSection(sec, subs, notesForSec, groups, rows) {
-  const { beats, byGroup } = digest(sec, subs, notesForSec, groups, rows);
+function analyzeSection(sec, subs, notesForSec, groups, rows, gsubs, liveForSec) {
+  const { beats, byGroup } = digest(sec, subs, notesForSec, groups, rows, gsubs);
   const out = [];
   const tgt = (groupId, beatList) => ({ sectionId: sec.id, groupId, beats: beatList });
   const gname = id => (groups.find(g => g.id === id) || {}).name || id;
@@ -121,9 +122,50 @@ function analyzeSection(sec, subs, notesForSec, groups, rows) {
       break;
     }
   }
+  // Mixed subdivisions between parts (per-part subdivision writing)
+  {
+    const mixed = [];
+    for (let b = 0; b < beats; b++) {
+      const scs = new Set();
+      for (const g of groups) { const c = byGroup[g.id][b]; if (c.m.some(v => v)) scs.add(c.sc); }
+      if (scs.size >= 2) mixed.push(b);
+    }
+    if (mixed.length) {
+      out.push({ kind: 'crossdiv', sectionId: sec.id, title: 'Two subdivisions at once', body: 'On the highlighted beats one part splits the beat into three while another splits it into four. Two different grids running against each other inside the same pulse is a cross-rhythm — the effect is a shimmer that resolves every time the parts meet on the downbeat.', terms: t('polyrhythm', 'hemiola', 'triplet'), targets: [tgt(null, mixed)] });
+    }
+  }
+  // Timing of a live play-along take
+  if (liveForSec) {
+    let n = 0, sumMs = 0, worst = 0; const takeBeats = [];
+    const beatMs = 60000 / (sec._tempo || 120);
+    for (const r of rows) {
+      const larr = liveForSec[r.id] || [];
+      for (let b = 0; b < beats; b++) {
+        const cell = larr[b] || [];
+        const sc = byGroup[r.groupId] ? byGroup[r.groupId][b].sc : 4;
+        for (let s = 0; s < cell.length; s++) {
+          const m = cell[s] || 0;
+          if (m < 2) continue;
+          const off = m - 2;
+          const dev = (off <= 0.5 ? off : off - 1) * (beatMs / sc);
+          n++; sumMs += dev; if (Math.abs(dev) > Math.abs(worst)) worst = dev;
+          takeBeats.push(b);
+        }
+      }
+    }
+    if (n >= 4) {
+      const avg = sumMs / n;
+      const lean = avg > 8 ? 'a touch behind the grid' : avg < -8 ? 'slightly ahead of the grid' : 'right on top of the grid';
+      out.push({ kind: 'take', sectionId: sec.id, title: 'Your take, measured', body: 'Of the ' + n + ' notes you tapped in freely, the average landed ' + lean + ' (' + (avg >= 0 ? '+' : '') + Math.round(avg) + ' ms), the loosest by ' + Math.round(Math.abs(worst)) + ' ms. Small, consistent lateness reads as laid-back feel; scattered error reads as unsteady. Switch to auto-rhythm to hear the same idea locked to the grid.', terms: t('beat', 'groove', 'swing'), targets: [tgt(null, takeBeats)] });
+    }
+  }
   // Triplet vs straight subdivisions
   const tripBeats = [], eighthBeats = [];
-  for (let b = 0; b < beats; b++) { if ((subs[b] || 4) === 3) tripBeats.push(b); else if ((subs[b] || 4) === 2) eighthBeats.push(b); }
+  for (let b = 0; b < beats; b++) {
+    let three = false, two = false;
+    for (const g of groups) { const c = byGroup[g.id][b]; if (c.sc === 3) three = true; else if (c.sc === 2) two = true; }
+    if (three) tripBeats.push(b); else if (two) eighthBeats.push(b);
+  }
   if (tripBeats.length && tripBeats.length < beats) {
     out.push({ kind: 'triplets', sectionId: sec.id, title: 'Duple meets triple', body: 'The highlighted beats divide into triplets — three equal notes where the neighbors have four sixteenths' + (eighthBeats.length ? ' or two eighths' : '') + '. Switching the subdivision mid-phrase flips the feel from square to rolling.', terms: t('triplet', 'sixteenth'), targets: [tgt(null, tripBeats)] });
   } else if (tripBeats.length === beats) {
@@ -201,7 +243,7 @@ function analyzeSection(sec, subs, notesForSec, groups, rows) {
 }
 
 export function analyzeProject(project, opts) {
-  const { sections, beatSubs, notes, tempo, swing } = project;
+  const { sections, beatSubs, groupSubs, notes, live, tempo, swing } = project;
   const { scope, activeSectionId, groups, rows } = opts;
   const secList = scope === 'cadence' ? sections : sections.filter(s => s.id === activeSectionId);
   const out = [];
@@ -216,11 +258,11 @@ export function analyzeProject(project, opts) {
   if (swing > 0) {
     out.push({ kind: 'swing', sectionId: null, title: 'Swung, not straight', body: 'Swing is set to ' + swing + '%, so every other subdivision plays late. The notation stays even but the feel shuffles — the lilt you hear in jazz and hip-hop.', terms: t('swing', 'groove'), targets: [] });
   }
-  for (const sec of secList) out.push(...analyzeSection(sec, beatSubs[sec.id] || [], notes[sec.id] || {}, groups, rows));
+  for (const sec of secList) out.push(...analyzeSection({ ...sec, _tempo: tempo }, beatSubs[sec.id] || [], notes[sec.id] || {}, groups, rows, (groupSubs || {})[sec.id], (live || {})[sec.id]));
   // Cadence-wide dynamic arc
   if (scope === 'cadence' && sections.length >= 2) {
     const dens = sections.map(s => {
-      const d = digest(s, beatSubs[s.id] || [], notes[s.id] || {}, groups, rows);
+      const d = digest(s, beatSubs[s.id] || [], notes[s.id] || {}, groups, rows, (groupSubs || {})[s.id]);
       let sounded = 0, total = 0;
       for (const g of groups) d.byGroup[g.id].forEach(c => { total += c.sc; c.m.forEach(v => { if (v) sounded++; }); });
       return { s, v: total ? sounded / total : 0 };
@@ -244,12 +286,12 @@ export function analyzeProject(project, opts) {
 
 // Compact text description + teaching prompt for an LLM.
 export function buildLLMPrompt(project, opts) {
-  const { sections, beatSubs, notes, tempo, swing } = project;
+  const { sections, beatSubs, groupSubs, notes, tempo, swing } = project;
   const { scope, activeSectionId, groups, rows } = opts;
   const secList = scope === 'cadence' ? sections : sections.filter(s => s.id === activeSectionId);
   const lines = ['Tempo ' + tempo + ' BPM, 4/4 time' + (swing ? ', swing ' + swing + '%' : '') + '.'];
   for (const sec of secList) {
-    const { beats, byGroup } = digest(sec, beatSubs[sec.id] || [], notes[sec.id] || {}, groups, rows);
+    const { beats, byGroup } = digest(sec, beatSubs[sec.id] || [], notes[sec.id] || {}, groups, rows, (groupSubs || {})[sec.id]);
     lines.push('Section "' + sec.name + '" (' + sec.measures + ' measures):');
     for (const g of groups) {
       let any = false;
