@@ -49,7 +49,9 @@ The Insights panel explains patterns for free, offline, with no account and no A
 
 Three tiers, because the one-click path is the least reliable: **copy** works with anything including a local model, **deep links** prefill Claude / ChatGPT / Gemini when the payload fits in a URL (their `?q=` parameters are undocumented and can break, so anything too long copies and opens an empty chat rather than silently truncating), and **download .md** suits Projects, NotebookLM, or emailing a band director.
 
-Guardrails, not gates: you preview the exact text before it moves, a first-run notice explains what's shared, that it spends *your* credits, and that assistants set their own minimum ages (claude.ai is 18+, most others 13+ or parental consent). Nothing is blocked — you decide.
+Guardrails, not gates: you preview the exact text before it moves, and a first-run notice explains what's shared, that the cost falls on the assistant's free tier or your own account rather than the app's, and that assistants set their own minimum ages (claude.ai is 18+, most others 13+ or parental consent). Nothing is blocked — you decide.
+
+Verified in the wild: ChatGPT's prefill works from a plain `localhost` page, and answers **without requiring an account** — so a student can get an explanation without signing up for anything. Claude and Gemini prefills are not yet confirmed; if a parameter changes, that destination degrades to an empty chat with the text already on your clipboard.
 
 ## Attribution, licenses & copyright
 

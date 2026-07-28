@@ -44,7 +44,7 @@ export default function ExplainModal({
               <div className="explain-disclosure-title">Before you send this somewhere</div>
               <ul>
                 <li><strong>What gets shared:</strong> the pattern you drew, your section names, and your tempo — shown in full below. Nothing about you, no account details.</li>
-                <li><strong>What it costs:</strong> this opens an assistant you already use and spends <em>your</em> credits or plan usage, not the app's. dut dut never calls an AI itself.</li>
+                <li><strong>What it costs:</strong> nothing from dut dut — it never calls an AI itself. You are using the assistant's own free tier, or your account and credits if you are signed in. Some assistants will answer without an account at all.</li>
                 <li><strong>Age requirements:</strong> assistants set their own minimums — claude.ai requires 18+, most others 13+ or parental consent. Check the service's terms before using it.</li>
               </ul>
               <button className="file-btn" style={{ flex: '0 0 auto', alignSelf: 'flex-start' }} onClick={onDismissDisclosure}>Got it</button>
@@ -92,7 +92,7 @@ export default function ExplainModal({
             <button className="file-btn" onClick={handleDownload}>Download .md</button>
           </div>
           <div className="small-note" style={{ marginTop: 8 }}>
-            Opens in a new tab and uses your own account and credits. Works with any assistant — including a local model — via copy.
+            Opens in a new tab and runs on the assistant's free tier or your own account — never the app's. Works with any assistant, including a local model, via copy.
           </div>
 
           {status && <div className="explain-status">{status}</div>}
