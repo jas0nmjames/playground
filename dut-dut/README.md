@@ -32,13 +32,26 @@ React 19 + Vite. One class component owns all state; everything else is presenta
 - `src/components/StaffPanel.jsx` — percussion staff notation as SVG, with playhead
 - `src/components/SettingsDrawer.jsx` — tempo, metronome, swing, mutes, section management, project save/load, exports, about
 - `src/components/InsightsPanel.jsx` — the Insights cards (sidebar or bottom-strip layout), scope toggle, and the floating tooltip shown when hovering score highlight bands
-- `src/insights-engine.js` — pure rule-based music-theory analysis (`analyzeProject`) producing insight cards with score-highlight targets and reference links, plus `buildLLMPrompt` for optional LLM commentary (the "Ask Claude" button appears only where a `window.claude.complete` runtime exists, e.g. inside a Claude artifact)
+- `src/insights-engine.js` — pure rule-based music-theory analysis (`analyzeProject`) producing insight cards with score-highlight targets and reference links, plus the context envelope (`buildCadenceContext` / `renderContextMarkdown`) used by the explain-elsewhere handoff
+- `src/components/ExplainModal.jsx` + `src/handoff.js` — "Explain this pattern elsewhere": builds a portable context document and hands it to the assistant of your choice (see below)
 - `src/staff.js` — pure staff-geometry function (noteheads, stems, beams, flags, tuplets, accents, grace notes, buzz z's); shared by the on-screen SVG staff and the PNG export
 - `src/audio-engine.js` — synthesized drum voices (oscillators + filtered noise) and a variable-duration lookahead scheduler, so beats can mix 16th/triplet/8th subdivisions in one loop
 - `src/export-utils.js` — MIDI file writer, offline WAV renderer, score-PNG renderer, download helper
 - `src/constants.js` — instrument/tool definitions, project validation (`normalizeProject`)
 
-Audio and export code load on demand (dynamic `import()`), so Vite splits them into separate chunks — the initial page load doesn't include them.
+Audio, export, and insights code load on demand (dynamic `import()`), so Vite splits them into separate chunks — the initial page load doesn't include them. Anything shared with an eagerly-loaded module has to stay dependency-free or it drags those chunks back into the main bundle, which is why `downloadBlob` lives in its own `src/download.js` and `ExplainModal` receives `LEVELS` as a prop instead of importing it.
+
+## Explaining a pattern with your own assistant
+
+The Insights panel explains patterns for free, offline, with no account and no AI involved — that stays the primary teaching surface. "Explain this pattern elsewhere" is for going deeper: it builds a self-describing context document (notation legend, the pattern, per-voice subdivisions, live-take timing, and what the built-in analyzer already found) and hands it to whichever assistant you already use.
+
+**Why a handoff instead of a built-in AI button.** A Claude Pro/Max or ChatGPT Plus subscription can't be called from code — only separately-metered API credits can, and most people using this will never have an API key. Sending the text into the chat UI where you're already signed in is the only route that reaches the subscription you already pay for. It also means **the app never calls an AI itself** and makes no network requests of its own; nothing leaves your browser until you choose to send it. (The page does still load its two fonts from Google Fonts — self-hosting them would make that guarantee absolute.)
+
+Three tiers, because the one-click path is the least reliable: **copy** works with anything including a local model, **deep links** prefill Claude / ChatGPT / Gemini when the payload fits in a URL (their `?q=` parameters are undocumented and can break, so anything too long copies and opens an empty chat rather than silently truncating), and **download .md** suits Projects, NotebookLM, or emailing a band director.
+
+Guardrails, not gates: you preview the exact text before it moves, and a first-run notice explains what's shared, that the cost falls on the assistant's free tier or your own account rather than the app's, and that assistants set their own minimum ages (claude.ai is 18+, most others 13+ or parental consent). Nothing is blocked — you decide.
+
+Verified in the wild: ChatGPT's prefill works from a plain `localhost` page, and answers **without requiring an account** — so a student can get an explanation without signing up for anything. Claude and Gemini prefills are not yet confirmed; if a parameter changes, that destination degrades to an empty chat with the text already on your clipboard.
 
 ## Attribution, licenses & copyright
 

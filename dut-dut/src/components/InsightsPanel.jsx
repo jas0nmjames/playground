@@ -39,9 +39,19 @@ function InsightCard({ card, variant }) {
   );
 }
 
-function LlmBits({ llmAvailable, onAskClaude, askClaudeLabel, llmText, llmLabel, variant }) {
+function LlmBits({ llmAvailable, onAskClaude, askClaudeLabel, llmText, llmLabel, variant, explainAvailable, onExplain }) {
   return (
     <>
+      {explainAvailable && (
+        <button
+          className="ask-claude-btn"
+          style={variant === 'bottom' ? { flex: '0 0 220px' } : undefined}
+          onClick={onExplain}
+        >
+          Explain this pattern elsewhere →
+        </button>
+      )}
+      {/* Only inside a Claude artifact, where inference is already available. */}
       {llmAvailable && (
         <button
           className="ask-claude-btn"

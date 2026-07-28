@@ -1,30 +1,39 @@
 import { Component } from 'react';
 import {
-  GROUPS_META, ALL_ROWS, TOOLS, STORAGE_KEY, COLORS,
-  defaultSections, makeSectionNotes, makeBeatSubs, resizeBeatArray, normalizeProject,
+  GROUPS_META, ALL_ROWS, ROW_GROUP, TOOLS, STORAGE_KEY, COLORS, TAKE_DEFAULT,
+  defaultSections, beatCount, makeSectionNotes, makeBeatSubs, makeGroupSubs, resizeBeatArray, normalizeProject,
 } from './constants.js';
 import { buildStaffShapes } from './staff.js';
 import BlocksPanel from './components/BlocksPanel.jsx';
 import StaffPanel from './components/StaffPanel.jsx';
 import SettingsDrawer from './components/SettingsDrawer.jsx';
 import InsightsPanel, { InsightTooltip } from './components/InsightsPanel.jsx';
+import ExplainModal from './components/ExplainModal.jsx';
+
+const HANDOFF_ACK_KEY = 'dut-dut-handoff-ack-v1';
+const EXPLAIN_LEVEL_KEY = 'dut-dut-explain-level-v1';
 
 export default class App extends Component {
   state = {
     screen: 'editor',        // 'editor' | 'preview'
     viewport: 'desktop',     // 'desktop' | 'mobile'
-    mobileTab: 'blocks',     // 'blocks' | 'staff'
+    mobileTab: 'blocks',     // 'blocks' | 'staff' | 'learn'
     settingsOpen: false,
     sections: defaultSections(),
     activeSectionId: 'intro',
-    beatSubs: null,          // { [sectionId]: number[] } — subdivisions (2/3/4) per beat
+    beatSubs: null,          // { [sectionId]: number[] } — ruler subdivisions (2/3/4) per beat
+    groupSubs: null,         // { [sectionId]: { [groupId]: number[] } } — per-part overrides, 0 = inherit
     notes: null,             // { [sectionId]: { [rowId]: number[][] } } — [beat][sub] note values
+    live: null,              // { [sectionId]: { [rowId]: number[][] } } — [beat][sub] tap metadata
     tool: 'hit',
+    perPart: false,          // show the per-part ÷ chip row
+    selectedRowId: null,     // the drum Space taps into
+    tapMode: 'quant',        // 'quant' | 'exact'
     swing: 0,
     metronome: false,
     tempo: 120,
     playing: false,
-    playheadPos: -1,
+    playBeat: -1,            // fractional beat position of the playhead
     muted: { cymbal: false, snare: false, tenor: false, bass: false },
     painting: null,          // { value } while a drag-paint is in progress
     rendering: false,        // WAV export in progress
@@ -37,30 +46,48 @@ export default class App extends Component {
     llmText: '',
     llmLabel: '',
     llmLoading: false,
+    explainOpen: false,
+    explainLevel: 'new',     // see LEVELS in insights-engine
+    handoffAcked: false,     // first-run handoff disclosure dismissed
   };
 
   constructor(props) {
     super(props);
-    const notes = {}, beatSubs = {};
-    for (const s of this.state.sections) { notes[s.id] = makeSectionNotes(s); beatSubs[s.id] = makeBeatSubs(s); }
-    this.state = { ...this.state, notes, beatSubs };
+    const notes = {}, live = {}, beatSubs = {}, groupSubs = {};
+    for (const s of this.state.sections) {
+      notes[s.id] = makeSectionNotes(s);
+      live[s.id] = makeSectionNotes(s);
+      beatSubs[s.id] = makeBeatSubs(s);
+      groupSubs[s.id] = makeGroupSubs(s);
+    }
+    this.state = { ...this.state, notes, live, beatSubs, groupSubs };
+    this._marks = [];        // recent { beat, time } scheduler marks, for the visual clock
   }
 
   componentDidMount() {
     if (window.innerWidth < 820) this.setState({ viewport: 'mobile' });
     this._mouseUpHandler = () => this.cellUp();
     window.addEventListener('mouseup', this._mouseUpHandler);
+    this._keyHandler = (e) => this.onKeyDown(e);
+    window.addEventListener('keydown', this._keyHandler);
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) this._applyProject(JSON.parse(saved));
     } catch (e) { /* keep defaults */ }
     this._llmOk = typeof window !== 'undefined' && window.claude && typeof window.claude.complete === 'function';
     import('./insights-engine.js').then(m => { this._insights = m; this.forceUpdate(); }).catch(() => {});
+    try {
+      const acked = localStorage.getItem(HANDOFF_ACK_KEY) === '1';
+      const lvl = localStorage.getItem(EXPLAIN_LEVEL_KEY);
+      this.setState({ handoffAcked: acked, explainLevel: lvl || 'new' });
+    } catch (e) { /* keep defaults */ }
   }
   componentWillUnmount() {
     window.removeEventListener('mouseup', this._mouseUpHandler);
+    window.removeEventListener('keydown', this._keyHandler);
     clearTimeout(this._saveT);
     clearTimeout(this._tipT);
+    cancelAnimationFrame(this._raf);
     this._scheduler?.stop();
   }
 
@@ -71,33 +98,29 @@ export default class App extends Component {
     }, 400);
   }
   _serializeProject() {
-    const { tempo, swing, sections, beatSubs, notes, activeSectionId } = this.state;
-    return JSON.stringify({ v: 2, app: 'dut-dut', tempo, swing, sections, beatSubs, notes, activeSectionId });
+    const { tempo, swing, sections, beatSubs, groupSubs, notes, live, activeSectionId } = this.state;
+    return JSON.stringify({ v: 3, app: 'dut-dut', tempo, swing, sections, beatSubs, groupSubs, notes, live, activeSectionId });
   }
   _project() {
-    const { tempo, swing, sections, beatSubs, notes } = this.state;
-    return { tempo, swing, sections, beatSubs, notes };
+    const { tempo, swing, sections, beatSubs, groupSubs, notes, live } = this.state;
+    return { tempo, swing, sections, beatSubs, groupSubs, notes, live };
   }
   _applyProject(p) {
     const norm = normalizeProject(p);
-    if (this.state.playing) this._scheduler?.stop();
-    this.setState({ ...norm, playing: false, playheadPos: -1 });
+    if (this.state.playing) this._stopClock();
+    this.setState({ ...norm, playing: false, playBeat: -1 });
     this._persist();
   }
 
   _activeSection() {
     return this.state.sections.find(s => s.id === this.state.activeSectionId) || this.state.sections[0];
   }
-  _subs() { return this.state.beatSubs[this._activeSection().id]; }
-  _posCount() { return this._subs().reduce((a, b) => a + b, 0); }
-  _resolvePos(pos) {
-    const subs = this._subs();
-    let acc = 0;
-    for (let b = 0; b < subs.length; b++) {
-      if (pos < acc + subs[b]) return { beat: b, sub: pos - acc, subCount: subs[b] };
-      acc += subs[b];
-    }
-    return { beat: 0, sub: 0, subCount: subs[0] || 4 };
+  // Effective subdivisions for one part: its own override where set, else the ruler.
+  _subsFor(sectionId, groupId) {
+    const master = this.state.beatSubs[sectionId];
+    const ov = (this.state.groupSubs[sectionId] || {})[groupId];
+    if (!ov) return master;
+    return master.map((m, i) => ov[i] || m);
   }
 
   async _ensureAudio() {
@@ -109,54 +132,137 @@ export default class App extends Component {
     if (!this._scheduler) {
       this._scheduler = new mod.VarScheduler({
         audioContext: this._audioCtx,
-        getPositionCount: () => this._posCount(),
-        getDuration: (pos) => (60 / this.state.tempo) / this._resolvePos(pos).subCount,
-        onScheduleStep: (pos, time) => this._onStep(mod, pos, time),
+        getPositionCount: () => beatCount(this._activeSection()),
+        getDuration: () => 60 / this.state.tempo,
+        onScheduleStep: (beat, time) => this._onStep(mod, beat, time),
       });
     }
     return mod;
   }
 
-  _onStep(mod, pos, time) {
+  // One scheduler step is one beat: every part places its own subdivisions inside it.
+  _onStep(mod, beat, time) {
     const section = this._activeSection();
-    const notes = this.state.notes[section.id];
-    const { beat, sub, subCount } = this._resolvePos(pos);
-    const dur = (60 / this.state.tempo) / subCount;
-    let t = time;
-    if (subCount % 2 === 0 && sub % 2 === 1) t += dur * (this.state.swing / 100) * 0.5;
-    if (this.state.metronome && sub === 0) {
-      mod.playMetronome(this._audioCtx, t, this._audioCtx.destination, beat % 4 === 0);
-    }
-    const dest = this._audioCtx.destination;
+    const notesFor = this.state.notes[section.id];
+    const liveFor = this.state.live[section.id];
+    const beatDur = 60 / this.state.tempo;
+    const ctx = this._audioCtx, dest = ctx.destination;
+    this._marks.push({ beat, time });
+    if (this._marks.length > 32) this._marks.shift();
+    if (this.state.metronome) mod.playMetronome(ctx, time, dest, beat % 4 === 0);
     for (const row of ALL_ROWS) {
       if (this.state.muted[row.groupId]) continue;
-      const v = notes[row.id][beat][sub];
-      if (!v) continue;
+      const sc = this._subsFor(section.id, row.groupId)[beat];
+      const dur = beatDur / sc;
+      const arr = notesFor[row.id][beat] || [];
+      const larr = (liveFor && liveFor[row.id] && liveFor[row.id][beat]) || [];
       const play = this._voicePlayers[row.id];
-      if (v === 1) play(this._audioCtx, t, dest, 1);
-      else if (v === 2) play(this._audioCtx, t, dest, 2);
-      else if (v === 3) { play(this._audioCtx, t - 0.028, dest, 0); play(this._audioCtx, t, dest, 1); }
-      else if (v === 4) { play(this._audioCtx, t, dest, 1); play(this._audioCtx, t + dur / 2, dest, 1); }
-      else if (v === 5) { for (let i = 0; i < 4; i++) play(this._audioCtx, t + i * dur / 4, dest, i === 0 ? 1 : 0); }
+      for (let s = 0; s < sc; s++) {
+        const v = arr[s];
+        if (!v) continue;
+        let t = time + s * dur;
+        const m = larr[s] || 0;
+        if (m >= 2) t += (m - 2) * dur;
+        else if (sc % 2 === 0 && s % 2 === 1) t += dur * (this.state.swing / 100) * 0.5;
+        if (v === 1) play(ctx, t, dest, 1);
+        else if (v === 2) play(ctx, t, dest, 2);
+        else if (v === 3) { play(ctx, Math.max(0.001, t - 0.028), dest, 0); play(ctx, t, dest, 1); }
+        else if (v === 4) { play(ctx, t, dest, 1); play(ctx, t + dur / 2, dest, 1); }
+        else if (v === 5) { for (let i = 0; i < 4; i++) play(ctx, t + i * dur / 4, dest, i === 0 ? 1 : 0); }
+      }
     }
-    requestAnimationFrame(() => this.setState({ playheadPos: pos }));
+  }
+
+  _markAt(now) {
+    let best = null;
+    for (const m of this._marks) if (m.time <= now && (!best || m.time > best.time)) best = m;
+    return best;
+  }
+  // Where the music actually is right now, in fractional beats.
+  _beatPos(now) {
+    const m = this._markAt(now);
+    if (!m) return -1;
+    const beatDur = 60 / this.state.tempo;
+    const beats = beatCount(this._activeSection());
+    const pos = m.beat + Math.max(0, Math.min(1.2, (now - m.time) / beatDur));
+    return ((pos % beats) + beats) % beats;
+  }
+  _startClock() {
+    cancelAnimationFrame(this._raf);
+    const loop = () => {
+      if (!this.state.playing) return;
+      this._raf = requestAnimationFrame(loop);
+      const now = performance.now();
+      if (now - (this._lastPaint || 0) < 55) return;
+      this._lastPaint = now;
+      const pos = this._beatPos(this._audioCtx.currentTime);
+      if (pos >= 0) this.setState({ playBeat: pos });
+    };
+    this._raf = requestAnimationFrame(loop);
+  }
+  _stopClock() {
+    cancelAnimationFrame(this._raf);
+    this._scheduler?.stop();
+    this._marks = [];
   }
 
   togglePlay = async () => {
     if (this.state.playing) {
-      this._scheduler?.stop();
-      this.setState({ playing: false, playheadPos: -1 });
+      this._stopClock();
+      this.setState({ playing: false, playBeat: -1 });
       return;
     }
     await this._ensureAudio();
+    this._marks = [];
     this._scheduler.start();
-    this.setState({ playing: true });
+    this.setState({ playing: true }, () => this._startClock());
   };
+
+  // Space is a drumstick, never a transport control: it only writes notes.
+  onKeyDown = (e) => {
+    if (e.code !== 'Space' || e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    e.preventDefault();
+    if (e.repeat) return;
+    if (this.state.playing && this.state.selectedRowId) this._recordTap();
+  };
+
+  // Space during playback writes into the selected drum — either at the moment it was
+  // played (exact) or pulled to the nearest subdivision (auto-rhythm).
+  _recordTap() {
+    if (!this._audioCtx) return;
+    const rowId = this.state.selectedRowId;
+    const section = this._activeSection();
+    const beats = beatCount(section);
+    const now = this._audioCtx.currentTime - (this._audioCtx.outputLatency || this._audioCtx.baseLatency || 0);
+    const pos = this._beatPos(now);
+    if (pos < 0) return;
+    const subs = this._subsFor(section.id, ROW_GROUP[rowId]);
+    let b = Math.floor(pos);
+    const frac = pos - b;
+    const sc = subs[b] || 4;
+    const toolV = (TOOLS.find(tl => tl.id === this.state.tool) || {}).v || 1;
+    const value = toolV || 1;
+    let sub, meta;
+    if (this.state.tapMode === 'quant') {
+      let k = Math.round(frac * sc);
+      if (k >= sc) { b = (b + 1) % beats; k = 0; }
+      sub = k; meta = 1;
+    } else {
+      const k = Math.max(0, Math.min(sc - 1, Math.floor(frac * sc)));
+      sub = k; meta = 2 + Math.max(0, Math.min(0.995, frac * sc - k));
+    }
+    this._writeCell(rowId, b, sub, value, meta);
+    if (this._voicePlayers && !this.state.muted[ROW_GROUP[rowId]]) {
+      this._voicePlayers[rowId](this._audioCtx, this._audioCtx.currentTime + 0.005, this._audioCtx.destination, value === 2 ? 2 : 1);
+    }
+  }
 
   setTempo = (v) => { this.setState({ tempo: Math.max(40, Math.min(240, Math.round(Number(v) || 120))) }); this._persist(); };
 
   selectSection = (id) => {
-    if (this.state.playing) { this._scheduler?.stop(); this.setState({ playing: false, playheadPos: -1 }); }
+    if (this.state.playing) { this._stopClock(); this.setState({ playing: false, playBeat: -1 }); }
     this.setState({ activeSectionId: id });
     this._persist();
   };
@@ -166,7 +272,9 @@ export default class App extends Component {
     this.setState({
       sections: [...this.state.sections, section],
       notes: { ...this.state.notes, [id]: makeSectionNotes(section) },
+      live: { ...this.state.live, [id]: makeSectionNotes(section) },
       beatSubs: { ...this.state.beatSubs, [id]: makeBeatSubs(section) },
+      groupSubs: { ...this.state.groupSubs, [id]: makeGroupSubs(section) },
       activeSectionId: id,
     });
     this._persist();
@@ -177,54 +285,119 @@ export default class App extends Component {
     const sections = this.state.sections.map(s => s.id === id ? { ...s, measures } : s);
     const count = measures * 4;
     const subs = resizeBeatArray(this.state.beatSubs[id], count, () => 4);
-    const rows = {};
-    for (const row of ALL_ROWS) rows[row.id] = resizeBeatArray(this.state.notes[id][row.id], count, (i) => new Array(subs[i]).fill(0));
-    this.setState({ sections, beatSubs: { ...this.state.beatSubs, [id]: subs }, notes: { ...this.state.notes, [id]: rows } });
+    const gs = {};
+    for (const gm of GROUPS_META) gs[gm.id] = resizeBeatArray((this.state.groupSubs[id] || {})[gm.id] || [], count, () => 0);
+    const rows = {}, lrows = {};
+    for (const row of ALL_ROWS) {
+      const sizeAt = (i) => gs[row.groupId][i] || subs[i];
+      rows[row.id] = resizeBeatArray(this.state.notes[id][row.id], count, (i) => new Array(sizeAt(i)).fill(0));
+      lrows[row.id] = resizeBeatArray(this.state.live[id][row.id], count, (i) => new Array(sizeAt(i)).fill(0));
+    }
+    this.setState({
+      sections,
+      beatSubs: { ...this.state.beatSubs, [id]: subs },
+      groupSubs: { ...this.state.groupSubs, [id]: gs },
+      notes: { ...this.state.notes, [id]: rows },
+      live: { ...this.state.live, [id]: lrows },
+    });
     this._persist();
   };
   deleteSection = (id) => {
     if (this.state.sections.length <= 1) return;
     const sections = this.state.sections.filter(s => s.id !== id);
     const notes = { ...this.state.notes }; delete notes[id];
+    const live = { ...this.state.live }; delete live[id];
     const beatSubs = { ...this.state.beatSubs }; delete beatSubs[id];
+    const groupSubs = { ...this.state.groupSubs }; delete groupSubs[id];
     const activeSectionId = this.state.activeSectionId === id ? sections[0].id : this.state.activeSectionId;
-    this.setState({ sections, notes, beatSubs, activeSectionId });
+    this.setState({ sections, notes, live, beatSubs, groupSubs, activeSectionId });
     this._persist();
   };
 
-  cycleBeatSub = (beatIdx) => {
-    const section = this._activeSection();
-    const subs = this.state.beatSubs[section.id].slice();
-    const next = subs[beatIdx] === 4 ? 3 : subs[beatIdx] === 3 ? 2 : 4;
-    subs[beatIdx] = next;
-    const rows = {};
+  // Any subdivision change re-buckets every row to its part's new cell count.
+  _applySubs(master, gsubs) {
+    const sid = this._activeSection().id;
+    const beats = master.length;
+    const rows = {}, lrows = {};
     for (const row of ALL_ROWS) {
-      const beats = this.state.notes[section.id][row.id].slice();
-      const old = beats[beatIdx];
-      const na = new Array(next).fill(0);
-      for (let i = 0; i < Math.min(next, old.length); i++) na[i] = old[i];
-      beats[beatIdx] = na;
-      rows[row.id] = beats;
+      const oldN = this.state.notes[sid][row.id], oldL = this.state.live[sid][row.id];
+      const nb = [], nl = [];
+      for (let b = 0; b < beats; b++) {
+        const sc = (gsubs[row.groupId] && gsubs[row.groupId][b]) || master[b];
+        const on = oldN[b] || [], ol = (oldL && oldL[b]) || [];
+        const na = new Array(sc).fill(0), la = new Array(sc).fill(0);
+        for (let i = 0; i < Math.min(sc, on.length); i++) { na[i] = on[i]; la[i] = ol[i] || 0; }
+        nb.push(na); nl.push(la);
+      }
+      rows[row.id] = nb; lrows[row.id] = nl;
     }
     this.setState({
-      beatSubs: { ...this.state.beatSubs, [section.id]: subs },
-      notes: { ...this.state.notes, [section.id]: rows },
+      beatSubs: { ...this.state.beatSubs, [sid]: master },
+      groupSubs: { ...this.state.groupSubs, [sid]: gsubs },
+      notes: { ...this.state.notes, [sid]: rows },
+      live: { ...this.state.live, [sid]: lrows },
     });
     this._persist();
+  }
+  cycleBeatSub = (beatIdx) => {
+    const sid = this._activeSection().id;
+    const master = this.state.beatSubs[sid].slice();
+    master[beatIdx] = master[beatIdx] === 4 ? 3 : master[beatIdx] === 3 ? 2 : 4;
+    this._applySubs(master, this.state.groupSubs[sid]);
   };
+  cycleGroupBeatSub = (groupId, beatIdx) => {
+    const sid = this._activeSection().id;
+    const gsubs = { ...this.state.groupSubs[sid] };
+    const arr = (gsubs[groupId] || []).slice();
+    const cur = arr[beatIdx] || 0;
+    arr[beatIdx] = cur === 0 ? 4 : cur === 4 ? 3 : cur === 3 ? 2 : 0;
+    gsubs[groupId] = arr;
+    this._applySubs(this.state.beatSubs[sid], gsubs);
+  };
+  resetGroupSubs = (groupId) => {
+    const sid = this._activeSection().id;
+    const gsubs = { ...this.state.groupSubs[sid] };
+    gsubs[groupId] = new Array(this.state.beatSubs[sid].length).fill(0);
+    this._applySubs(this.state.beatSubs[sid], gsubs);
+  };
+  resetAllSubs = () => {
+    const sid = this._activeSection().id;
+    const gsubs = {};
+    for (const gm of GROUPS_META) gsubs[gm.id] = new Array(this.state.beatSubs[sid].length).fill(0);
+    this._applySubs(this.state.beatSubs[sid], gsubs);
+  };
+  togglePerPart = () => this.setState({ perPart: !this.state.perPart });
 
   setSwing = (v) => { this.setState({ swing: Number(v) }); this._persist(); };
   toggleMetronome = () => this.setState({ metronome: !this.state.metronome });
   toggleMute = (groupId) => this.setState({ muted: { ...this.state.muted, [groupId]: !this.state.muted[groupId] } });
   setTool = (id) => this.setState({ tool: id });
+  selectRow = (rowId) => {
+    this._lastRow = { ...(this._lastRow || {}), [ROW_GROUP[rowId]]: rowId };
+    this.setState({ selectedRowId: this.state.selectedRowId === rowId ? null : rowId });
+  };
+  armGroup = (groupId) => {
+    if (ROW_GROUP[this.state.selectedRowId] === groupId) { this.setState({ selectedRowId: null }); return; }
+    const gm = GROUPS_META.find(g => g.id === groupId);
+    const rowId = ((this._lastRow || {})[groupId]) || gm.rowDefs[0].id;
+    this.setState({ selectedRowId: rowId });
+  };
+  setTapMode = (m) => this.setState({ tapMode: m });
 
-  _paintCell(rowId, beat, sub, value) {
-    const section = this._activeSection();
-    const beats = this.state.notes[section.id][rowId].slice();
+  _writeCell(rowId, beat, sub, value, meta) {
+    const sid = this._activeSection().id;
+    const beats = this.state.notes[sid][rowId].slice();
     const na = beats[beat].slice();
     na[sub] = value;
     beats[beat] = na;
-    this.setState({ notes: { ...this.state.notes, [section.id]: { ...this.state.notes[section.id], [rowId]: beats } } });
+    const lbeats = this.state.live[sid][rowId].slice();
+    const la = (lbeats[beat] || []).slice();
+    la[sub] = value ? (meta || 0) : 0;
+    lbeats[beat] = la;
+    this.setState({
+      notes: { ...this.state.notes, [sid]: { ...this.state.notes[sid], [rowId]: beats } },
+      live: { ...this.state.live, [sid]: { ...this.state.live[sid], [rowId]: lbeats } },
+    });
     this._persist();
   }
   cellDown = (rowId, beat, sub) => {
@@ -232,20 +405,34 @@ export default class App extends Component {
     const cur = this.state.notes[section.id][rowId][beat][sub];
     const toolV = TOOLS.find(tl => tl.id === this.state.tool).v;
     const value = (toolV !== 0 && cur === toolV) ? 0 : toolV;
-    this._paintCell(rowId, beat, sub, value);
+    this._writeCell(rowId, beat, sub, value, 0);
     this.setState({ painting: { value } });
   };
   cellEnter = (rowId, beat, sub) => {
     if (!this.state.painting) return;
-    this._paintCell(rowId, beat, sub, this.state.painting.value);
+    this._writeCell(rowId, beat, sub, this.state.painting.value, 0);
   };
   cellUp = () => this.state.painting && this.setState({ painting: null });
   clearSection = () => {
-    const section = this._activeSection();
-    const subs = this.state.beatSubs[section.id];
-    const rows = {};
-    for (const row of ALL_ROWS) rows[row.id] = subs.map(sc => new Array(sc).fill(0));
-    this.setState({ notes: { ...this.state.notes, [section.id]: rows } });
+    const sid = this._activeSection().id;
+    const rows = {}, lrows = {};
+    for (const row of ALL_ROWS) {
+      const sizes = this._subsFor(sid, row.groupId);
+      rows[row.id] = sizes.map(sc => new Array(sc).fill(0));
+      lrows[row.id] = sizes.map(sc => new Array(sc).fill(0));
+    }
+    this.setState({ notes: { ...this.state.notes, [sid]: rows }, live: { ...this.state.live, [sid]: lrows } });
+    this._persist();
+  };
+  clearTake = () => {
+    const sid = this._activeSection().id;
+    const rows = {}, lrows = {};
+    for (const row of ALL_ROWS) {
+      const nb = this.state.notes[sid][row.id], lb = this.state.live[sid][row.id];
+      rows[row.id] = nb.map((cell, b) => cell.map((v, s) => ((lb[b] && lb[b][s]) ? 0 : v)));
+      lrows[row.id] = lb.map(cell => cell.map(() => 0));
+    }
+    this.setState({ notes: { ...this.state.notes, [sid]: rows }, live: { ...this.state.live, [sid]: lrows } });
     this._persist();
   };
 
@@ -281,12 +468,33 @@ export default class App extends Component {
       rows: ALL_ROWS.map(r => ({ id: r.id, groupId: r.groupId })),
     };
   }
+  openExplain = () => this.setState({ explainOpen: true });
+  closeExplain = () => this.setState({ explainOpen: false });
+  setExplainLevel = (id) => {
+    this.setState({ explainLevel: id });
+    try { localStorage.setItem(EXPLAIN_LEVEL_KEY, id); } catch (e) { /* storage blocked */ }
+  };
+  ackHandoff = () => {
+    this.setState({ handoffAcked: true });
+    try { localStorage.setItem(HANDOFF_ACK_KEY, '1'); } catch (e) { /* storage blocked */ }
+  };
+  // The exact text the user previews and sends — nothing else leaves the app.
+  _explainText() {
+    if (!this._insights) return '';
+    try {
+      const ctx = this._insights.buildCadenceContext(this._project(), this._analysisOpts());
+      return this._insights.renderContextMarkdown(ctx, { level: this.state.explainLevel });
+    } catch (e) {
+      return '';
+    }
+  }
+
   askClaude = async () => {
     if (this.state.llmLoading || !this._llmOk || !this._insights) return;
     const label = this.state.insightScope === 'cadence' ? 'Claude on the full cadence' : 'Claude on "' + this._activeSection().name + '"';
     this.setState({ llmLoading: true });
     try {
-      const prompt = this._insights.buildLLMPrompt({ sections: this.state.sections, beatSubs: this.state.beatSubs, notes: this.state.notes, tempo: this.state.tempo, swing: this.state.swing }, this._analysisOpts());
+      const prompt = this._insights.buildLLMPrompt(this._project(), { ...this._analysisOpts(), level: this.state.explainLevel });
       const text = await window.claude.complete(prompt);
       this.setState({ llmText: String(text || '').trim(), llmLabel: label, llmLoading: false });
     } catch (e) {
@@ -328,26 +536,39 @@ export default class App extends Component {
   onExportPng = async () => {
     const u = await import('./export-utils.js');
     const beatW = 96, leftPad = 60;
+    const opts = { unison: this.props.unisonNotation ?? true };
     const render = this.state.sections.map(sec => ({
       name: sec.name,
       groups: GROUPS_META.map(g => ({
         name: g.name, color: g.color,
-        shapes: buildStaffShapes(g, g.rowDefs.map(rd => this.state.notes[sec.id][rd.id]), this.state.beatSubs[sec.id], sec.measures, beatW, leftPad),
+        shapes: buildStaffShapes(
+          g,
+          g.rowDefs.map(rd => this.state.notes[sec.id][rd.id]),
+          g.rowDefs.map(rd => this.state.live[sec.id][rd.id]),
+          this._subsFor(sec.id, g.id), sec.measures, beatW, leftPad, opts,
+        ),
       })),
     }));
     await u.renderScorePng(render, { title: 'dut dut — cadence', tempo: this.state.tempo });
   };
 
   render() {
-    const { screen, viewport, mobileTab, settingsOpen, sections, tempo, playing, playheadPos } = this.state;
+    const { screen, viewport, mobileTab, settingsOpen, sections, tempo, playing, playBeat } = this.state;
     const section = this._activeSection();
-    const subs = this.state.beatSubs[section.id];
     const isMobile = viewport === 'mobile';
     const isEditor = screen === 'editor';
     const isPreview = screen === 'preview';
     const { accent, onAccent, text, mutedText, border } = COLORS;
+    const takeColor = this.props.takeColor || TAKE_DEFAULT;
 
     const tabStyle = (active) => ({ background: active ? accent : 'transparent', color: active ? onAccent : mutedText });
+
+    const subsByGroup = {};
+    for (const g of GROUPS_META) subsByGroup[g.id] = this._subsFor(section.id, g.id);
+    const overrides = this.state.groupSubs[section.id] || {};
+    const anyOverride = GROUPS_META.some(g => (overrides[g.id] || []).some(v => v));
+    const selRow = ALL_ROWS.find(r => r.id === this.state.selectedRowId) || null;
+    const hasTake = ALL_ROWS.some(r => (this.state.live[section.id][r.id] || []).some(cell => cell.some(m => m)));
 
     // ---- Insights ----
     const insightsLayout = ['sidebar', 'bottom', 'inline'].includes(this.props.insightsLayout) ? this.props.insightsLayout : 'sidebar';
@@ -355,10 +576,7 @@ export default class App extends Component {
     let insights = [];
     if (this._insights) {
       try {
-        insights = this._insights.analyzeProject(
-          { sections, beatSubs: this.state.beatSubs, notes: this.state.notes, tempo, swing: this.state.swing },
-          this._analysisOpts(),
-        );
+        insights = this._insights.analyzeProject(this._project(), this._analysisOpts());
       } catch (e) { insights = []; }
     }
     const focusId = this.state.hoverInsightId || this.state.pinnedInsightId;
@@ -412,6 +630,8 @@ export default class App extends Component {
       askClaudeLabel: this.state.llmLoading ? 'Asking Claude…' : 'Ask Claude to explain this pattern',
       llmText: this.state.llmText,
       llmLabel: this.state.llmLabel,
+      explainAvailable: !!this._insights,
+      onExplain: this.openExplain,
     };
     const insightsPanelProps = {
       cards: insightCards,
@@ -487,17 +707,33 @@ export default class App extends Component {
                 }}
                 isMobile={isMobile}
                 section={section}
-                subs={subs}
+                masterSubs={this.state.beatSubs[section.id]}
+                subsByGroup={subsByGroup}
+                overrides={overrides}
                 sectionNotes={this.state.notes[section.id]}
+                sectionLive={this.state.live[section.id]}
                 tool={this.state.tool}
                 setTool={this.setTool}
                 tempo={tempo}
                 muted={this.state.muted}
                 toggleMute={this.toggleMute}
                 cycleBeatSub={this.cycleBeatSub}
+                cycleGroupBeatSub={this.cycleGroupBeatSub}
+                resetGroupSubs={this.resetGroupSubs}
+                perPart={this.state.perPart}
+                togglePerPart={this.togglePerPart}
+                selectedRowId={this.state.selectedRowId}
+                selectRow={this.selectRow}
+                armGroup={this.armGroup}
+                selRow={selRow}
+                tapMode={this.state.tapMode}
+                setTapMode={this.setTapMode}
+                hasTake={hasTake}
+                clearTake={this.clearTake}
+                takeColor={takeColor}
                 cellDown={this.cellDown}
                 cellEnter={this.cellEnter}
-                playheadPos={playheadPos}
+                playBeat={playBeat}
                 tintByGroup={focusBeatByGroup}
                 focusColor={focusInsight ? focusInsight.color : null}
               />
@@ -509,13 +745,16 @@ export default class App extends Component {
                 isMobile={isMobile}
                 isPreview={isPreview}
                 section={section}
-                subs={subs}
+                subsByGroup={subsByGroup}
                 sectionNotes={this.state.notes[section.id]}
+                sectionLive={this.state.live[section.id]}
                 tempo={tempo}
                 playing={playing}
                 onTogglePlay={this.togglePlay}
-                playheadPos={playheadPos}
-                resolvePos={(pos) => this._resolvePos(pos)}
+                playBeat={playBeat}
+                unison={this.props.unisonNotation ?? true}
+                takeColor={takeColor}
+                hasTake={hasTake}
                 insights={insights}
                 showBands={isEditor && showHighlights}
                 focusId={focusId}
@@ -553,6 +792,16 @@ export default class App extends Component {
             toggleMetronome={this.toggleMetronome}
             setViewport={this.setViewport}
             clearSection={this.clearSection}
+            selRow={selRow}
+            tapMode={this.state.tapMode}
+            setTapMode={this.setTapMode}
+            hasTake={hasTake}
+            clearTake={this.clearTake}
+            takeColor={takeColor}
+            perPart={this.state.perPart}
+            togglePerPart={this.togglePerPart}
+            anyOverride={anyOverride}
+            resetAllSubs={this.resetAllSubs}
             swing={this.state.swing}
             setSwing={this.setSwing}
             muted={this.state.muted}
@@ -571,6 +820,19 @@ export default class App extends Component {
             rendering={this.state.rendering}
           />
           <InsightTooltip tip={tipData} tipKeep={this.tipKeep} tipLeave={this.unhoverInsight} />
+          <ExplainModal
+            open={this.state.explainOpen}
+            onClose={this.closeExplain}
+            text={this.state.explainOpen ? this._explainText() : ''}
+            levels={(this._insights && this._insights.LEVELS) || []}
+            level={this.state.explainLevel}
+            setLevel={this.setExplainLevel}
+            scopeLabel={this.state.insightScope === 'cadence'
+              ? `The whole cadence — ${sections.length} sections`
+              : `The "${section.name}" section only`}
+            showDisclosure={!this.state.handoffAcked}
+            onDismissDisclosure={this.ackHandoff}
+          />
         </div>
       </div>
     );

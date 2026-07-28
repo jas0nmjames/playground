@@ -3,9 +3,19 @@ import { buildStaffShapes } from '../staff.js';
 
 const INK = 'oklch(24% 0.015 260)';
 
-function StaffSvg({ sg, showPlayhead, playheadX }) {
+function StaffSvg({ sg, showPlayhead, playheadX, takeColor }) {
   return (
     <svg width={sg.width} height={sg.height} style={{ display: 'block' }}>
+      {sg.bands.map(bd => (
+        <rect
+          key={bd.key}
+          x={bd.x} y={bd.y} width={bd.w} height={bd.h} rx={5}
+          fill={bd.fill} opacity={bd.opacity}
+          style={{ cursor: 'help' }}
+          onMouseEnter={bd.enter}
+          onMouseLeave={bd.leave}
+        />
+      ))}
       {sg.lines.map((ln, i) => (
         <line key={i} x1={16} x2={sg.lineEndX} y1={ln.y} y2={ln.y} stroke="oklch(55% 0.02 260)" strokeWidth={1} />
       ))}
@@ -18,16 +28,6 @@ function StaffSvg({ sg, showPlayhead, playheadX }) {
       <text x={42} y={sg.ts2Y} fill={INK} style={{ font: '700 15px Georgia,serif' }}>4</text>
       {sg.measureNums.map(mn => (
         <text key={mn.n} x={mn.x} y={sg.numY} fill="oklch(55% 0.02 260)" style={{ font: 'italic 9px Georgia,serif' }}>{mn.n}</text>
-      ))}
-      {sg.bands.map(bd => (
-        <rect
-          key={bd.key}
-          x={bd.x} y={bd.y} width={bd.w} height={bd.h} rx={5}
-          fill={bd.fill} opacity={bd.opacity}
-          style={{ cursor: 'help' }}
-          onMouseEnter={bd.enter}
-          onMouseLeave={bd.leave}
-        />
       ))}
       {showPlayhead && (
         <line x1={playheadX} x2={playheadX} y1={0} y2={sg.height} stroke="oklch(58% 0.16 235)" strokeWidth={2} opacity={0.8} />
@@ -61,27 +61,36 @@ function StaffSvg({ sg, showPlayhead, playheadX }) {
       ) : (
         <ellipse key={nt.key} cx={nt.x} cy={nt.y} rx={5.2} ry={3.9} transform={`rotate(-18 ${nt.x} ${nt.y})`} fill={nt.fill} />
       ))}
+      {sg.unisons.map(un => (
+        <rect key={un.key} x={un.x} y={un.y} width={un.w} height={un.h} rx={un.rx} fill={un.fill} />
+      ))}
+      {sg.snapBars.map(sb => (
+        <line key={sb.key} x1={sb.x1} x2={sb.x2} y1={sb.y} y2={sb.y} stroke={takeColor} strokeWidth={2} />
+      ))}
+      {sg.takeTicks.map(tk => (
+        <line key={tk.key} x1={tk.x} x2={tk.x} y1={tk.y1} y2={tk.y2} stroke={takeColor} strokeWidth={1.4} />
+      ))}
     </svg>
   );
 }
 
 export default function StaffPanel({
-  style, isMobile, isPreview, section, subs, sectionNotes, tempo,
-  playing, onTogglePlay, playheadPos, resolvePos,
+  style, isMobile, isPreview, section, subsByGroup, sectionNotes, sectionLive, tempo,
+  playing, onTogglePlay, playBeat, unison = true, takeColor, hasTake = false,
   insights = [], showBands = false, focusId = null, focusColor = null, tintByGroup = null,
   onBandEnter, onBandLeave,
 }) {
   const beatW = isMobile ? 112 : 128;
   const leftPad = 60;
-
-  let playheadX = -100;
-  if (playheadPos >= 0) {
-    const { beat, sub, subCount } = resolvePos(playheadPos);
-    playheadX = leftPad + beat * beatW + sub * (beatW / subCount) + (beatW / subCount) / 2;
-  }
+  const playheadX = playBeat >= 0 ? leftPad + playBeat * beatW : -100;
 
   const staffGroups = GROUPS_META.map(g => {
-    const shapes = buildStaffShapes(g, g.rowDefs.map(rd => sectionNotes[rd.id]), subs, section.measures, beatW, leftPad);
+    const shapes = buildStaffShapes(
+      g,
+      g.rowDefs.map(rd => sectionNotes[rd.id]),
+      g.rowDefs.map(rd => sectionLive[rd.id]),
+      subsByGroup[g.id], section.measures, beatW, leftPad, { unison },
+    );
 
     // Translucent hover bands over each insight's target beats
     const bands = [];
@@ -109,9 +118,11 @@ export default function StaffPanel({
     }
 
     const tintSet = tintByGroup ? tintByGroup[g.id] : null;
-    const notes = shapes.notes.map(n => ({ ...n, fill: tintSet && tintSet.has(n.b) ? focusColor : INK }));
+    const tinted = (n) => (tintSet && tintSet.has(n.b) ? focusColor : n.live ? takeColor : INK);
+    const notes = shapes.notes.map(n => ({ ...n, fill: tinted(n) }));
+    const unisons = shapes.unisons.map(n => ({ ...n, fill: tinted(n) }));
 
-    return { id: g.id, name: g.name, color: g.color, shapes: { ...shapes, notes, bands } };
+    return { id: g.id, name: g.name, color: g.color, shapes: { ...shapes, notes, unisons, bands } };
   });
 
   return (
@@ -133,9 +144,16 @@ export default function StaffPanel({
           {staffGroups.map(sg => (
             <div key={sg.id} className="staff-group">
               <div className="staff-group-label" style={{ color: sg.color }}>{sg.name}</div>
-              <StaffSvg sg={sg.shapes} showPlayhead={playheadPos >= 0} playheadX={playheadX} />
+              <StaffSvg sg={sg.shapes} showPlayhead={playBeat >= 0} playheadX={playheadX} takeColor={takeColor} />
             </div>
           ))}
+          {hasTake && (
+            <div className="take-key">
+              <span><span className="take-key-dot" style={{ background: takeColor }} />tapped in live</span>
+              <span><span className="take-key-tick" style={{ background: takeColor }} />where you actually played it</span>
+              <span><span className="take-key-bar" style={{ background: takeColor }} />snapped to the grid</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
