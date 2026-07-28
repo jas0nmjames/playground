@@ -1083,6 +1083,96 @@ a:hover {
   z-index: 40;
 }
 
+/* Explain-elsewhere modal */
+.explain-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(580px, calc(100% - 32px));
+  max-height: calc(100% - 48px);
+  background: oklch(98% 0.006 80);
+  border: 1px solid oklch(85% 0.012 80);
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  z-index: 21;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.explain-body {
+  flex: 1;
+  overflow: auto;
+  padding: 14px 18px 18px;
+}
+.explain-disclosure {
+  border: 1.5px solid oklch(72% 0.12 85);
+  background: oklch(97% 0.03 85);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.explain-disclosure-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: oklch(20% 0.015 260);
+}
+.explain-disclosure ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.explain-disclosure li {
+  font-size: 11px;
+  line-height: 1.5;
+  color: oklch(35% 0.02 260);
+}
+.explain-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.explain-control {
+  display: flex;
+  flex-direction: column;
+}
+.explain-preview {
+  margin: 0 0 6px;
+  max-height: 260px;
+  overflow: auto;
+  background: oklch(95% 0.008 80);
+  border: 1px solid oklch(85% 0.012 80);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: oklch(30% 0.02 260);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.explain-dests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.explain-status {
+  margin-top: 12px;
+  border: 1.5px solid oklch(58% 0.16 235);
+  background: oklch(96% 0.02 235);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: oklch(30% 0.03 260);
+}
+
 /* Footer credit bar */
 .footer-bar {
   flex: 0 0 auto;

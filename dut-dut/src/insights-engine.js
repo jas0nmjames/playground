@@ -284,20 +284,88 @@ export function analyzeProject(project, opts) {
   return capped;
 }
 
-// Compact text description + teaching prompt for an LLM.
-export function buildLLMPrompt(project, opts) {
-  const { sections, beatSubs, groupSubs, notes, tempo, swing } = project;
+// ---------------------------------------------------------------------------
+// Portable context envelope
+//
+// A self-describing description of the cadence that any assistant can consume —
+// MCP's spirit (a well-specified context contract) without requiring a server.
+// Deliberately human-readable: the user previews this exact text before it is
+// sent anywhere, so it has to be auditable by a person, not just a model.
+// ---------------------------------------------------------------------------
+
+export const LEVELS = [
+  { id: 'new', label: 'New to this' },
+  { id: 'playing', label: 'I play' },
+  { id: 'deep', label: 'Go deeper' },
+];
+
+const SUB_NAME = { 4: '16th notes', 3: 'triplets', 2: '8th notes' };
+
+// "16th notes" or "16th notes; triplets on beats 2, 6" — voices can now carry
+// their own subdivision per beat, so an even character count per beat is not
+// something the reader can assume.
+function describeSubs(scPerBeat) {
+  const uniq = [...new Set(scPerBeat)];
+  if (uniq.length === 1) return SUB_NAME[uniq[0]] || 'mixed';
+  const counts = uniq.map(u => ({ u, n: scPerBeat.filter(x => x === u).length })).sort((a, b) => b.n - a.n);
+  const parts = [SUB_NAME[counts[0].u] || 'mixed'];
+  for (const { u } of counts.slice(1)) {
+    const bs = scPerBeat.map((c, i) => (c === u ? i + 1 : 0)).filter(Boolean);
+    parts.push((SUB_NAME[u] || 'mixed') + ' on beat' + (bs.length > 1 ? 's' : '') + ' ' + bs.join(', '));
+  }
+  return parts.join('; ');
+}
+
+// Aggregate timing of a live play-along take, if one exists for this section.
+function takeSummary(sec, liveForSec, byGroup, rows, tempo) {
+  if (!liveForSec) return null;
+  const beats = sec.measures * 4;
+  const beatMs = 60000 / (tempo || 120);
+  let free = 0, snapped = 0, sumMs = 0, worst = 0;
+  const perBeat = {};
+  for (const r of rows) {
+    const larr = liveForSec[r.id] || [];
+    for (let b = 0; b < beats; b++) {
+      const cell = larr[b] || [];
+      const sc = byGroup[r.groupId] ? byGroup[r.groupId][b].sc : 4;
+      for (let s = 0; s < cell.length; s++) {
+        const m = cell[s] || 0;
+        if (m === 1) { snapped++; continue; }
+        if (m < 2) continue;
+        const off = m - 2;
+        const dev = (off <= 0.5 ? off : off - 1) * (beatMs / sc);
+        free++; sumMs += dev;
+        if (Math.abs(dev) > Math.abs(worst)) worst = dev;
+        (perBeat[b] = perBeat[b] || []).push(dev);
+      }
+    }
+  }
+  if (!free && !snapped) return null;
+  const avg = free ? sumMs / free : 0;
+  // Beats where the player was most consistently off — useful coaching signal.
+  const drift = Object.entries(perBeat)
+    .map(([b, devs]) => ({ beat: Number(b) + 1, avg: devs.reduce((x, y) => x + y, 0) / devs.length }))
+    .filter(d => Math.abs(d.avg) > 15)
+    .sort((a, b) => Math.abs(b.avg) - Math.abs(a.avg))
+    .slice(0, 3);
+  return { free, snapped, avgMs: Math.round(avg), worstMs: Math.round(worst), drift };
+}
+
+export function buildCadenceContext(project, opts) {
+  const { sections, beatSubs, groupSubs, notes, live, tempo, swing } = project;
   const { scope, activeSectionId, groups, rows } = opts;
   const secList = scope === 'cadence' ? sections : sections.filter(s => s.id === activeSectionId);
-  const lines = ['Tempo ' + tempo + ' BPM, 4/4 time' + (swing ? ', swing ' + swing + '%' : '') + '.'];
-  for (const sec of secList) {
+
+  const outSections = secList.map(sec => {
     const { beats, byGroup } = digest(sec, beatSubs[sec.id] || [], notes[sec.id] || {}, groups, rows, (groupSubs || {})[sec.id]);
-    lines.push('Section "' + sec.name + '" (' + sec.measures + ' measures):');
+    const voices = [];
     for (const g of groups) {
       let any = false;
       const parts = [];
+      const scPerBeat = [];
       for (let b = 0; b < beats; b++) {
         const c = byGroup[g.id][b];
+        scPerBeat.push(c.sc);
         let cell = '';
         c.m.forEach(v => {
           if (!v) { cell += '.'; return; }
@@ -305,14 +373,113 @@ export function buildLLMPrompt(project, opts) {
           cell += (v & 2) ? '>' : (v & 4) ? 'f' : (v & 8) ? 'd' : (v & 16) ? 'z' : 'x';
         });
         if (c.sc === 3) cell = '[' + cell + ']';
+        else if (c.sc === 2) cell = '(' + cell + ')';
         parts.push(cell);
         if (b % 4 === 3 && b < beats - 1) parts.push('|');
       }
-      if (any) lines.push('  ' + g.name + ': ' + parts.join(' '));
+      if (any) voices.push({ name: g.name, line: parts.join(' '), subs: describeSubs(scPerBeat) });
+    }
+    return {
+      name: sec.name,
+      measures: sec.measures,
+      voices,
+      take: takeSummary(sec, (live || {})[sec.id], byGroup, rows, tempo),
+    };
+  });
+
+  return {
+    app: 'dut dut',
+    tempo, swing, timeSig: '4/4',
+    scope: scope === 'cadence' ? 'cadence' : 'section',
+    sections: outSections,
+    findings: analyzeProject(project, opts).filter(i => i.kind !== 'basics').map(i => i.title),
+  };
+}
+
+const LEVEL_ASK = {
+  new: `I'm new to music theory — assume I can hear rhythm but can't read notation.
+
+In 4-6 plain sentences, help me understand what I've written: what gives it its feel, one comparison to music I'd likely have heard, one thing that's already working, and one concrete change to try next. Define at most two terms in passing, in plain words. No jargon I'd have to look up, no markdown, no lists, no headings.`,
+
+  playing: `I play and can read basic drum notation — skip the fundamentals.
+
+In 5-8 sentences: what makes this pattern work rhythmically; a suggested sticking (which hand plays what, R/L) for the busiest voice; whether this is realistically playable at the tempo above and where the hard spot is; and one arranging change that would improve it. Be specific about beat numbers. No markdown, no lists.`,
+
+  deep: `I know the fundamentals — go deep.
+
+Cover the metric structure and where the phrase resolves, any stylistic lineage this evokes (corps, street, HBCU idiom) and why, and a critique of the arranging: voice balance across the line, tension and release, and whether each part is idiomatic for its instrument. Flag anything unidiomatic or physically awkward. Prose, no markdown, no lists.`,
+};
+
+export function renderContextMarkdown(ctx, { level = 'new' } = {}) {
+  const L = [];
+  L.push('# Drumline cadence — context for explanation');
+  L.push('');
+  L.push(`I sketched this drum pattern in **dut dut**, a step sequencer for drumline cadences, and I'd like help understanding it musically. Everything you need is below.`);
+  L.push('');
+
+  L.push('## How to read the notation');
+  L.push('');
+  L.push('Each line is one voice of the drumline. Characters are consecutive slices of a beat, `|` separates measures, and beats are space-separated:');
+  L.push('');
+  L.push('- `.` rest · `x` hit · `>` accented hit · `f` flam (grace note before the stroke) · `d` diddle (two strokes in one slot) · `z` buzz roll');
+  L.push('- A beat with no brackets is **four 16th notes**. `[...]` marks a **triplet** beat, `(..)` marks a beat of **two 8th notes**.');
+  L.push('- Voices can use *different* subdivisions on the same beat, so lines will not always have equal character counts. Each voice notes its own subdivisions.');
+  L.push('');
+
+  L.push('## The pattern');
+  L.push('');
+  L.push(`Tempo **${ctx.tempo} BPM** · ${ctx.timeSig}${ctx.swing ? ` · swing ${ctx.swing}%` : ''}`);
+  L.push('');
+
+  for (const sec of ctx.sections) {
+    L.push(`### "${sec.name}" — ${sec.measures} measure${sec.measures === 1 ? '' : 's'}`);
+    L.push('');
+    if (!sec.voices.length) {
+      L.push('_(nothing written in this section yet)_');
+      L.push('');
+      continue;
+    }
+    L.push('```');
+    const pad = Math.max(...sec.voices.map(v => v.name.length));
+    for (const v of sec.voices) L.push(`${v.name.padEnd(pad)} : ${v.line}`);
+    L.push('```');
+    L.push('');
+    for (const v of sec.voices) L.push(`- **${v.name}** — ${v.subs}`);
+    L.push('');
+    if (sec.take) {
+      const t2 = sec.take;
+      L.push(`**My live take:** I played ${t2.free + t2.snapped} of these notes in by hand` +
+        (t2.snapped ? ` (${t2.snapped} snapped to the grid, ${t2.free} kept at free timing)` : '') + '.');
+      if (t2.free) {
+        L.push(`Average timing was ${t2.avgMs >= 0 ? '+' : ''}${t2.avgMs} ms against the grid (positive = behind the beat), loosest note ${t2.worstMs >= 0 ? '+' : ''}${t2.worstMs} ms.`);
+        if (t2.drift.length) {
+          L.push('Consistently off on: ' + t2.drift.map(d => `beat ${d.beat} (${d.avg >= 0 ? '+' : ''}${Math.round(d.avg)} ms)`).join(', ') + '.');
+        }
+        L.push('Please comment on my timing too.');
+      }
+      L.push('');
     }
   }
-  const findings = analyzeProject(project, opts).filter(i => i.kind !== 'basics').map(i => i.title);
-  return 'You are a friendly percussion educator helping a beginner understand a drumline pattern they just sketched in a step sequencer. Symbols per subdivision: . rest, x hit, > accented hit, f flam, d diddle (two strokes), z buzz roll. [..] means that beat is a triplet. | separates measures.\n\n' +
-    lines.join('\n') + '\n\nAlready-detected features: ' + (findings.length ? findings.join('; ') : 'none') + '.\n\n' +
-    'In 3-5 short, plain sentences: explain what makes this pattern tick musically (go beyond the detected list where you can), define at most one term in passing, and end with one concrete thing to try next. Warm and encouraging, no markdown, no lists, no headings.';
+
+  L.push(`## What the app's built-in analyzer already spotted`);
+  L.push('');
+  if (ctx.findings.length) {
+    for (const f of ctx.findings) L.push(`- ${f}`);
+    L.push('');
+    L.push('_Please go past these rather than restating them._');
+  } else {
+    L.push('_Nothing notable detected — the pattern may be sparse or unusual._');
+  }
+  L.push('');
+
+  L.push('## What I would like');
+  L.push('');
+  L.push(LEVEL_ASK[level] || LEVEL_ASK.new);
+
+  return L.join('\n');
+}
+
+// Back-compat wrapper for the in-artifact `window.claude.complete` path.
+export function buildLLMPrompt(project, opts) {
+  return renderContextMarkdown(buildCadenceContext(project, opts), { level: (opts && opts.level) || 'new' });
 }

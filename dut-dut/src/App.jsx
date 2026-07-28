@@ -8,6 +8,10 @@ import BlocksPanel from './components/BlocksPanel.jsx';
 import StaffPanel from './components/StaffPanel.jsx';
 import SettingsDrawer from './components/SettingsDrawer.jsx';
 import InsightsPanel, { InsightTooltip } from './components/InsightsPanel.jsx';
+import ExplainModal from './components/ExplainModal.jsx';
+
+const HANDOFF_ACK_KEY = 'dut-dut-handoff-ack-v1';
+const EXPLAIN_LEVEL_KEY = 'dut-dut-explain-level-v1';
 
 export default class App extends Component {
   state = {
@@ -42,6 +46,9 @@ export default class App extends Component {
     llmText: '',
     llmLabel: '',
     llmLoading: false,
+    explainOpen: false,
+    explainLevel: 'new',     // see LEVELS in insights-engine
+    handoffAcked: false,     // first-run handoff disclosure dismissed
   };
 
   constructor(props) {
@@ -69,6 +76,11 @@ export default class App extends Component {
     } catch (e) { /* keep defaults */ }
     this._llmOk = typeof window !== 'undefined' && window.claude && typeof window.claude.complete === 'function';
     import('./insights-engine.js').then(m => { this._insights = m; this.forceUpdate(); }).catch(() => {});
+    try {
+      const acked = localStorage.getItem(HANDOFF_ACK_KEY) === '1';
+      const lvl = localStorage.getItem(EXPLAIN_LEVEL_KEY);
+      this.setState({ handoffAcked: acked, explainLevel: lvl || 'new' });
+    } catch (e) { /* keep defaults */ }
   }
   componentWillUnmount() {
     window.removeEventListener('mouseup', this._mouseUpHandler);
@@ -456,12 +468,33 @@ export default class App extends Component {
       rows: ALL_ROWS.map(r => ({ id: r.id, groupId: r.groupId })),
     };
   }
+  openExplain = () => this.setState({ explainOpen: true });
+  closeExplain = () => this.setState({ explainOpen: false });
+  setExplainLevel = (id) => {
+    this.setState({ explainLevel: id });
+    try { localStorage.setItem(EXPLAIN_LEVEL_KEY, id); } catch (e) { /* storage blocked */ }
+  };
+  ackHandoff = () => {
+    this.setState({ handoffAcked: true });
+    try { localStorage.setItem(HANDOFF_ACK_KEY, '1'); } catch (e) { /* storage blocked */ }
+  };
+  // The exact text the user previews and sends — nothing else leaves the app.
+  _explainText() {
+    if (!this._insights) return '';
+    try {
+      const ctx = this._insights.buildCadenceContext(this._project(), this._analysisOpts());
+      return this._insights.renderContextMarkdown(ctx, { level: this.state.explainLevel });
+    } catch (e) {
+      return '';
+    }
+  }
+
   askClaude = async () => {
     if (this.state.llmLoading || !this._llmOk || !this._insights) return;
     const label = this.state.insightScope === 'cadence' ? 'Claude on the full cadence' : 'Claude on "' + this._activeSection().name + '"';
     this.setState({ llmLoading: true });
     try {
-      const prompt = this._insights.buildLLMPrompt(this._project(), this._analysisOpts());
+      const prompt = this._insights.buildLLMPrompt(this._project(), { ...this._analysisOpts(), level: this.state.explainLevel });
       const text = await window.claude.complete(prompt);
       this.setState({ llmText: String(text || '').trim(), llmLabel: label, llmLoading: false });
     } catch (e) {
@@ -597,6 +630,8 @@ export default class App extends Component {
       askClaudeLabel: this.state.llmLoading ? 'Asking Claude…' : 'Ask Claude to explain this pattern',
       llmText: this.state.llmText,
       llmLabel: this.state.llmLabel,
+      explainAvailable: !!this._insights,
+      onExplain: this.openExplain,
     };
     const insightsPanelProps = {
       cards: insightCards,
@@ -785,6 +820,19 @@ export default class App extends Component {
             rendering={this.state.rendering}
           />
           <InsightTooltip tip={tipData} tipKeep={this.tipKeep} tipLeave={this.unhoverInsight} />
+          <ExplainModal
+            open={this.state.explainOpen}
+            onClose={this.closeExplain}
+            text={this.state.explainOpen ? this._explainText() : ''}
+            levels={(this._insights && this._insights.LEVELS) || []}
+            level={this.state.explainLevel}
+            setLevel={this.setExplainLevel}
+            scopeLabel={this.state.insightScope === 'cadence'
+              ? `The whole cadence — ${sections.length} sections`
+              : `The "${section.name}" section only`}
+            showDisclosure={!this.state.handoffAcked}
+            onDismissDisclosure={this.ackHandoff}
+          />
         </div>
       </div>
     );
