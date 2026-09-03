@@ -14,6 +14,7 @@ Welcome to my playground.
 | [captions](./captions/) | [↗](https://jas0nmjames.github.io/playground/captions/) | Experimenting with HTML5's baked in captions. |  | Jan 2023 | Sep 2025 |
 | [playground-chatbots](./chatbots/) | [↗](https://jas0nmjames.github.io/playground/chatbots/) | This is a playground to experiment with chatbots and live chat: traditional dialog chatbots, natural language processing and understanding (NLPs &amp; NLUs), large language models (LLMs), live chat integration and conversation design best practices in general. |  | Mar 2023 | Sep 2025 |
 | [Exit Modals Demo](./exit-modals/) | [↗](https://jas0nmjames.github.io/playground/exit-modals/) |  |  | Apr 2023 | Sep 2025 |
+| [HTML Media Best Practices](./html-media-best-practices/) | [↗](https://jas0nmjames.github.io/playground/html-media-best-practices/) | Demo pages for embedding images and video on the web — lazy loading, YouTube and Vimeo embeds, player controls — alongside notes and WCAG references on making that media accessible. |  | Jul 2023 | Sep 2025 |
 | [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) |  |  | Sep 2024 | Sep 2025 |
 | [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
 | [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) |  |  | Jul 2025 | Sep 2025 |
@@ -26,9 +27,8 @@ Welcome to my playground.
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 | [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
 | [dut dut](./dut-dut/) | [↗](https://jas0nmjames.github.io/playground/dut-dut/) | A web-based app to annotate, create, preview, and learn from drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. An Insights panel analyzes what you've written — rudiments, syncopation, backbeats, hemiolas, call-and-response, and more — with hover-to-highlight on the score and links to learn each concept. Work autosaves in the browser and can be saved/loaded as a JSON project file. |  | Jul 2026 | Jul 2026 |
+| [Strikefleet Omega — Recreated](./strikefleet-omega-recreated/) | [↗](https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/) | A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the draw-a-flight-path carrier-defense game that was delisted from Google Play. Vanilla JavaScript + HTML5 Canvas. No build step, no dependencies. | `generative` | Jul 2026 | Jul 2026 |
 | [TI-83+ Emulated Portfolio](./ti83-emulated-portfolio/) | [↗](https://jas0nmjames.github.io/playground/ti83-emulated-portfolio/) | A TI-83 Plus graphing calculator emulator with a working TI-BASIC interpreter, | `generative` | Sep 2026 | Sep 2026 |
-| [HTML Media Best Practices README](./html-media-best-practices/) | [↗](https://jas0nmjames.github.io/playground/html-media-best-practices/) |  |  | — | — |
-| [Strikefleet Omega — Recreated](./strikefleet-omega-recreated/) | [↗](https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/) | A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the |  | — | — |
 <!-- END DIRECTORY -->
 
 ## Generative Experiments
@@ -46,6 +46,7 @@ Building things I couldn't before, [at great expense](https://www.youtube.com/wa
 | [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 | [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
+| [Strikefleet Omega — Recreated](./strikefleet-omega-recreated/) | [↗](https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/) | A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the draw-a-flight-path carrier-defense game that was delisted from Google Play. Vanilla JavaScript + HTML5 Canvas. No build step, no dependencies. | `generative` | Jul 2026 | Jul 2026 |
 | [TI-83+ Emulated Portfolio](./ti83-emulated-portfolio/) | [↗](https://jas0nmjames.github.io/playground/ti83-emulated-portfolio/) | A TI-83 Plus graphing calculator emulator with a working TI-BASIC interpreter, | `generative` | Sep 2026 | Sep 2026 |
 <!-- END GENERATIVE -->
 

@@ -1,8 +1,12 @@
+---
+published: 2026-07-21
+updated: 2026-07-21
+tags: generative
+---
+
 # Strikefleet Omega — Recreated
 
-A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the
-draw-a-flight-path carrier-defense game that was delisted from Google Play.
-Vanilla JavaScript + HTML5 Canvas. No build step, no dependencies.
+A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the draw-a-flight-path carrier-defense game that was delisted from Google Play. Vanilla JavaScript + HTML5 Canvas. No build step, no dependencies.
 
 ## Play
 

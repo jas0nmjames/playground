@@ -1,4 +1,11 @@
-# HTML Media Best Practices README
+---
+published: 2023-07-12
+updated: 2025-09-02
+---
+
+# HTML Media Best Practices
+
+Demo pages for embedding images and video on the web — lazy loading, YouTube and Vimeo embeds, player controls — alongside notes and WCAG references on making that media accessible.
 
 ## Index
 
