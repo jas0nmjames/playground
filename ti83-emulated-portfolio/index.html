@@ -1,143 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TI-83+ Emulated Portfolio</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Courier New', monospace;
-      background: #1a1a1a;
-      color: #00ff00;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .calculator {
-      background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-      border: 3px solid #333;
-      border-radius: 20px;
-      padding: 20px;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-    }
-
-    .display {
-      background: #00aa00;
-      color: #000;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      min-height: 80px;
-      font-family: 'Courier New', monospace;
-      line-height: 1.5;
-    }
-
-    .button-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      padding: 15px;
-      background: #444;
-      color: #00ff00;
-      border: 2px solid #666;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      font-weight: bold;
-      transition: all 0.2s;
-    }
-
-    button:hover {
-      background: #555;
-      border-color: #00ff00;
-      color: #00ff00;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-    }
-
-    button:active {
-      background: #333;
-      transform: scale(0.95);
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #00ff00;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-    }
-
-    .menu {
-      color: #00ff00;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-  </style>
-</head>
-<body>
-  <div>
-    <div class="header">
-      <h1>TI-83+</h1>
-      <p>Portfolio Edition</p>
-    </div>
-
-    <div class="calculator">
-      <div class="display">
-        <div class="menu">
-          JASON'S PORTFOLIO<br>
-          =================<br>
-          <br>
-          1: PROJECTS<br>
-          2: SKILLS<br>
-          3: ABOUT<br>
-          4: CONTACT<br>
-          <br>
-          ENTER CHOICE:
-        </div>
-      </div>
-
-      <div class="button-grid">
-        <button>7</button>
-        <button>8</button>
-        <button>9</button>
-        <button>4</button>
-        <button>5</button>
-        <button>6</button>
-        <button>1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>0</button>
-        <button>.</button>
-        <button>(-)</button>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <button>CLEAR</button>
-        <button>ENTER</button>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="src/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TI-83+ Emulated Portfolio</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='%23343940'/><rect x='6' y='5' width='20' height='10' rx='1' fill='%239aa685'/><g fill='%23b6bac1'><rect x='6' y='19' width='5' height='4' rx='1'/><rect x='13.5' y='19' width='5' height='4' rx='1'/><rect x='21' y='19' width='5' height='4' rx='1'/><rect x='6' y='25' width='5' height='4' rx='1'/><rect x='13.5' y='25' width='5' height='4' rx='1'/><rect x='21' y='25' width='5' height='4' rx='1'/></g></svg>"
+    />
+    <meta
+      name="description"
+      content="A TI-83+ graphing calculator emulator with a working TI-BASIC interpreter, running an interactive portfolio program."
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

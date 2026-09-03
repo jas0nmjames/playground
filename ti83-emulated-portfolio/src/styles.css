@@ -1,0 +1,441 @@
+/* ---------------------------------------------------------------- tokens */
+
+:root {
+  --bg: #14161a;
+  --bg-panel: #1c1f25;
+  --text: #d7dbe2;
+  --text-dim: #8d95a3;
+  --rule: #2b2f37;
+
+  /* Calculator case */
+  --case-top: #43474e;
+  --case-bottom: #292c32;
+  --case-edge: #575c65;
+  --bezel: #1a1c20;
+
+  /* Keys */
+  --key-dark: #494d55;
+  --key-dark-edge: #5c616b;
+  --key-light: #b6bac1;
+  --key-light-edge: #cfd3d9;
+  --key-blue: #2f6ea8;
+  --key-green: #3c7a54;
+  --label-second: #86bbec;
+  --label-alpha: #83c79c;
+
+  /* LCD */
+  --lcd-bg: #9aa685;
+  --lcd-ink: #1a2212;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------ page */
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.page-header h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 5vw, 40px);
+  letter-spacing: -0.02em;
+}
+
+.page-header p {
+  margin: 0 0 40px;
+  max-width: 60ch;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: auto minmax(280px, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 36px;
+  }
+}
+
+/* ------------------------------------------------------------ calculator */
+
+.calculator {
+  --case-w: min(460px, 92vw);
+  width: var(--case-w);
+  padding: 18px 18px 24px;
+  border-radius: 22px 22px 34px 34px;
+  background: linear-gradient(175deg, var(--case-top), var(--case-bottom));
+  border: 1px solid var(--case-edge);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 24px 60px rgba(0, 0, 0, 0.55);
+  container-type: inline-size;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 4px 10px;
+}
+
+.brand-ti {
+  font-size: 3.4cqw;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #e8ebf0;
+}
+
+.brand-sub {
+  font-size: 2.6cqw;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9aa1ad;
+}
+
+/* -------------------------------------------------------------------- LCD */
+
+.screen-bezel {
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bezel);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 18px;
+}
+
+.lcd {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background: var(--lcd-bg);
+  border-radius: 2px;
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.lcd-grid {
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  height: 100%;
+}
+
+.lcd-row {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+}
+
+.lcd-row.inverse {
+  background: var(--lcd-ink);
+}
+
+.lcd-row.inverse .cell {
+  color: var(--lcd-bg);
+}
+
+/*
+ * The hardware cell is 6x8 px holding a 5x7 glyph, so the glyph fills 7/8 of
+ * the row height. A cell here is 6.25cqw wide by 8.33cqw tall; sizing the
+ * font so its advance width matches the cell (advance is ~0.6em in a
+ * monospace face) lands at ~10cqw and packs the characters the way the real
+ * display does.
+ */
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 9.7cqw;
+  line-height: 1;
+  color: var(--lcd-ink);
+  white-space: pre;
+}
+
+.cell.cursor {
+  background: var(--lcd-ink);
+  color: var(--lcd-bg);
+  animation: blink 1s steps(1, end) infinite;
+}
+
+.lcd-row.inverse .cell.cursor {
+  background: var(--lcd-bg);
+  color: var(--lcd-ink);
+}
+
+@keyframes blink {
+  50% {
+    background: transparent;
+    color: var(--lcd-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.cursor,
+  .busy {
+    animation: none;
+  }
+}
+
+/* The dashed marker the hardware shows while a program runs or pauses. */
+.busy {
+  position: absolute;
+  top: 3cqw;
+  right: 3cqw;
+  width: 3.5cqw;
+  height: 1.2cqw;
+  background: var(--lcd-ink);
+  animation: blink 0.7s steps(1, end) infinite;
+}
+
+/* ------------------------------------------------------------------ graph */
+
+.graph {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.graph canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  image-rendering: pixelated;
+}
+
+.graph-label {
+  position: absolute;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 5.6cqw;
+  line-height: 1;
+  color: var(--lcd-ink);
+  background: var(--lcd-bg);
+  padding: 0.8cqw 0.6cqw;
+  white-space: pre;
+}
+
+.graph-label-top { top: 0; left: 0; }
+.graph-label-x { bottom: 0; left: 0; }
+.graph-label-y { bottom: 0; right: 0; }
+
+/* ----------------------------------------------------------------- keypad */
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(10, auto);
+  gap: 2.1cqw;
+}
+
+.key {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3cqw;
+  aspect-ratio: 1.55;
+  padding: 0.8cqw 0.4cqw 0.9cqw;
+  border: 1px solid var(--key-dark-edge);
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--key-dark-edge), var(--key-dark));
+  color: #eef1f5;
+  font-family: inherit;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1.5px 0 rgba(0, 0, 0, 0.5);
+  transition: transform 60ms ease, filter 60ms ease;
+}
+
+.key:hover {
+  filter: brightness(1.14);
+}
+
+.key:active {
+  transform: translateY(1.5px);
+  box-shadow: none;
+}
+
+.key:focus-visible {
+  outline: 2px solid var(--label-second);
+  outline-offset: 2px;
+}
+
+.key-main {
+  font-size: 3cqw;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.key-above {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6cqw;
+  width: 100%;
+  min-height: 2.4cqw;
+  padding: 0 0.4cqw;
+  font-size: 2.05cqw;
+  line-height: 1;
+}
+
+.key-second-label { color: var(--label-second); }
+.key-alpha-label { color: var(--label-alpha); }
+
+/* Light number-pad keys */
+.key-num,
+.key-enter {
+  background: linear-gradient(180deg, var(--key-light-edge), var(--key-light));
+  border-color: #dfe2e7;
+  color: #14161a;
+}
+
+.key-num .key-main,
+.key-enter .key-main {
+  font-size: 3.4cqw;
+  font-weight: 700;
+}
+
+.key-top {
+  aspect-ratio: 1.9;
+}
+
+.key-top .key-main {
+  font-size: 2.5cqw;
+}
+
+.key-second {
+  background: linear-gradient(180deg, #4083c0, var(--key-blue));
+  border-color: #5d9ed6;
+}
+
+.key-alpha {
+  background: linear-gradient(180deg, #4f9169, var(--key-green));
+  border-color: #6aa885;
+}
+
+.key-active {
+  filter: brightness(1.35);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* ------------------------------------------------------------- arrow pad */
+
+.dpad {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.arrow {
+  position: absolute;
+  width: 34%;
+  aspect-ratio: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--key-dark-edge);
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--key-dark-edge), var(--key-dark));
+  color: #eef1f5;
+  font-size: 2.4cqw;
+  cursor: pointer;
+  box-shadow: 0 1.5px 0 rgba(0, 0, 0, 0.5);
+}
+
+.arrow:hover { filter: brightness(1.14); }
+.arrow:active { transform: translateY(1.5px); box-shadow: none; }
+.arrow:focus-visible { outline: 2px solid var(--label-second); outline-offset: 2px; }
+
+.arrow-up { top: 4%; left: 50%; transform: translateX(-50%); }
+.arrow-down { bottom: 4%; left: 50%; transform: translateX(-50%); }
+.arrow-left { left: 6%; top: 50%; transform: translateY(-50%); }
+.arrow-right { right: 6%; top: 50%; transform: translateY(-50%); }
+
+.arrow-up:active { transform: translateX(-50%) translateY(1.5px); }
+.arrow-down:active { transform: translateX(-50%) translateY(1.5px); }
+.arrow-left:active { transform: translateY(-50%) translateY(1.5px); }
+.arrow-right:active { transform: translateY(-50%) translateY(1.5px); }
+
+/* ------------------------------------------------------------------ guide */
+
+.guide h2 {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.guide h2:not(:first-child) {
+  margin-top: 36px;
+}
+
+.guide dl {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.guide-item {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.guide-item:last-child {
+  border-bottom: 0;
+}
+
+.guide dt {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.guide dd {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.notes {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.notes code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text);
+}
