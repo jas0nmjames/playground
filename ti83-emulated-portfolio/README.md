@@ -6,10 +6,7 @@ tags: generative
 
 # TI-83+ Emulated Portfolio
 
-A TI-83 Plus graphing calculator emulator with a working TI-BASIC interpreter,
-hosting a portfolio that lives entirely inside the calculator. `PORTFOLIO` runs
-on power-on; you navigate it the way you'd navigate any TI-BASIC program —
-number keys, arrows, and `ENTER` to clear a `Pause`.
+A TI-83 Plus graphing calculator emulator with a working TI-BASIC interpreter, hosting a portfolio that lives entirely inside the calculator. `PORTFOLIO` runs on power-on; you navigate it the way you'd navigate any TI-BASIC program — number keys, arrows, and `ENTER` to clear a `Pause`.
 
 ## Running it
 
