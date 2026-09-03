@@ -1,0 +1,15 @@
+{
+  "name": "ti83-emulated-portfolio",
+  "version": "0.1.0",
+  "description": "A nostalgic portfolio experience built as an interactive TI-83+ graphing calculator emulator",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
