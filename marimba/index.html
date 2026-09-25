@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marimba — Jason James</title>
+  <meta name="description" content="A playable marimba: hit a bar to hear it and light up the matching project.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="marimba.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="#">Jason James</a>
+    <nav class="site-nav">
+      <a href="#">Work</a>
+      <a href="#">About</a>
+      <a href="#">Notes</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Each card answers to one scale degree: hitting a bar of that degree pulses the card. -->
+  <main class="projects">
+    <div class="project" style="--basis: 220px; --max: 340px; --tilt: -1.2deg; --shot: 5 / 2">
+      <article class="card" data-degree="1">
+        <div class="card__label"><span class="card__badge">1</span><span class="card__solfege">Do</span></div>
+        <div class="card__image">project image</div>
+        <div class="card__meta"><span class="card__title">Project one</span><span class="card__year">2026</span></div>
+      </article>
+    </div>
+
+    <div class="project" style="--basis: 170px; --max: 240px; --drop: clamp(0px, 2vw, 28px); --tilt: 1deg; --shot: 2 / 1">
+      <article class="card" data-degree="3">
+        <div class="card__label"><span class="card__badge">3</span><span class="card__solfege">Mi</span></div>
+        <div class="card__image">project image</div>
+        <div class="card__meta"><span class="card__title">Project two</span><span class="card__year">2025</span></div>
+      </article>
+    </div>
+
+    <div class="project" style="--basis: 190px; --max: 280px; --drop: clamp(0px, 1vw, 10px); --tilt: -0.6deg; --shot: 9 / 4">
+      <article class="card" data-degree="5">
+        <div class="card__label"><span class="card__badge">5</span><span class="card__solfege">Sol</span></div>
+        <div class="card__image">project image</div>
+        <div class="card__meta"><span class="card__title">Project three</span><span class="card__year">2025</span></div>
+      </article>
+    </div>
+
+    <div class="project" style="--basis: 170px; --max: 240px; --drop: clamp(0px, 3vw, 36px); --tilt: 1.8deg; --shot: 2 / 1">
+      <article class="card" data-degree="7">
+        <div class="card__label"><span class="card__badge">7</span><span class="card__solfege">Ti</span></div>
+        <div class="card__image">project image</div>
+        <div class="card__meta"><span class="card__title">Project four</span><span class="card__year">2024</span></div>
+      </article>
+    </div>
+  </main>
+
+  <section class="player" aria-label="Marimba">
+    <div class="controls">
+      <div class="controls__group">
+        <select class="key-select" aria-label="Key">
+          <option value="0">C</option>
+          <option value="1">D♭</option>
+          <option value="2">D</option>
+          <option value="3" selected>E♭</option>
+          <option value="4">E</option>
+          <option value="5">F</option>
+          <option value="6">G♭</option>
+          <option value="7">G</option>
+          <option value="8">A♭</option>
+          <option value="9">A</option>
+          <option value="10">B♭</option>
+          <option value="11">B</option>
+        </select>
+        <div class="mode-toggle" role="group" aria-label="Mode">
+          <button type="button" value="major" aria-pressed="true">Major</button>
+          <button type="button" value="minor" aria-pressed="false">Minor</button>
+        </div>
+      </div>
+      <p class="hint">Colored bars are in <span class="hint__key">E♭ major</span>. Tap, click, or use keys Q–I.</p>
+    </div>
+
+    <!-- Bars and rails are drawn by marimba.js -->
+    <div class="marimba">
+      <svg class="marimba__rails" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+  </section>
+</body>
+</html>

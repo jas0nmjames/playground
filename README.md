@@ -27,6 +27,7 @@ Welcome to my playground.
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 | [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
 | [dut dut](./dut-dut/) | [↗](https://jas0nmjames.github.io/playground/dut-dut/) | A web-based app to annotate, create, preview, and learn from drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. An Insights panel analyzes what you've written — rudiments, syncopation, backbeats, hemiolas, call-and-response, and more — with hover-to-highlight on the score and links to learn each concept. Work autosaves in the browser and can be saved/loaded as a JSON project file. |  | Jul 2026 | Jul 2026 |
+| [Marimba](./marimba/) | [↗](https://jas0nmjames.github.io/playground/marimba/) | A playable marimba for a portfolio homepage: thirteen bars (E♭4–E♭5) colored by scale degree in the key you pick, a synthesized marimba note on every hit, and project cards that pulse when you play their degree (do, mi, sol, ti). | `generative` | Sep 2026 | Sep 2026 |
 <!-- END DIRECTORY -->
 
 ## Generative Experiments
@@ -44,6 +45,7 @@ Building things I couldn't before, [at great expense](https://www.youtube.com/wa
 | [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
 | [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
 | [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
+| [Marimba](./marimba/) | [↗](https://jas0nmjames.github.io/playground/marimba/) | A playable marimba for a portfolio homepage: thirteen bars (E♭4–E♭5) colored by scale degree in the key you pick, a synthesized marimba note on every hit, and project cards that pulse when you play their degree (do, mi, sol, ti). | `generative` | Sep 2026 | Sep 2026 |
 <!-- END GENERATIVE -->
 
 ## Maintaining the Directory
