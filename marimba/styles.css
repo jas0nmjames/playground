@@ -1,0 +1,474 @@
+:root {
+  --paper: oklch(0.97 0.012 85);
+  --surface: oklch(0.995 0.004 85);
+  --ink: oklch(0.27 0.03 55);
+  --ink-muted: oklch(0.5 0.02 60);
+  --accent: oklch(0.55 0.14 28);
+  --stripe-dark: oklch(0.93 0.012 80);
+  --stripe-light: oklch(0.96 0.01 80);
+  --rail: oklch(0.45 0.05 50);
+  --bar-off-key: oklch(0.9 0.014 75);
+  --nail: oklch(0.3 0.03 50 / 0.18);
+
+  /* Scale-degree colors as bare OKLCH channels, so an alpha can be added: oklch(var(--deg-1) / 0.6) */
+  --deg-1: 0.74 0.14 28;
+  --deg-2: 0.8 0.13 62;
+  --deg-3: 0.86 0.13 95;
+  --deg-4: 0.79 0.12 150;
+  --deg-5: 0.76 0.1 200;
+  --deg-6: 0.72 0.11 255;
+  --deg-7: 0.7 0.12 305;
+
+  --font-display: Fredoka, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+[data-degree="1"] { --deg: var(--deg-1); }
+[data-degree="2"] { --deg: var(--deg-2); }
+[data-degree="3"] { --deg: var(--deg-3); }
+[data-degree="4"] { --deg: var(--deg-4); }
+[data-degree="5"] { --deg: var(--deg-5); }
+[data-degree="6"] { --deg: var(--deg-6); }
+[data-degree="7"] { --deg: var(--deg-7); }
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+}
+
+body {
+  min-height: 100vh;
+  padding: clamp(16px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 36px);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+a:hover { color: var(--accent); }
+
+/* Header */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Scale-degree cards — each .card-slot sets its own --basis, --max, --drop, --tilt and image --shot ratio */
+
+.card-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(16px, 2.5vw, 32px);
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.card-slot {
+  flex: 1 1 var(--basis);
+  max-width: var(--max);
+  margin-top: var(--drop, 0px);
+  transform: rotate(var(--tilt));
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.card__badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: oklch(var(--deg));
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+.card__image {
+  aspect-ratio: var(--shot);
+  border-radius: 12px;
+  background: repeating-linear-gradient(135deg, var(--stripe-dark) 0 8px, var(--stripe-light) 8px 16px);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 15px;
+}
+
+.card__title { font-weight: 500; }
+
+.card__note { color: var(--ink-muted); }
+
+/* Player */
+
+.player {
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+}
+
+.controls__group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.key-select {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--surface);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.mode-toggle button {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  min-height: 36px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink);
+}
+
+.mode-toggle button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}
+
+/* Secret melody: ▶ plays it, the dots fill as it's played back */
+
+.secret {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 16px 4px 4px;
+  background: var(--surface);
+  border-radius: 999px;
+}
+
+.secret__button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.secret__icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.secret__icon--open {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.secret[data-state="unlocked"] .secret__icon--play,
+.secret:not([data-state="unlocked"]) .secret__icon--open { display: none; }
+
+.secret__status {
+  min-width: 7em;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.secret__dots {
+  display: flex;
+  gap: 5px;
+}
+
+.secret__dots > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-muted);
+}
+
+.secret__dots > .is-on {
+  background: var(--ink);
+  box-shadow: none;
+}
+
+/* Marimba — an 8:5 frame sized to fit the viewport height; bar positions are % of the frame (see marimba.js) */
+
+.marimba {
+  position: relative;
+  width: min(100%, max(340px, calc((100vh - 380px) * 1.6)));
+  margin: 0 auto;
+  aspect-ratio: 8 / 5;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.marimba__rails {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.marimba__rails line {
+  stroke: var(--rail);
+  stroke-width: 5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.bar {
+  position: absolute;
+  background: var(--bar-off-key);
+  color: var(--ink-muted);
+  border-radius: clamp(6px, 1.4vw, 14px);
+  box-shadow: inset 0 -5px 0 oklch(0 0 0 / 0.08);
+  cursor: pointer;
+  transition: background 300ms, box-shadow 150ms;
+}
+
+.bar[data-degree] {
+  background: oklch(var(--deg));
+  color: var(--ink);
+}
+
+.bar[data-row="b"] { z-index: 1; }
+.bar[data-row="f"] { z-index: 2; }
+
+/* The secret melody's visual cue: a ring on each bar as it sounds, visible on every bar color */
+.bar.is-cued {
+  z-index: 3;
+  box-shadow: inset 0 -5px 0 oklch(0 0 0 / 0.08), 0 0 0 3px var(--paper), 0 0 0 6px var(--ink);
+}
+
+/* Decorations never take the pointer, so a touch always lands on (and is captured by) the bar itself */
+.bar > * { pointer-events: none; }
+
+/* Nail holes, over the rails at 22% and 78% along the bar */
+.bar__nail {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  width: clamp(5px, 0.8vw, 9px);
+  height: clamp(5px, 0.8vw, 9px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--nail);
+}
+
+.bar__nail + .bar__nail { top: 78%; }
+
+.bar__degree,
+.bar__name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-display);
+}
+
+.bar__degree {
+  top: 5%;
+  font-weight: 600;
+  font-size: clamp(12px, 2vw, 22px);
+}
+
+.bar__name {
+  bottom: 5%;
+  font-weight: 500;
+  font-size: clamp(10px, 1.5vw, 16px);
+}
+
+/* Hidden card dialog */
+
+.secret-dialog {
+  width: min(360px, calc(100% - 32px));
+  padding: 24px;
+  border: none;
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 60px oklch(0.27 0.03 55 / 0.25);
+  text-align: center;
+}
+
+.secret-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: secret-in 420ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.secret-dialog::backdrop {
+  background: oklch(0.27 0.03 55 / 0.4);
+}
+
+@keyframes secret-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96) rotate(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .secret-dialog[open] { animation: none; }
+}
+
+.secret-dialog__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.secret-dialog__eyebrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.secret-dialog__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  text-wrap: balance;
+}
+
+.secret-dialog__card {
+  --shot: 2 / 1;
+  width: 100%;
+  margin: 4px 0;
+  text-align: left;
+  transform: rotate(-1.5deg);
+}
+
+.secret-dialog form { margin: 0; }
+
+.secret-dialog__close {
+  min-height: 40px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
