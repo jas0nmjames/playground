@@ -67,22 +67,18 @@ a:hover { color: var(--accent); }
   flex-wrap: wrap;
 }
 
-.wordmark {
+.page-title {
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 24px;
   letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
-.site-nav {
-  display: flex;
-  gap: 20px;
-  font-size: 15px;
-}
+/* Scale-degree cards — each .card-slot sets its own --basis, --max, --drop, --tilt and image --shot ratio */
 
-/* Project cards — each .project sets its own --basis, --max, --drop, --tilt and image --shot ratio */
-
-.projects {
+.card-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -93,7 +89,7 @@ a:hover { color: var(--accent); }
   margin: 0 auto;
 }
 
-.project {
+.card-slot {
   flex: 1 1 var(--basis);
   max-width: var(--max);
   margin-top: var(--drop, 0px);
@@ -148,7 +144,7 @@ a:hover { color: var(--accent); }
 
 .card__title { font-weight: 500; }
 
-.card__year { color: var(--ink-muted); }
+.card__note { color: var(--ink-muted); }
 
 /* Player */
 
@@ -222,6 +218,72 @@ a:hover { color: var(--accent); }
   text-wrap: pretty;
 }
 
+/* Secret melody: ▶ plays it, the dots fill as it's played back */
+
+.secret {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 16px 4px 4px;
+  background: var(--surface);
+  border-radius: 999px;
+}
+
+.secret__button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.secret__icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.secret__icon--open {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.secret[data-state="unlocked"] .secret__icon--play,
+.secret:not([data-state="unlocked"]) .secret__icon--open { display: none; }
+
+.secret__status {
+  min-width: 7em;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.secret__dots {
+  display: flex;
+  gap: 5px;
+}
+
+.secret__dots > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-muted);
+}
+
+.secret__dots > .is-on {
+  background: var(--ink);
+  box-shadow: none;
+}
+
 /* Marimba — an 8:5 frame sized to fit the viewport height; bar positions are % of the frame (see marimba.js) */
 
 .marimba {
@@ -258,12 +320,21 @@ a:hover { color: var(--accent); }
   border-radius: clamp(6px, 1.4vw, 14px);
   box-shadow: inset 0 -5px 0 oklch(0 0 0 / 0.08);
   cursor: pointer;
-  transition: background 300ms;
+  transition: background 300ms, box-shadow 150ms;
 }
 
 .bar[data-degree] {
   background: oklch(var(--deg));
   color: var(--ink);
+}
+
+.bar[data-row="b"] { z-index: 1; }
+.bar[data-row="f"] { z-index: 2; }
+
+/* The secret melody's visual cue: a ring on each bar as it sounds, visible on every bar color */
+.bar.is-cued {
+  z-index: 3;
+  box-shadow: inset 0 -5px 0 oklch(0 0 0 / 0.08), 0 0 0 3px var(--paper), 0 0 0 6px var(--ink);
 }
 
 /* Decorations never take the pointer, so a touch always lands on (and is captured by) the bar itself */
@@ -302,4 +373,102 @@ a:hover { color: var(--accent); }
   bottom: 5%;
   font-weight: 500;
   font-size: clamp(10px, 1.5vw, 16px);
+}
+
+/* Hidden card dialog */
+
+.secret-dialog {
+  width: min(360px, calc(100% - 32px));
+  padding: 24px;
+  border: none;
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 60px oklch(0.27 0.03 55 / 0.25);
+  text-align: center;
+}
+
+.secret-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: secret-in 420ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.secret-dialog::backdrop {
+  background: oklch(0.27 0.03 55 / 0.4);
+}
+
+@keyframes secret-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96) rotate(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .secret-dialog[open] { animation: none; }
+}
+
+.secret-dialog__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.secret-dialog__eyebrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.secret-dialog__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  text-wrap: balance;
+}
+
+.secret-dialog__card {
+  --shot: 2 / 1;
+  width: 100%;
+  margin: 4px 0;
+  text-align: left;
+  transform: rotate(-1.5deg);
+}
+
+.secret-dialog form { margin: 0; }
+
+.secret-dialog__close {
+  min-height: 40px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

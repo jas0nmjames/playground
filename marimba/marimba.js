@@ -18,6 +18,14 @@ const BARS = [
 const KEYS = 'QASEDRFTGHUJI'; // KEYS[i] plays BARS[i]: home row for naturals, the row above for accidentals, like a piano
 const SCALES = { major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10] };
 const SOLFEGE = { major: ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'], minor: ['Do', 'Re', 'Me', 'Fa', 'Sol', 'Le', 'Te'] };
+const ROLES = {
+  major: ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Leading tone'],
+  minor: ['Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant', 'Subtonic'],
+};
+const INTERVALS = { // above the tonic
+  major: ['unison', 'major 2nd', 'major 3rd', 'perfect 4th', 'perfect 5th', 'major 6th', 'major 7th'],
+  minor: ['unison', 'major 2nd', 'minor 3rd', 'perfect 4th', 'perfect 5th', 'minor 6th', 'minor 7th'],
+};
 const SHARP = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const FLAT = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
 const FLAT_KEYS = { major: [5, 10, 3, 8, 1, 6], minor: [2, 7, 0, 5, 10, 3] }; // roots whose key signature uses flats
@@ -84,7 +92,7 @@ const rails = marimba.querySelector('.marimba__rails');
 const keySelect = document.querySelector('.key-select');
 const modeButtons = [...document.querySelectorAll('.mode-toggle button')];
 const keyName = document.querySelector('.hint__key');
-const cards = [...document.querySelectorAll('.card')];
+const cards = [...document.querySelectorAll('.card-row .card')];
 
 // Lengths and centers are % of the frame's height. Each semitone up is 2^(-1/24) shorter, so an octave is 1/√2 as long.
 function geometry({ row, midi }) {
@@ -96,16 +104,19 @@ function geometry({ row, midi }) {
 // 1–7 within the current key, 0 when the pitch class is out of it.
 const degreeOf = pc => SCALES[state.mode].indexOf((pc - state.root + 12) % 12) + 1;
 
+// Note names spelled for the current key.
+const spelling = () => (FLAT_KEYS[state.mode].includes(state.root) ? FLAT : SHARP);
+
 const bars = BARS.map((bar, i) => {
-  const { front, length, center, width } = geometry(bar);
+  const { length, center, width } = geometry(bar);
   const el = document.createElement('div');
   el.className = 'bar';
+  el.dataset.row = bar.row;
   Object.assign(el.style, {
     left: `${(bar.x - width / 2) / 8 * 100}%`,
     width: `${width / 8 * 100}%`,
     top: `${center - length / 2}%`,
     height: `${length}%`,
-    zIndex: front ? 2 : 1,
   });
   el.innerHTML = '<span class="bar__nail"></span><span class="bar__nail"></span><span class="bar__degree"></span><span class="bar__name"></span>';
 
@@ -114,12 +125,12 @@ const bars = BARS.map((bar, i) => {
     // Touch pointers are implicitly captured by the bar they land on; release so pointerenter fires on the others.
     if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
     held.add(e.pointerId);
-    hit(i);
+    play(i);
   });
   el.addEventListener('pointerenter', e => {
     if (!held.has(e.pointerId)) return;
     if (!e.buttons) held.delete(e.pointerId); // released somewhere we never heard about, e.g. outside the window
-    else hit(i);
+    else play(i);
   });
 
   marimba.append(el);
@@ -146,7 +157,7 @@ for (const row of ['f', 'b']) {
 
 function render() {
   const { root, mode } = state;
-  const names = FLAT_KEYS[mode].includes(root) ? FLAT : SHARP;
+  const names = spelling();
   bars.forEach(({ el, degree, name }, i) => {
     const d = degreeOf(BARS[i].pc);
     if (d) el.dataset.degree = d;
@@ -154,7 +165,13 @@ function render() {
     degree.textContent = SETTINGS.showDegrees && d ? d : '';
     name.textContent = SETTINGS.showNoteNames ? names[BARS[i].pc] : '';
   });
-  for (const card of cards) card.querySelector('.card__solfege').textContent = SOLFEGE[mode][card.dataset.degree - 1];
+  for (const card of cards) {
+    const d = card.dataset.degree - 1;
+    card.querySelector('.card__solfege').textContent = SOLFEGE[mode][d];
+    card.querySelector('.card__image').textContent = INTERVALS[mode][d];
+    card.querySelector('.card__title').textContent = ROLES[mode][d];
+    card.querySelector('.card__note').textContent = names[(root + SCALES[mode][d]) % 12];
+  }
   keyName.textContent = `${names[root]} ${mode}`;
   keySelect.value = root;
   for (const button of modeButtons) button.setAttribute('aria-pressed', button.value === mode);
@@ -167,9 +184,12 @@ function hit(i) {
     { duration: 380, easing: 'cubic-bezier(.2,.8,.2,1)' },
   );
 
-  // Ring the matching card, then let a second ring ripple out and fade.
   const card = cards.find(c => Number(c.dataset.degree) === degreeOf(BARS[i].pc));
-  if (!card) return;
+  if (card) pulse(card);
+}
+
+// Ring a card in its degree's color, then let a second ring ripple out and fade.
+function pulse(card) {
   const channels = getComputedStyle(card).getPropertyValue('--deg').trim();
   const color = alpha => `oklch(${channels} / ${alpha})`;
   card.animate([
@@ -181,11 +201,11 @@ function hit(i) {
 
 window.addEventListener('keydown', e => {
   if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1) return;
-  if (/^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (/^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName) || secretDialog.open) return;
   const i = KEYS.indexOf(e.key.toUpperCase());
   if (i >= 0) {
     e.preventDefault();
-    hit(i);
+    play(i);
   }
 });
 
@@ -206,5 +226,126 @@ for (const button of modeButtons) {
     render();
   });
 }
+
+// Easter egg: E♭4 G4 B♭4 E♭5 — 1 (low), 3, 5, 1 (high) in E♭ major, the key the page opens in — unlocks a hidden
+// card. The pitches are fixed rather than degrees because E♭ is the only key whose two 1s both fit on the bars.
+// The ▶ button plays the melody and rings each bar as it sounds, so it can be matched by ear or by eye; the status
+// beside it is a live region, and once the melody has played it also reads the notes and their keys aloud.
+const SECRET = [0, 4, 7, 12]; // indexes into BARS
+const SECRET_STEP = 650; // ms between the demo's notes
+
+const secretBox = document.querySelector('.secret');
+const secretButton = secretBox.querySelector('.secret__button');
+const secretStatus = secretBox.querySelector('.secret__status');
+const secretDots = SECRET.map(() => document.createElement('span'));
+secretBox.querySelector('.secret__dots').append(...secretDots);
+const secretDialog = document.querySelector('.secret-dialog');
+
+const secret = {
+  state: 'idle', // idle → demo (melody playing) → turn (waiting for the visitor) → unlocked
+  recent: [], // the visitor's last few bars
+  timers: [],
+  status: '',
+};
+
+function setSecretState(next) {
+  secret.state = next;
+  secretBox.dataset.state = next;
+}
+
+function showDots(count) {
+  secretDots.forEach((dot, n) => dot.classList.toggle('is-on', n < count));
+}
+
+// `spoken` is appended for screen readers only.
+function showStatus(text, spoken = '') {
+  if (secret.status === text + spoken) return; // don't re-announce an unchanged live region
+  secret.status = text + spoken;
+  secretStatus.textContent = text;
+  if (spoken) {
+    const extra = document.createElement('span');
+    extra.className = 'visually-hidden';
+    extra.textContent = spoken;
+    secretStatus.append(extra);
+  }
+}
+
+function stopDemo() {
+  secret.timers.forEach(clearTimeout);
+  secret.timers = [];
+  for (const { el } of bars) el.classList.remove('is-cued');
+}
+
+function playDemo() {
+  stopDemo();
+  synth.ensure(); // start audio inside the click; the notes themselves play from timers
+  setSecretState('demo');
+  secret.recent = [];
+  showDots(0);
+  showStatus('Listen…');
+  SECRET.forEach((i, n) => {
+    secret.timers.push(setTimeout(() => {
+      hit(i);
+      showDots(n + 1);
+      bars[i].el.classList.add('is-cued');
+      secret.timers.push(setTimeout(() => bars[i].el.classList.remove('is-cued'), SECRET_STEP - 150));
+    }, n * SECRET_STEP));
+  });
+  secret.timers.push(setTimeout(yourTurn, SECRET.length * SECRET_STEP + 300));
+}
+
+function yourTurn() {
+  stopDemo();
+  setSecretState('turn');
+  showDots(0);
+  const names = spelling();
+  const notes = SECRET.map(i => names[BARS[i].pc].replace('♭', ' flat').replace('♯', ' sharp')).join(', ');
+  showStatus('Your turn', `: play ${notes} (keys ${SECRET.map(i => KEYS[i]).join(', ')})`);
+}
+
+// The visitor played bar i. The demo calls hit() directly, so its notes never count.
+function play(i) {
+  if (secret.state === 'demo') yourTurn();
+  hit(i);
+  if (secret.state === 'unlocked') return;
+  secret.recent = [...secret.recent, i].slice(-SECRET.length);
+  const count = matched(secret.recent);
+  if (count === SECRET.length) unlock();
+  else if (secret.state === 'turn') {
+    showDots(count);
+    showStatus(count ? `${count} of ${SECRET.length}` : 'Your turn');
+  }
+}
+
+// How many of the melody's opening notes the end of `recent` matches.
+function matched(recent) {
+  for (let n = Math.min(recent.length, SECRET.length); n > 0; n--) {
+    if (recent.slice(-n).every((bar, j) => bar === SECRET[j])) return n;
+  }
+  return 0;
+}
+
+function unlock() {
+  setSecretState('unlocked');
+  secretButton.setAttribute('aria-label', 'Open the hidden card');
+  showDots(SECRET.length);
+  showStatus('Unlocked');
+  setTimeout(openSecret, 450); // let the last note land first
+}
+
+function openSecret() {
+  if (secretDialog.open) return;
+  secretDialog.showModal();
+  pulse(secretDialog.querySelector('.card'));
+}
+
+secretButton.addEventListener('click', () => (secret.state === 'unlocked' ? openSecret() : playDemo()));
+
+// Clicking the backdrop closes the dialog, like Esc and the Close button.
+secretDialog.addEventListener('click', e => {
+  const r = secretDialog.getBoundingClientRect();
+  const outside = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+  if (e.target === secretDialog && outside) secretDialog.close();
+});
 
 render();

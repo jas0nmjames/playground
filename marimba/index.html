@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Marimba — Jason James</title>
-  <meta name="description" content="A playable marimba: hit a bar to hear it and light up the matching project.">
+  <title>Marimba navigator — Jason's Playground</title>
+  <meta name="description" content="A playable marimba: hit a bar to hear it and light up the card for its scale degree.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap">
@@ -13,46 +13,41 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="wordmark" href="#">Jason James</a>
-    <nav class="site-nav">
-      <a href="#">Work</a>
-      <a href="#">About</a>
-      <a href="#">Notes</a>
-      <a href="#">Contact</a>
-    </nav>
+    <h1 class="page-title"><a href="https://github.com/jas0nmjames/playground">Jason's Playground</a>: marimba navigator</h1>
   </header>
 
-  <!-- Each card answers to one scale degree: hitting a bar of that degree pulses the card. -->
-  <main class="projects">
-    <div class="project" style="--basis: 220px; --max: 340px; --tilt: -1.2deg; --shot: 5 / 2">
+  <!-- Each card answers to one scale degree: hitting a bar of that degree pulses the card. marimba.js keeps the
+       names, intervals and notes in step with the key and mode; the text here is E♭ major, the page's starting key. -->
+  <main class="card-row">
+    <div class="card-slot" style="--basis: 220px; --max: 340px; --tilt: -1.2deg; --shot: 5 / 2">
       <article class="card" data-degree="1">
         <div class="card__label"><span class="card__badge">1</span><span class="card__solfege">Do</span></div>
-        <div class="card__image">project image</div>
-        <div class="card__meta"><span class="card__title">Project one</span><span class="card__year">2026</span></div>
+        <div class="card__image">unison</div>
+        <div class="card__meta"><span class="card__title">Tonic</span><span class="card__note">E♭</span></div>
       </article>
     </div>
 
-    <div class="project" style="--basis: 170px; --max: 240px; --drop: clamp(0px, 2vw, 28px); --tilt: 1deg; --shot: 2 / 1">
+    <div class="card-slot" style="--basis: 170px; --max: 240px; --drop: clamp(0px, 2vw, 28px); --tilt: 1deg; --shot: 2 / 1">
       <article class="card" data-degree="3">
         <div class="card__label"><span class="card__badge">3</span><span class="card__solfege">Mi</span></div>
-        <div class="card__image">project image</div>
-        <div class="card__meta"><span class="card__title">Project two</span><span class="card__year">2025</span></div>
+        <div class="card__image">major 3rd</div>
+        <div class="card__meta"><span class="card__title">Mediant</span><span class="card__note">G</span></div>
       </article>
     </div>
 
-    <div class="project" style="--basis: 190px; --max: 280px; --drop: clamp(0px, 1vw, 10px); --tilt: -0.6deg; --shot: 9 / 4">
+    <div class="card-slot" style="--basis: 190px; --max: 280px; --drop: clamp(0px, 1vw, 10px); --tilt: -0.6deg; --shot: 9 / 4">
       <article class="card" data-degree="5">
         <div class="card__label"><span class="card__badge">5</span><span class="card__solfege">Sol</span></div>
-        <div class="card__image">project image</div>
-        <div class="card__meta"><span class="card__title">Project three</span><span class="card__year">2025</span></div>
+        <div class="card__image">perfect 5th</div>
+        <div class="card__meta"><span class="card__title">Dominant</span><span class="card__note">B♭</span></div>
       </article>
     </div>
 
-    <div class="project" style="--basis: 170px; --max: 240px; --drop: clamp(0px, 3vw, 36px); --tilt: 1.8deg; --shot: 2 / 1">
+    <div class="card-slot" style="--basis: 170px; --max: 240px; --drop: clamp(0px, 3vw, 36px); --tilt: 1.8deg; --shot: 2 / 1">
       <article class="card" data-degree="7">
         <div class="card__label"><span class="card__badge">7</span><span class="card__solfege">Ti</span></div>
-        <div class="card__image">project image</div>
-        <div class="card__meta"><span class="card__title">Project four</span><span class="card__year">2024</span></div>
+        <div class="card__image">major 7th</div>
+        <div class="card__meta"><span class="card__title">Leading tone</span><span class="card__note">D</span></div>
       </article>
     </div>
   </main>
@@ -78,6 +73,16 @@
           <button type="button" value="major" aria-pressed="true">Major</button>
           <button type="button" value="minor" aria-pressed="false">Minor</button>
         </div>
+        <!-- Easter egg: play the melody back to unlock the hidden card (see marimba.js) -->
+        <div class="secret" data-state="idle">
+          <button type="button" class="secret__button" aria-label="Play the secret melody" aria-describedby="secret-how">
+            <svg class="secret__icon secret__icon--play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L12.8 8z"/></svg>
+            <svg class="secret__icon secret__icon--open" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>
+          </button>
+          <span class="secret__status" role="status">Secret melody</span>
+          <span class="secret__dots" aria-hidden="true"></span>
+          <span class="visually-hidden" id="secret-how">Plays four notes and lights up each bar as it sounds. Play the same notes on the marimba to unlock a hidden card.</span>
+        </div>
       </div>
       <p class="hint">Colored bars are in <span class="hint__key">E♭ major</span>. Tap, click, or use keys Q–I.</p>
     </div>
@@ -87,5 +92,23 @@
       <svg class="marimba__rails" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true"></svg>
     </div>
   </section>
+
+  <dialog class="secret-dialog" aria-labelledby="secret-title">
+    <p class="secret-dialog__eyebrow">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>
+      Verified by ear
+    </p>
+    <h2 class="secret-dialog__title" id="secret-title">You found a hidden card</h2>
+    <div class="secret-dialog__card">
+      <article class="card" data-degree="1">
+        <div class="card__label"><span class="card__badge">8</span><span>Do</span></div>
+        <div class="card__image">1 · 3 · 5 · 8</div>
+        <div class="card__meta"><span class="card__title">Octave</span><span class="card__note">E♭</span></div>
+      </article>
+    </div>
+    <form method="dialog">
+      <button class="secret-dialog__close" autofocus>Close</button>
+    </form>
+  </dialog>
 </body>
 </html>
