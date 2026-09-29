@@ -9,6 +9,9 @@
   --rail: oklch(0.45 0.05 50);
   --bar-off-key: oklch(0.9 0.014 75);
   --nail: oklch(0.3 0.03 50 / 0.18);
+  --footer-ink: oklch(0.45 0.02 60);
+  --rule: oklch(0.88 0.015 80);
+  --rule-dashed: oklch(0.85 0.015 80);
 
   /* Scale-degree colors as bare OKLCH channels, so an alpha can be added: oklch(var(--deg-1) / 0.6) */
   --deg-1: 0.74 0.14 28;
@@ -19,9 +22,10 @@
   --deg-6: 0.72 0.11 255;
   --deg-7: 0.7 0.12 305;
 
-  --font-display: Fredoka, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'DM Mono', monospace;
+  /* Bungee for the title, Readex Pro for everything else, and Noto Music for the ♭ and ♯ glyphs neither has.
+     Readex Pro has no italic, so italic text is a synthesized oblique. */
+  --font-display: Bungee, 'Noto Music', sans-serif;
+  --font-body: 'Readex Pro', 'Noto Music', system-ui, sans-serif;
 }
 
 [data-degree="1"] { --deg: var(--deg-1); }
@@ -48,6 +52,7 @@ body {
   gap: clamp(20px, 3vw, 36px);
   color: var(--ink);
   font-family: var(--font-body);
+  line-height: 1.4;
 }
 
 a {
@@ -70,11 +75,13 @@ a:hover { color: var(--accent); }
 .page-title {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 24px;
-  letter-spacing: -0.01em;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.15;
   text-wrap: balance;
 }
+
+.page-title em { font-style: normal; } /* Bungee has no italic */
 
 /* Scale-degree cards — each .card-slot sets its own --basis, --max, --drop, --tilt and image --shot ratio */
 
@@ -109,9 +116,9 @@ a:hover { color: var(--accent); }
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-display);
+  font-style: italic;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .card__badge {
@@ -121,7 +128,8 @@ a:hover { color: var(--accent); }
   background: oklch(var(--deg));
   display: grid;
   place-items: center;
-  font-weight: 600;
+  font-style: normal;
+  font-weight: 700;
 }
 
 .card__image {
@@ -130,8 +138,8 @@ a:hover { color: var(--accent); }
   background: repeating-linear-gradient(135deg, var(--stripe-dark) 0 8px, var(--stripe-light) 8px 16px);
   display: grid;
   place-items: center;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-style: italic;
+  font-size: 16px;
   color: var(--ink-muted);
 }
 
@@ -139,12 +147,15 @@ a:hover { color: var(--accent); }
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: 15px;
+  font-size: 16px;
 }
 
-.card__title { font-weight: 500; }
+.card__title { font-weight: 600; }
 
-.card__note { color: var(--ink-muted); }
+.card__note {
+  font-weight: 500;
+  color: var(--ink-muted);
+}
 
 /* Player */
 
@@ -173,9 +184,10 @@ a:hover { color: var(--accent); }
 }
 
 .key-select {
-  font-family: var(--font-display);
-  font-weight: 500;
+  font-family: inherit;
+  font-weight: 600;
   font-size: 16px;
+  line-height: 1.2;
   color: var(--ink);
   background: var(--surface);
   border: none;
@@ -194,9 +206,10 @@ a:hover { color: var(--accent); }
 }
 
 .mode-toggle button {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
   border: none;
   border-radius: 999px;
   padding: 8px 16px;
@@ -213,7 +226,8 @@ a:hover { color: var(--accent); }
 
 .hint {
   margin: 0;
-  font-size: 14px;
+  font-style: italic;
+  font-size: 15px;
   color: var(--ink-muted);
   text-wrap: pretty;
 }
@@ -262,9 +276,9 @@ a:hover { color: var(--accent); }
 
 .secret__status {
   min-width: 7em;
-  font-family: var(--font-display);
+  font-style: italic;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .secret__dots {
@@ -284,13 +298,39 @@ a:hover { color: var(--accent); }
   box-shadow: none;
 }
 
-/* Marimba — an 8:5 frame sized to fit the viewport height; bar positions are % of the frame (see marimba.js) */
+/* Marimba — the scroller is an 8:5 window sized to fit the viewport height, showing one octave (8 naturals) of the
+   22-natural marimba and snapping between octaves. Bar positions are % of the marimba (see marimba.js). */
+
+.marimba-scroller,
+.scrub {
+  width: min(100%, max(340px, calc((100vh - 380px) * 1.6)));
+  margin: 0 auto;
+}
+
+.marimba-scroller {
+  --fade-left: #000 0;
+  --fade-right: #000 100%;
+  padding: 10px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  -webkit-mask-image: linear-gradient(to right, var(--fade-left), var(--fade-right));
+  mask-image: linear-gradient(to right, var(--fade-left), var(--fade-right));
+}
+
+.marimba-scroller::-webkit-scrollbar { display: none; }
+
+.marimba-scroller.is-dragging { scroll-snap-type: none; }
+
+/* Fade an edge only while there's more marimba past it */
+.marimba-scroller.fade-left { --fade-left: transparent 0, #000 40px; }
+.marimba-scroller.fade-right { --fade-right: #000 calc(100% - 40px), transparent 100%; }
 
 .marimba {
   position: relative;
-  width: min(100%, max(340px, calc((100vh - 380px) * 1.6)));
-  margin: 0 auto;
-  aspect-ratio: 8 / 5;
+  width: calc(100% * var(--units, 22) / 8);
+  aspect-ratio: var(--units, 22) / 5;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -306,11 +346,23 @@ a:hover { color: var(--accent); }
   overflow: visible;
 }
 
-.marimba__rails line {
+.marimba__rails polyline {
+  fill: none;
   stroke: var(--rail);
   stroke-width: 5;
   stroke-linecap: round;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+}
+
+/* One snap point per octave view, at its first C */
+.marimba__snap {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  scroll-snap-align: start;
+  pointer-events: none;
 }
 
 .bar {
@@ -360,20 +412,156 @@ a:hover { color: var(--accent); }
   left: 0;
   right: 0;
   text-align: center;
-  font-family: var(--font-display);
 }
 
 .bar__degree {
   top: 5%;
-  font-weight: 600;
+  font-weight: 700;
   font-size: clamp(12px, 2vw, 22px);
 }
 
 .bar__name {
   bottom: 5%;
-  font-weight: 500;
+  font-weight: 600;
   font-size: clamp(10px, 1.5vw, 16px);
 }
+
+/* Scrub strip: a minimap of the whole marimba under the scroller. The thumb is the octave in view; drag, flick or tap
+   to move it. */
+
+.scrub {
+  position: relative;
+  height: 52px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.scrub__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bar-off-key);
+}
+
+.scrub__thumb {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.scrub__label {
+  position: absolute;
+  top: 26px;
+  transform: translateX(-50%);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-muted);
+  pointer-events: none;
+}
+
+/* Footer */
+
+.site-footer {
+  max-width: 1240px;
+  width: 100%;
+  margin: clamp(24px, 4vw, 48px) auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--footer-ink);
+}
+
+.site-footer a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-footer p { margin: 0; }
+
+.credits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.credits__by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+}
+
+.credits__by img { display: block; }
+
+.impact {
+  padding-top: 20px;
+  border-top: 1px dashed var(--rule-dashed);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 20px 40px;
+  align-items: start;
+}
+
+.impact__title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.impact__column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.impact__heading {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.impact__heading em { font-weight: 500; }
+
+.impact__figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  color: var(--ink);
+}
+
+.impact details { max-width: 62ch; }
+
+.impact summary {
+  cursor: pointer;
+  font-style: italic;
+}
+
+.impact details p {
+  margin-top: 8px;
+  text-wrap: pretty;
+}
+
+.impact__small { font-size: 14px; }
+
+.impact__aside { font-style: italic; }
 
 /* Hidden card dialog */
 
@@ -416,7 +604,8 @@ a:hover { color: var(--accent); }
   align-items: center;
   gap: 6px;
   margin: 0;
-  font-size: 14px;
+  font-style: italic;
+  font-size: 15px;
   color: var(--ink-muted);
 }
 
@@ -432,9 +621,8 @@ a:hover { color: var(--accent); }
 
 .secret-dialog__title {
   margin: 0;
-  font-family: var(--font-display);
   font-weight: 600;
-  font-size: 22px;
+  font-size: 24px;
   text-wrap: balance;
 }
 
@@ -455,9 +643,10 @@ a:hover { color: var(--accent); }
   border-radius: 999px;
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
   cursor: pointer;
 }
 

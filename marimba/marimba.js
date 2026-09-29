@@ -7,15 +7,24 @@ const SETTINGS = {
   decay: 1.4, // seconds (the design allows 0.5–3)
 };
 
-// E♭4–E♭5. Naturals sit in the front row, accidentals in the back; x is the bar's center in eighths of the frame's width.
-const BARS = [
-  { pc: 3, midi: 63, row: 'b', x: 0.5 }, { pc: 4, midi: 64, row: 'f', x: 1 }, { pc: 5, midi: 65, row: 'f', x: 2 },
-  { pc: 6, midi: 66, row: 'b', x: 2.5 }, { pc: 7, midi: 67, row: 'f', x: 3 }, { pc: 8, midi: 68, row: 'b', x: 3.5 },
-  { pc: 9, midi: 69, row: 'f', x: 4 }, { pc: 10, midi: 70, row: 'b', x: 4.5 }, { pc: 11, midi: 71, row: 'f', x: 5 },
-  { pc: 0, midi: 72, row: 'f', x: 6 }, { pc: 1, midi: 73, row: 'b', x: 6.5 }, { pc: 2, midi: 74, row: 'f', x: 7 },
-  { pc: 3, midi: 75, row: 'b', x: 7.5 },
-];
-const KEYS = 'QASEDRFTGHUJI'; // KEYS[i] plays BARS[i]: home row for naturals, the row above for accidentals, like a piano
+// C3–C6, a practice-marimba range: naturals in the front row, accidentals in the back. x is the bar's center in
+// natural-bar widths: a natural's center is n + 0.5 and an accidental sits on the line at n, where n counts the
+// naturals below it.
+const NATURALS = [0, 2, 4, 5, 7, 9, 11];
+const BARS = [];
+for (let midi = 48, n = 0; midi <= 84; midi++) {
+  const pc = midi % 12;
+  const front = NATURALS.includes(pc);
+  BARS.push({ pc, midi, row: front ? 'f' : 'b', x: front ? n + 0.5 : n });
+  if (front) n++;
+}
+const UNITS = BARS.filter(b => b.row === 'f').length; // the marimba is 22 naturals wide
+const OCTAVES = 3; // the view stops at C3, C4 and C5, each showing 8 naturals (C to C)
+const START_OCTAVE = 1; // opens on C4
+
+// Piano layout relative to the octave in view: naturals on the home row (A–K, then L ; '), accidentals on the row
+// above (W E, T Y U, O P). Values are semitones above the view's first C.
+const PIANO_KEYS = { A: 0, W: 1, S: 2, E: 3, D: 4, F: 5, T: 6, G: 7, Y: 8, H: 9, U: 10, J: 11, K: 12, O: 13, L: 14, P: 15, ';': 16, "'": 17 };
 const SCALES = { major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10] };
 const SOLFEGE = { major: ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'], minor: ['Do', 'Re', 'Me', 'Fa', 'Sol', 'Le', 'Te'] };
 const ROLES = {
@@ -83,22 +92,26 @@ class Synth {
   }
 }
 
-const state = { root: 3, mode: 'major' };
+const state = { root: 0, mode: 'major' };
 const synth = new Synth();
 const held = new Set(); // pointers pressed on a bar; sliding one onto another bar plays it too
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-const marimba = document.querySelector('.marimba');
+const scroller = document.querySelector('.marimba-scroller');
+const marimba = scroller.querySelector('.marimba');
 const rails = marimba.querySelector('.marimba__rails');
+const strip = document.querySelector('.scrub');
+const thumb = strip.querySelector('.scrub__thumb');
 const keySelect = document.querySelector('.key-select');
 const modeButtons = [...document.querySelectorAll('.mode-toggle button')];
 const keyName = document.querySelector('.hint__key');
 const cards = [...document.querySelectorAll('.card-row .card')];
 
-// Lengths and centers are % of the frame's height. Each semitone up is 2^(-1/24) shorter, so an octave is 1/√2 as long.
+// Lengths and centers are % of the marimba's height. Each octave up is 2^(-1/3) as long.
 function geometry({ row, midi }) {
   const front = row === 'f';
-  const scale = 2 ** (-(midi - 63) / 24);
-  return { front, length: (front ? 50 : 38) * scale, center: front ? 66 : 24, width: front ? 0.84 : 0.72 };
+  const scale = 2 ** (-(midi - 60) / 36);
+  return { front, length: (front ? 44 : 34) * scale, center: front ? 68 : 22, width: front ? 0.84 : 0.72 };
 }
 
 // 1–7 within the current key, 0 when the pitch class is out of it.
@@ -107,14 +120,16 @@ const degreeOf = pc => SCALES[state.mode].indexOf((pc - state.root + 12) % 12) +
 // Note names spelled for the current key.
 const spelling = () => (FLAT_KEYS[state.mode].includes(state.root) ? FLAT : SHARP);
 
+marimba.style.setProperty('--units', UNITS);
+
 const bars = BARS.map((bar, i) => {
   const { length, center, width } = geometry(bar);
   const el = document.createElement('div');
   el.className = 'bar';
   el.dataset.row = bar.row;
   Object.assign(el.style, {
-    left: `${(bar.x - width / 2) / 8 * 100}%`,
-    width: `${width / 8 * 100}%`,
+    left: `${(bar.x - width / 2) / UNITS * 100}%`,
+    width: `${width / UNITS * 100}%`,
     top: `${center - length / 2}%`,
     height: `${length}%`,
   });
@@ -137,22 +152,43 @@ const bars = BARS.map((bar, i) => {
   return { el, degree: el.querySelector('.bar__degree'), name: el.querySelector('.bar__name') };
 });
 
-// Two rails per row, under the nail holes (22% and 78% along each bar), from the row's first bar to its last and
-// overhanging each end by 0.45. The SVG's 800 × 500 viewBox maps x (eighths) × 100 and y (%) × 5.
+// Two rails per row, through every bar's nail holes (22% and 78% along it) and overhanging each end by 0.45 along
+// the end segment. The viewBox maps x (natural widths) × 100 and y (%) × 5.
+rails.setAttribute('viewBox', `0 0 ${UNITS * 100} 500`);
 for (const row of ['f', 'b']) {
   const rowBars = BARS.filter(b => b.row === row);
-  const first = rowBars[0], last = rowBars[rowBars.length - 1];
-  const a = geometry(first), z = geometry(last);
   for (const k of [-0.28, 0.28]) {
-    const ya = a.center + k * a.length, yz = z.center + k * z.length;
-    const slope = (yz - ya) / (last.x - first.x);
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', (first.x - 0.45) * 100);
-    line.setAttribute('y1', (ya - slope * 0.45) * 5);
-    line.setAttribute('x2', (last.x + 0.45) * 100);
-    line.setAttribute('y2', (yz + slope * 0.45) * 5);
+    const points = rowBars.map(b => {
+      const { center, length } = geometry(b);
+      return [b.x, center + k * length];
+    });
+    const overhang = ([x, y], [px, py]) => {
+      const dx = Math.abs(x - px);
+      return [x + (x - px) / dx * 0.45, y + (y - py) / dx * 0.45];
+    };
+    points.unshift(overhang(points[0], points[1]));
+    points.push(overhang(points[points.length - 1], points[points.length - 2]));
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    line.setAttribute('points', points.map(([x, y]) => `${(x * 100).toFixed(1)},${(y * 5).toFixed(1)}`).join(' '));
     rails.append(line);
   }
+}
+
+// One snap point per octave view, at its first C.
+for (let o = 0; o < OCTAVES; o++) {
+  const snap = document.createElement('span');
+  snap.className = 'marimba__snap';
+  snap.style.left = `${o * 7 / UNITS * 100}%`;
+  marimba.append(snap);
+}
+
+// The strip is a minimap of the whole marimba, labelled under each C.
+for (const bar of BARS.filter(b => b.pc === 0)) {
+  const label = document.createElement('span');
+  label.className = 'scrub__label';
+  label.textContent = `C${bar.midi / 12 - 1}`;
+  label.style.left = `${bar.x / UNITS * 100}%`;
+  strip.append(label);
 }
 
 function render() {
@@ -178,6 +214,7 @@ function render() {
 }
 
 function hit(i) {
+  reveal(i);
   synth.play(BARS[i].midi, SETTINGS.decay);
   bars[i].el.animate(
     [{ transform: 'scale(0.93)', filter: 'brightness(1.1)' }, { transform: 'scale(1)', filter: 'brightness(1)' }],
@@ -199,11 +236,133 @@ function pulse(card) {
   ], { duration: 1600, easing: 'ease-out' });
 }
 
+// Octaves. The scroller snaps to one octave view at a time, and the keyboard plays whichever octave is in view.
+const octaveWidth = () => scroller.scrollWidth * 7 / UNITS;
+const octaveInView = () => Math.max(0, Math.min(OCTAVES - 1, Math.round(scroller.scrollLeft / octaveWidth())));
+
+// Returns the scroll position it's heading to.
+function goOctave(octave, smooth = true) {
+  const left = Math.max(0, Math.min(OCTAVES - 1, octave)) * octaveWidth();
+  scroller.scrollTo({ left, behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto' });
+  return left;
+}
+
+// Keep a played bar in view. Neighbouring views share a C, so the C bars always sit at a view's edge; moving for them
+// would bounce between octaves. Only a bar that's cut off or off screen moves the view, to the nearest octave that
+// shows it whole.
+function reveal(i) {
+  const view = scroller.getBoundingClientRect();
+  const bar = bars[i].el.getBoundingClientRect();
+  if (bar.left >= view.left - 1 && bar.right <= view.right + 1) return;
+  const left = bar.left - view.left + scroller.scrollLeft;
+  const right = left + bar.width;
+  const shows = o => left >= o * octaveWidth() - 1 && right <= o * octaveWidth() + scroller.clientWidth + 1;
+  const current = octaveInView();
+  const [nearest] = [...Array(OCTAVES).keys()].filter(shows).sort((a, b) => Math.abs(a - current) - Math.abs(b - current));
+  if (nearest !== undefined) goOctave(nearest);
+}
+
+// The strip's thumb and value, and the scroller's edge fades, follow the scroll position.
+function measure() {
+  const { scrollLeft, scrollWidth, clientWidth } = scroller;
+  const max = scrollWidth - clientWidth;
+  const overflow = max > 2;
+  strip.hidden = !overflow;
+  scroller.classList.toggle('fade-left', overflow && scrollLeft > 2);
+  scroller.classList.toggle('fade-right', overflow && scrollLeft < max - 2);
+  thumb.style.left = `${scrollLeft / scrollWidth * 100}%`;
+  thumb.style.width = `${Math.min(100, clientWidth / scrollWidth * 100)}%`;
+  strip.setAttribute('aria-valuenow', max > 0 ? Math.round(scrollLeft / max * 100) : 0);
+}
+
+scroller.addEventListener('scroll', measure, { passive: true });
+window.addEventListener('resize', measure);
+const resizes = new ResizeObserver(measure);
+resizes.observe(scroller);
+resizes.observe(marimba);
+
+// Strip gestures: a drag moves the view like a minimap (snapping off meanwhile), a flick pages one octave, a tap jumps
+// to the octave under it, and letting go settles on the nearest octave.
+let gesture = null;
+let settling = 0; // counts settles, so a new gesture can cancel the last one's wait
+
+strip.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  try {
+    strip.setPointerCapture(e.pointerId);
+  } catch {} // the pointer is already gone
+  settling++;
+  gesture = { id: e.pointerId, x: e.clientX, t: performance.now(), scrollLeft: scroller.scrollLeft, octave: octaveInView(), moved: false };
+  scroller.classList.add('is-dragging');
+});
+
+strip.addEventListener('pointermove', e => {
+  if (e.pointerId !== gesture?.id) return;
+  const dx = e.clientX - gesture.x;
+  if (Math.abs(dx) > 6) gesture.moved = true;
+  scroller.scrollLeft = gesture.scrollLeft + dx * scroller.scrollWidth / strip.getBoundingClientRect().width;
+});
+
+strip.addEventListener('pointerup', e => {
+  if (e.pointerId !== gesture?.id) return;
+  const { x, t, octave, moved } = gesture;
+  const dx = e.clientX - x;
+  if (!moved) {
+    const r = strip.getBoundingClientRect();
+    settle(Math.floor((e.clientX - r.left) / r.width * OCTAVES));
+  } else if (performance.now() - t < 350 && Math.abs(dx) > 24) {
+    settle(octave + Math.sign(dx));
+  } else {
+    settle(octaveInView());
+  }
+});
+
+strip.addEventListener('pointercancel', e => {
+  if (e.pointerId === gesture?.id) settle(octaveInView());
+});
+
+// Scroll to an octave at the end of a gesture. Snapping stays off until the view gets there: switching it back on
+// mid-scroll can stop the scroll where it is.
+function settle(octave) {
+  gesture = null;
+  const target = goOctave(octave);
+  const run = ++settling;
+  const started = performance.now();
+  (function arrived() {
+    if (run !== settling) return;
+    if (Math.abs(scroller.scrollLeft - target) > 1 && performance.now() - started < 2000) requestAnimationFrame(arrived);
+    else scroller.classList.remove('is-dragging');
+  })();
+}
+
+strip.addEventListener('keydown', e => {
+  const octave = { Home: 0, End: OCTAVES - 1 }[e.key];
+  if (octave === undefined) return;
+  e.preventDefault();
+  goOctave(octave);
+});
+
 window.addEventListener('keydown', e => {
-  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1) return;
-  if (/^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName) || secretDialog.open) return;
-  const i = KEYS.indexOf(e.key.toUpperCase());
-  if (i >= 0) {
+  if (secretDialog.open || /^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName)) return; // the dialog handles Esc itself
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const arrow = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
+  if (arrow) {
+    if (!/^(BUTTON|A|SUMMARY)$/.test(e.target.tagName)) {
+      e.preventDefault();
+      goOctave(octaveInView() + arrow);
+    }
+    return;
+  }
+  if (e.repeat || e.key.length !== 1) return;
+  const key = e.key.toUpperCase();
+  if (key === 'Z' || key === 'X') {
+    e.preventDefault();
+    goOctave(octaveInView() + (key === 'Z' ? -1 : 1));
+    return;
+  }
+  if (!(key in PIANO_KEYS)) return;
+  const i = octaveInView() * 12 + PIANO_KEYS[key];
+  if (i < BARS.length) {
     e.preventDefault();
     play(i);
   }
@@ -227,11 +386,11 @@ for (const button of modeButtons) {
   });
 }
 
-// Easter egg: E♭4 G4 B♭4 E♭5 — 1 (low), 3, 5, 1 (high) in E♭ major, the key the page opens in — unlocks a hidden
-// card. The pitches are fixed rather than degrees because E♭ is the only key whose two 1s both fit on the bars.
+// Easter egg: C4 E4 G4 C5 — 1 (low), 3, 5, 1 (high) in C major, the key the page opens in — unlocks a hidden card.
+// The pitches are fixed, so the melody is the same whichever key is selected.
 // The ▶ button plays the melody and rings each bar as it sounds, so it can be matched by ear or by eye; the status
 // beside it is a live region, and once the melody has played it also reads the notes and their keys aloud.
-const SECRET = [0, 4, 7, 12]; // indexes into BARS
+const SECRET = [12, 16, 19, 24]; // indexes into BARS
 const SECRET_STEP = 650; // ms between the demo's notes
 
 const secretBox = document.querySelector('.secret');
@@ -300,7 +459,8 @@ function yourTurn() {
   showDots(0);
   const names = spelling();
   const notes = SECRET.map(i => names[BARS[i].pc].replace('♭', ' flat').replace('♯', ' sharp')).join(', ');
-  showStatus('Your turn', `: play ${notes} (keys ${SECRET.map(i => KEYS[i]).join(', ')})`);
+  const keys = SECRET.map(i => Object.keys(PIANO_KEYS).find(k => START_OCTAVE * 12 + PIANO_KEYS[k] === i)).join(', ');
+  showStatus('Your turn', `: play ${notes} (from the middle octave, keys ${keys})`);
 }
 
 // The visitor played bar i. The demo calls hit() directly, so its notes never count.
@@ -348,4 +508,79 @@ secretDialog.addEventListener('click', e => {
   if (e.target === secretDialog && outside) secretDialog.close();
 });
 
+// Everything the page downloaded, from the browser's resource timings (Google Fonts lets its sizes be read). A file
+// the browser only revalidated reports just its headers, so each file's full size is remembered from the visit that
+// downloaded it, and every visit estimates the same page.
+function pageBytes() {
+  let sizes = {};
+  try {
+    sizes = JSON.parse(localStorage.getItem('marimba-sizes')) || {};
+  } catch {}
+  let total = 0;
+  for (const e of [...performance.getEntriesByType('navigation'), ...performance.getEntriesByType('resource')]) {
+    if (e.name.startsWith('https://api.websitecarbon.com/')) continue;
+    const url = e.entryType === 'navigation' ? e.name.split(/[?#]/)[0] : e.name;
+    if (e.encodedBodySize > 0) sizes[url] = Math.max(e.transferSize, e.encodedBodySize);
+    total += sizes[url] ?? e.transferSize;
+  }
+  try {
+    localStorage.setItem('marimba-sizes', JSON.stringify(sizes));
+  } catch {}
+  return total;
+}
+
+// The Sustainable Web Design model with Website Carbon's constants, which reproduce its calculator exactly: 0.3 kWh
+// per GiB at the 494 g CO₂e/kWh global grid average, with a quarter of views being repeat visits that load 2% of the
+// page. The hosting isn't assumed to be green.
+const carbonPerView = bytes => bytes * (0.75 + 0.25 * 0.02) / 2 ** 30 * 0.3 * 494;
+
+// Footer: this page's carbon per view. Website Carbon measures it, and its answer is cached for a day. If it fails (its
+// API has been answering 503) or takes over 10 seconds, the page estimates the figure from its own size instead, and
+// doesn't cache that, so the next visit asks Website Carbon again.
+function loadCarbon() {
+  const line = document.querySelector('.carbon__line');
+  const note = document.querySelector('.carbon__note');
+  const source = document.querySelector('.carbon__source');
+  const perView = c => `≈ ${c < 0.01 ? c.toFixed(3) : c.toFixed(2)} g CO₂e per view`;
+  const show = (lineText, noteText) => {
+    line.textContent = lineText;
+    note.textContent = noteText;
+  };
+  const showMeasured = ({ c, p }) => show(perView(c), `Cleaner than ${Math.round(p)}% of pages tested`);
+  const unavailable = () => show('Measured per view on the live site', 'Estimate unavailable here');
+  const pageLoaded = new Promise(resolve => (document.readyState === 'complete' ? resolve() : addEventListener('load', resolve, { once: true })));
+  const estimateHere = async () => {
+    await Promise.all([pageLoaded, document.fonts.ready]);
+    const bytes = pageBytes();
+    if (!bytes) return unavailable();
+    show(perView(carbonPerView(bytes)), `Estimated from this page's ${Math.round(bytes / 1000)} kB`);
+    source.textContent = 'Sustainable Web Design';
+    source.href = 'https://sustainablewebdesign.org/estimating-digital-emissions/';
+  };
+
+  const url = location.href.split('#')[0].split('?')[0];
+  const key = `marimba-wcb:${url}`;
+  try {
+    const cached = JSON.parse(localStorage.getItem(key));
+    if (cached && Date.now() - cached.t < 24 * 60 * 60 * 1000) return showMeasured(cached.d);
+  } catch {}
+  if (!/^https?:$/.test(location.protocol)) return unavailable();
+  fetch(`https://api.websitecarbon.com/b?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout?.(10000) })
+    .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    .then(data => {
+      const d = { c: Number(data.c), p: Number(data.p) };
+      if (!Number.isFinite(d.c) || !Number.isFinite(d.p)) throw new Error('unexpected response');
+      showMeasured(d);
+      try {
+        localStorage.setItem(key, JSON.stringify({ t: Date.now(), d }));
+      } catch {}
+    })
+    .catch(() => estimateHere().catch(unavailable));
+}
+
 render();
+goOctave(START_OCTAVE, false);
+measure();
+requestAnimationFrame(measure);
+setTimeout(measure, 500);
+loadCarbon();
