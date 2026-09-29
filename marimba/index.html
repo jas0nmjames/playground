@@ -7,23 +7,25 @@
   <meta name="description" content="A playable marimba: hit a bar to hear it and light up the card for its scale degree.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Readex+Pro:wght@300..700&display=swap">
+  <!-- Just the ♭ and ♯ glyphs -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%E2%99%AD%E2%99%AF&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script src="marimba.js" defer></script>
 </head>
 <body>
   <header class="site-header">
-    <h1 class="page-title"><a href="https://github.com/jas0nmjames/playground">Jason's Playground</a>: marimba navigator</h1>
+    <h1 class="page-title"><a href="https://github.com/jas0nmjames/playground">Jason's Playground</a>: <em>marimba navigator</em></h1>
   </header>
 
   <!-- Each card answers to one scale degree: hitting a bar of that degree pulses the card. marimba.js keeps the
-       names, intervals and notes in step with the key and mode; the text here is E♭ major, the page's starting key. -->
+       names, intervals and notes in step with the key and mode; the text here is C major, the page's starting key. -->
   <main class="card-row">
     <div class="card-slot" style="--basis: 220px; --max: 340px; --tilt: -1.2deg; --shot: 5 / 2">
       <article class="card" data-degree="1">
         <div class="card__label"><span class="card__badge">1</span><span class="card__solfege">Do</span></div>
         <div class="card__image">unison</div>
-        <div class="card__meta"><span class="card__title">Tonic</span><span class="card__note">E♭</span></div>
+        <div class="card__meta"><span class="card__title">Tonic</span><span class="card__note">C</span></div>
       </article>
     </div>
 
@@ -31,7 +33,7 @@
       <article class="card" data-degree="3">
         <div class="card__label"><span class="card__badge">3</span><span class="card__solfege">Mi</span></div>
         <div class="card__image">major 3rd</div>
-        <div class="card__meta"><span class="card__title">Mediant</span><span class="card__note">G</span></div>
+        <div class="card__meta"><span class="card__title">Mediant</span><span class="card__note">E</span></div>
       </article>
     </div>
 
@@ -39,7 +41,7 @@
       <article class="card" data-degree="5">
         <div class="card__label"><span class="card__badge">5</span><span class="card__solfege">Sol</span></div>
         <div class="card__image">perfect 5th</div>
-        <div class="card__meta"><span class="card__title">Dominant</span><span class="card__note">B♭</span></div>
+        <div class="card__meta"><span class="card__title">Dominant</span><span class="card__note">G</span></div>
       </article>
     </div>
 
@@ -47,7 +49,7 @@
       <article class="card" data-degree="7">
         <div class="card__label"><span class="card__badge">7</span><span class="card__solfege">Ti</span></div>
         <div class="card__image">major 7th</div>
-        <div class="card__meta"><span class="card__title">Leading tone</span><span class="card__note">D</span></div>
+        <div class="card__meta"><span class="card__title">Leading tone</span><span class="card__note">B</span></div>
       </article>
     </div>
   </main>
@@ -56,10 +58,10 @@
     <div class="controls">
       <div class="controls__group">
         <select class="key-select" aria-label="Key">
-          <option value="0">C</option>
+          <option value="0" selected>C</option>
           <option value="1">D♭</option>
           <option value="2">D</option>
-          <option value="3" selected>E♭</option>
+          <option value="3">E♭</option>
           <option value="4">E</option>
           <option value="5">F</option>
           <option value="6">G♭</option>
@@ -84,14 +86,48 @@
           <span class="visually-hidden" id="secret-how">Plays four notes and lights up each bar as it sounds. Play the same notes on the marimba to unlock a hidden card.</span>
         </div>
       </div>
-      <p class="hint">Colored bars are in <span class="hint__key">E♭ major</span>. Tap, click, or use keys Q–I.</p>
+      <p class="hint">Colored bars are in <span class="hint__key">C major</span>. Tap, click, or use keys A–K, with Z X or ← → to change octave.</p>
     </div>
 
-    <!-- Bars and rails are drawn by marimba.js -->
-    <div class="marimba">
-      <svg class="marimba__rails" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <!-- Bars, rails, snap points and the strip's labels are drawn by marimba.js -->
+    <div class="marimba-scroller" id="marimba-scroller">
+      <div class="marimba">
+        <svg class="marimba__rails" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+    </div>
+    <div class="scrub" role="scrollbar" aria-label="Scroll the marimba" aria-controls="marimba-scroller" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+      <div class="scrub__track"><div class="scrub__thumb"></div></div>
     </div>
   </section>
+
+  <footer class="site-footer">
+    <div class="credits">
+      <p class="credits__by">
+        <span>Designed and built by <a href="https://jasonjames.works">Jason James</a> with</span>
+        <img src="assets/claude-symbol.svg" alt="Claude logo" width="18" height="18">
+        <span><a href="https://claude.ai">Claude Design</a> and <a href="https://claude.com/claude-code">Claude Code</a></span>
+      </p>
+      <p>© 2026</p>
+    </div>
+    <section class="impact" aria-labelledby="impact-title">
+      <h2 class="impact__title" id="impact-title">Environmental impact of this page</h2>
+      <div class="impact__column">
+        <span class="impact__heading">Making it <em>(one-time, estimated)</em></span>
+        <div class="impact__figures"><span>≈ 3.2 kWh</span><span>≈ 1.2 kg CO₂</span><span>≈ 1.6 L water</span></div>
+        <details>
+          <summary>How this was estimated</summary>
+          <p>176 model requests by Claude Code, counted from the session logs, at 18 Wh each, the per-request assumption used across this playground. Carbon uses 0.386 kg CO₂ per kWh and water 0.5 L per kWh. Claude Design's requests can't be counted from here, so they aren't included, and neither is model training. <a href="https://github.com/jas0nmjames/playground/tree/main/marimba#claude">Breakdown by pass</a>.</p>
+        </details>
+      </div>
+      <!-- The per-view figure comes from Website Carbon, or from the page's own size when that fails (see marimba.js) -->
+      <div class="impact__column">
+        <span class="impact__heading">Each visit <em>(ongoing)</em></span>
+        <div class="impact__figures"><span class="carbon__line">Measuring…</span></div>
+        <span class="impact__small"><span class="carbon__note">Checking this page</span> · via <a class="carbon__source" href="https://www.websitecarbon.com">Website Carbon</a></span>
+        <span class="impact__small impact__aside">Sound is synthesized on your device. No samples or tracking.</span>
+      </div>
+    </section>
+  </footer>
 
   <dialog class="secret-dialog" aria-labelledby="secret-title">
     <p class="secret-dialog__eyebrow">
@@ -103,7 +139,7 @@
       <article class="card" data-degree="1">
         <div class="card__label"><span class="card__badge">8</span><span>Do</span></div>
         <div class="card__image">1 · 3 · 5 · 8</div>
-        <div class="card__meta"><span class="card__title">Octave</span><span class="card__note">E♭</span></div>
+        <div class="card__meta"><span class="card__title">Octave</span><span class="card__note">C</span></div>
       </article>
     </div>
     <form method="dialog">
