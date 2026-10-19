@@ -47,7 +47,19 @@ body {
 .page {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 48px 20px 80px;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding-block: 20px 48px;
+  }
+
+  .page-header p {
+    margin-bottom: 20px;
+  }
 }
 
 .page-header h1 {
@@ -91,6 +103,22 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
     0 24px 60px rgba(0, 0, 0, 0.55);
   container-type: inline-size;
+}
+
+/* On a phone the whole calculator should fit on one screen, so the screen and
+   keys are visible together. The case is ~2.06x taller than it is wide. */
+@media (max-width: 860px) {
+  .page-header {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .calculator {
+    --case-w: min(460px, 100%, calc((100svh - 24px) / 2.06));
+  }
 }
 
 .brand {
@@ -244,6 +272,15 @@ body {
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(10, auto);
   gap: 2.1cqw;
+}
+
+/* Keys are tapped in quick succession on a phone: no double-tap zoom, no
+   text selection, no grey tap flash. */
+.key,
+.arrow {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
 }
 
 .key {
