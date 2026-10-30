@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TI-BASIC Home Screen</title>
+  <meta name="description" content="A TI-84-style calculator that runs a TI-BASIC menu program in the browser. Edit the program and run it again.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="intro">
+    <p class="eyebrow">playground / ti-basic</p>
+    <h1>prgmHOME</h1>
+    <p>A home screen written in TI-BASIC, the language of the TI-83 and TI-84 graphing calculators, running in your browser. Press <kbd>ENTER</kbd> to run it, then pick from the menu with the arrows or a number key.</p>
+  </header>
+
+  <main class="layout">
+    <section class="calc" aria-label="Calculator">
+      <div class="calc-top">
+        <span class="brand">PLAYGROUND <b>84</b></span>
+        <span class="model">TI-BASIC</span>
+      </div>
+
+      <div class="bezel">
+        <div class="lcd" id="lcd" role="img" aria-label="Calculator screen">
+          <div class="cells" id="cells"></div>
+          <div class="busy" id="busy" aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="sr-only" id="screen-text" aria-live="polite"></p>
+
+      <div class="keypad" id="keypad"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Program editor</h2>
+        <span class="status" id="status">Ready</span>
+      </div>
+      <label class="sr-only" for="source">prgmHOME source</label>
+      <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+      <div class="actions">
+        <button type="button" class="btn primary" id="run">Run prgmHOME</button>
+        <button type="button" class="btn" id="stop">Break (ON)</button>
+        <button type="button" class="btn ghost" id="reset">Restore original</button>
+      </div>
+      <p class="hint">Type <code>-&gt;</code> for <code>→</code>, <code>!=</code> for <code>≠</code>, and <code>&lt;=</code> / <code>&gt;=</code> for <code>≤</code> / <code>≥</code>. Your edits are kept in this browser.</p>
+
+      <details class="ref">
+        <summary>What this calculator understands</summary>
+        <dl>
+          <dt>Screen</dt><dd><code>ClrHome</code> <code>Disp</code> <code>Output(row,col,value</code> <code>Pause</code> <code>Wait</code></dd>
+          <dt>Input</dt><dd><code>Menu(</code> <code>Input</code> <code>Prompt</code> <code>getKey</code></dd>
+          <dt>Flow</dt><dd><code>If</code> <code>Then</code> <code>Else</code> <code>End</code> <code>While</code> <code>Repeat</code> <code>For(</code> <code>Lbl</code> <code>Goto</code> <code>Stop</code></dd>
+          <dt>Data</dt><dd><code>→</code> into <code>A</code>–<code>Z</code>, <code>θ</code>, <code>Str0</code>–<code>Str9</code>; <code>DelVar</code> <code>Ans</code></dd>
+          <dt>Math</dt><dd><code>+ − × ÷ ^</code> <code>= ≠ &lt; &gt; ≤ ≥</code> <code>and or xor not(</code> <code>randInt(</code> <code>rand</code> <code>int(</code> <code>iPart(</code> <code>fPart(</code> <code>abs(</code> <code>round(</code> <code>min(</code> <code>max(</code> <code>remainder(</code> <code>√(</code></dd>
+          <dt>Strings</dt><dd><code>length(</code> <code>sub(</code> <code>toString(</code>, and <code>+</code> to join</dd>
+        </dl>
+        <p>On the home screen you can also type math like <code>2+3</code> or <code>5→A</code> and press <kbd>ENTER</kbd>. <kbd>PRGM</kbd> types <code>prgmHOME</code> for you, and <kbd>ALPHA</kbd> types the green letter above the next key.</p>
+        <p>Keyboard: arrows, <kbd>Enter</kbd>, <kbd>Esc</kbd> = CLEAR, <kbd>Backspace</kbd> = DEL, digits and letters type, <kbd>Ctrl</kbd>+<kbd>B</kbd> = ON (break).</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <a href="../">← playground</a>
+    <span>Not affiliated with Texas Instruments.</span>
+  </footer>
+
+  <script src="interpreter.js"></script>
+  <script src="prgm-home.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
