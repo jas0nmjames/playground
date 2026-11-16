@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Liquid hourglass</title>
+  <meta name="description" content="A double liquid-motion hourglass, simulated in the browser.">
+  <meta name="theme-color" content="#e7e8ea">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="stage" id="stage">
+    <div class="shadow" id="shadow" aria-hidden="true"></div>
+    <div class="device" id="device" role="button" tabindex="0"
+         aria-label="Liquid hourglass. Press to turn it over.">
+      <canvas id="fluid"></canvas>
+      <canvas id="bubbles"></canvas>
+      <canvas id="shine-a"></canvas>
+      <canvas id="shine-b"></canvas>
+    </div>
+    <button class="start" id="start" type="button" hidden>Play</button>
+    <p class="notice" id="notice" role="status" hidden></p>
+  </main>
+
+  <div class="controls">
+    <button type="button" id="play" aria-pressed="true">Pause</button>
+    <button type="button" id="flip">Flip</button>
+    <label class="toggle"><input type="checkbox" id="auto" checked> Flip when empty</label>
+  </div>
+  <pre class="hud" id="hud" hidden></pre>
+
+  <script src="js/geometry.js"></script>
+  <script src="js/sim.js"></script>
+  <script src="js/glass.js"></script>
+  <script src="js/bubbles.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
