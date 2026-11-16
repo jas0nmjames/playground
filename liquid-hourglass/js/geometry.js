@@ -31,14 +31,14 @@ function HGGeometryModule(root) {
     innerRadius: 0.045,
 
     plateY: 0.80,        // centre line of the plate at x = 0
-    plateSlope: 0.268,   // rise of the plate toward the walls (about 15 degrees)
+    plateSlope: 0.36,    // rise of the plate toward the walls (about 20 degrees)
     plateThick: 0.035,   // vertical thickness of the plate
     bore: 0.05,          // nozzle bore width
     boreChamfer: 0.014,
     lipLen: 0.03,        // how far the spout sticks out of the plate
-    lipBase: 0.062,      // half width of the spout where it meets the plate
-    lipTip: 0.038,       // half width of the spout at its tip
-    vent: 0.06,          // gap between the plate end and the side wall
+    lipBase: 0.058,      // half width of the spout where it meets the plate
+    lipTip: 0.032,       // half width of the spout at its tip
+    vent: 0.075,         // gap between the plate end and the side wall
 
     depth: 4,            // end chambers are this many times deeper than the slot
     depthBlend: 0.03,    // length over which the depth changes at an opening

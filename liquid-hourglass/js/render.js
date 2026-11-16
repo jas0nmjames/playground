@@ -59,21 +59,28 @@
   var FS_COMPOSE = [
     'precision highp float;',
     'varying vec2 v_uv;',
-    'uniform sampler2D u_a, u_b, u_back;',
+    'uniform sampler2D u_a, u_b, u_back, u_wall;',
     'uniform vec2 u_texel;',           // one field texel in uv
     'uniform float u_px;',             // screen pixels per field texel
     'uniform float u_thresh;',
     'uniform float u_rim;',            // rim width in screen pixels
     'uniform vec2 u_light;',           // direction toward the light, in texture space
     'uniform vec3 u_colA, u_rimA, u_colB, u_rimB;',
+    'uniform vec4 u_wallMap;',         // uv -> wall texture: scale xy, offset zw
+    'uniform vec2 u_wallShiftB;',      // rear chamber parallax, in wall texture units
+    'uniform float u_wallPx;',         // screen pixels per unit of stored wall distance
     'uniform float u_debug;',
     '',
-    'vec3 layer(sampler2D tex, vec3 col, vec3 rimCol, out float alpha, out float gloss) {',
+    'vec3 layer(sampler2D tex, vec2 shift, vec3 col, vec3 rimCol, out float alpha, out float gloss) {',
     '  vec4 f = texture2D(tex, v_uv);',
     '  vec4 fx = texture2D(tex, v_uv + vec2(u_texel.x, 0.0)) - texture2D(tex, v_uv - vec2(u_texel.x, 0.0));',
     '  vec4 fy = texture2D(tex, v_uv + vec2(0.0, u_texel.y)) - texture2D(tex, v_uv - vec2(0.0, u_texel.y));',
     '  vec4 g = sqrt(fx * fx + fy * fy) * 0.5 + 0.003;',
     '  vec4 d = (f - u_thresh) / g * u_px;',      // distance inside each blob edge, in pixels
+    // liquid never shows inside a wall: clip against the wall distance too
+    '  vec2 wuv = vec2(v_uv.x, 1.0 - v_uv.y) * u_wallMap.xy + u_wallMap.zw - shift;',
+    '  float wd = (texture2D(u_wall, wuv).r - 0.5) * u_wallPx - 0.6;',
+    '  d = min(d, vec4(wd));',
     '  vec4 cov = clamp(d + 0.5, 0.0, 1.0);',
     '  alpha = max(max(cov.r, cov.g), max(cov.b, cov.a));',
     '  float dm = max(max(d.r, d.g), max(d.b, d.a));',
@@ -91,15 +98,16 @@
     '',
     'void main() {',
     '  float aA, gA, aB, gB;',
-    '  vec3 cA = layer(u_a, u_colA, u_rimA, aA, gA);',
-    '  vec3 cB = layer(u_b, u_colB, u_rimB, aB, gB);',
+    '  vec3 cA = layer(u_a, vec2(0.0), u_colA, u_rimA, aA, gA);',
+    '  vec3 cB = layer(u_b, u_wallShiftB, u_colB, u_rimB, aB, gB);',
     '  vec4 back = texture2D(u_back, v_uv);',
     '  vec3 through = mix(vec3(1.0), cA, aA) * mix(vec3(1.0), cB, aB);',
     '  vec3 col = back.rgb * through;',
     '  col += back.a * 0.10 * max(gA * aA, gB * aB);',
     '  if (u_debug > 0.5) {',
-    '    vec4 f = texture2D(u_a, v_uv);',
-    '    col = mix(back.rgb, vec3(f.r + f.a, f.g + f.a * 0.6, f.b), 0.85);',
+    '    vec4 f = texture2D(u_a, v_uv);',   // front chamber only: one colour per channel
+    '    float m = clamp(f.r + f.g + f.b + f.a, 0.0, 1.0);',
+    '    col = mix(back.rgb, vec3(f.r + f.a, f.g + f.a * 0.6, f.b) / max(m, 0.001), m * 0.9);',
     '  }',
     '  gl_FragColor = vec4(col, back.a);',
     '}'
@@ -132,15 +140,16 @@
 
   var LOOK = {
     splat: 1.3,            // splat radius / local particle spacing
-    threshold: 0.6,
+    blur: 0.009,           // smoothing of the field before it is thresholded, in device units
+    threshold: 0.5,
     rim: 0.011,            // width of the darker outline, in device units
-    offsetB: [-0.005, -0.014],     // parallax of the rear chamber, in device units
+    offsetB: [-0.02, -0.015],      // parallax of the rear chamber, in device units
     colA: [0.16, 0.66, 0.93], rimA: [0.05, 0.42, 0.80],      // front chamber: cyan
     colB: [0.95, 0.17, 0.72], rimB: [0.74, 0.05, 0.55],      // rear chamber: magenta
     light: [-0.55, -0.83]  // toward the light, in screen space (x right, y down)
   };
 
-  function Renderer(canvas, view) {
+  function Renderer(canvas, view, geom) {
     var gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false }) ||
       canvas.getContext('experimental-webgl');
     if (!gl) throw new Error('WebGL is not available');
@@ -162,6 +171,23 @@
 
     this.back = gl.createTexture();
     this.fields = null;
+
+    // Wall distance from the simulation's own grid, as an 8-bit texture.
+    var band = geom.params.band, sdf = geom.sdf, bytes = new Uint8Array(sdf.length);
+    for (var i = 0; i < sdf.length; i++) {
+      var v = Math.round((0.5 + sdf[i] / (2 * band)) * 255);
+      bytes[i] = v < 0 ? 0 : v > 255 ? 255 : v;
+    }
+    this.wall = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.wall);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, geom.nx, geom.ny, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, bytes);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    this.geom = geom;
     this.maxPoint = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
     gl.disable(gl.DEPTH_TEST);
   }
@@ -188,7 +214,7 @@
     var pxPerUnit = cw / this.view.w;
     // The field can be coarser than the screen: edges are rebuilt from its
     // gradient. Keep the largest splat within the point size limit.
-    var scale = Math.min(1, Math.max(0.4, 300 / pxPerUnit));
+    var scale = Math.min(1, Math.max(0.35, 260 / pxPerUnit));
     var spacing = 0.03;
     var limit = this.maxPoint / (2 * this.look.splat * spacing * pxPerUnit);
     if (scale > limit) scale = limit;
@@ -250,18 +276,21 @@
 
   Renderer.prototype._blur = function (src, tmp) {
     var gl = this.gl, P = this.pBlur;
+    var step = this.look.blur * src.w / this.view.w / 1.4;   // two rounds of a kernel with sigma = step
     gl.useProgram(P.p);
     gl.activeTexture(gl.TEXTURE0);
     gl.uniform1i(P.u.u_tex, 0);
     gl.viewport(0, 0, src.w, src.h);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, tmp.fb);
-    gl.bindTexture(gl.TEXTURE_2D, src.tex);
-    gl.uniform2f(P.u.u_dir, 1 / src.w, 0);
-    this._quad(P);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, src.fb);
-    gl.bindTexture(gl.TEXTURE_2D, tmp.tex);
-    gl.uniform2f(P.u.u_dir, 0, 1 / src.h);
-    this._quad(P);
+    for (var round = 0; round < 2; round++) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, tmp.fb);
+      gl.bindTexture(gl.TEXTURE_2D, src.tex);
+      gl.uniform2f(P.u.u_dir, step / src.w, 0);
+      this._quad(P);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, src.fb);
+      gl.bindTexture(gl.TEXTURE_2D, tmp.tex);
+      gl.uniform2f(P.u.u_dir, 0, step / src.h);
+      this._quad(P);
+    }
   };
 
   // a and b are { buf: Float32Array of x,y,spacing,channel, n }. angle is the
@@ -283,7 +312,14 @@
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, F[0].tex);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, F[1].tex);
     gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.back);
-    gl.uniform1i(P.u.u_a, 0); gl.uniform1i(P.u.u_b, 1); gl.uniform1i(P.u.u_back, 2);
+    gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.wall);
+    gl.uniform1i(P.u.u_a, 0); gl.uniform1i(P.u.u_b, 1); gl.uniform1i(P.u.u_back, 2); gl.uniform1i(P.u.u_wall, 3);
+    var G = this.geom, V = this.view, pxPerUnit = this.canvas.width / V.w;
+    var wsx = 1 / (G.cell * G.nx), wsy = 1 / (G.cell * G.ny);
+    gl.uniform4f(P.u.u_wallMap, V.w * wsx, V.h * wsy,
+      (V.x0 - G.x0) * wsx + 0.5 / G.nx, (V.y0 - G.y0) * wsy + 0.5 / G.ny);
+    gl.uniform2f(P.u.u_wallShiftB, L.offsetB[0] * wsx, L.offsetB[1] * wsy);
+    gl.uniform1f(P.u.u_wallPx, 2 * G.params.band * pxPerUnit);
     gl.uniform2f(P.u.u_texel, 1 / F[0].w, 1 / F[0].h);
     gl.uniform1f(P.u.u_px, 1 / this.fieldScale);
     gl.uniform1f(P.u.u_thresh, L.threshold);

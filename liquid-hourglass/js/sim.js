@@ -3,21 +3,34 @@
  *
  * The dyed liquid is a set of equal-volume particles solved with position
  * based fluids (Macklin and Mueller 2013). The cell is treated as a thin gap
- * of varying depth, so the model is two dimensional and depth averaged:
+ * of varying depth, so the model is two dimensional and depth averaged.
  *
+ * What is modelled:
  *   - Incompressibility: a density constraint per particle. The target 2D
  *     density scales with the local depth, so liquid that leaves a deep end
  *     chamber spreads into a wide flat disc in the thin slot, and shrinks
  *     back into a bead when it reaches the other end.
- *   - Surface tension: short range cohesion between particles of one body of
- *     liquid, weighted by how exposed each particle is.
- *   - The clear oil is not simulated. Its effect is a linear drag, which is
- *     what the walls of a thin gap do to a slow flow (Hele-Shaw friction).
+ *   - Surface tension: pairwise cohesion inside one body of liquid. In the
+ *     slot, and for small beads anywhere, it has a range of a few particle
+ *     spacings, which is what lets a strand gather into a round drop. The
+ *     large pools use a cheaper short-range form.
+ *   - The clear oil is not simulated. It appears as a linear drag (what the
+ *     walls of a thin gap do to a slow flow), a little more drag on whatever
+ *     face of the liquid is advancing, and slower sinking for very small
+ *     droplets.
  *   - Bodies of liquid are tracked as blobs. A blob splits when it is no
- *     longer connected and two blobs merge only after they have touched for
- *     a while, which stands in for the oil film that has to drain first.
+ *     longer connected. Two blobs merge only after they have touched for a
+ *     while, which stands in for the oil film that has to drain first.
  *
- * Nothing here knows which way is up: gravity is passed in every step.
+ * What is a rule rather than physics:
+ *   - A strand thinner than about two particles snaps after a short delay.
+ *     In the real slot a filament thinner than the gap breaks up in three
+ *     dimensions, which a 2D model cannot do by itself.
+ *   - The nozzle only lets liquid out of an end chamber and the vents only
+ *     let it in (see _collide).
+ *
+ * Nothing here knows which way is up: gravity is passed in every step. The
+ * tuning assumes a step of 1/240 s.
  *
  * The file is one named function so that its source can also be handed to a
  * Web Worker.
@@ -32,27 +45,31 @@ function HGSimModule(root) {
     radius: 0.55,         // wall contact radius / local spacing
 
     gravity: 14,          // buoyancy-reduced gravity
-    drag: 16,             // oil drag in the slot (1/s); fall speed is gravity/drag
+    drag: 12.5,           // oil drag in the slot (1/s); fall speed is gravity/drag
     dragDeep: 0.5,        // drag in the end chambers relative to the slot
     nozzleDrag: 350,      // extra resistance of the nozzle bore
-    ventDrag: 40,         // extra resistance of the vents
+    ventDrag: 10,         // extra resistance of the vents
     smallBlob: 10,        // blobs near this many particles sink noticeably slower
+    frontDrag: 2.5,       // extra drag on the leading face of moving liquid in the slot
+    frontClear: 0.05,     // ...but only this far from a wall, where there is oil to push aside
 
-    tension: 800,         // cohesion strength in the slot (1/s^2)
+    tension: 500,         // cohesion strength in the slot (1/s^2)
     cohRange: 3.8,        // cohesion range in the slot / local spacing
     cohEvery: 4,          // steps between rebuilds of the long-range pair list
+    cohBlobMax: 320,      // in the end chambers it applies to bodies smaller than this
+    cohDeep: 3,           // and is this much stronger there, so beads stay round
     tensionDeep: 6000,    // short-range cohesion strength in the end chambers (1/s^2)
     cohIn: 0.15,          // short-range cohesion starts at this fraction of the kernel radius
     defMax: 0.6,          // short-range cohesion is weighted by how exposed a particle is
     hardCore: 0.8,        // closest approach inside a blob / lattice spacing
     film: 1.0,            // closest approach between two blobs / lattice spacing
-    hardStiff: 0.4,
+    hardStiff: 0.4,       // how firmly those closest approaches are enforced
 
     epsRel: 0.6,          // constraint softening
-    iterations: 2,
+    iterations: 2,        // solver iterations per step
     xsph: 0.1,            // velocity smoothing inside a blob
-    wallFriction: 3,      // tangential damping at walls (1/s)
-    vmax: 6,
+    wallFriction: 0.3,    // tangential damping at walls (1/s)
+    vmax: 6,              // speed limit, as a safety net
 
     neckRadius: 3.2,      // neighbourhood used to measure how thin a strand is / lattice spacing
     neckWidth: 0.55,      // a strand with an RMS half width below this is a filament
@@ -60,8 +77,8 @@ function HGSimModule(root) {
     pinchTime: 0.04,      // seconds a filament survives before it snaps
     link: 1.45,           // blob connectivity distance / lattice spacing
     contact: 1.35,        // blob contact distance / lattice spacing
-    mergeMin: 0.7,        // seconds two blobs touch before they merge
-    mergeMax: 4.0,
+    mergeMin: 0.5,        // seconds two blobs touch before they merge
+    mergeMax: 3.0,        // ...chosen at random between these two for each pair
     tinyBlob: 3,          // blobs this small merge almost at once
     trackEvery: 4,        // steps between blob tracking passes
     neighEvery: 2,        // steps between neighbour list rebuilds
@@ -69,7 +86,7 @@ function HGSimModule(root) {
   };
 
   var HEX = 1.0746;       // lattice spacing of a hex packing with unit area per particle
-  var MAXB = 1024;
+  var MAXB = 1024;        // most blobs that can exist at once
 
   function mulberry32(a) {
     return function () {
@@ -145,6 +162,7 @@ function HGSimModule(root) {
       for (var x = -0.5 + (row & 1) * a * 0.5; x <= 0.5; x += a) {
         if (g.sdfAt(x, y) < rad * 1.02) continue;
         if (g.depthAt(x, y) < S * 0.999) continue;
+        if (Math.abs(x) > g.xEnd - 0.004 && y > g.yVent - 1.3 * rad) continue;   // not inside the vents
         pts.push(x, y);
       }
     }
@@ -165,6 +183,7 @@ function HGSimModule(root) {
     this.wphi = new F(n); this.wnx = new F(n); this.wny = new F(n);
     this.touch = new Uint8Array(n);
     this.slot = new Uint8Array(n);          // 1 where the particle is not in a fully deep region
+    this.lr = new Uint8Array(n);            // 1 where the longer-range cohesion applies
     this.dl = new F(n);                     // local particle spacing
     var maxLong = n * 40;
     this.la = new I(maxLong); this.lb = new I(maxLong); this.nl = 0;
@@ -209,6 +228,8 @@ function HGSimModule(root) {
     var blob = this.blob, bcount = this.bcount;
     var depth = g.depth, zone = g.zone, gx0 = g.x0, gy0 = g.y0, inv = 1 / g.cell, nx = g.nx, ny = g.ny;
     var hThin = this.hThin, d = this.d;
+    var gsx = this.gsx, gsy = this.gsy, vx = this.vx, vy = this.vy, frontDrag = P.frontDrag;
+    var wphi = this.wphi, frontClear = P.frontClear;
     for (var i = 0; i < n; i++) {
       var fx = (x[i] - gx0) * inv, fy = (y[i] - gy0) * inv;
       var ix = fx | 0, iy = fy | 0;
@@ -226,8 +247,21 @@ function HGSimModule(root) {
       this.dl[i] = d * isq;
       var deepness = S > 1 ? (si - 1) / (S - 1) : 0;
       this.slot[i] = deepness < 0.97 ? 1 : 0;
+      this.lr[i] = (deepness < 0.97 || (bcount[blob[i]] || 1) < P.cohBlobMax) ? 1 : 0;
+      this.coh[i] = 1 + (P.cohDeep - 1) * deepness;
       var cnt = bcount[blob[i]] || 1;
       var k = P.drag * (1 + (P.dragDeep - 1) * deepness) * (1 + P.smallBlob / cnt);
+      if (deepness < 0.5 && frontDrag > 0 && wphi[i] > frontClear) {
+        // The oil pushes back on whatever face of the liquid is advancing,
+        // which is what flattens a sinking drop into an oval.
+        var gxs = gsx[i], gys = gsy[i], g2s = gxs * gxs + gys * gys;
+        var v2 = vx[i] * vx[i] + vy[i] * vy[i];
+        if (g2s > 1e-12 && v2 > 1e-4) {
+          var expo = Math.sqrt(g2s) * h[i] * h[i] * h[i] / 8;
+          var face = -(gxs * vx[i] + gys * vy[i]) / Math.sqrt(g2s * v2);
+          if (face > 0) k *= 1 + frontDrag * (expo > 1 ? 1 : expo) * face;
+        }
+      }
       var z = zone[(tx > 0.5 ? ix + 1 : ix) + (ty > 0.5 ? iy + 1 : iy) * nx];
       if (z === 1) k += P.nozzleDrag; else if (z === 2) k += P.ventDrag;
       kb[i] = k;
@@ -281,7 +315,7 @@ function HGSimModule(root) {
   // Pairs for the longer-range cohesion that acts in the thin slot. Uses the
   // cell grid left behind by _neighbors().
   Chamber.prototype._longPairs = function () {
-    var n = this.n, px = this.px, py = this.py, dl = this.dl, slot = this.slot, blob = this.blob;
+    var n = this.n, px = this.px, py = this.py, dl = this.dl, slot = this.lr, blob = this.blob;
     var gw = this.gw, gh = this.gh, cs = this.cellSize;
     var cellStart = this.cellStart, cellOf = this.cellOf, sorted = this.sorted;
     var la = this.la, lb = this.lb, maxLong = la.length, nl = 0;
@@ -349,12 +383,14 @@ function HGSimModule(root) {
       var ax = X < 0 ? -X : X;
       if (ax < bw) {
         // Nozzles let liquid out of an end chamber, not back in.
-        if (yo >= yTip && Y < yTip && yo < H / 2) py[i] = yTip;
-        else if (yo <= yTip2 && Y > yTip2 && yo > H / 2) py[i] = yTip2;
+        if (yo < H / 2) { if (yo >= yTip && Y < yTip) py[i] = yTip; }
+        else if (yo <= yTip2 && Y > yTip2) py[i] = yTip2;
       } else if (ax > xEnd - 0.004) {
-        // Vents let liquid into an end chamber, not out of it.
-        if (yo <= yVent && Y > yVent) py[i] = yVent;
-        else if (yo >= yVent2 && Y < yVent2) py[i] = yVent2;
+        // Vents let liquid into an end chamber, not out of it. Liquid held
+        // back rests on the opening as it would on a wall.
+        var gap = 1.2 * rad[i];
+        if (yo <= yVent && Y > yVent - gap) py[i] = yVent - gap;
+        else if (yo >= yVent2 && Y < yVent2 + gap) py[i] = yVent2 + gap;
       }
     }
   };
@@ -364,7 +400,7 @@ function HGSimModule(root) {
     var pa = this.pa, pb = this.pb, px = this.px, py = this.py, hI = this.h, sI = this.s;
     var rho = this.rho, gsx = this.gsx, gsy = this.gsy, g2 = this.g2, lam = this.lam, def = this.def;
     var pr = this.pr, pux = this.pux, puy = this.puy, pg = this.pg, ph = this.ph;
-    var ddx = this.ddx, ddy = this.ddy, blob = this.blob, slot = this.slot, dl = this.dl;
+    var ddx = this.ddx, ddy = this.ddy, blob = this.blob, slot = this.lr, dl = this.dl, coh = this.coh;
     var wphi = this.wphi, wnx = this.wnx, wny = this.wny;
     var wallTab = this.wallTab, wallDer = this.wallDer, wallN = this.wallN;
     var K4 = 4 / Math.PI, K30 = 30 / Math.PI;
@@ -461,7 +497,7 @@ function HGSimModule(root) {
       var R = cr * dm;
       if (e2 >= R * R || e2 < 1e-16) continue;
       var eq = e2 / (R * R), et = 1 - eq;
-      var ef = kl * dm * 3.49 * et * et / R;          // pull is q(1-q^2)^2 along the pair, peak 1
+      var ef = kl * 0.5 * (coh[i] + coh[j]) * dm * 3.49 * et * et / R;   // pull is q(1-q^2)^2 along the pair
       ex *= ef; ey *= ef;
       ddx[i] -= ex; ddy[i] -= ey; ddx[j] += ex; ddy[j] += ey;
     }

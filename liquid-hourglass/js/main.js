@@ -6,12 +6,13 @@
  *   ?debug   show the particle fields and a stats readout
  *   ?seed=N  change the random seed
  *   ?still   start paused, as if reduced motion were requested
+ *   ?main    simulate on the main thread instead of in workers
  */
 (function () {
   'use strict';
 
   var DT = 1 / 240;          // simulation step; the tuning in sim.js assumes this value
-  var MAX_STEPS = 6;         // per frame; beyond this the simulation runs in slow motion
+  var MAX_STEPS = 8;         // per batch; if that is not enough the simulation runs in slow motion
   var FLIP_TIME = 1.3;       // seconds for a half turn
   var PREROLL = 0.3;         // seconds simulated before the first frame is shown
 
@@ -36,7 +37,7 @@
   // streams drift in and out of step as they do in the real toy.
   var CHAMBERS = [
     { sim: {}, seed: seed },
-    { sim: { nozzleDrag: HGSim.DEFAULTS.nozzleDrag * 1.07 }, seed: seed + 101 }
+    { sim: { nozzleDrag: HGSim.DEFAULTS.nozzleDrag * 1.02 }, seed: seed + 101 }
   ];
 
   // ---- simulation hosts -------------------------------------------------
@@ -77,6 +78,7 @@
     this.chamber = null;
     this.worker = null;
     var self = this;
+    if (query.has('main') || typeof Worker === 'undefined') return;
     try {
       var src = '(' + HGGeometryModule.toString() + ')(self);\n' +
         '(' + HGSimModule.toString() + ')(self);\n' +
@@ -131,8 +133,8 @@
 
   // ---- time, turning and gravity ----------------------------------------
 
-  var simTime = 0, accumulator = 0, inflight = false, manual = false, lastFrame = 0;
-  var running = !reduced, started = false;
+  var simTime = 0, accumulator = 0, inflight = false, manual = false;
+  var running = !reduced, started = false, everPlayed = false;
   var turn = { from: 0, to: 0, t0: -1e9, queued: 0 };
 
   function turning(t) { return t < turn.t0 + FLIP_TIME; }
@@ -247,21 +249,30 @@
     }
   }
 
-  function frame(now) {
+  // Keep the simulation fed. Called every frame and again whenever a batch
+  // of steps comes back, so a slow display does not slow the physics down.
+  var lastPump = 0;
+  function pump() {
+    var now = performance.now();
+    var dt = Math.min(0.1, (now - lastPump) / 1000);
+    lastPump = now;
+    if (!started || manual) return;
+    if (running) accumulator += dt;
+    if (inflight) return;
+    var onMain = !hosts[0].worker;
+    var steps = Math.min(onMain ? 4 : MAX_STEPS, Math.floor(accumulator / DT));
+    if (steps < 1) return;
+    accumulator -= steps * DT;
+    if (accumulator > 4 * DT) accumulator = 4 * DT;       // cannot keep up: run in slow motion
+    // Without workers the steps run right here, so wait for the next frame
+    // rather than starving the page.
+    launch(steps).then(onMain ? null : pump);
+  }
+
+  function frame() {
     requestAnimationFrame(frame);
-    var dt = Math.min(0.05, (now - lastFrame) / 1000);
-    lastFrame = now;
-    if (!started) return;
-    if (running && !manual) accumulator += dt;
-    if (!inflight && !manual) {
-      var steps = Math.min(MAX_STEPS, Math.floor(accumulator / DT));
-      if (steps > 0) {
-        accumulator -= steps * DT;
-        if (accumulator > 2 * DT) accumulator = 2 * DT;   // cannot keep up: drop the backlog
-        launch(steps);
-      }
-    }
-    draw();
+    pump();
+    if (started) draw();
   }
 
   // ---- controls ---------------------------------------------------------
@@ -270,7 +281,8 @@
     running = on;
     playButton.textContent = on ? 'Pause' : 'Play';
     playButton.setAttribute('aria-pressed', on ? 'true' : 'false');
-    startButton.hidden = on;
+    if (on) everPlayed = true;
+    startButton.hidden = everPlayed;      // the large button is only for a page that starts paused
     if (!on) accumulator = 0;
   }
 
@@ -299,7 +311,7 @@
 
   if (debug) hud.hidden = false;
   try {
-    renderer = new HGRenderer(fluidCanvas, view);
+    renderer = new HGRenderer(fluidCanvas, view, geom);
     renderer.debug = debug;
   } catch (err) {
     notice.textContent = 'This needs WebGL, which is not available in this browser.';
@@ -316,7 +328,7 @@
     return launch(Math.round(PREROLL / DT));
   }).then(function () {
     started = true;
-    lastFrame = performance.now();
+    lastPump = performance.now();
     draw();
   });
   requestAnimationFrame(frame);
