@@ -1,0 +1,54 @@
+R0177627|I was out late at my sister's and had not eaten|stop for chicken on the way home|not cook at eight at night|She paid $12.57 cash at Cluck & Biscuit – Lakeshore and ate in the car on a 13-mile round trip.
+R0178126|my shift ran over and the house is 13 miles round trip from anything open|pick up burgers|eat before bed|She put $16.32 on a credit card at Burger Depot – Dunmore.
+R0178532|six of us go through a lot of food|do the weekly shop after work|have lunches packed for everyone|She spent 54 minutes and $134.94 on a credit card at Oxbow Supercenter – Kettle Creek, 13 of those minutes in the checkout line.
+R0178656|it was a slow, cold day at the wash|take home what tips there were|buy milk|She left with $11.00 in cash tips.
+R0179564|I pay my phone bill in person, in cash|go to the store before it closes|keep my number working|A 78-year-old waited 12 minutes and paid Vireo Wireless $75.15 plus a $1.50 walk-in fee.
+R0180023|my refill is ready and the pharmacy closes at eight|get there in time|not miss tonight's dose|At 97 he waited 21 minutes in line at Wellspring Pharmacy – Ashford Mills and paid an $8.00 copay in cash; his Part D plan paid $8.60.
+R0180052|my dad's hours were cut|send him what I can|help him make rent|She sent $194.00 by payment app to her 55-year-old father, from an account that does not hold much more.
+R0180518|it is my mother-in-law's birthday|take the family to dinner|celebrate without a kitchen to clean|They waited 21 minutes for a table at The Sleepy Skillet and spent $66.35; he asked for a booth away from the speakers so he could follow the conversation.
+R0180661|my blood pressure refill is ready|pick it up after my shift|stay on my medication|She waited 13 minutes at Wellspring Pharmacy – Riverfront and owed nothing; her Part D plan paid $12.75 on a $28.33 cash price.
+R0180801|Wednesday night service is where I see my people|go and give something|belong somewhere while I look for work|She put $5.00 in the plate at Covenant United Methodist Church, a ten-mile round trip.
+R0181029|WIC loaded for the baby and the toddler|buy the approved items|keep them fed until my partner is paid|WIC paid $27.68 at Tillbrook Foods – Mill Street.
+R0181489|a customer wants change for a cash job tomorrow|grab $40 at the grocery store machine|not drive to my bank|He paid $3.50 in out-of-network fees for a $40.00 withdrawal at Marlow's Market – Fox Hollow.
+R0182135|my husband has the car and I need to get home|book a ride on the app|not wait for the last bus|The $33.67 Vamos Ride request failed when the payment step timed out; no ride was booked.
+R0182481|we do one big shop a week|go after my teller shift|spend less at the discount store|She spent $115.77 on a credit card at Pennywell Discount Grocery – Hospital Hill; the shelf tags are in English and she shops by brand colors she knows.
+R0182763|the kids are in bed|work on applications|get back to a paycheck|He spent 36 minutes on one online application that timed out once and made him start the work-history section again.
+R0183879|we are out of milk and cereal and the nearest full grocery is nine miles away|make a quick run|have breakfast covered|She spent $23.63 on a credit card at Marlow's Market – Ashford Mills.
+R0184198|the faucet kit I bought was the wrong size|return it with the receipt|get my $93.65 back|He took the bus five miles round trip to Kettleman Home Center – Garfield Park and the refund went back to his debit card.
+R0184530|I am out of coffee and bread|stop at the supercenter on the way home from the shop|not make a separate trip|He spent $17.09 at Oxbow Supercenter – Hospital Hill.
+R0185167|the car payment is due and the account is thin until Friday|pay what I can tonight|avoid a missed payment on my record|He paid $339.60 toward a $616.23 installment to DriveLine Credit, leaving $276.63 still owed.
+R0185401|we need eggs and something for tomorrow's lunches|go to the corner grocery with my grandson driving|not run out|She spent $34.28 on a credit card at Ashford Corner Grocery; her grandson read the prices to her.
+R0185508|my wife is at choir practice|get a slice|not cook for one|He spent $8.17 at Slice Wagon Pizza – Southgate and ate it in the car.
+R0185848|a friend covered my textbook|pay him back|not owe anyone|He sent $41.95 through Palmo.
+R0185922|my son's WIC benefits loaded|buy his milk and cereal|keep the grocery bill down|WIC paid $34.26 at Oxbow Supercenter – Kettle Creek; the WIC items were rung up separately, adding nine minutes.
+R0186164|my prescription is ready|pick it up after my shift|start it tonight|She paid a $3.00 copay at Wellspring Pharmacy – Southgate; Medicaid paid $33.44 on an $80.98 cash price.
+R0187662|I need cash for the morning|withdraw $60|pay the neighbor who drives me|The ATM at Three Forks Credit Union – Midtown declined: the balance was below $60.00.
+R0187679|my father is between jobs|send him money tonight|help him cover the month|She sent $358.00 by payment app to her 49-year-old father.
+R0187824|the kids need school supplies and I cannot walk a store easily|order online|have it delivered|She checked out a $47.17 cart on Bazaaro (online marketplace) in seven minutes.
+R0188382|I need cash for a parts seller tomorrow|use the bank machine|be ready in the morning|The ATM at Corbel National Bank – Riverfront was out of service; she left without the $40.00.
+R0188459|I owe my roommate for the utilities|send $179 by app|keep the peace|The app declined the transfer: his linked account did not have enough.
+R0188794|child care for my three is due for the month|pay it online tonight|keep their spots|The $1,375.59 payment to Sunflower Early Learning (Route 9) could not be made; the account would not cover it, and she will ask the director for a week.
+R0188819|my husband's pills and our bills both need attention|sort them at the kitchen table|keep the week in order|She spent 57 minutes filling his pill organizer and writing out checks.
+R0189793|the tank is low and I have my tip money|put $15 in|get to work tomorrow|She paid $15.00 cash at Lantern Fuel & Go – Foundry District, tips from the dinner shift.
+R0190338|my refill has been waiting since Monday|pick it up before the pharmacy closes|not run out|She waited 22 minutes at Wellspring Pharmacy – Southgate and paid a $15.00 copay; her plan paid $21.35 on an $80.77 cash price.
+R0190395|my grandson sent me money on the app|move it to my bank right away|use it for groceries tomorrow|A 91-year-old paid a $1.61 instant-transfer fee to move $92.25 out of Palmo.
+R0191124|my Medicaid requires proof of my part-time hours|upload my pay stubs|keep my coverage|She spent 16 minutes photographing and uploading stubs to the State Medicaid Program site.
+R0192677|the neighbor's son cleaned our gutters|pay him by phone|settle up the same day|He sent $41.67 through a payment app.
+R0193717|I keep my money in an online bank with no branches|find a machine in its network|get $60 without a fee|He withdrew $60.00 with his Nimbus Bank (online) card at a partner ATM two miles away, from the driver's seat.
+R0194129|a neighbor is selling a stroller|pay him by app|take it home tonight|He sent $23.00 through a payment app.
+R0194327|I drove to the station for a carton|pay with my debit card|have enough for the week|The $82.65 purchase at Lantern Fuel & Go – Hospital Hill was declined for insufficient funds at the end of a 30-mile round trip.
+R0194460|my mother and I split takeout|send her my half|keep it even|She sent $11.00 by payment app to her 55-year-old mother.
+R0196047|the car is nearly out of gas|put $25 on my prepaid card at the pump|get my daughter to school tomorrow|The pump at Lantern Fuel & Go – Willow Bend would not authorize $25.00 against the card's balance; she left without fuel.
+R0196557|we both worked late|have groceries delivered|not shop at nine at night|A $102.63 Zipmeal grocery order, tip included, cost $113.25 with $10.62 in delivery and service fees.
+R0197001|I met friends and the tab came to more than I had|pay my share|leave on good terms|She could not cover the $46.16 tab at The Little Thimble Taproom on any card; a friend paid and she owes her.
+R0197050|I delivered food for three hours after my restaurant shift|cash out tonight|have gas money for school tomorrow|A 17-year-old paid a $1.99 fee to cash out $68.98 from Forkly instantly.
+R0197150|my roommate sent his half of the rent to my app balance|move it to my bank tonight|have it there before the landlord's draft|He paid a $4.81 instant-transfer fee to move $274.59 out of Palmo.
+R0198088|my share of the rent is due to the leaseholder|send it even though my checking is empty|keep our place|He sent $323.00 by payment app funded from a credit card, paying a $9.69 funding fee.
+R0198621|I tried to order a phone case|check out with my debit card|have it by the weekend|Bazaaro (online marketplace) would not complete the $19.25 order: her bank flagged the charge for review.
+R0199034|my shift ended after the last bus|get a ride home|sleep before tomorrow's shift|A $34.33 Vamos Ride trip took 19 minutes, close to two hours of his take-home pay.
+R0200433|the day's card sales close out at night|have the batch settle to our account|see the money by morning|Penny Pine Dollar – Crossroads settled 25 card sales totaling $562.78; processing fees took $12.99.
+R0200790|the store closed at eleven with cash in the drawer|drop it in the bank's night depository|not keep it on site overnight|Tolliver Valley Quick Stop's manager dropped $519.64 in cash at First Halvern Bank – Northside, a 16-minute detour on the way home.
+R0201102|last call is over|close the card batch|know what the night brought in|The Salty Spoon Lounge settled 13 card sales totaling $461.90; fees took $9.51.
+R0201111|clients paid their tax-prep invoices by card today|settle the batch|book the receipts|Sorensen CPAs' card batch of $1,576.26 settled at $1,540.31 after $35.95 in processing fees.
+R0201546|I closed the bar tonight|count my tips before I leave|take cash home to my family|She left with $106.00 in cash tips just before midnight.
+R0201670|my hospital shift ended at eleven|ride the late bus home on my pass|not pay for parking downtown|A 19-mile ride took 68 minutes with an 11-minute wait; the transit subsidy carried about $9.80.

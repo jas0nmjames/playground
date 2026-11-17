@@ -1,0 +1,48 @@
+agency_or_service,level,daily_operating_cost_estimate,main_funding_source,notes
+Halvern Unified School District (K-12 schools),local,531800,"state aid, local property tax, federal Title I and IDEA",10409 students x $103.60 per school day x 180 days / 365; itemized per student in records.csv
+Ashford Mills City Schools (K-12 schools),local,97700,"state aid, local property tax, federal Title I and IDEA",2023 students x $97.90 per school day x 180 days / 365; itemized per student in records.csv
+Tolliver County Schools (K-12 schools),local,117100,"state aid, local property tax, federal Title I and IDEA",2191 students x $108.40 per school day x 180 days / 365; itemized per student in records.csv
+School meal programs,federal,27600,"USDA reimbursements, family payments",itemized per meal in records.csv
+Head Start,federal,4300,HHS grant,106 children; itemized per child-day
+State pre-kindergarten,state,15500,state lottery and general funds,662 children; itemized per child-day
+Three Rivers Community College,state,174800,"state appropriation, tuition, Pell grants",not itemized; tuition payments appear when due
+Police (city departments and county sheriff patrol),local,124300,city and county general funds,not itemized
+Fire and rescue,local,56000,city and county general funds,not itemized
+Halvern County EMS,local,18000,"county EMS levy, patient billing",calls are itemized (ambulance transports and no-transport responses)
+911 dispatch,local,7900,"county general fund, phone surcharge",not itemized
+County jail,local,29800,county general fund,240 people held; itemized per person-day
+"Courts, prosecution and public defense",state,45100,"state and county funds, fines and fees",court appearances and fine payments are itemized
+State prisons (Halvern's per-capita share),state,73700,state general fund,not itemized; residents in state prison are outside the city
+"Streets, signals and streetlights (city and county)",local,77800,"local sales and property tax, state gas-tax share",not itemized
+State highways (Halvern's per-capita share),state,117400,state and federal fuel taxes,not itemized
+Water and sewer utilities,local,147500,customer rates,household bills are itemized on their due dates
+Trash and recycling,local,26800,customer fees,bills itemized on due dates
+Stormwater and drainage,local,10100,stormwater fee,not itemized
+Halvern Area Transit (bus and paratransit),local,98400,"local sales tax, state aid, federal formula funds, fares","8963 boardings today x $9.80, plus paratransit; itemized per ride"
+Public libraries,local,13700,"city and county property tax, state aid","visits, computer sessions and story times are itemized"
+Parks and recreation,local,30000,"city general fund, program fees",organized programs are itemized; ordinary park use is not
+Public health department,local,24000,"state and federal public health grants, county funds",clinic visits and WIC appointments are itemized
+Senior services and meals,local,9300,"Older Americans Act funds, county funds, donations",meals are itemized
+Child welfare and county social services,state,58700,state and federal funds,not itemized
+"Benefits administration (SNAP, Medicaid, TANF eligibility offices)",state,25100,state and federal administrative funds,renewal paperwork is itemized as unpaid time
+Workforce career center and unemployment insurance administration,state,11200,federal WIOA and UI administrative grants,career center visits are itemized
+"General government (administration, assessor, elections, clerks)",local,87400,property and sales tax,permits and license fees are itemized
+Code enforcement and animal control,local,5200,city general fund,not itemized
+Halvern Housing Authority and rent subsidies,federal,40300,HUD housing assistance payments,1214 subsidized households; landlord subsidy payments post on the 1st
+Medicaid and CHIP (medical spending for residents),state,415600,federal and state Medicaid funds,16138 enrollees; today's claims are itemized
+Medicare (medical spending for residents),federal,854500,"payroll tax, premiums, general revenue",18455 enrollees; today's claims are itemized
+Marketplace premium tax credits,federal,82400,federal general revenue,6995 enrollees; paid to insurers monthly
+Veterans health care,federal,82900,VA appropriations,"4174 veterans, about half enrolled"
+"Social Security (retirement, survivors, disability)",federal,1334500,"payroll tax, trust funds",monthly benefits / 30.4; deposits itemized on each person's pay date
+Supplemental Security Income,federal,51200,federal general revenue,paid on the 1st
+VA disability compensation and pensions,federal,61900,federal general revenue,paid on the 1st
+SNAP food benefits,federal,58200,USDA,issuances itemized on each household's issuance day (1st to 10th)
+WIC,federal,6800,USDA,food benefits plus clinic costs
+TANF cash assistance,state,2400,federal block grant and state funds,issued on days 1 to 3
+Unemployment insurance benefits,state,27400,employer payroll taxes,weekly payments itemized
+"Refundable tax credits (EITC, Child Tax Credit), annual average",federal,58200,federal general revenue,"paid once a year in tax season; today's refunds are itemized (today alone: $3,645,094 in refundable credits)"
+Child care subsidies (CCDF),state,10400,federal block grant and state match,parent copays itemized; provider payments appear as business records
+Energy assistance (LIHEAP),federal,3800,federal block grant,pledges itemized when made
+U.S. Postal Service (local operations),federal,66900,postage,self-funded; counter purchases itemized
+National defense (Halvern's per-capita share),federal,737500,federal general revenue and borrowing,national spending shown for scale; not local operations
+Interest on federal debt (per-capita share),federal,819400,federal general revenue and borrowing,national spending shown for scale
