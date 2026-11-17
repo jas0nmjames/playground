@@ -1,3 +1,8 @@
+---
+published: 2026-07-21
+updated: 2026-07-21
+---
+
 # Strikefleet Omega — Recreated
 
 A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the

@@ -1,4 +1,11 @@
-# HTML Media Best Practices README
+---
+published: 2023-07-12
+updated: 2026-11-17
+---
+
+# HTML Media Best Practices
+
+Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video with and without posters and WebM, and YouTube and Vimeo embeds. [Browse the demos](https://jas0nmjames.github.io/playground/html-media-best-practices/).
 
 ## Index
 

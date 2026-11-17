@@ -41,8 +41,8 @@ function extractTitle(content) {
 function extractDescription(content) {
   const lines = content.split('\n');
   let pastH1 = false;
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
     if (!pastH1) {
       if (/^#\s/.test(trimmed)) pastH1 = true;
       continue;
@@ -52,7 +52,14 @@ function extractDescription(content) {
     if (trimmed.startsWith('[![')) continue;
     if (trimmed.startsWith('![')) continue;
     if (trimmed.startsWith('*') && trimmed.endsWith('*')) continue;
-    return trimmed;
+    // Join the rest of the paragraph (hard-wrapped lines) into one line
+    const paragraph = [trimmed];
+    for (let j = i + 1; j < lines.length; j++) {
+      const next = lines[j].trim();
+      if (!next || /^([#>|`-]|\d+\.\s|!\[|\[!\[)/.test(next)) break;
+      paragraph.push(next);
+    }
+    return paragraph.join(' ');
   }
   return null;
 }
