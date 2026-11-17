@@ -186,7 +186,7 @@ dl.kv dd{margin:3px 0 0;font:400 13.5px/1.25 var(--f-data);font-variant-numeric:
     </div>
     <div class="feedhead"><span id="fh">Live ticker · tap a line to open it</span><button type="button" id="bMore">More</button></div>
     <div id="feed"></div>
-    <footer class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude" id="impact">Moving it here ≈ 0.58 kWh, 0.22 kg CO₂, 0.29 L water</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></footer>
+    <footer class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="v3/">Miniature and Map (v3)</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude" id="impact">Claude Code work here ≈ 1.8 kWh, 0.70 kg CO₂, 0.91 L water</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></footer>
   </section>
 
   <aside class="sheet" id="detail" hidden aria-label="Record detail"></aside>
@@ -251,7 +251,7 @@ class Reader{
     }
   }
   str(k){const b=this.b,s=this.fs[k],e=this.fe[k];
-    if(e-s<28&&!this.fq[k]){let r='';for(let i=s;i<e;i++)r+=String.fromCharCode(b[i]);return r;}
+    if(e-s<28&&!this.fq[k]){let r='';for(let i=s;i<e;i++){const c=b[i];if(c>127){r=null;break;}r+=String.fromCharCode(c);}if(r!==null)return r;}
     const r=TD.decode(b.subarray(s,e));return this.fq[k]===2?r.replace(/""/g,'"'):r;}
   num(k){const v=parseFloat(this.str(k));return v===v?v:0;}
 }
@@ -294,7 +294,7 @@ async function build(bufs,prog){
     d.t[i]=Math.min(DAY-1,sec);
     const ty=tyMap.get(R.str(cTy));d.type[i]=ty===undefined?12:ty;
     const dr=cD<0?-1:distIdx(R.str(cD));d.dist[i]=dr;
-    const oc=cOut<0?'completed':R.str(cOut);d.bad[i]=(oc&&oc!=='completed')||ty===11?1:0;
+    const oc=cOut<0?'completed':R.str(cOut);d.bad[i]=ty===11||oc==='declined'||oc==='abandoned'||oc==='failed'||oc==='rescheduled'?1:0;
     let g=cG<0?0:R.num(cG);if(!g)g=(cU<0?0:R.num(cU))+(c3<0?0:R.num(c3));d.amt[i]=g;
     d.mins[i]=cMin<0?0:R.num(cMin);
     const cs=cCat<0?'':R.str(cCat);let ci=catMap.get(cs);if(ci===undefined){ci=d.cats.length;d.cats.push(cs);catMap.set(cs,ci);}d.cat[i]=ci;
@@ -322,7 +322,7 @@ async function build(bufs,prog){
   let sorted=true;for(let k=1;k<n;k++)if(d.t[k]<d.t[k-1]){sorted=false;break;}
   if(!sorted)order.sort((x,y)=>d.t[x]-d.t[y]||x-y);
   const T=new Uint32Array(n),cA=new Float64Array(n+1),cF=new Uint32Array(n+1),cU2=new Float64Array(n+1),bins=new Uint32Array(288),binsBad=new Uint32Array(288),tc=new Uint32Array(13),dc=new Uint32Array(7);
-  for(let k=0;k<n;k++){const r=order[k];T[k]=d.t[r];cA[k+1]=cA[k]+d.amt[r];cF[k+1]=cF[k]+d.bad[r];cU2[k+1]=cU2[k]+(d.type[r]===10?d.mins[r]:0);const bn=Math.min(287,d.t[r]/300|0);bins[bn]++;if(d.bad[r])binsBad[bn]++;tc[d.type[r]]++;dc[d.dist[r]<0?6:d.dist[r]]++;}
+  for(let k=0;k<n;k++){const r=order[k];T[k]=d.t[r];cA[k+1]=cA[k]+(d.bad[r]?0:d.amt[r]);cF[k+1]=cF[k]+d.bad[r];cU2[k+1]=cU2[k]+(d.type[r]===10?d.mins[r]:0);const bn=Math.min(287,d.t[r]/300|0);bins[bn]++;if(d.bad[r])binsBad[bn]++;tc[d.type[r]]++;dc[d.dist[r]<0?6:d.dist[r]]++;}
   Object.assign(d,{order,T,cA,cF,cU:cU2,bins,binsBad,tc,dc,binMax:Math.max(1,...bins),ids:null});
   d.ex=Float32Array.from(d.ex);d.ey=Float32Array.from(d.ey);d.ek=Uint8Array.from(d.ek);
   return d;
@@ -556,7 +556,7 @@ function drawTL(){
 }
 
 /* ---------- text helpers ---------- */
-const nice=s=>{s=(s||'record').replace(/_/g,' ');return s.charAt(0).toUpperCase()+s.slice(1);};
+const nice=s=>{s=(s||'record').split('.').pop().replace(/_/g,' ');return s.charAt(0).toUpperCase()+s.slice(1);};
 function money(v){const a=Math.abs(v);if(a>=1e6)return '$'+(v/1e6).toFixed(a>=1e7?1:2)+'M';if(a>=1e4)return '$'+Math.round(v).toLocaleString();return '$'+v.toFixed(2);}
 const pad=n=>String(n).padStart(2,'0');
 const hms=t=>pad(t/3600|0)+':'+pad((t/60|0)%60)+':'+pad(t%60|0);
