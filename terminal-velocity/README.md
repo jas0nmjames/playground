@@ -2,6 +2,7 @@
 published: 2025-09-03
 updated: 2026-03-10
 tags: generative
+nosite: true
 ---
 
 # Velocity — Textured v1.1.0

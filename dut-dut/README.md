@@ -1,6 +1,7 @@
 ---
 published: 2026-07-20
 updated: 2026-07-21
+url: https://dutdut.netlify.app/
 ---
 
 # dut dut
