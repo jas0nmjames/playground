@@ -1,0 +1,13 @@
+observed_date,weekday,holiday,actual_date,note,source_url,source_file
+2027-01-01,Friday,New Year’s Day,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-01-18,Monday,"Birthday of Martin Luther King, Jr.",,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-02-15,Monday,Washington’s Birthday,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-05-31,Monday,Memorial Day,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-06-18,Friday,Juneteenth National Independence Day,2027-06-19,falls on a Saturday; observed Friday,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-07-05,Monday,Independence Day,2027-07-04,falls on a Sunday; observed Monday,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-09-06,Monday,Labor Day,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-10-11,Monday,Columbus Day,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-11-11,Thursday,Veterans Day,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-11-25,Thursday,Thanksgiving Day,,,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-12-24,Friday,Christmas Day,2027-12-25,falls on a Saturday; observed Friday,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
+2027-12-31,Friday,New Year’s Day,2028-01-01,New Year's Day 2028 falls on a Saturday; observed in 2027,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/tabs/2027/,https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/holidays.ics
