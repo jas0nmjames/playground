@@ -6,7 +6,7 @@ tags: generative
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
 
-Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet. A systems lens opens one district into stacked layers of the circumstances behind its records, with the feedback loops that keep them going.
+Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going.
 
 ## Views
 
@@ -40,7 +40,7 @@ The same moment in the Map view, zoomed out to show most of the sheet.
 
 ![The systems lens: six stacked layers of Larkin Avenue, with record 6 selected, lines dropping to the circumstances behind it, callouts on the right and the Rollover loop drawn through the top two layers](screenshots/systems-lens.jpg)
 
-[systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/) is a prototype third view, in v3's style. It opens on record 6, a $75 payday loan renewal, with the Rollover loop drawn. Unlike the other two pages, it doesn't load the run: its district, circumstances and nine records are written for the prototype. The [design record](reference/halvern-systems-lens.md) explains why, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
+The systems lens opens over v3 from a record's **What shaped this**, from a household's day, or from the **Systems lens** button in the header (**L**). It maps one composite block in each district, defined in `systems-lens/blocks.json`, and the run tags the records of those blocks' households, so the lens shows the record you opened. It also runs on its own at [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/), where a menu switches blocks and each pin shows a composite example. The [design record](reference/halvern-systems-lens.md) explains the choices, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
 
 The screenshots were taken from these pages in headless Chromium with software WebGL, at twice the pixel density.
 
@@ -62,13 +62,14 @@ v3's own placeholder day plays while the real one downloads. The chip in the hea
 - **Records in flight.** Each record arcs from one party to the other. Click a path to open it; where several overlap, a chooser lists them. With the keyboard, **[** and **]** step through the records in flight and **Enter** opens one.
 - **Places.** Click a home or building to see its recent records. Since the real day is folded onto v3's town, each home or building also says how many real households or places it stands for. A pin counts the failures at a place so far today; click it to list them.
 - **Activity.** Money moved, records, failures and unpaid hours so far; six filters, one per kind; and the latest records. Below 1,280 px wide, the Activity panel becomes a drawer.
-- **A record.** Amount and status, from and to, method, time, category, record id (with hand-written records marked), the money breakdown, the job statement and the narrative. **See this household's day** lists the household's records so far and later, and keeps their paths drawn on the city.
+- **A record.** Amount and status, from and to, method, time, category, record id (with hand-written records marked), the money breakdown, the job statement and the narrative. Under **Look closer**, **This household's day** lists the household's records so far and later, and keeps their paths drawn on the city. **What shaped this** opens the systems lens on the record, when its household lives on a mapped block and the record follows one of the block's patterns.
+- **Systems lens.** The details rail widens into the lens over the city, and playback pauses. **Back to the city** or **Esc** returns to the record. Links of the form `v3/#lens=larkin/R3/R0029594` open a block, a pattern or a record directly, and `#view=map` opens on the map.
 - **Timeline.** Bars show records per ten minutes. Plum marks flag ten-minute stretches where failures run well above the day's usual share: overnight, when autopays bounce, and in the evening. Speeds are Live (the real clock), 1, 5 and 20 minutes a second. Page Up and Page Down move an hour.
 - With reduced motion requested, v3 starts paused and draws paths without animating them.
 
 ## Reading the systems lens
 
-The lens takes two ideas into the project: system dynamics (stocks, flows and feedback) and societal context, after Donald Martin Jr.: "the dynamic and complex collection of social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems." It shows one district, Larkin Avenue in the inner suburbs, as six aligned layers of the same blocks.
+The lens takes two ideas into the project: system dynamics (stocks, flows and feedback) and societal context, after Donald Martin Jr.: "the dynamic and complex collection of social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems." It shows one composite block at a time, one in each district (Pelham Street downtown, Larkin Avenue in the inner suburbs, Fox Hollow in the outer suburbs, Mill Street in Ashford Mills, Main Street in Dunmore and the Route 9 Crossroads in open country), as six aligned layers of the same blocks.
 
 - **Layers.** From the top: Today (the day's records), Economic, Political, Built & natural, Social & cultural, and Historical. Each label says how fast that layer changes, from "by the minute" to "bedrock, lasts a century". The same square on every layer is the same place.
 - **A story.** Select a record or a circumstance. A blue column marks its square on every layer, dashed lines drop to what it rests on, and the layers in its story spread apart while the rest fold away. Each circumstance in the story gets a callout with its year and full text, such as "1983 · Historical: Halvern Works closes: 1,900 union jobs gone."
@@ -76,7 +77,7 @@ The lens takes two ideas into the project: system dynamics (stocks, flows and fe
 - **Loops.** Four feedback loops are drawn one at a time through the layers they cross: R1 Fee spiral, R2 Rollover, R3 Time tax and B1 Circle buffer. R loops reinforce and B loops balance; the + and − on each link say which way it pushes. Dotted arrows show circumstances on other layers that push a loop.
 - **Details.** The right column describes the selection in v3's transaction-sheet style, and lists what shaped it, what it shapes and the loops it belongs to.
 
-Everything in the lens is a composite of documented US patterns on invented blocks, and every loop is a hypothesis for the next run to test. **Back to the city**, Miniature and Map all open v3; carrying a selected record between the views isn't built yet.
+Everything in the lens is a composite of documented US patterns on invented blocks, and every loop is a hypothesis for the next run to test. The records are the run's own: `block_id`, `block_pattern` and `context_ids` in `records.csv` say which block's household made a record, which pattern it follows and which circumstances that pattern is mapped to.
 
 ## Running them locally
 

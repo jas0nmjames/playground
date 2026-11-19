@@ -149,6 +149,7 @@ main.body { position:relative; }
 .lens.open .lens-panel { clip-path:inset(0px 0px 0px 0px round 16px 0px 0px 0px); }
 .lens-bar { display:flex; align-items:center; gap:12px; padding:0 12px; background:var(--surface); border-bottom:1px solid var(--line); min-width:0; }
 .lens-bar .btn.ghost { font-size:15px; }
+.lens-sel { min-height:36px; border-radius:10px; border:1px solid var(--ctrl); background:#fff; font:600 14px var(--ui); color:var(--ink); padding:4px 8px; max-width:260px; }
 .lens-ctx { font-size:14px; color:var(--ink2); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .lens-ctx b { color:var(--ink); font-weight:600; }
 #lens-frame { width:100%; height:100%; border:0; display:block; background:var(--page); }
@@ -239,7 +240,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <input type="radio" name="view" id="v-mini" value="mini" checked><label for="v-mini">Miniature</label>
     <input type="radio" name="view" id="v-map" value="map"><label for="v-map">Map</label>
   </fieldset>
-  <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
+  <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
   <span class="dim small" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens</span>
   <button class="btn" id="drawer-btn" aria-controls="rail" aria-expanded="false">Activity</button>
 </header>
@@ -290,6 +291,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <section class="lens-panel" aria-label="Systems lens">
       <div class="lens-bar">
         <button type="button" class="btn ghost" id="lens-back"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</button>
+        <label class="sr-only" for="lens-block">Mapped block</label>
+        <select id="lens-block" class="lens-sel"></select>
         <span class="lens-ctx" id="lens-ctx"></span>
         <span class="dim small">Esc closes the lens</span>
       </div>
@@ -1471,32 +1474,56 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   };
 
   // ---------- systems lens overlay ----------
-  // The lens maps one composite block (Larkin Avenue, D2). A real record opens it when it shows one of the lens's
-  // patterns in D2; the lens then shows the composite record with that pattern, and says so.
+  // One composite block per district is mapped in ../systems-lens/blocks.json. The run tags every record made by a block
+  // household with block_id, and with block_pattern when it follows one of the block's patterns. The lens draws the block and
+  // shows the opened record; this side sends it the record, the block's counts so far today and its latest records.
   const Lens = {
-    on: false, ready: false, pending: null, wasPlaying: false, opener: null,
-    PATTERNS: [[/payday_loan/, 'R3'], [/check_cashing/, 'R2'], [/missed_bus/, 'R1'], [/remittance_sent/, 'R5'], [/emergency_(department|visit)/, 'R7']],
-    SUB: { R3: 'Same pattern on Larkin Avenue · Rollover loop', R2: 'Same pattern on Larkin Avenue · six layers', R1: 'Same pattern on Larkin Avenue · Time tax loop', R4: 'Same pattern on Larkin Avenue · Fee spiral loop', R5: 'Same pattern on Larkin Avenue · six layers', R7: 'Same pattern on Larkin Avenue · six layers' },
-    match(r) {
-      if (!r || !r._real || r.district !== 'D2') return null;
-      if (/overdraft_fee|returned_payment_fee/.test(r.fee_type)) return 'R4';
-      for (const [re, k] of this.PATTERNS) if (re.test(r.job_category)) return k;
-      return null;
+    on: false, ready: false, pending: null, wasPlaying: false, opener: null, frameBlock: null, doc: null, last: null, cur: null,
+    async loadDoc() {
+      if (this.doc) return this.doc;
+      try { const res = await fetch('../systems-lens/blocks.json'); if (res.ok) this.doc = await res.json(); } catch (e) { /* the lens says so when opened */ }
+      if (this.doc) $('#lens-block').innerHTML = this.doc.blocks.map((b) => `<option value="${b.id}">${esc(b.name)} · ${b.district}</option>`).join('');
+      return this.doc;
     },
+    block(id) { return this.doc && this.doc.blocks.find((b) => b.id === id); },
+    pattern(bid, pid) { const b = this.block(bid); return b && b.patterns.find((p) => p.id === pid); },
+    match(r) { return r && r._blk && r._pat ? { block: r._blk, pattern: r._pat } : null; },
+    sub(k) { const b = this.block(k.block), p = this.pattern(k.block, k.pattern); return b && p ? `${p.title} · ${b.name}` : 'A pattern mapped in the Systems lens'; },
     frame() { return $('#lens-frame'); },
-    load() {
-      if (this.frame().src) return;
-      this.frame().addEventListener('load', () => { this.ready = true; if (this.pending) { this.post(this.pending); this.pending = null; } }, { once: true });
-      this.frame().src = '../systems-lens/?embed=1&rec=';
+    load(block) {
+      if (this.frameBlock === block) return;
+      this.ready = false; this.frameBlock = block;
+      this.frame().src = `../systems-lens/?embed=1&block=${encodeURIComponent(block)}&rec=`;
     },
     post(msg) { if (!this.ready) { this.pending = msg; return; } this.frame().contentWindow.postMessage(Object.assign({ source: 'halvern-v3' }, msg), location.origin); },
-    open(rec, fromId, opener) {
-      this.load();
-      const r = fromId ? H.recById.get(fromId) : null;
-      $('#lens-ctx').innerHTML = r
-        ? `<b>Larkin Avenue</b> · D2 Inner suburbs · same pattern as ${esc(H.catLabel(r))} at ${H.fmt(r._t)}`
-        : '<b>Larkin Avenue</b> · D2 Inner suburbs · the one block mapped so far';
-      this.post({ type: 'open', rec: rec || null, from: fromId || null });
+    payload(r) {
+      const a = amountOf(r);
+      return { id: r.record_id, title: H.catLabel(r), amt: a.txt, fail: r._vk === 'fail', income: r._vk === 'income',
+        status: r._vk === 'unpaid' ? 'Done · unpaid' : H.outcomeWord(r), type: REC[r._vk].label, job: r.job_statement || '', narrative: r.narrative || '',
+        time: H.fmt(r._t), from: r._from.name, to: cpName(r), pattern: r._pat };
+    },
+    // records so far today from this block's households: counts and the latest five per pattern, and one household's own
+    live(block, hhId) {
+      const counts = {}, recs = {}, mine = [];
+      for (let i = 0; i < S.idx; i++) {
+        const r = H.records[i]; if (r._blk !== block || !r._pat) continue;
+        counts[r._pat] = (counts[r._pat] || 0) + 1; (recs[r._pat] = recs[r._pat] || []).push(r);
+        if (hhId && r.household_id === hhId) mine.push(r);
+      }
+      for (const k in recs) recs[k] = recs[k].slice(-5).reverse().map((r) => this.payload(r));
+      return { counts, recs, household: hhId ? { id: hhId, recs: mine.slice(-12).reverse().map((r) => this.payload(r)) } : null };
+    },
+    async open(block, pattern, fromId, opener, hhId) {
+      await this.loadDoc();
+      if (!this.doc) { say('The Systems lens could not load its mapped blocks.'); return; }
+      const b = this.block(block) || this.block(this.last) || this.block('larkin') || this.doc.blocks[0];
+      const r = fromId ? H.recById.get(fromId) : null, p = pattern ? this.pattern(b.id, pattern) : null;
+      this.last = b.id; this.cur = { block: b.id, pattern: p ? p.id : null, fromId: r && p ? r.record_id : null, hhId: hhId || null };
+      $('#lens-block').value = b.id;
+      $('#lens-ctx').innerHTML = `${esc(b.district)} ${esc(b.districtName)}` + (p ? ` · <b>${esc(p.title)}</b>` : hhId ? ` · <b>${esc(hhId)}</b>’s records here` : ' · pick a pattern to trace');
+      this.load(b.id);
+      this.post({ type: 'open', pattern: this.cur.pattern, record: this.cur.fromId ? this.payload(r) : null, live: H.realLoaded ? this.live(b.id, hhId) : null });
+      history.replaceState(null, '', '#lens=' + [b.id, this.cur.pattern || '', this.cur.fromId || ''].join('/').replace(/\/+$/, ''));
       if (this.on) return;
       this.on = true; this.opener = opener || document.activeElement;
       this.wasPlaying = S.playing; if (S.playing) setPlaying(false);
@@ -1505,8 +1532,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       $('#scene').inert = true; $('#rail').inert = true;
       $('#lens-btn').setAttribute('aria-pressed', 'true');
       setTimeout(() => $('#lens-back').focus({ preventScroll: true }), S.rm ? 0 : 460);
-      say(r ? 'Systems lens open. Showing a composite record with the same pattern on Larkin Avenue. Escape goes back to the city.' : 'Systems lens open on Larkin Avenue. Pick a record to trace. Escape goes back to the city.');
+      say(`Systems lens open on ${b.name}${p ? `, showing ${p.title.toLowerCase()}` : ''}. Escape goes back to the city.`);
     },
+    refresh() { if (this.on && this.cur) this.open(this.cur.block, this.cur.pattern, this.cur.fromId, null, this.cur.hhId); },
     close() {
       if (!this.on) return;
       this.on = false;
@@ -1515,14 +1543,37 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       S.rm ? done() : setTimeout(done, 460);
       $('#scene').inert = false; syncDrawer();
       $('#lens-btn').setAttribute('aria-pressed', 'false');
+      history.replaceState(null, '', location.pathname + location.search);
       if (this.wasPlaying) setPlaying(true);
       const o = this.opener; this.opener = null;
       if (o && document.contains(o) && !o.closest('#lens')) o.focus(); else $('#scene').focus();
+      say('Back to the city.');
     },
     toggle(opener) {
       if (this.on) return this.close();
-      const top = Sheet.stack[Sheet.stack.length - 1], r = top && top.type === 'record' ? H.recById.get(top.id) : null, k = this.match(r);
-      this.open(k, k ? r.record_id : null, opener);
+      const top = Sheet.stack[Sheet.stack.length - 1];
+      if (top && top.type === 'record') {
+        const r = H.recById.get(top.id), k = this.match(r);
+        if (k) return this.open(k.block, k.pattern, r.record_id, opener);
+        if (r && r._blk) return this.open(r._blk, null, null, opener, r.household_id);
+      }
+      if (top && top.type === 'hhday') { const p = H.party.get(top.id); if (p && p.block) return this.open(p.block, null, null, opener, top.id); }
+      this.open(this.last, null, null, opener);
+    },
+    // #lens=<block>[/<pattern>[/<record>]] opens the lens; #view=map or #view=mini picks the view
+    fromHash(realReady) {
+      const q = new URLSearchParams(location.hash.slice(1)), v = q.get('view'), L = q.get('lens');
+      if (!realReady && (v === 'map' || v === 'mini')) setView(v);
+      if (!L) return;
+      const [block, pat, rid] = L.split('/');
+      if (rid) {
+        if (!realReady) return; // the record exists once the real day has loaded
+        const r = H.recById.get(rid); if (!r) return this.open(block, pat || null, null);
+        if (r._t > S.t) seek(r._t + .01);
+        selectRecord(rid, scene());
+        return this.open(block, pat || null, rid);
+      }
+      if (!realReady) this.open(block, pat || null, null);
     },
   };
 
@@ -1587,9 +1638,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function closerHTML(r) {
     const k = Lens.match(r), day = r.household_id
       ? `<button class="go" data-hhday="${r.household_id}"><span class="gi">${CLOCK_ICON}</span><span><b>This household’s day</b><small>Every record for ${esc(r.household_id)}, in time order</small></span><span class="chev" aria-hidden="true">›</span></button>` : '';
-    const lens = k
-      ? `<button class="go" data-lens="${k}" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>${Lens.SUB[k]}</small></span><span class="chev" aria-hidden="true">›</span></button>`
-      : `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>Not mapped yet. The lens covers one block of D2 Inner suburbs so far.</small></span></div>`;
+    let lens;
+    if (k) lens = `<button class="go" data-lens="${k.block}/${k.pattern}" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>${esc(Lens.sub(k))}</small></span><span class="chev" aria-hidden="true">›</span></button>`;
+    else if (r._blk) { const b = Lens.block(r._blk); lens = `<button class="go" data-lens="${r._blk}/" data-hh="${esc(r.household_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes this household’s block</b><small>${esc(b ? b.name : 'A mapped block')} · this record isn’t one of its patterns</small></span><span class="chev" aria-hidden="true">›</span></button>`; }
+    else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>Not mapped yet. One block in each district is mapped so far.</small></span></div>`;
     return `<h3>Look closer</h3><div class="closer">${day}${lens}</div>`;
   }
   function recentFor(pred, n = 25) { const out = []; for (let i = S.idx - 1; i >= 0 && out.length < n; i--) if (pred(H.records[i])) out.push(H.records[i]); return out; }
@@ -1619,8 +1671,13 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     return `<p class="eyebrow"><span>Household’s day</span></p><h2 id="sheet-title" tabindex="-1" class="title">${esc(p.name)}</h2>${p.info ? `<p class="dim">${esc(hhInfo(p))}</p>` : ''}<p class="dim">${esc(whereOf(p))} · so far, to ${H.fmt(S.t)}</p>
       <div class="mini-tiles"><div><span class="lbl">Money in</span><span class="v in">${H.fmtMoney(inn, true)}</span></div><div><span class="lbl">Money out</span><span class="v">${H.fmtMoney(-out, true)}</span></div><div><span class="lbl">Unpaid</span><span class="v">${H.fmtHours(un)}</span></div><div><span class="lbl">Failures</span><span class="v">${fails}</span></div></div>
       <p class="dim small">Its paths stay drawn on the city while this is open.</p>
+      ${p.block ? hhLensHTML(p, so) : ''}
       <h3>So far today</h3>${so.length ? `<ul class="feed inline">${so.slice().reverse().map((r) => rowHTML(r)).join('')}</ul>` : '<p class="dim">Nothing yet today.</p>'}
       ${later.length ? `<h3>Later today</h3><ul class="feed inline later">${later.map((r) => rowHTML(r)).join('')}</ul>` : ''}`;
+  }
+  function hhLensHTML(p, so) {
+    const b = Lens.block(p.block), n = so.filter((r) => r._pat).length;
+    return `<div class="closer" style="margin-top:12px"><button class="go" data-lens="${p.block}/" data-hh="${esc(p.id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this household’s day</b><small>${esc(b ? b.name : 'A mapped block')} · ${n ? `${n} of its records so far follow mapped patterns` : 'none of its records so far follow mapped patterns'}</small></span><span class="chev" aria-hidden="true">›</span></button></div>`;
   }
   function openHouseholdDay(id) {
     unpinHousehold(); S.hhDay = id; pinHousehold(id);
@@ -1812,8 +1869,13 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     $('#lens-btn').addEventListener('click', (e) => Lens.toggle(e.currentTarget));
     $('#lens-back').addEventListener('click', () => Lens.close());
     $('#lens-city').addEventListener('click', () => Lens.close());
-    window.addEventListener('message', (e) => { if (e.origin === location.origin && e.data && e.data.source === 'halvern-lens' && e.data.type === 'close') Lens.close(); });
-    setTimeout(() => Lens.load(), 4000);
+    $('#lens-block').addEventListener('change', (e) => Lens.open(e.target.value, null, null));
+    window.addEventListener('message', (e) => {
+      if (e.origin !== location.origin || !e.data || e.data.source !== 'halvern-lens') return;
+      if (e.data.type === 'close') Lens.close();
+      if (e.data.type === 'ready' && e.data.block === Lens.frameBlock) { Lens.ready = true; if (Lens.pending) { Lens.post(Lens.pending); Lens.pending = null; } }
+    });
+    Lens.loadDoc().then(() => setTimeout(() => Lens.load(Lens.last || 'larkin'), 4000));
     const tl = $('#tl');
     tl.addEventListener('input', () => { seek(+tl.value); updateTimeline(); });
     tl.addEventListener('keydown', (e) => {
@@ -1830,7 +1892,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const row = e.target.closest('button.row, #chooser button[data-id]');
       if (row) { closeChooser(); selectRecord(row.dataset.id, row.closest('#chooser') ? scene() : row); return; }
       const hd = e.target.closest('[data-hhday]'); if (hd) { openHouseholdDay(hd.dataset.hhday); return; }
-      const ln = e.target.closest('[data-lens]'); if (ln) { Lens.open(ln.dataset.lens, ln.dataset.from, ln); return; }
+      const ln = e.target.closest('[data-lens]'); if (ln) { const [bk, pt] = ln.dataset.lens.split('/'); Lens.open(bk, pt || null, ln.dataset.from || null, ln, ln.dataset.hh || null); return; }
       const lo = e.target.closest('[data-lens-open]'); if (lo) { e.preventDefault(); Lens.open(null, null, lo); return; }
     });
     document.addEventListener('keydown', (e) => {
@@ -1959,6 +2021,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     seek(S.t);
     setView(window.MiniView ? 'mini' : 'mini', true);
     if (window.MiniView) App.onMiniReady();
+    Lens.fromHash(false);
     requestAnimationFrame(loop);
   });
   // real-day.js calls these: status while the run loads, then useDay once H.records holds it
@@ -1973,6 +2036,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     if (Sheet.stack.length) Sheet.close(true);
     S.selId = null; S.hhDay = null; S.selPin = null; histDrawnAt = -1;
     seek(S.t);
+    if (/[#&]lens=[^&/]+\/[^&/]*\/./.test(location.hash)) Lens.fromHash(true); else Lens.refresh();
   };
   App.headPoint = headPoint; App.progress = progress; App.seek = seek; App.select = selectRecord; App.setView = setView; App.setPlaying = setPlaying; App.hitFlights = hitFlights; App.openHouseholdDay = openHouseholdDay;
 })();

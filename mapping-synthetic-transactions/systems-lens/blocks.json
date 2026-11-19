@@ -1054,15 +1054,15 @@
       {
        "k": "a",
        "p": 0,
-       "c": 4.6,
-       "r": 5.6,
+       "c": 5.0,
+       "r": 5.4,
        "t": "Rent paid in full"
       },
       {
        "k": "b",
        "p": 0,
-       "c": 2.2,
-       "r": 6.6,
+       "c": 3.4,
+       "r": 6.0,
        "t": "Short payments"
       },
       {
@@ -3675,10 +3675,9 @@
     {
      "t": "label",
      "c": 0.25,
-     "r": 7,
+     "r": 1.6,
      "text": "Ash River",
-     "dx": -8,
-     "dy": 16,
+     "dx": -14,
      "size": 12.5,
      "anchor": "end"
     },
@@ -4752,13 +4751,12 @@
     },
     {
      "t": "label",
-     "c": 0,
+     "c": 4,
      "r": 4,
      "text": "Main St",
-     "dx": -8,
-     "dy": 14,
+     "dy": -6,
      "size": 12.5,
-     "anchor": "end"
+     "anchor": "middle"
     },
     {
      "t": "line",

@@ -132,8 +132,10 @@ body.embed header.top, body.embed .ctxbar, body.embed footer.bar{display:none}
 body.embed .app{height:100%;min-height:0}
 body.embed main.body{height:100%}
 body.embed #plates{max-height:calc(100vh - 24px)}
-.embednote{margin:12px 0 0;padding:10px 12px;background:#E8EEFE;border-radius:10px;font-size:13px;color:var(--ink)}
 .pick{margin:6px 0 0}
+.blocksel{min-height:36px;border-radius:10px;border:1px solid var(--ctrl);background:#fff;font:600 14px var(--ui);color:var(--ink);padding:4px 10px}
+.job{margin:8px 0 10px;padding:12px 14px;background:var(--page);border-radius:10px;font-size:14.5px;line-height:1.45}
+.sheet h4{font-size:13px;font-weight:700;color:var(--ink2);margin:16px 0 4px}
 
 @media (max-width:1240px){
   main.body{grid-template-columns:1fr}
@@ -181,19 +183,24 @@ body.embed #plates{max-height:calc(100vh - 24px)}
       <span class="chip">Composite context · patterns from US history</span>
     </div>
     <nav class="seg" aria-label="View">
-      <a href="../v3/">Miniature</a>
-      <a href="../v3/">Map</a>
+      <a href="../v3/#view=mini">Miniature</a>
+      <a href="../v3/#view=map">Map</a>
       <a aria-current="page">Systems lens</a>
     </nav>
   </header>
   <div class="ctxbar">
-    <a class="btn ghost" href="../v3/" title="Opens Miniature and Map. Carrying the selected record across is not built yet."><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</a>
-    <span class="muted">Opened from</span>
-    <span class="recchip"><span class="ic" style="background:var(--r-bill)">6</span>13:05 · Payday loan renewed at Advance Now <span class="amt">−$75.00</span></span>
-    <span class="muted small place">Larkin Avenue · D2 Inner suburbs · Wed, Mar 3, 2027</span>
+    <a class="btn ghost" href="../v3/" id="tocity"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</a>
+    <label class="muted" for="blocksel">Block</label>
+    <select id="blocksel" class="blocksel"></select>
+    <a class="btn ghost" id="overcity" href="../v3/">Open over the city</a>
+    <span class="muted small place" id="place"></span>
   </div>
   <main class="body">
     <nav class="tools" aria-label="Layers and loops">
+      <section>
+        <h2 id="blockname">Block</h2>
+        <p class="hint" id="blocksum"></p>
+      </section>
       <section>
         <h2>Layers</h2>
         <p class="hint">Point at a layer to lift it. Select one to see it alone. A blue dot marks layers in the current story.</p>
@@ -209,7 +216,7 @@ body.embed #plates{max-height:calc(100vh - 24px)}
     </nav>
     <div class="stage">
       <div class="soloNote" id="soloNote" hidden>One layer shown. Links and loops return with all layers.</div>
-      <svg id="plates" viewBox="0 0 1158 930" role="img" aria-label="Exploded view of Larkin Avenue as six aligned layers, with links from records to circumstances and a feedback loop"></svg>
+      <svg id="plates" viewBox="0 0 1158 930" role="group" aria-roledescription="exploded layers" aria-label="Exploded view of a block as six aligned layers"></svg>
     </div>
     <aside id="rail" class="rail" aria-labelledby="rail-h">
       <div class="rail-head"><h2 id="rail-h">Details</h2></div>
@@ -223,12 +230,12 @@ body.embed #plates{max-height:calc(100vh - 24px)}
 </div>
 
 <script>
-(function(){
+(async function(){
 "use strict";
 const NS = "http://www.w3.org/2000/svg";
 function s(tag, attrs, parent){
   const e = document.createElementNS(NS, tag);
-  if(attrs) for(const k in attrs){ if(k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); }
+  if(attrs) for(const k in attrs){ if(attrs[k] == null) continue; if(k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); }
   if(parent) parent.appendChild(e);
   return e;
 }
@@ -259,105 +266,25 @@ const TYPES = {
 const col = t => css(TYPES[t].v);
 const LAYER_PLATE = {econ:1, pol:2, env:3, soc:4, hist:5};
 
-const CONTEXT = [
-  {id:"H1", types:["hist","pol"], year:"1938", layer:"hist", rep:[6,3], under:[],
-   lines:["Federal appraisal map rates", "these blocks “hazardous”"], title:"Rated “hazardous” on the 1938 appraisal map",
-   body:"A federal appraisal map graded the Larkin Avenue blocks red, citing the race of residents and the age of the housing. For decades lenders treated red-rated blocks as too risky for mortgages and deposits, so home ownership, equity and bank branches stayed thin here."},
-  {id:"H3", types:["hist","econ"], year:"1983", layer:"hist", rep:[10,0], under:[],
-   lines:["Halvern Works closes:", "1,900 union jobs gone"], title:"Halvern Works closes",
-   body:"The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly."},
-  {id:"H2", types:["hist","pol","env"], year:"1961", layer:"env", rep:[3,3], under:["H1"],
-   lines:["Interstate spur cut through;", "about 300 homes cleared"], title:"The interstate spur goes through",
-   body:"The state routed an interstate spur through the red-rated blocks, where land was cheapest and residents had the least say. It cleared about 300 homes and split the district. The nearest walkable crossing is now 0.6 miles from the Route 6 stop."},
-  {id:"E1", types:["env"], year:"today", layer:"env", rep:[10,5], under:["H1"],
-   lines:["Cutler Run floodplain:", "flood insurance required"], title:"Cutler Run floodplain",
-   body:"A third of the blocks by the creek sit in the 100-year floodplain. Homes with a mortgage there must carry flood insurance, a bill most of the city never sees. These were the cheapest lots, and the ones red-rated buyers could get."},
-  {id:"E2", types:["env"], year:"today", layer:"env", rep:[2,2], under:["H2"],
-   lines:["Highway air: more asthma", "within 500 ft of the spur"], title:"Highway air",
-   body:"Homes beside the spur breathe more traffic exhaust. Childhood asthma is higher here than in the rest of the city, and an attack often means the ER rather than a scheduled visit."},
-  {id:"P1", types:["econ"], year:"2009", layer:"econ", rep:[6,3], under:["H1"],
-   lines:["Last two bank branches", "close after a merger"], title:"The last bank branches close",
-   body:"After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Halvern Savings building is a check casher."},
-  {id:"EC1", types:["econ"], year:"today", layer:"econ", rep:[9,1], under:["H3"],
-   lines:["Hourly work, schedules", "posted under a week out"], title:"Hourly work, short-notice schedules",
-   body:"Most jobs open to people here are hourly, with schedules posted less than a week ahead and pay docked for lateness. Income moves week to week, which makes autopay dates hard to plan around."},
-  {id:"P2", types:["pol"], year:"state law", layer:"pol", rep:[7,3], under:[],
-   lines:["State allows 2–3% check", "fees and ~390% APR loans"], title:"State rules on check cashing and payday loans",
-   body:"State law lets check cashers charge 2 to 3 percent of a check and lets payday lenders charge $15 per $100 borrowed every two weeks, about 390% a year. A renewal pays the fee again without paying down the loan."},
-  {id:"P3", types:["pol"], year:"2019", layer:"pol", rep:[2,4], under:[],
-   lines:["Route 6 cut from every", "15 to every 30 minutes"], title:"Route 6 service cut",
-   body:"Facing a budget gap, the transit agency cut Route 6 from every 15 to every 30 minutes. Missing a bus now costs half an hour, and a late clock-in can cost part of a shift."},
-  {id:"P4", types:["pol","econ"], year:"2011", layer:"pol", rep:[5,3], under:["H1"],
-   lines:["Single-use zoning; no new", "grocery since 2011"], title:"Zoning and the missing grocery",
-   body:"Zoning keeps most blocks residential and allows shops only on the Larkin strip. The last supermarket closed in 2011 and none has replaced it, so daily food comes from the corner market and the dollar store."},
-  {id:"S1", types:["soc","cult"], year:"1990s on", layer:"soc", rep:[9,5], under:["H3"],
-   lines:["Immigrant gateway: Spanish,", "Vietnamese, Haitian Creole"], title:"An immigrant gateway",
-   body:"Low rents after the plant closed made Larkin a first stop for new arrivals. Many households send money home every week, and many neighbors work and bank in more than one language."},
-  {id:"S2", types:["cult","econ"], year:"today", layer:"soc", rep:[9,2], under:["S1","P1"],
-   lines:["Church savings circles", "(tandas, hụi, sòl)"], title:"Church savings circles",
-   body:"Several congregations run rotating savings circles. Each member pays in every week and takes the whole pot in turn. With no branch nearby, the circle is the neighborhood’s savings account and emergency fund."}
-];
-const RECORDS = [
-  {id:"R8", n:1, time:"01:30", kind:"bill", place:"creek", cell:[11,5], title:"Flood insurance autopay, $112", links:["E1"],
-   body:"Household 0391’s flood policy drafts on the 3rd. Neighbors two streets uphill do not pay it."},
-  {id:"R1", n:2, time:"07:42", kind:"fail", place:"bus", cell:[2,4], title:"Missed the Route 6 bus by a minute", links:["P3","H2"],
-   body:"The next bus is 30 minutes out. Walking around the spur to the next stop takes longer. 38 minutes lost and a late clock-in at the warehouse."},
-  {id:"R10", n:3, time:"08:10", kind:"purchase", place:"market", cell:[5,3], title:"Groceries at Larkin Market, $31.40", links:["P4"],
-   body:"Milk, eggs, rice and bread at corner-store prices. The nearest supermarket is 3.1 miles away."},
-  {id:"R7", n:4, time:"09:20", kind:"purchase", place:"house", cell:[2,2], title:"ER visit for a child’s asthma attack, $250 copay", links:["E2"],
-   body:"The family lives 200 feet from the spur. The ER copay is the day’s largest health expense in the district."},
-  {id:"R2", n:5, time:"11:15", kind:"income", place:"bank", cell:[6,3], title:"Paycheck cashed at QuikCash, $14.20 fee", links:["P1","P2"],
-   body:"A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Halvern Savings branch, for 2%."},
-  {id:"R3", n:6, time:"13:05", kind:"bill", place:"payday", cell:[7,3], title:"Payday loan renewed, $75 fee", links:["P2","EC1"],
-   body:"$500 borrowed after a short week in February. The fee is paid again and the $500 is still owed."},
-  {id:"R4", n:7, time:"16:50", kind:"fail", place:"dollar", cell:[8,3], title:"Debit card declined at Dollar Mart, $23.18", links:["EC1"],
-   body:"An insurance autopay overdrew the account at 3 p.m. Paid in cash instead, after a second try."},
-  {id:"R6", n:8, time:"19:00", kind:"unpaid", place:"church", cell:[9,2], title:"Savings circle, $100 paid in", links:["S2"],
-   body:"Week 7 of a 10-week circle at Iglesia Nueva Vida. This household takes the $1,000 pot in week 10."},
-  {id:"R5", n:9, time:"19:40", kind:"bill", place:"envios", cell:[9,4], title:"Money sent to family abroad, $200 plus $9 fee", links:["S1","P1"],
-   body:"Sent from Envíos Larkin, the only transfer counter open after 6 p.m. within walking distance."}
-];
-const FACTS = {
-  R8:{amt:"−$112.00", status:"Completed", with:"Flood insurer, autopay", type:"Bill"},
-  R1:{amt:"38 min lost", status:"Missed", with:"Halvern Transit, Route 6", type:"Trip", fail:true},
-  R10:{amt:"−$31.40", status:"Completed", with:"Larkin Market", type:"Purchase"},
-  R7:{amt:"−$250.00", status:"Completed", with:"Halvern Regional, emergency room", type:"Health care"},
-  R2:{amt:"−$14.20", status:"Completed", with:"QuikCash Larkin", type:"Check cashing fee", note:"on a $710 paycheck"},
-  R3:{amt:"−$75.00", status:"Completed", with:"Advance Now", type:"Loan fee", note:"$500 still owed"},
-  R4:{amt:"−$23.18", status:"Declined", with:"Dollar Mart", type:"Purchase", fail:true},
-  R6:{amt:"−$100.00", status:"Completed", with:"Iglesia Nueva Vida savings circle", type:"Informal savings"},
-  R5:{amt:"−$209.00", status:"Completed", with:"Envíos Larkin", type:"Money transfer", note:"$200 sent, $9 fee"}
-};
+/* The block comes from blocks.json: ?block=<id>, Larkin Avenue by default. The simulator reads the same file to tag records. */
+const QS = new URLSearchParams(location.search);
+let DOC;
+try { const res = await fetch("blocks.json"); if(!res.ok) throw new Error("the server answered " + res.status); DOC = await res.json(); }
+catch(err){ document.getElementById("detail").textContent = "The mapped blocks could not load (" + err.message + "). Open this page from a web server."; return; }
+const BLOCK = DOC.blocks.find(b => b.id === QS.get("block")) || DOC.blocks.find(b => b.id === "larkin") || DOC.blocks[0];
+const CONTEXT = BLOCK.contexts.map(c => Object.assign({}, c));
+/* each pattern stands on the Today layer as a numbered pin; its example is a composite record written for it */
+const RECORDS = BLOCK.patterns.map(p => ({id:p.id, n:p.n, time:p.example.time, kind:p.kind, cell:p.cell, title:p.example.title, body:p.example.body, links:p.links, pattern:p.title, matched:(p.match || []).length > 0}));
+const FACTS = {};
+BLOCK.patterns.forEach(p => { const e = p.example; FACTS[p.id] = {amt:e.amt, status:e.status, with:e["with"], type:e.type, note:e.note, fail:!!e.fail}; });
 const KIND_V = {purchase:"--r-purchase", income:"--r-income", bill:"--r-bill", fail:"--r-fail", unpaid:"--r-unpaid"};
 const KIND_NAME = {purchase:"Purchase", income:"Income", bill:"Bill or fee", fail:"Failed job", unpaid:"Unpaid or informal"};
 const BY = {};
 CONTEXT.forEach(c => { c.kindOf = "context"; c.plate = LAYER_PLATE[c.layer]; BY[c.id] = c; });
 RECORDS.forEach(r => { r.kindOf = "record"; r.plate = 0; BY[r.id] = r; });
 
-/* Loops: hypotheses drawn for the prototype. Nodes sit on the plate they belong to. */
-const LOOPS = {
-  R1:{name:"Fee spiral", kind:"R", seen:["R4"],
-    text:"A low balance lets a payment overdraw the account. The overdraft fee lowers the balance again, so the next payment is more likely to bounce.",
-    nodes:[{k:"a", p:0, c:10.4, r:5.9, t:"Balance after bills"}, {k:"b", p:0, c:6.6, r:6.4, t:"Payments that overdraw"}, {k:"c", p:1, c:8.6, r:5.4, t:"Overdraft fees"}],
-    links:[["a","b","−","A lower balance means more payments overdraw."], ["b","c","+","More overdrafts mean more fees."], ["c","a","−","More fees mean a lower balance."]],
-    drivers:[{from:"EC1", to:"b", sign:"+", t:"Pay that moves week to week makes autopay dates miss."}]},
-  R2:{name:"Rollover", kind:"R", seen:["R3"],
-    text:"A short week leads to a payday loan. Each renewal pays the fee without paying down the loan, which leaves the next week short again.",
-    nodes:[{k:"a", p:0, c:5.6, r:0.7, t:"Cash left after bills"}, {k:"b", p:1, c:4.8, r:0.9, t:"Payday renewals"}, {k:"c", p:1, c:7.9, r:2.2, t:"Fees paid to the lender"}],
-    links:[["a","b","−","Less cash left means more renewals."], ["b","c","+","More renewals mean more fees."], ["c","a","−","More fees leave less cash."]],
-    drivers:[{from:"P2", to:"c", sign:"+", t:"State law sets the fee at $15 per $100 per renewal."}, {from:"P1", to:"b", sign:"+", t:"With no branch nearby there is no small-dollar loan from a bank."}]},
-  R3:{name:"Time tax", kind:"R", seen:["R1"],
-    text:"A missed bus means a late clock-in and docked pay. Less pay pushes back fixing the car, which keeps the household on the bus.",
-    nodes:[{k:"a", p:0, c:2.4, r:4.6, t:"Rides Route 6"}, {k:"b", p:0, c:1.6, r:0.6, t:"Late clock-ins"}, {k:"c", p:1, c:9.8, r:1.6, t:"Docked pay"}, {k:"d", p:0, c:4.4, r:0.2, t:"Money to fix the car"}],
-    links:[["a","b","+","More bus trips mean more late clock-ins."], ["b","c","+","More late clock-ins mean more docked pay."], ["c","d","−","More docked pay leaves less for the car."], ["d","a","−","Less for the car means more bus trips."]],
-    drivers:[{from:"P3", to:"a", sign:"+", t:"Buses every 30 minutes make each miss cost more."}, {from:"H2", to:"a", sign:"+", t:"The spur forces a long walk to the next stop."}]},
-  B1:{name:"Circle buffer", kind:"B", seen:["R6"],
-    text:"A shortfall sends the household to its savings circle instead of a lender. The payout covers the gap, which works against the rollover loop.",
-    nodes:[{k:"a", p:0, c:11.0, r:2.4, t:"Shortfall this week"}, {k:"b", p:4, c:10.8, r:0.9, t:"Turns to the circle"}, {k:"c", p:4, c:7.4, r:1.6, t:"Payout covers the gap"}],
-    links:[["a","b","+","A shortfall means turning to the circle."], ["b","c","+","Turning to the circle brings a payout."], ["c","a","−","A payout shrinks the shortfall."]],
-    drivers:[{from:"S2", to:"b", sign:"+", t:"Congregations run the circles."}],
-    cross:[{to:["R2","b"], from:"c", sign:"−", t:"A payout means one less payday renewal."}]}
-};
+/* Loops: hypotheses for the next run to test. Nodes sit on the plate they belong to. */
+const LOOPS = BLOCK.loops;
 
 /* graph */
 function parents(id){ const it = BY[id]; return it.kindOf === "record" ? it.links : it.under; }
@@ -382,9 +309,10 @@ function loopPlates(k){
 }
 
 /* state */
-const state = {sel:"R3", loop:"R2", hover:null, solo:null};
-/* ?embed=1 runs inside v3's lens overlay; ?rec=<record id> opens on that record and the first loop it appears in; ?rec= with no id opens with nothing picked */
-const QS = new URLSearchParams(location.search), EMBED = QS.get("embed") === "1";
+const state = {sel:BLOCK.start.pattern, loop:BLOCK.start.loop, hover:null, solo:null, rec:null};
+let LIVE = null; // from v3 when embedded: {counts:{pattern:n}, recs:{pattern:[record…]}, household:{id, recs:[record…]}}
+/* ?embed=1 runs inside v3's lens overlay; ?rec=<pattern id> opens on that pattern and the first loop it appears in; ?rec= with no id opens with nothing picked */
+const EMBED = QS.get("embed") === "1";
 if(EMBED) document.body.classList.add("embed");
 function loopFor(id){ const e = Object.entries(LOOPS).find(([, L]) => L.seen.includes(id)); return e ? e[0] : null; }
 if(QS.has("rec")){ const r = QS.get("rec"); state.sel = BY[r] && BY[r].kindOf === "record" ? r : null; state.loop = state.sel ? loopFor(state.sel) : null; }
@@ -438,7 +366,19 @@ const PLATES = [
   {name:"Social & cultural", sub:"languages, congregations", pace:"changes over generations", color:"--c-soc"},
   {name:"Historical", sub:"1938 grades, 1961, 1983", pace:"bedrock, lasts a century", color:"--c-hist"}
 ];
+PLATES.forEach((P, i) => { if(BLOCK.plateSubs && BLOCK.plateSubs[i]) P.sub = BLOCK.plateSubs[i]; });
 s("rect", {x:0, y:0, width:1158, height:930, fill:"#F3F5F8", class:"bg"}, svgP);
+svgP.setAttribute("aria-label", `Exploded view of ${BLOCK.name} as six aligned layers, with links from records to circumstances and a feedback loop`);
+document.title = `Halvern Systems Lens · ${BLOCK.name}`;
+(function(){
+  const sel = document.getElementById("blocksel");
+  DOC.blocks.forEach(b => { const o = h("option", {value:b.id, text:`${b.name} · ${b.district}`}, sel); if(b.id === BLOCK.id) o.selected = true; });
+  sel.addEventListener("change", () => { const q = new URLSearchParams(location.search); q.set("block", sel.value); q.delete("rec"); location.search = q.toString(); });
+  document.getElementById("place").textContent = `${BLOCK.district} ${BLOCK.districtName} · Wed, Mar 3, 2027`;
+  document.getElementById("blockname").textContent = BLOCK.name;
+  document.getElementById("blocksum").textContent = BLOCK.summary;
+  document.getElementById("overcity").href = `../v3/#lens=${BLOCK.id}`;
+})();
 const stack = s("g", null, svgP);
 const overlay = s("g", {"pointer-events":"none"}, svgP);
 const calloutLayer = s("g", null, svgP);
@@ -449,7 +389,7 @@ function reg(id, el, p){
   (featEls[id] = featEls[id] || []).push(el);
   el.classList.add("hit", "dimmable");
   el.setAttribute("tabindex", "0"); el.setAttribute("role", "button");
-  el.setAttribute("aria-label", BY[id].kindOf === "record" ? `${BY[id].n}. ${BY[id].time} ${BY[id].title}` : `${BY[id].title}, ${BY[id].year}`);
+  el.setAttribute("aria-label", BY[id].kindOf === "record" ? `Pattern ${BY[id].n}, ${BY[id].pattern}${BY[id].matched ? "" : " (not in the simulator yet)"}` : `${BY[id].title}, ${BY[id].year}`);
   onActivate(el, () => select(id));
 }
 
@@ -480,151 +420,121 @@ function haloText(g, x, y, t, opt){
   return flab(g, x, y, t, opt);
 }
 
-/* --- plate 0: today */
+/* --- the block's drawing, from blocks.json: areas, lines, stops, labels, icons, badges and boxes in plate coordinates */
+const KIT = {
+  house:{t:"#D7A48F", l:"#EFE6D2", r:"#D9CFBA"}, shop:{t:"#EEF1F5", l:"#F4EEDF", r:"#DCD3BF"}, ware:{t:"#D3CBB9", l:"#E6DFCE", r:"#CBC2AE"},
+  church:{t:"#F4EEDF", l:"#FFFFFF", r:"#E3E8EF"}, tower:{t:"#C9D3E0", l:"#E8EDF4", r:"#B9C5D6"}, civic:{t:"#E9E2D0", l:"#F7F3EA", r:"#DCD3BF"},
+  walkup:{t:"#B9735A", l:"#E3C9B5", r:"#C9A48D"}, jail:{t:"#B7BDC6", l:"#D9DDE3", r:"#AEB5BF"}, silo:{t:"#E3E8EF", l:"#F4F6F9", r:"#D3DAE4"},
+  trailer:{t:"#E8E4DA", l:"#F7F4EC", r:"#D9D3C4"}, barn:{t:"#A8473A", l:"#C46A5B", r:"#93392E"}
+};
+const colr = v => (typeof v === "string" && v.startsWith("--")) ? css(v) : v;
+const clean = o => { const out = {}; for(const k in o) if(o[k] != null) out[k] = o[k]; return out; };
+function featAttrs(f){
+  return clean({fill:colr(f.fill) || "none", opacity:f.opacity, stroke:f.stroke ? colr(f.stroke) : null, "stroke-width":f.sw, "stroke-dasharray":f.dash});
+}
+const ICON = {
+  factory(g, x, y){ s("path", {d:`M${x - 10} ${y} v-9 l5 -4 v4 l5 -4 v4 l5 -4 v13 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1}, g); },
+  bankx(g, x, y){
+    s("path", {d:`M${x - 9} ${y} v-12 h18 v12 M${x - 11} ${y - 12} l11 -6 l11 6`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);
+    s("path", {d:`M${x - 9} ${y - 14} l18 14 M${x + 9} ${y - 14} l-18 14`, stroke:"#8E2C6E", "stroke-width":2.4}, g);
+  },
+  circle(g, x, y){
+    s("path", {d:`M${x} ${y - 18} v8 m-4 -5 h8 M${x - 7} ${y} v-10 l7 -6 l7 6 v10 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, g);
+    for(let i = 0; i < 6; i++){ const a = i * Math.PI / 3; s("circle", {cx:x + Math.cos(a) * 15, cy:y - 4 + Math.sin(a) * 7, r:2.4, fill:css("--c-cult"), stroke:"#0E1B2E", "stroke-width":.6}, g); }
+  },
+  gear(g, x, y){
+    s("circle", {cx:x, cy:y, r:7, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.4}, g);
+    for(let i = 0; i < 8; i++){ const a = i * Math.PI / 4; s("line", {x1:x + Math.cos(a) * 7, y1:y + Math.sin(a) * 7, x2:x + Math.cos(a) * 10, y2:y + Math.sin(a) * 10, stroke:"#0E1B2E", "stroke-width":2}, g); }
+  },
+  sign(g, x, y, f){
+    s("rect", {x:x - 12, y:y - 18, width:24, height:18, rx:4, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);
+    s("text", {x, y:y - 5, "text-anchor":"middle", class:"ui", "font-size":11.5, "font-weight":700, fill:"#0E1B2E", text:(f && f.text) || "•"}, g);
+  },
+  toll(g, x, y){
+    s("path", {d:`M${x - 14} ${y + 4} v-24 M${x + 14} ${y + 4} v-24 M${x - 17} ${y - 20} h34`, fill:"none", stroke:"#0E1B2E", "stroke-width":1.8}, g);
+    s("rect", {x:x - 5, y:y - 19, width:10, height:6, rx:1.5, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1}, g);
+  },
+  jail(g, x, y){
+    s("rect", {x:x - 11, y:y - 16, width:22, height:16, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, g);
+    for(let i = -6; i <= 6; i += 4) s("line", {x1:x + i, y1:y - 16, x2:x + i, y2:y, stroke:"#0E1B2E", "stroke-width":1.4}, g);
+  },
+  college(g, x, y){
+    s("path", {d:`M${x - 13} ${y - 14} L${x} ${y - 22} L${x + 13} ${y - 14} Z M${x - 13} ${y} h26`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);
+    for(let i = -9; i <= 9; i += 6) s("line", {x1:x + i, y1:y - 13, x2:x + i, y2:y - 1, stroke:"#0E1B2E", "stroke-width":1.6}, g);
+  },
+  cross(g, x, y){
+    s("rect", {x:x - 10, y:y - 20, width:20, height:20, rx:4, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);
+    s("path", {d:`M${x} ${y - 16} v12 M${x - 6} ${y - 10} h12`, stroke:"#8E3B6D", "stroke-width":3}, g);
+  },
+  car(g, x, y){
+    s("path", {d:`M${x - 12} ${y - 3} v-5 l4 -5 h12 l4 5 h4 v5 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);
+    s("circle", {cx:x - 6, cy:y - 2, r:2.6, fill:"#0E1B2E"}, g); s("circle", {cx:x + 7, cy:y - 2, r:2.6, fill:"#0E1B2E"}, g);
+  }
+};
+function drawFeat(g, f){
+  if(f.t === "area") area(g, f.c0, f.r0, f.c1, f.r1, featAttrs(f));
+  else if(f.t === "line") s("polyline", clean({points:pts(f.pts.map(q => lp(q[0], q[1]))), fill:"none", stroke:colr(f.stroke) || "#0E1B2E", "stroke-width":f.sw || 1.4, "stroke-dasharray":f.dash, "stroke-linecap":f.cap}), g);
+  else if(f.t === "stops") f.pts.forEach(q => { const [x, y] = lp(q[0], q[1]); s("circle", {cx:x, cy:y, r:4.2, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, g); });
+  else if(f.t === "label"){ const [x, y] = lp(f.c, f.r, f.h || 0); haloText(g, x + (f.dx || 0), y + (f.dy || 0), f.text, clean({anchor:f.anchor, size:f.size, weight:f.weight, fill:f.fill, cls:f.cls})); }
+  else if(f.t === "icon"){ const [x, y] = lp(f.c, f.r); (ICON[f.kind] || ICON.sign)(g, x, y, f); }
+  else if(f.t === "badge"){
+    const [bx, by] = lp(f.c, f.r);
+    s("rect", {x:bx + f.dx, y:by + f.dy, width:f.w, height:22, rx:3, fill:colr(f.fill || "--c-pol"), class:"focusring"}, g);
+    label(g, bx + f.dx + f.w / 2, by + f.dy + 16, f.text, {anchor:"middle", size:12, fill:"#FFFFFF"});
+  }
+  else if(f.t === "box") box(g, f.c0, f.r0, f.c1, f.r1, f.h, KIT[f.k] || KIT.house);
+}
+function houseFor(k, c, r){
+  if(k === "walkup") return {c0:c + .12, r0:r + .12, c1:c + .88, r1:r + .88, h:14 + ((c * 3 + r) % 4) * 3, k:"walkup"};
+  if(k === "bighouse") return {c0:c + .12, r0:r + .15, c1:c + .88, r1:r + .85, h:12 + ((c + r) % 3) * 2, k:"house"};
+  if(k === "trailer") return {c0:c + .1, r0:r + .25, c1:c + .9, r1:r + .6, h:6, k:"trailer"};
+  return {c0:c + .2, r0:r + .2, c1:c + .8, r1:r + .8, h:9 + ((c * 3 + r) % 4) * 2, k:k || "house"};
+}
+
+/* --- plate 0: today. Boxes are drawn back to front; each pattern's pin stands on the roof at its cell */
 (function(){
   const g = plateEls[0].content;
-  area(g, 3, 0, 5, ROWS, {fill:"#B9B2A4", stroke:"#0E1B2E", "stroke-width":.6});
-  { const a = lp(4, 0), b = lp(4, ROWS); s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:"#FFFFFF", "stroke-width":1.2, "stroke-dasharray":"6 5"}, g); }
-  area(g, 0, 3.86, 3, 4.14, {fill:"#E3E8EF", stroke:"none"});
-  area(g, 5, 3.86, 11.7, 4.14, {fill:"#E3E8EF", stroke:"none"});
-  area(g, 11.7, 0, COLS, ROWS, {fill:"#9EC3DE", stroke:"none"});
-  const [sx, sy] = lp(COLS, 4); haloText(g, sx + 8, sy + 10, "Larkin Ave", {size:12.5});
-  const HOUSE = {t:"#D7A48F", l:"#EFE6D2", r:"#D9CFBA"}, SHOP = {t:"#EEF1F5", l:"#F4EEDF", r:"#DCD3BF"}, WARE = {t:"#D3CBB9", l:"#E6DFCE", r:"#CBC2AE"}, CH = {t:"#F4EEDF", l:"#FFFFFF", r:"#E3E8EF"};
-  const boxes = [];
-  const recAt = {}; RECORDS.forEach(r => recAt[r.cell.join(",")] = r);
-  for(let c = 0; c < 12; c++) for(let r = 0; r < ROWS; r++){
-    if(c === 3 || c === 4) continue;
-    if(r <= 1 && c >= 8) continue;
-    const key = c + "," + r, rec = recAt[key];
-    if(rec && rec.place === "bus"){ boxes.push({c0:c + .55, r0:r + .05, c1:c + .9, r1:r + .3, h:7, k:SHOP, key}); continue; }
-    if(c === 11 && r >= 3){ boxes.push({c0:c + .18, r0:r + .22, c1:c + .66, r1:r + .74, h:11, k:HOUSE, key}); continue; }
-    if(r === 3 && c >= 5 && c <= 8){ boxes.push({c0:c + .06, r0:r + .08, c1:c + .94, r1:r + .82, h:c === 6 ? 20 : 15, k:SHOP, key}); continue; }
-    if(c === 9 && r === 2){ boxes.push({c0:9.2, r0:2.2, c1:9.8, r1:2.8, h:26, k:CH, key, spire:true}); continue; }
-    if(rec && rec.place === "envios"){ boxes.push({c0:c + .1, r0:r + .1, c1:c + .9, r1:r + .7, h:13, k:SHOP, key}); continue; }
-    if(!rec && (c * 5 + r * 3) % 7 === 0) continue;
-    boxes.push({c0:c + .2, r0:r + .2, c1:c + .8, r1:r + .8, h:9 + ((c * 3 + r) % 4) * 2, k:HOUSE, key});
-  }
-  boxes.push({c0:8.1, r0:.12, c1:11.55, r1:1.7, h:20, k:WARE, key:"ware"});
+  const pinAt = new Set(RECORDS.map(r => r.cell.join(",")));
+  const explicit = BLOCK.today.filter(f => f.t === "box"), occ = new Set(), boxes = explicit.map(b => Object.assign({}, b));
+  explicit.forEach(b => { for(let c = Math.floor(b.c0); c < Math.ceil(b.c1); c++) for(let r = Math.floor(b.r0); r < Math.ceil(b.r1); r++) occ.add(c + "," + r); });
+  BLOCK.today.filter(f => f.t === "houses").forEach(H => {
+    for(let c = Math.floor(H.c0); c < Math.ceil(H.c1); c++) for(let r = Math.floor(H.r0); r < Math.ceil(H.r1); r++){
+      const key = c + "," + r, cx = c + .5, cy = r + .5, pin = pinAt.has(key);
+      if(occ.has(key) || (H.except || []).some(e => cx > e[0] && cx < e[2] && cy > e[1] && cy < e[3])) continue;
+      if(!pin && (H.gap > 1 ? (c + 2 * r) % H.gap !== 0 : (c * 5 + r * 3) % 7 === 0)) continue;
+      boxes.push(houseFor(H.k, c, r)); occ.add(key);
+    }
+  });
+  BLOCK.today.forEach(f => { if(f.t !== "box" && f.t !== "houses" && f.t !== "label") drawFeat(g, f); });
   boxes.sort((a, b) => (a.c0 + a.c1 + a.r0 + a.r1) - (b.c0 + b.c1 + b.r0 + b.r1));
   const heights = {};
   boxes.forEach(b => {
-    box(g, b.c0, b.r0, b.c1, b.r1, b.h, b.k); heights[b.key] = b.h;
-    if(b.spire){ const top = lp((b.c0 + b.c1) / 2, (b.r0 + b.r1) / 2, b.h); s("path", {d:`M${top[0] - 5} ${top[1]} L${top[0]} ${top[1] - 20} L${top[0] + 5} ${top[1]} Z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":.8}, g); heights[b.key] += 18; }
+    box(g, b.c0, b.r0, b.c1, b.r1, b.h, KIT[b.k] || KIT.house);
+    const key = Math.floor((b.c0 + b.c1) / 2) + "," + Math.floor((b.r0 + b.r1) / 2);
+    let top = b.h;
+    if(b.spire){ const t = lp((b.c0 + b.c1) / 2, (b.r0 + b.r1) / 2, b.h); s("path", {d:`M${t[0] - 5} ${t[1]} L${t[0]} ${t[1] - 20} L${t[0] + 5} ${t[1]} Z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":.8}, g); top += 18; }
+    heights[key] = Math.max(heights[key] || 0, top);
   });
-  { const w = lp(9.8, .9, 20); haloText(g, w[0] + 30, w[1] - 6, "warehouses", {size:12.5}); }
+  BLOCK.today.forEach(f => { if(f.t === "label") drawFeat(g, f); });
   RECORDS.slice().sort((a, b) => (a.cell[0] + a.cell[1]) - (b.cell[0] + b.cell[1])).forEach(r => {
     const hh = heights[r.cell.join(",")] || 0; pinTopH[r.id] = hh;
     const [x, y] = lp(r.cell[0] + .5, r.cell[1] + .5, hh);
     const m = s("g", {transform:`translate(${x},${y})`}, g);
     s("line", {x1:0, y1:0, x2:0, y2:-22, stroke:"#5B6676", "stroke-width":1.3}, m);
-    s("circle", {cy:-34, r:13, fill:css(KIND_V[r.kind]), stroke:"#FFFFFF", "stroke-width":2.5, filter:"url(#liftsm)", class:"focusring"}, m);
+    s("circle", {cy:-34, r:13, fill:css(KIND_V[r.kind]), stroke:"#FFFFFF", "stroke-width":2.5, filter:"url(#liftsm)", class:"focusring", "stroke-dasharray":r.matched ? null : "4 3"}, m);
     s("text", {y:-29.5, "text-anchor":"middle", class:"ui", "font-size":13.5, "font-weight":700, fill:"#FFFFFF", text:String(r.n)}, m);
     reg(r.id, m, 0);
   });
 })();
 
-/* --- plate 1: economic */
-(function(){
-  const g = plateEls[1].content;
-  const ec = s("g", null, g);
-  area(ec, 8, 0, COLS, 1.7, {fill:css("--c-econ"), opacity:.5});
-  [[8.7,.7],[10.1,.7],[11.3,1]].forEach(([c, r]) => { const [x, y] = lp(c, r); s("path", {d:`M${x - 10} ${y} v-9 l5 -4 v4 l5 -4 v4 l5 -4 v13 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1}, ec); });
-  { const [x, y] = lp(COLS, .4); haloText(ec, x + 8, y, "hourly employers"); }
-  reg("EC1", ec, 1);
-  const p1 = s("g", null, g);
-  [[6.5, 3.5], [1.5, 5.6]].forEach(([c, r], i) => {
-    const [x, y] = lp(c, r);
-    s("path", {d:`M${x - 9} ${y} v-12 h18 v12 M${x - 11} ${y - 12} l11 -6 l11 6`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, p1);
-    s("path", {d:`M${x - 9} ${y - 14} l18 14 M${x + 9} ${y - 14} l-18 14`, stroke:"#8E2C6E", "stroke-width":2.4}, p1);
-    if(i === 0) haloText(p1, x + 16, y - 8, "branches closed 2009");
+/* --- plates 1-5: each circumstance draws on its own plate, and sometimes on another (a highway on Built & natural and Historical) */
+CONTEXT.forEach(c => {
+  Object.keys(c.draw || {}).forEach(p => {
+    const g = s("g", null, plateEls[+p].content);
+    c.draw[p].forEach(f => drawFeat(g, f));
+    reg(c.id, g, +p);
   });
-  reg("P1", p1, 1);
-})();
-
-/* --- plate 2: political */
-(function(){
-  const g = plateEls[2].content;
-  const p2 = s("g", null, g);
-  area(p2, 0, 0, COLS, ROWS, {fill:"none", stroke:css("--c-pol"), "stroke-width":3.2, opacity:.85});
-  const [bx, by] = lp(COLS, 0);
-  s("rect", {x:bx - 150, y:by - 30, width:150, height:22, rx:3, fill:css("--c-pol"), class:"focusring"}, p2);
-  label(p2, bx - 75, by - 14, "state law covers the plate", {anchor:"middle", size:12, fill:"#FFFFFF"});
-  reg("P2", p2, 2);
-  const p4 = s("g", null, g);
-  area(p4, 5, 3, 9, 3.86, {fill:css("--c-econ"), opacity:.55});
-  area(p4, 5, 3, 9, 3.86, {fill:"none", stroke:"#0E1B2E", "stroke-width":1});
-  { const [x, y] = lp(7, 3); haloText(p4, x + 4, y - 8, "only strip where shops are allowed", {anchor:"middle"}); }
-  reg("P4", p4, 2);
-  const p3 = s("g", null, g);
-  const line = []; for(let c = 0; c <= 11.7; c += .5) line.push(lp(c, 4));
-  s("polyline", {points:pts(line), fill:"none", stroke:css("--c-pol"), "stroke-width":3.6, "stroke-linecap":"round"}, p3);
-  [1, 2.5, 6, 9, 11].forEach(c => { const [x, y] = lp(c, 4); s("circle", {cx:x, cy:y, r:4.2, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, p3); });
-  { const [x, y] = lp(11.7, 4); haloText(p3, x + 10, y + 18, "Route 6, every 30 min"); }
-  reg("P3", p3, 2);
-})();
-
-/* --- plate 3: built & natural */
-(function(){
-  const g = plateEls[3].content;
-  const e2 = s("g", null, g);
-  area(e2, 1.5, 0, 3, ROWS, {fill:"url(#hatch-light)", stroke:"none"});
-  area(e2, 5, 0, 5.5, ROWS, {fill:"url(#hatch-light)", stroke:"none"});
-  area(e2, 1.5, 0, 3, ROWS, {fill:"#5E8A3A", opacity:.14, stroke:"none"});
-  { const [x, y] = lp(1.5, .4); haloText(e2, x - 8, y - 4, "exhaust zone", {anchor:"end"}); }
-  reg("E2", e2, 3);
-  const h2 = s("g", null, g);
-  area(h2, 3, 0, 5, ROWS, {fill:"#9C9486", stroke:"#0E1B2E", "stroke-width":1.2});
-  { const a = lp(4, 0), b = lp(4, ROWS); s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:"#FFFFFF", "stroke-width":1.4, "stroke-dasharray":"6 5"}, h2); }
-  { const [x, y] = lp(4.6, ROWS); haloText(h2, x + 12, y + 16, "interstate spur"); }
-  reg("H2", h2, 3);
-  const e1 = s("g", null, g);
-  area(e1, 9.6, 3, COLS, ROWS, {fill:"#3B7FB8", opacity:.4});
-  area(e1, 9.6, 3, COLS, ROWS, {fill:"url(#waves)"});
-  { const [x, y] = lp(COLS, 5); haloText(e1, x + 10, y, "floodplain"); }
-  reg("E1", e1, 3);
-})();
-
-/* --- plate 4: social & cultural */
-(function(){
-  const g = plateEls[4].content;
-  const s1 = s("g", null, g);
-  area(s1, 7, 3, COLS, ROWS, {fill:css("--c-soc"), opacity:.36});
-  { const [x, y] = lp(9.8, 6.2); haloText(s1, x, y, "español · tiếng Việt · kreyòl", {anchor:"middle"}); }
-  reg("S1", s1, 4);
-  const s2 = s("g", null, g);
-  [[9.5, 2.5], [6.4, 6.2]].forEach(([c, r]) => {
-    const [x, y] = lp(c, r);
-    s("path", {d:`M${x} ${y - 18} v8 m-4 -5 h8 M${x - 7} ${y} v-10 l7 -6 l7 6 v10 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, s2);
-    for(let i = 0; i < 6; i++){ const a = i * Math.PI / 3; s("circle", {cx:x + Math.cos(a) * 15, cy:y - 4 + Math.sin(a) * 7, r:2.4, fill:css("--c-cult"), stroke:"#0E1B2E", "stroke-width":.6}, s2); }
-  });
-  { const [x, y] = lp(9.5, 2.5); haloText(s2, x + 24, y - 10, "savings circles"); }
-  reg("S2", s2, 4);
-})();
-
-/* --- plate 5: historical */
-(function(){
-  const g = plateEls[5].content;
-  const h1 = s("g", null, g);
-  area(h1, 0, 1, 10, ROWS, {fill:"#C0392B", opacity:.36, stroke:"#8A2A1E", "stroke-width":1});
-  area(h1, 0, 1, 10, ROWS, {fill:"url(#hatch-light)"});
-  area(h1, 10, 1, COLS, ROWS, {fill:"#D9B23A", opacity:.4});
-  area(h1, 0, 0, COLS, 1, {fill:"#5B83B5", opacity:.32});
-  { const [x, y] = lp(6.2, 5.2); haloText(h1, x, y, "Grade D, “hazardous”", {anchor:"middle", size:14, fill:"#7A2418", weight:700}); }
-  { const [x, y] = lp(11, 4.4); haloText(h1, x, y, "C", {anchor:"middle", cls:"disp", size:15}); }
-  { const [x, y] = lp(5.5, .5); haloText(h1, x, y + 4, "B", {anchor:"middle", cls:"disp", size:15}); }
-  reg("H1", h1, 5);
-  const h2 = s("g", null, g);
-  area(h2, 3, 0, 5, ROWS, {fill:"none", stroke:"#0E1B2E", "stroke-width":1.6, "stroke-dasharray":"5 3"});
-  { const [x, y] = lp(4.6, ROWS); haloText(h2, x + 12, y + 16, "homes cleared 1961"); }
-  reg("H2", h2, 5);
-  const h3 = s("g", null, g);
-  area(h3, 9, 0, COLS, 1, {fill:"#8A5A2B", opacity:.5, stroke:"#0E1B2E"});
-  const [wx, wy] = lp(10.5, .5);
-  s("circle", {cx:wx, cy:wy, r:7, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.4}, h3);
-  for(let i = 0; i < 8; i++){ const a = i * Math.PI / 4; s("line", {x1:wx + Math.cos(a) * 7, y1:wy + Math.sin(a) * 7, x2:wx + Math.cos(a) * 10, y2:wy + Math.sin(a) * 10, stroke:"#0E1B2E", "stroke-width":2}, h3); }
-  haloText(h3, wx - 16, wy - 12, "Halvern Works, closed 1983", {anchor:"end"});
-  reg("H3", h3, 5);
-})();
+});
 
 label(svgP, 24, 922, "Composite circumstances on invented blocks. The same square on every layer is the same place. Loops are hypotheses for run 2 to test.", {size:13, fill:"#5B6676", cls:"ui"});
 
@@ -854,6 +764,19 @@ function icon(id){
   sp.setAttribute("aria-hidden", "true");
   return sp;
 }
+function realRows(parent, list){
+  const ul = h("ul", {class:"rows"}, parent);
+  list.forEach(rec => {
+    const b = h("button", {type:"button", class:"row"}, h("li", null, ul));
+    b.appendChild(icon(rec.pattern));
+    const m = h("span", null, b);
+    h("span", {class:"nm", text:rec.title}, m);
+    h("span", {class:"sub", text:`${rec.time} · ${rec.amt}`}, m);
+    h("span", {html:CHEV}, b);
+    b.addEventListener("click", () => { state.rec = rec; if(state.sel !== rec.pattern){ state.sel = rec.pattern; state.loop = loopFor(rec.pattern) || state.loop; syncTools(); renderLoopCard(); relayout(); } renderDetail(); });
+  });
+}
+const liveCount = id => (LIVE && LIVE.counts && LIVE.counts[id]) || 0;
 function rowList(parent, ids){
   if(!ids.length){ h("p", {class:"none", text:"Nothing in this view"}, parent); return; }
   const ul = h("ul", {class:"rows"}, parent);
@@ -862,8 +785,9 @@ function rowList(parent, ids){
     const b = h("button", {type:"button", class:"row"}, h("li", null, ul));
     b.appendChild(icon(x));
     const m = h("span", null, b);
-    h("span", {class:"nm", text: it.kindOf === "record" ? it.title : it.title}, m);
-    h("span", {class:"sub", text: it.kindOf === "record" ? `${it.time} · ${FACTS[x].with}` : `${it.year} · ${PLATES[it.plate].name} layer`}, m);
+    const n = liveCount(x);
+    h("span", {class:"nm", text: it.kindOf === "record" ? (LIVE ? it.pattern : it.title) : it.title}, m);
+    h("span", {class:"sub", text: it.kindOf === "record" ? (LIVE ? (n ? `${n} record${n === 1 ? "" : "s"} so far today` : it.matched ? "none yet today" : "not in the simulator yet") : `${it.time} · ${FACTS[x].with}`) : `${it.year} · ${PLATES[it.plate].name} layer`}, m);
     h("span", {html:CHEV}, b);
     b.addEventListener("click", () => select(x));
   });
@@ -878,18 +802,51 @@ function renderDetail(){
   if(!id){
     if(!EMBED){ h("p", {class:"none", text:"Select a record or a circumstance in the layers to see its details."}, detailEl); return; }
     const sh0 = h("div", {class:"sheet"}, detailEl);
-    h("h3", {class:"title", text:"Pick a record to trace"}, sh0);
-    h("p", {class:"why", style:"margin-top:8px", text:`${RECORDS.length} records on Larkin Avenue have their circumstances mapped. Pick one to see what shaped it.`}, sh0);
-    const box = h("div", {class:"pick"}, sh0); rowList(box, RECORDS.map(r => r.id));
+    const hhold = LIVE && LIVE.household;
+    h("h3", {class:"title", text: hhold ? `${hhold.id} on ${BLOCK.name}` : "Pick a pattern to trace"}, sh0);
+    if(hhold){
+      h("p", {class:"why", style:"margin-top:8px", text:`This household lives on ${BLOCK.name}. ${hhold.recs.length ? "These of its records so far today follow a pattern mapped here." : "None of its records so far today follow a pattern mapped here."}`}, sh0);
+      if(hhold.recs.length) realRows(h("div", {class:"pick"}, sh0), hhold.recs);
+      h("h4", {text:"Every pattern on this block"}, sh0);
+    } else {
+      h("p", {class:"why", style:"margin-top:8px", text:`${BLOCK.name} has ${RECORDS.length} patterns mapped to their circumstances. ${LIVE ? "The counts are records from households on this block so far today." : "Pick one to see what shaped it."}`}, sh0);
+    }
+    rowList(h("div", {class:"pick"}, sh0), RECORDS.map(r => r.id));
     return;
   }
   const it = BY[id];
   const sh = h("div", {class:"sheet"}, detailEl);
   const eb = h("div", {class:"eyebrow"}, sh);
   eb.appendChild(icon(id));
-  if(it.kindOf === "record"){
+  const real = it.kindOf === "record" && state.rec && state.rec.pattern === id ? state.rec : null;
+  if(real){
+    h("span", {text:`${it.pattern} · ${real.time}`}, eb);
+    h("h3", {class:"title", text:real.title}, sh);
+    h("p", {class:"big" + (real.fail ? " fail" : real.income ? " in" : ""), text:real.amt}, sh);
+    const st = h("div", {class:"status"}, sh);
+    h("span", {class:"pill " + (real.fail ? "fail" : "ok"), text:real.status}, st);
+    if(real.type) h("span", {class:"pill neutral", text:real.type}, st);
+    if(real.job) h("blockquote", {class:"job", text:`“${real.job}”`}, sh);
+    if(real.narrative) h("p", {class:"why", text:real.narrative}, sh);
+    kv(sh, [["Time", real.time], ["From", real.from], ["To", real.to], ["Record", real.id]].filter(x => x[1]));
+    const n = liveCount(id);
+    h("p", {class:"note", text:`From this run. ${n > 1 ? `One of ${n} records on ${BLOCK.name} so far today that follow this pattern.` : `A record on ${BLOCK.name} that follows this pattern.`} The circumstances below are composites mapped to the pattern, not to this household’s history.`}, sh);
+    h("h3", {text:"Shaped by"}, sh);
+    rowList(sh, parents(id));
+    if(n > 1){ const b = h("button", {type:"button", class:"btn wide", text:`See all ${n} records like this`}, sh); b.addEventListener("click", () => { state.rec = null; renderDetail(); }); }
+  } else if(it.kindOf === "record" && LIVE){
+    const n = liveCount(id), list = (LIVE.recs && LIVE.recs[id]) || [];
+    h("span", {text:`Pattern ${it.n} · ${BLOCK.name}`}, eb);
+    h("h3", {class:"title", text:it.pattern}, sh);
+    h("p", {class:"big", text: n ? `${n} record${n === 1 ? "" : "s"}` : "None yet"}, sh);
+    h("p", {class:"why", text: n ? "so far today, from households on this block." : it.matched ? "No records like this so far today." : "The simulator does not produce records like this yet, so the pin shows a composite example."}, sh);
+    if(list.length){ h("h4", {text: n > list.length ? `Latest ${list.length}` : "Records"}, sh); realRows(sh, list); }
+    h("p", {class:"note", text:`Composite example: ${it.title}. ${it.body}`}, sh);
+    h("h3", {text:"Shaped by"}, sh);
+    rowList(sh, parents(id));
+  } else if(it.kindOf === "record"){
     const f = FACTS[id];
-    h("span", {text:`Record ${it.n} · ${it.time}`}, eb);
+    h("span", {text:`Composite record ${it.n} · ${it.time}`}, eb);
     h("h3", {class:"title", text:it.title.replace(/, \$[\d.,]+( fee| copay| plus \$9 fee)?$/, "")}, sh);
     h("p", {class:"big" + (f.fail ? " fail" : ""), text:f.amt}, sh);
     const st = h("div", {class:"status"}, sh);
@@ -898,7 +855,7 @@ function renderDetail(){
     if(f.note) h("span", {class:"muted small", text:f.note}, st);
     h("p", {class:"why", text:it.body}, sh);
     kv(sh, [["Time", it.time], ["With", f.with], ["Kind", KIND_NAME[it.kind]], ["Layer", "Today"]]);
-    if(EMBED && QS.get("from")) h("p", {class:"embednote", text:"A composite record on Larkin Avenue with the same pattern as the one you opened. Its circumstances are mapped; the opened record’s are not yet."}, sh);
+    h("p", {class:"note", text: it.matched ? `Written for the lens. Records like it in the run are tagged “${it.pattern}”; open the lens from the city to see them.` : "Written for the lens. The simulator does not produce records like this yet."}, sh);
     h("h3", {text:"Shaped by"}, sh);
     rowList(sh, parents(id));
   } else {
@@ -979,7 +936,7 @@ function setHover(p){
 }
 function setSolo(p){ state.solo = p; state.hover = null; syncTools(); relayout(); }
 function setLoop(k){ state.loop = k; syncTools(); renderLoopCard(); renderDetail(); relayout(); }
-function select(id){ state.sel = id; syncTools(); renderDetail(); relayout(); }
+function select(id){ state.sel = id; if(state.rec && state.rec.pattern !== id) state.rec = null; syncTools(); renderDetail(); relayout(); }
 function syncTools(){
   const act = activePlates();
   plateBtns.forEach((b, p) => { b.setAttribute("aria-pressed", String(state.solo === p)); b.classList.toggle("inchain", !!act && act.has(p)); });
@@ -992,13 +949,14 @@ document.addEventListener("keydown", e => {
   if(EMBED){ if(state.solo != null) setSolo(null); else toParent({type:"close"}); return; }
   if(state.solo != null) setSolo(null); else if(state.loop) setLoop(null); else if(state.sel) select(null);
 });
-/* the overlay can switch records without reloading the lens */
+/* v3's overlay sends the opened record, this block's counts and its latest records; switching blocks reloads the frame */
 window.addEventListener("message", e => {
   if(!EMBED || e.origin !== location.origin || !e.data || e.data.source !== "halvern-v3") return;
   if(e.data.type === "open"){
-    const r = e.data.rec && BY[e.data.rec] ? e.data.rec : null;
-    state.solo = null; state.sel = r; state.loop = r ? loopFor(r) : null;
-    if(e.data.from) QS.set("from", e.data.from); else QS.delete("from");
+    LIVE = e.data.live || null;
+    const p = e.data.pattern && BY[e.data.pattern] ? e.data.pattern : null;
+    state.solo = null; state.sel = p; state.loop = p ? loopFor(p) : null;
+    state.rec = p && e.data.record ? Object.assign({}, e.data.record, {pattern:p}) : null;
     syncTools(); renderDetail(); renderLoopCard(); relayout();
   }
 });
@@ -1018,6 +976,7 @@ window.addEventListener("message", e => {
 })();
 
 syncTools(); renderDetail(); renderLoopCard(); relayout();
+toParent({type:"ready", block:BLOCK.id});
 })();
 </script>
 </body>
