@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halvern Systems Lens: three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=IM+Fell+English+SC&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a drafting table. The drawing is the page; a pinned field-notes card on the right explains whatever you point at. */
+:root{
+  --paper:#F6F1E4;
+  --paper-2:#EDE5D1;
+  --ink:#1E1B17;
+  --ink-2:#5A5246;
+  --rule:#CFC4AC;
+  --water:#3B7FB8;
+  /* Martin's six circumstances, as watercolor washes */
+  --c-hist:#8A5A2B;
+  --c-pol:#2D4F86;
+  --c-econ:#B8862A;
+  --c-env:#5E8A3A;
+  --c-soc:#B4505E;
+  --c-cult:#76569A;
+  /* Halvern in Motion record language (map tokens) */
+  --r-purchase:#A65300;
+  --r-income:#145A33;
+  --r-bill:#2F5E9E;
+  --r-fail:#8E2C6E;
+  --r-unpaid:#1E1B17;
+  --font-display:"IM Fell English SC", "Iowan Old Style", Georgia, serif;
+  --font-hand:"Architects Daughter", "Bradley Hand", "Segoe Print", cursive;
+  --font-ui:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);font-size:14px;line-height:1.45}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--c-pol);outline-offset:2px}
+
+.app{display:grid;grid-template-rows:auto auto 1fr auto;min-height:100%}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px;padding:14px 20px 10px;border-bottom:1px solid var(--rule)}
+.title h1{font-family:var(--font-display);font-weight:400;font-size:30px;line-height:1;margin:0;letter-spacing:.01em;text-wrap:balance}
+.title p{margin:4px 0 0;color:var(--ink-2);font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink-2);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c-soc)}
+nav.tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+nav.tabs a{display:flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--ink);padding:8px 14px 9px;border:1px solid var(--rule);border-bottom:none;border-radius:6px 6px 0 0;background:var(--paper-2);min-height:36px}
+nav.tabs a b{font-family:var(--font-display);font-weight:400;font-size:18px}
+nav.tabs a span{font-size:12px;color:var(--ink-2)}
+nav.tabs a[aria-current="page"]{background:var(--paper);border-color:var(--ink-2);position:relative;top:1px}
+
+.entry{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:8px 20px;border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-2)}
+.entry .from{display:flex;align-items:center;gap:8px}
+.entry .rec{color:var(--ink);font-weight:600}
+.entry .dot{width:10px;height:10px;border-radius:50%;background:var(--r-income);border:1.5px solid var(--ink)}
+.entry .back{margin-left:auto;border:1px solid var(--ink-2);background:transparent;border-radius:6px;padding:4px 10px;cursor:not-allowed;color:var(--ink-2)}
+.entry .direction{flex-basis:100%;color:var(--ink);font-size:13px;max-width:110ch}
+
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:0}
+.stage{position:relative;overflow:auto;padding:10px 14px}
+.stage svg.view{display:block;width:100%;height:auto;max-height:calc(100vh - 210px);min-width:760px}
+.view[hidden]{display:none!important}
+aside#rail{border-left:1px solid var(--rule);padding:14px 16px 20px;overflow:auto;display:flex;flex-direction:column;gap:18px;background:linear-gradient(var(--paper),var(--paper))}
+.card{background:#FBF8F0;border:1px solid var(--ink-2);border-radius:4px;padding:12px 14px;box-shadow:2px 3px 0 rgba(30,27,23,.12)}
+.card .kicker{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);display:flex;gap:8px;align-items:center}
+.card h2{font-family:var(--font-display);font-weight:400;font-size:21px;line-height:1.15;margin:4px 0 8px;text-wrap:balance}
+.card p{margin:0 0 10px;max-width:65ch}
+.types{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.type{font-size:11.5px;padding:1px 8px;border-radius:999px;color:#fff;font-weight:600}
+.links h3{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:10px 0 4px;font-weight:600}
+.links ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.links button{all:unset;cursor:pointer;display:flex;gap:8px;align-items:baseline;padding:4px 6px;border-radius:4px;width:100%;box-sizing:border-box}
+.links button:hover,.links button:focus-visible{background:var(--paper-2)}
+.links button .sw{width:9px;height:9px;border-radius:2px;flex:none;transform:translateY(1px)}
+.links .none{color:var(--ink-2);font-size:13px}
+.hint{font-size:12.5px;color:var(--ink-2)}
+.panel h3{font-family:var(--font-display);font-weight:400;font-size:18px;margin:0 0 8px}
+.panel .sub{font-size:12px;color:var(--ink-2);margin:-4px 0 10px}
+
+.valve{margin:0 0 12px}
+.valve .vl{font-size:12.5px;font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between;gap:8px}
+.valve .vl small{font-weight:400;color:var(--ink-2)}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--ink-2);border-radius:6px;overflow:hidden}
+.seg button{border:none;background:transparent;padding:6px 8px;min-height:32px;cursor:pointer;font-size:12.5px}
+.seg button+button{border-left:1px solid var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px}
+.tile{border:1px solid var(--rule);border-radius:4px;padding:8px;background:#FBF8F0}
+.tile .k{font-size:11px;color:var(--ink-2)}
+.tile .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.tile .v.bad{color:var(--r-fail)}
+.ctrl{display:flex;gap:8px;margin-bottom:12px}
+.ctrl button{border:1px solid var(--ink-2);background:transparent;border-radius:6px;padding:6px 12px;min-height:32px;cursor:pointer}
+.ledger{list-style:none;margin:0;padding:0;font-size:12.5px;display:flex;flex-direction:column;gap:2px}
+.ledger li{display:grid;grid-template-columns:42px 1fr auto;gap:8px;padding:4px 4px;border-radius:3px;font-variant-numeric:tabular-nums}
+.ledger li.future{opacity:.38}
+.ledger li.now{background:var(--paper-2)}
+.ledger .t{color:var(--ink-2)}
+.ledger .a.fail{color:var(--r-fail);font-weight:600}
+.loops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.loops button{all:unset;cursor:pointer;display:grid;grid-template-columns:30px 1fr;gap:8px;padding:6px;border-radius:4px;border:1px solid transparent;width:100%;box-sizing:border-box;font-size:12.5px}
+.loops button:hover,.loops button:focus-visible{border-color:var(--rule);background:#FBF8F0}
+.loops button[aria-pressed="true"]{border-color:var(--ink-2);background:#FBF8F0}
+.loops .badge{font-family:var(--font-display);font-size:16px;width:28px;height:28px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center}
+.loops .off{opacity:.45}
+
+footer{border-top:1px solid var(--rule);padding:8px 20px 12px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:12.5px}
+footer .lg{display:flex;align-items:center;gap:6px}
+footer .lg i{width:16px;height:11px;border-radius:2px;display:inline-block;opacity:.75;border:1px solid rgba(0,0,0,.25)}
+footer .note{margin-left:auto;color:var(--ink-2)}
+
+/* SVG drawing classes */
+.hand{font-family:var(--font-hand)}
+.disp{font-family:var(--font-display)}
+.hit{cursor:pointer}
+.dimmable{transition:opacity .2s}
+.dim{opacity:.28}
+.hot .tagbox{stroke-width:2.6}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:1000px){
+  main{grid-template-columns:1fr}
+  aside#rail{border-left:none;border-top:1px solid var(--rule)}
+  .stage svg.view{max-height:none}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0">
+  <defs>
+    <filter id="ink" x="-2%" y="-2%" width="104%" height="104%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wash" x="-4%" y="-8%" width="108%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="2" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0" result="ga"/>
+      <feComposite in="d" in2="ga" operator="arithmetic" k1="-0.35" k2="1" k3="0" k4="0"/>
+    </filter>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#1E1B17" stroke-width="1"/>
+    </pattern>
+    <pattern id="hatch-light" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#1E1B17" stroke-width=".6" opacity=".45"/>
+    </pattern>
+    <pattern id="stipple" width="14" height="12" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r=".9" fill="#1E1B17" opacity=".35"/><circle cx="10" cy="8" r=".7" fill="#1E1B17" opacity=".3"/><circle cx="7" cy="1" r=".5" fill="#1E1B17" opacity=".25"/>
+    </pattern>
+    <pattern id="ruled" width="40" height="9" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="8.5" x2="40" y2="8.5" stroke="#2D4F86" stroke-width=".6" opacity=".45"/>
+    </pattern>
+    <pattern id="gravel" width="22" height="16" patternUnits="userSpaceOnUse">
+      <ellipse cx="5" cy="5" rx="3" ry="2" fill="none" stroke="#1E1B17" stroke-width=".6" opacity=".35"/>
+      <ellipse cx="15" cy="12" rx="2.4" ry="1.6" fill="none" stroke="#1E1B17" stroke-width=".6" opacity=".3"/>
+    </pattern>
+    <pattern id="strata" width="60" height="10" patternUnits="userSpaceOnUse">
+      <path d="M0 5 Q15 2 30 5 T60 5" fill="none" stroke="#1E1B17" stroke-width=".6" opacity=".35"/>
+    </pattern>
+    <pattern id="brick" width="16" height="8" patternUnits="userSpaceOnUse">
+      <path d="M0 0H16M0 4H16M4 0V4M12 4V8" stroke="#1E1B17" stroke-width=".5" opacity=".35" fill="none"/>
+    </pattern>
+    <pattern id="waves" width="18" height="8" patternUnits="userSpaceOnUse">
+      <path d="M0 4 Q4.5 1 9 4 T18 4" fill="none" stroke="#1E1B17" stroke-width=".7" opacity=".45"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#1E1B17"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="app">
+  <header>
+    <div class="title">
+      <h1>Halvern Systems Lens</h1>
+      <p>Larkin Avenue, D2 Inner suburbs · Wednesday, March 3, 2027 · three prototype directions</p>
+    </div>
+    <span class="chip">Composite context · invented city · patterns from US history</span>
+    <nav class="tabs" aria-label="Directions">
+      <a href="#section" data-view="section"><b>1</b><span>Section</span></a>
+      <a href="#exploded" data-view="exploded"><b>2</b><span>Exploded view</span></a>
+      <a href="#works" data-view="works"><b>3</b><span>The Works</span></a>
+    </nav>
+  </header>
+  <div class="entry">
+    <div class="from"><span>Opened from Halvern in Motion:</span><span class="dot" aria-hidden="true"></span><span class="rec">11:15 · Paycheck cashed at QuikCash Larkin · $14.20 fee</span></div>
+    <a class="back" href="./" style="cursor:pointer;text-decoration:none;color:var(--ink)">Chosen direction: Exploded view →</a>
+    <div class="direction" id="direction"></div>
+  </div>
+  <main>
+    <div class="stage" id="stage">
+      <svg class="view" id="v-section" viewBox="0 0 1400 820" role="img" aria-label="Cross-section of Larkin Avenue with layers of circumstances beneath the street"></svg>
+      <svg class="view" id="v-exploded" viewBox="0 0 1100 1060" role="img" aria-label="Exploded view of the district as six stacked plates" hidden></svg>
+      <svg class="view" id="v-works" viewBox="0 0 1400 850" role="img" aria-label="Cutaway of one household drawn as plumbing: accounts as tanks, payments as pipes, policies as valves" hidden></svg>
+    </div>
+    <aside id="rail" aria-label="Field notes">
+      <section id="detail" aria-live="polite"></section>
+      <section id="viewpanel" class="panel"></section>
+    </aside>
+  </main>
+  <footer id="legend"></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+function s(tag, attrs, parent){
+  const e = document.createElementNS(NS, tag);
+  if(attrs) for(const k in attrs){ if(k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); }
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function h(tag, attrs, parent){
+  const e = document.createElement(tag);
+  if(attrs) for(const k in attrs){ if(k === "text") e.textContent = attrs[k]; else if(k === "html") e.innerHTML = attrs[k]; else e.setAttribute(k, attrs[k]); }
+  if(parent) parent.appendChild(e);
+  return e;
+}
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ------------------------------------------------------------------ data */
+const TYPES = {
+  hist:{name:"Historical", v:"--c-hist"},
+  pol:{name:"Political", v:"--c-pol"},
+  econ:{name:"Economic", v:"--c-econ"},
+  env:{name:"Environmental", v:"--c-env"},
+  soc:{name:"Social", v:"--c-soc"},
+  cult:{name:"Cultural", v:"--c-cult"}
+};
+const col = t => css(TYPES[t].v);
+
+const CONTEXT = [
+  {id:"H1", types:["hist","pol"], year:"1938", lines:["Federal appraisal map rates", "these blocks “hazardous”"],
+   title:"Rated “hazardous” on the 1938 appraisal map", layer:"hist", x:520, w:236, under:[],
+   cells:{plate:5, rep:[6,3]},
+   body:"A federal appraisal map graded the Larkin Avenue blocks red, citing the race of residents and the age of the housing. For decades lenders treated red-rated blocks as too risky for mortgages and deposits, so home ownership, equity and bank branches stayed thin here."},
+  {id:"H3", types:["hist","econ"], year:"1983", lines:["Halvern Works closes:", "1,900 union jobs gone"],
+   title:"Halvern Works closes", layer:"hist", x:900, w:190, under:[],
+   cells:{plate:5, rep:[10,0]},
+   body:"The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly."},
+  {id:"H2", types:["hist","pol","env"], year:"1961", lines:["Interstate spur cut through;", "about 300 homes cleared"],
+   title:"The interstate spur goes through", layer:"env", x:380, w:200, under:["H1"],
+   cells:{plate:3, rep:[3,3]},
+   body:"The state routed an interstate spur through the red-rated blocks, where land was cheapest and residents had the least say. It cleared about 300 homes and split the district. The nearest walkable crossing is now 0.6 miles from the Route 6 stop."},
+  {id:"E1", types:["env"], year:"today", lines:["Cutler Run floodplain:", "flood insurance required"],
+   title:"Cutler Run floodplain", layer:"env", x:1200, w:190, under:["H1"],
+   cells:{plate:3, rep:[11,5]},
+   body:"A third of the blocks by the creek sit in the 100-year floodplain. Homes with a mortgage there must carry flood insurance, a bill most of the city never sees. These were the cheapest lots, and the ones red-rated buyers could get."},
+  {id:"E2", types:["env"], year:"today", lines:["Highway air: more asthma", "within 500 ft of the spur"],
+   title:"Highway air", layer:"env", x:168, w:196, under:["H2"],
+   cells:{plate:3, rep:[2,2]},
+   body:"Homes beside the spur breathe more traffic exhaust. Childhood asthma is higher here than in the rest of the city, and an attack often means the ER rather than a scheduled visit."},
+  {id:"P1", types:["econ"], year:"2009", lines:["Last two bank branches", "close after a merger"],
+   title:"The last bank branches close", layer:"econ", x:690, w:190, under:["H1"],
+   cells:{plate:1, rep:[6,3]},
+   body:"After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Halvern Savings building is a check casher."},
+  {id:"EC1", types:["econ"], year:"today", lines:["Hourly work, schedules", "posted under a week out"],
+   title:"Hourly work, short-notice schedules", layer:"econ", x:930, w:190, under:["H3"],
+   cells:{plate:1, rep:[9,1]},
+   body:"Most jobs open to people here are hourly, with schedules posted less than a week ahead and pay docked for lateness. Income moves week to week, which makes autopay dates hard to plan around."},
+  {id:"P2", types:["pol"], year:"state law", lines:["State allows 2–3% check", "fees and ~390% APR loans"],
+   title:"State rules on check cashing and payday loans", layer:"pol", x:800, w:196, under:[],
+   cells:{plate:2, rep:[7,3]},
+   body:"State law lets check cashers charge 2 to 3 percent of a check and lets payday lenders charge $15 per $100 borrowed every two weeks, about 390% a year. A renewal pays the fee again without paying down the loan."},
+  {id:"P3", types:["pol"], year:"2019", lines:["Route 6 cut from every", "15 to every 30 minutes"],
+   title:"Route 6 service cut", layer:"pol", x:200, w:190, under:[],
+   cells:{plate:2, rep:[2,4]},
+   body:"Facing a budget gap, the transit agency cut Route 6 from every 15 to every 30 minutes. Missing a bus now costs half an hour, and a late clock-in can cost part of a shift."},
+  {id:"P4", types:["pol","econ"], year:"2011", lines:["Single-use zoning; no new", "grocery since 2011"],
+   title:"Zoning and the missing grocery", layer:"pol", x:500, w:200, under:["H1"],
+   cells:{plate:2, rep:[5,3]},
+   body:"Zoning keeps most blocks residential and allows shops only on the Larkin strip. The last supermarket closed in 2011 and none has replaced it, so daily food comes from the corner market and the dollar store."},
+  {id:"S1", types:["soc","cult"], year:"1990s on", lines:["Immigrant gateway: Spanish,", "Vietnamese, Haitian Creole"],
+   title:"An immigrant gateway", layer:"soc", x:1110, w:210, under:["H3"],
+   cells:{plate:4, rep:[9,4]},
+   body:"Low rents after the plant closed made Larkin a first stop for new arrivals. Many households send money home every week, and many neighbors work and bank in more than one language."},
+  {id:"S2", types:["cult","econ"], year:"today", lines:["Church savings circles", "(tandas, hụi, sòl)"],
+   title:"Church savings circles", layer:"soc", x:880, w:196, under:["S1","P1"],
+   cells:{plate:4, rep:[9,2]},
+   body:"Several congregations run rotating savings circles. Each member pays in every week and takes the whole pot in turn. With no branch nearby, the circle is the neighborhood’s savings account and emergency fund."}
+];
+
+const RECORDS = [
+  {id:"R8", n:1, time:"01:30", kind:"bill", title:"Flood insurance autopay, $112", links:["E1"], cell:[11,5],
+   body:"Household 0391’s flood policy drafts on the 3rd. Neighbors two streets uphill do not pay it."},
+  {id:"R1", n:2, time:"07:42", kind:"fail", title:"Missed the Route 6 bus by a minute", links:["P3","H2"], cell:[2,4],
+   body:"The next bus is 30 minutes out. Walking around the spur to the next stop takes longer. 38 minutes lost and a late clock-in at the warehouse."},
+  {id:"R10", n:3, time:"08:10", kind:"purchase", title:"Groceries at Larkin Market, $31.40", links:["P4"], cell:[5,3],
+   body:"Milk, eggs, rice and bread at corner-store prices. The nearest supermarket is 3.1 miles away."},
+  {id:"R7", n:4, time:"09:20", kind:"purchase", title:"ER visit for a child’s asthma attack, $250 copay", links:["E2"], cell:[2,2],
+   body:"The family lives 200 feet from the spur. The ER copay is the day’s largest health expense in the district."},
+  {id:"R2", n:5, time:"11:15", kind:"income", title:"Paycheck cashed at QuikCash, $14.20 fee", links:["P1","P2"], cell:[6,3],
+   body:"A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Halvern Savings branch, for 2%."},
+  {id:"R3", n:6, time:"13:05", kind:"bill", title:"Payday loan renewed, $75 fee", links:["P2","EC1"], cell:[7,3],
+   body:"$300 borrowed after a short week in February. The fee is paid again; the $300 is still owed."},
+  {id:"R4", n:7, time:"16:50", kind:"fail", title:"Debit card declined at Dollar Mart, $23.18", links:["EC1"], cell:[8,3],
+   body:"An insurance autopay overdrew the account at 3 p.m. Paid in cash instead, after a second try."},
+  {id:"R6", n:8, time:"19:00", kind:"unpaid", title:"Savings circle, $100 paid in", links:["S2"], cell:[9,2],
+   body:"Week 7 of a 10-week circle at Iglesia Nueva Vida. This household takes the $1,000 pot in week 10."},
+  {id:"R5", n:9, time:"19:40", kind:"bill", title:"Money sent to family abroad, $200 plus $9 fee", links:["S1","P1"], cell:[9,4],
+   body:"Sent from Envíos Larkin, the only transfer counter open after 6 p.m. within walking distance."}
+];
+const KIND_V = {purchase:"--r-purchase", income:"--r-income", bill:"--r-bill", fail:"--r-fail", unpaid:"--r-unpaid"};
+const KIND_NAME = {purchase:"Purchase", income:"Income", bill:"Bill or fee", fail:"Failed job", unpaid:"Unpaid or informal"};
+
+const BY = {};
+CONTEXT.forEach(c => { c.kindOf = "context"; BY[c.id] = c; });
+RECORDS.forEach(r => { r.kindOf = "record"; BY[r.id] = r; });
+
+/* graph helpers: everything upstream (rests on) and downstream (shapes) */
+function parents(id){ const it = BY[id]; return it.kindOf === "record" ? it.links : it.under; }
+function children(id){
+  const out = [];
+  RECORDS.forEach(r => { if(r.links.includes(id)) out.push(r.id); });
+  CONTEXT.forEach(c => { if(c.under.includes(id)) out.push(c.id); });
+  return out;
+}
+function closure(id){
+  const set = new Set([id]);
+  const up = [id]; while(up.length){ const x = up.pop(); parents(x).forEach(p => { if(!set.has(p)){ set.add(p); up.push(p); } }); }
+  const dn = [id]; const seen = new Set([id]);
+  while(dn.length){ const x = dn.pop(); children(x).forEach(c => { if(!seen.has(c)){ seen.add(c); set.add(c); dn.push(c); } }); }
+  return set;
+}
+/* edges inside a closure, for drawing */
+function edgesIn(set){
+  const e = [];
+  set.forEach(id => parents(id).forEach(p => { if(set.has(p)) e.push([id, p]); }));
+  return e;
+}
+
+/* ------------------------------------------------------------------ state */
+const state = { view:"section", sel:"R2", loop:null };
+const views = {};
+
+/* ------------------------------------------------------------------ rail */
+const detailEl = document.getElementById("detail");
+function swatchFor(id){
+  const it = BY[id];
+  return it.kindOf === "record" ? css(KIND_V[it.kind]) : col(it.types[0]);
+}
+function renderDetail(){
+  detailEl.innerHTML = "";
+  const id = state.sel;
+  if(!id){ h("p", {class:"hint", text:"Point at anything in the drawing to see what it is and what it rests on."}, detailEl); return; }
+  const it = BY[id];
+  const card = h("div", {class:"card"}, detailEl);
+  const k = h("div", {class:"kicker"}, card);
+  if(it.kindOf === "record"){
+    h("span", {text:"Today’s record " + it.n + " · " + it.time}, k);
+    h("span", {text:KIND_NAME[it.kind]}, k);
+  } else {
+    h("span", {text:"Circumstance · " + it.year}, k);
+  }
+  h("h2", {text: it.title}, card);
+  if(it.kindOf === "context"){
+    const t = h("div", {class:"types"}, card);
+    it.types.forEach(ty => { const sp = h("span", {class:"type", text:TYPES[ty].name}, t); sp.style.background = col(ty); });
+  }
+  h("p", {text: it.body}, card);
+  const links = h("div", {class:"links"}, card);
+  function list(label, ids){
+    h("h3", {text:label}, links);
+    if(!ids.length){ h("div", {class:"none", text:"Nothing in this drawing"}, links); return; }
+    const ul = h("ul", null, links);
+    ids.forEach(x => {
+      const li = h("li", null, ul);
+      const b = h("button", {type:"button"}, li);
+      const sw = h("span", {class:"sw"}, b); sw.style.background = swatchFor(x);
+      h("span", {text: BY[x].kindOf === "record" ? BY[x].n + ". " + BY[x].title : BY[x].title + " (" + BY[x].year + ")"}, b);
+      b.addEventListener("click", () => select(x));
+    });
+  }
+  list(it.kindOf === "record" ? "Shaped by" : "Rests on", parents(id));
+  if(it.kindOf === "context") list("Shapes", children(id));
+}
+function select(id){
+  state.sel = id;
+  renderDetail();
+  Object.values(views).forEach(v => v.highlight && v.highlight());
+}
+
+/* ------------------------------------------------------------------ drawing helpers */
+const SKIN = ["#F1D3B8","#E2B48E","#C98E62","#A56B43","#7D4E2E","#5A3620","#EBC4A0","#B7825A"];
+const CLOTH = ["#2D4F86","#B4505E","#5E8A3A","#B8862A","#76569A","#3B7FB8","#8A5A2B","#444"];
+let figSeed = 3;
+function figure(g, x, y, opt){
+  opt = opt || {};
+  figSeed = (figSeed * 7 + 3) % 97;
+  const sk = SKIN[figSeed % SKIN.length], cl = opt.color || CLOTH[(figSeed >> 1) % CLOTH.length];
+  const sc = opt.scale || 1;
+  const f = s("g", {transform:`translate(${x},${y}) scale(${sc})`}, g);
+  if(opt.sit){
+    s("path", {d:"M-3 -14 L3 -14 L4 -6 L9 -6 L9 0 M-3 -14 L-3 -6 L4 -6", fill:"none", stroke:"#1E1B17", "stroke-width":1.1}, f);
+    s("path", {d:"M-3.5 -15 L3.5 -15 L4 -6 L-3 -6 Z", fill:cl, stroke:"#1E1B17", "stroke-width":1}, f);
+    s("circle", {cx:0, cy:-18.5, r:3.3, fill:sk, stroke:"#1E1B17", "stroke-width":1}, f);
+  } else if(opt.lie){
+    s("rect", {x:-10, y:-5, width:16, height:5, rx:2, fill:cl, stroke:"#1E1B17", "stroke-width":1}, f);
+    s("circle", {cx:9, cy:-3.5, r:3.2, fill:sk, stroke:"#1E1B17", "stroke-width":1}, f);
+  } else {
+    s("path", {d:"M-2.2 0 L-1.6 -7 M2.2 0 L1.6 -7", stroke:"#1E1B17", "stroke-width":1.2}, f);
+    s("path", {d:"M-3.6 -7 L-3 -15 L3 -15 L3.6 -7 Z", fill:cl, stroke:"#1E1B17", "stroke-width":1}, f);
+    s("circle", {cx:0, cy:-18.5, r:3.3, fill:sk, stroke:"#1E1B17", "stroke-width":1}, f);
+  }
+  return f;
+}
+function washRect(g, x, y, w, hh, color, op){
+  return s("rect", {x, y, width:w, height:hh, fill:color, opacity:op == null ? .5 : op, filter:"url(#wash)"}, g);
+}
+function inkG(parent, extra){ return s("g", Object.assign({filter:"url(#ink)", fill:"none", stroke:"#1E1B17", "stroke-width":1.4, "stroke-linejoin":"round", "stroke-linecap":"round"}, extra || {}), parent); }
+function label(g, x, y, text, opt){
+  opt = opt || {};
+  return s("text", {x, y, class: opt.cls || "hand", "font-size": opt.size || 13, fill: opt.fill || "#1E1B17", "text-anchor": opt.anchor || "start", stroke:"none"}, g).appendChild(document.createTextNode(text)).parentNode;
+}
+function numCircle(g, x, y, n, color){
+  const c = s("g", {transform:`translate(${x},${y})`}, g);
+  s("circle", {r:12, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.6}, c);
+  s("circle", {r:12, fill:color, opacity:.22}, c);
+  s("text", {y:5, "text-anchor":"middle", class:"disp", "font-size":16, fill:"#1E1B17", text:String(n)}, c);
+  return c;
+}
+
+/* ================================================================== 1. SECTION */
+(function(){
+  const svg = document.getElementById("v-section");
+  const G = 300; // ground line
+  const BANDS = [
+    {layer:"econ", y:300, h:86, name:"Economic", pace:"turns over in years", color:"--c-econ", pat:"stipple"},
+    {layer:"pol", y:386, h:86, name:"Political", pace:"set by votes, decades", color:"--c-pol", pat:"ruled"},
+    {layer:"env", y:472, h:86, name:"Built & natural", pace:"concrete and water, generations", color:"--c-env", pat:"gravel"},
+    {layer:"soc", y:558, h:86, name:"Social & cultural", pace:"carried by people", color:"--c-soc", pat:"strata"},
+    {layer:"hist", y:644, h:116, name:"Historical", pace:"bedrock, lasts a century", color:"--c-hist", pat:"hatch-light"}
+  ];
+  const bandOf = {}; BANDS.forEach(b => bandOf[b.layer] = b);
+
+  /* paper + sky */
+  s("rect", {x:0, y:0, width:1400, height:820, fill:css("--paper")}, svg);
+  const sky = s("g", {opacity:.14}, svg);
+  [[600,190,40],[650,150,34],[690,210,30],[730,170,48],[790,200,28],[830,160,36],[880,215,30],[930,185,40]].forEach(([x,y,w]) => s("rect", {x, y, width:w, height:G - y, fill:"#1E1B17"}, sky));
+  label(svg, 760, 140, "downtown, 3 miles", {size:12, fill:"#8a8170", anchor:"middle"});
+  label(svg, 160, 34, "Section through Larkin Avenue, looking north", {cls:"disp", size:22});
+  label(svg, 160, 56, "Numbered: today’s records. Below the street: the circumstances that put them there, slowest at the bottom.", {size:13, fill:"#5A5246"});
+
+  /* strata */
+  BANDS.forEach(b => {
+    washRect(svg, 150, b.y, 1250, b.h, css(b.color), .42);
+    s("rect", {x:150, y:b.y, width:1250, height:b.h, fill:`url(#${b.pat})`}, svg);
+    s("line", {x1:150, y1:b.y + b.h, x2:1400, y2:b.y + b.h, stroke:"#1E1B17", "stroke-width":.8, opacity:.5, filter:"url(#ink)"}, svg);
+    const lg = s("g", null, svg);
+    s("rect", {x:12, y:b.y + 14, width:10, height:b.h - 28, fill:css(b.color), opacity:.75}, lg);
+    label(lg, 30, b.y + 32, b.name, {cls:"disp", size:17});
+    label(lg, 30, b.y + 50, b.pace, {size:11.5, fill:"#5A5246"});
+  });
+  label(svg, 30, G - 10, "Street level", {cls:"disp", size:17});
+  label(svg, 30, G + 8 - 0, "", {});
+
+  /* highway cut slices down through the top two layers */
+  const cut = inkG(svg);
+  s("path", {d:`M318 ${G} L352 ${G+64} L498 ${G+64} L532 ${G} Z`, fill:css("--paper-2"), stroke:"none"}, cut);
+  s("path", {d:`M318 ${G} L352 ${G+64} L498 ${G+64} L532 ${G}`}, cut);
+  s("path", {d:`M352 ${G+64} L498 ${G+64}`, "stroke-width":2.2}, cut);
+  for(let x = 362; x < 490; x += 22) s("line", {x1:x, y1:G+44, x2:x+10, y2:G+44, "stroke-width":1}, cut);
+  [[372,G+38,"#B4505E"],[430,G+38,"#3B7FB8"],[460,G+58,"#B8862A"],[392,G+58,"#5E8A3A"]].forEach(([x,y,c]) => {
+    s("rect", {x, y:y-9, width:22, height:9, rx:3, fill:c, stroke:"#1E1B17"}, cut);
+    s("circle", {cx:x+5, cy:y, r:2, fill:"#1E1B17"}, cut); s("circle", {cx:x+17, cy:y, r:2, fill:"#1E1B17"}, cut);
+  });
+  s("rect", {x:312, y:G-34, width:5, height:34, fill:"url(#hatch)", stroke:"#1E1B17"}, cut);
+  s("rect", {x:533, y:G-34, width:5, height:34, fill:"url(#hatch)", stroke:"#1E1B17"}, cut);
+  label(svg, 425, G - 44, "Interstate spur", {anchor:"middle", size:13});
+  label(svg, 425, G - 28, "nearest crossing 0.6 mi →", {anchor:"middle", size:11.5, fill:"#5A5246"});
+
+  /* creek */
+  const ck = inkG(svg);
+  s("path", {d:`M1296 ${G} Q1310 ${G+30} 1340 ${G+32} Q1372 ${G+30} 1396 ${G}`, fill:"#9EC3DE", stroke:"#1E1B17"}, ck);
+  s("path", {d:`M1300 ${G+6} H1392 V${G+24} H1300 Z`, fill:"url(#waves)", stroke:"none"}, ck);
+  s("rect", {x:1180, y:G-6, width:216, height:6, fill:"url(#hatch-light)", stroke:"none"}, ck);
+  label(svg, 1345, G - 12, "Cutler Run", {anchor:"middle", size:12, cls:"hand"});
+
+  /* ground line */
+  const gl = inkG(svg, {"stroke-width":2});
+  s("path", {d:`M150 ${G} H318 M532 ${G} H1296 M1396 ${G} H1400`}, gl);
+
+  /* buildings */
+  const B = inkG(svg);
+  function walls(x, w, hh, opts){
+    opts = opts || {};
+    const top = G - hh;
+    s("rect", {x, y:top, width:w, height:hh, fill:opts.fill || "#FBF8F0"}, B);
+    if(opts.brick) s("rect", {x, y:top, width:w, height:hh, fill:"url(#brick)", stroke:"none"}, B);
+    // cut walls hatched (the cutaway)
+    s("rect", {x, y:top, width:5, height:hh, fill:"url(#hatch)"}, B);
+    s("rect", {x:x + w - 5, y:top, width:5, height:hh, fill:"url(#hatch)"}, B);
+    return top;
+  }
+  function floorLine(x, w, y){ s("rect", {x, y, width:w, height:4, fill:"url(#hatch)"}, B); }
+  function gable(x, w, top, rise){ s("path", {d:`M${x-6} ${top} L${x + w/2} ${top - rise} L${x + w + 6} ${top} Z`, fill:"#C9705A", opacity:.9}, B); s("path", {d:`M${x-6} ${top} L${x + w/2} ${top - rise} L${x + w + 6} ${top} Z`, fill:"url(#hatch-light)"}, B); }
+  function sign(x, y, w, text, fill){ s("rect", {x, y, width:w, height:16, fill:fill || "#FBF8F0"}, B); label(B, x + w/2, y + 12, text, {anchor:"middle", size:10.5, cls:"hand", fill: fill ? "#FBF8F0" : "#1E1B17"}); }
+  function awning(x, w, y, c){ for(let i = 0; i < w; i += 12){ s("path", {d:`M${x+i} ${y} h12 l-2 10 h-8 z`, fill: (i/12) % 2 ? "#FBF8F0" : c}, B); } }
+
+  // R7 house beside the spur (two floors, child in bed upstairs)
+  let t = walls(150, 100, 96); gable(150, 100, t, 34); floorLine(150, 100, G - 48);
+  s("rect", {x:162, y:G-70, width:30, height:12, fill:"#B4505E", opacity:.7}, B); figure(B, 178, G - 58, {lie:true});
+  figure(B, 220, G - 52); s("rect", {x:200, y:G-26, width:34, height:3}, B); figure(B, 175, G); s("path", {d:"M196 "+(G-14)+" h10 v14 M196 "+(G)+" h10"}, B);
+  s("path", {d:`M255 ${G-48} q8 -6 16 0 q8 6 16 0`, stroke:"#8a8170", "stroke-width":1, "stroke-dasharray":"2 3"}, B);
+
+  // R1 bus stop
+  s("path", {d:`M262 ${G} V${G-56} M262 ${G-56} h-0`}, B);
+  s("rect", {x:254, y:G-70, width:16, height:16, rx:8, fill:"#2D4F86"}, B);
+  label(B, 262, G - 58, "6", {anchor:"middle", size:11, fill:"#FBF8F0", cls:"disp"});
+  s("path", {d:`M272 ${G} V${G-40} H306 V${G}`}, B); s("rect", {x:272, y:G-40, width:34, height:4, fill:"url(#hatch)"}, B);
+  figure(B, 290, G);
+  label(B, 289, G - 46, "7:42", {anchor:"middle", size:10, fill:"#8E2C6E"});
+
+  // R10 corner market
+  t = walls(545, 94, 70, {brick:true}); awning(549, 86, t + 26, "#5E8A3A"); sign(553, t + 6, 78, "LARKIN MARKET");
+  s("path", {d:`M560 ${G-28} h60 M560 ${G-14} h60`}, B); figure(B, 600, G);
+  [[562,G-34],[575,G-34],[588,G-34],[601,G-34],[566,G-20],[580,G-20],[594,G-20]].forEach(([x,y]) => s("rect", {x, y, width:8, height:6, fill:["#B8862A","#B4505E","#5E8A3A"][(x+y)%3]}, B));
+
+  // R2 QuikCash in the old bank (columns + pediment)
+  t = walls(650, 102, 92);
+  s("path", {d:`M646 ${t} L701 ${t-22} L756 ${t} Z`, fill:"#EDE5D1"}, B);
+  [662, 684, 706, 728].forEach(x => s("rect", {x, y:t + 26, width:8, height:G - t - 26, fill:"#FBF8F0"}, B));
+  sign(658, t + 4, 86, "CHECKS CASHED", "#8E2C6E");
+  label(B, 701, t - 6, "HALVERN SAVINGS 1952", {anchor:"middle", size:7.5, cls:"disp", fill:"#5A5246"});
+  s("rect", {x:740, y:G-30, width:8, height:30, fill:"url(#hatch)"}, B);
+  figure(B, 718, G); figure(B, 744, G - 30, {scale:.9, color:"#444"});
+
+  // R3 Advance Now payday
+  t = walls(762, 94, 70); sign(768, t + 6, 82, "ADVANCE NOW", "#B8862A");
+  label(B, 809, t + 40, "$15 per $100", {anchor:"middle", size:11});
+  figure(B, 790, G); figure(B, 836, G - 2, {scale:.95, color:"#444"});
+
+  // R4 Dollar Mart
+  t = walls(866, 124, 64); sign(874, t + 6, 108, "DOLLAR MART", "#2D4F86");
+  for(let x = 878; x < 980; x += 16) s("rect", {x, y:G-34, width:10, height:30, fill:"#FBF8F0"}, B);
+  figure(B, 930, G); s("path", {d:`M942 ${G-24} l8 -6 m0 6 l-8 -6`, stroke:"#8E2C6E", "stroke-width":2}, B);
+
+  // R6 church with savings circle inside
+  t = walls(1002, 94, 84, {fill:"#FBF8F0"}); gable(1002, 94, t, 26);
+  s("path", {d:`M1036 ${t-26} V${t-70} L1049 ${t-90} L1062 ${t-70} V${t-26}`, fill:"#FBF8F0"}, B);
+  s("path", {d:`M1049 ${t-100} V${t-88} M1044 ${t-95} h10`}, B);
+  label(B, 1049, t + 16, "IGLESIA NUEVA VIDA", {anchor:"middle", size:7.5, cls:"disp"});
+  s("ellipse", {cx:1049, cy:G - 12, rx:30, ry:6, fill:"#76569A", opacity:.25, stroke:"none"}, B);
+  [1022, 1036, 1062, 1076].forEach(x => figure(B, x, G, {sit:true, scale:.85}));
+
+  // R5 Envíos
+  t = walls(1104, 74, 66); sign(1108, t + 6, 66, "ENVÍOS", "#B4505E");
+  label(B, 1141, t + 36, "transfers", {anchor:"middle", size:10.5}); figure(B, 1130, G); figure(B, 1160, G - 2, {scale:.9, color:"#444"});
+
+  // R8 creek house on piers
+  t = walls(1190, 96, 80); gable(1190, 96, t, 30); floorLine(1190, 96, G - 40);
+  s("path", {d:`M1200 ${G} v-8 M1276 ${G} v-8`, "stroke-width":2.4}, B);
+  figure(B, 1220, G - 44); figure(B, 1250, G - 8, {sit:true});
+  s("rect", {x:1206, y:G-30, width:20, height:14, fill:"#2D4F86", opacity:.55}, B);
+
+  /* context tags in strata */
+  const tagLayer = s("g", null, svg);
+  const tagEls = {};
+  CONTEXT.forEach(c => {
+    const b = bandOf[c.layer];
+    const th = 46, y = b.y + (b.h - th) / 2 + (c.layer === "hist" ? 0 : 0);
+    const g = s("g", {class:"hit dimmable", tabindex:0, role:"button", "aria-label":c.title + ", " + c.year}, tagLayer);
+    s("rect", {class:"tagbox", x:c.x, y, width:c.w, height:th, rx:3, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.4, filter:"url(#ink)"}, g);
+    c.types.forEach((ty, i) => s("rect", {x:c.x + 1, y:y + 1 + i * (th - 2) / c.types.length, width:7, height:(th - 2) / c.types.length, fill:col(ty)}, g));
+    label(g, c.x + 14, y + 19, c.lines[0], {size:12.5});
+    label(g, c.x + 14, y + 36, c.lines[1], {size:12.5});
+    const yr = s("text", {x:c.x + c.w - 6, y:y - 4, "text-anchor":"end", class:"disp", "font-size":12, fill:"#5A5246", text:c.year}, g);
+    c._sec = {cx:c.x + c.w / 2, top:y, bot:y + th};
+    tagEls[c.id] = g;
+    g.addEventListener("click", () => select(c.id));
+    g.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); select(c.id); } });
+  });
+
+  /* numbered record callouts */
+  const XS = {R7:200, R1:285, R10:592, R2:701, R3:809, R4:928, R6:1049, R5:1141, R8:1238};
+  const TOPS = {R7:G-136, R1:G-74, R10:G-74, R2:G-120, R3:G-74, R4:G-68, R6:G-196, R5:G-70, R8:G-114};
+  const recLayer = s("g", null, svg);
+  const recEls = {};
+  RECORDS.forEach(r => {
+    const x = XS[r.id], cy = 96;
+    r._sec = {x};
+    const g = s("g", {class:"hit dimmable", tabindex:0, role:"button", "aria-label":r.n + ". " + r.time + " " + r.title}, recLayer);
+    s("path", {d:`M${x} ${cy + 12} V${TOPS[r.id] - 4}`, stroke:"#1E1B17", "stroke-width":1, "stroke-dasharray":"1 3", fill:"none"}, g);
+    numCircle(g, x, cy, r.n, css(KIND_V[r.kind]));
+    label(g, x, cy - 18, r.time, {anchor:"middle", size:11, fill:"#5A5246"});
+    recEls[r.id] = g;
+    g.addEventListener("click", () => select(r.id));
+    g.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); select(r.id); } });
+  });
+
+  /* drill lines */
+  const drill = s("g", {"pointer-events":"none"}, svg);
+  svg.insertBefore(drill, tagLayer);
+
+  label(svg, 150, 805, "Not to scale. Every circumstance is a composite drawn from documented US patterns; Halvern and its households are invented.", {size:12, fill:"#5A5246"});
+
+  function anchorTop(id){ const it = BY[id]; return it.kindOf === "record" ? [it._sec.x, G] : [it._sec.cx, it._sec.top]; }
+  function anchorBot(id){ const it = BY[id]; return it.kindOf === "record" ? [it._sec.x, G] : [it._sec.cx, it._sec.bot]; }
+
+  views.section = {
+    highlight(){
+      drill.innerHTML = "";
+      const set = state.sel ? closure(state.sel) : null;
+      Object.entries(tagEls).forEach(([id, g]) => { g.classList.toggle("dim", !!set && !set.has(id)); g.classList.toggle("hot", state.sel === id); });
+      Object.entries(recEls).forEach(([id, g]) => g.classList.toggle("dim", !!set && !set.has(id)));
+      if(!set) return;
+      edgesIn(set).forEach(([child, parent]) => {
+        const [x1, y1] = anchorBot(child), [x2, y2] = anchorTop(parent);
+        const my = (y1 + y2) / 2;
+        const d = `M${x1} ${y1} C${x1} ${my} ${x2} ${my} ${x2} ${y2}`;
+        s("path", {d, stroke:"#FBF8F0", "stroke-width":7, fill:"none", opacity:.9}, drill);
+        s("path", {d, stroke:"#1E1B17", "stroke-width":2.2, fill:"none", "stroke-dasharray":"7 4"}, drill);
+        s("circle", {cx:x2, cy:y2, r:3.5, fill:"#1E1B17"}, drill);
+      });
+      // core sample under a selected record
+      const it = BY[state.sel];
+      if(it.kindOf === "record"){
+        s("rect", {x:it._sec.x - 9, y:G - 2, width:18, height:10, rx:3, fill:"#1E1B17"}, drill);
+      }
+    }
+  };
+})();
+
+/* ================================================================== 2. EXPLODED */
+(function(){
+  const svg = document.getElementById("v-exploded");
+  const C = 12, R = 7, TW = 60, TH = 26, OX = 640, OY0 = 96, GAP = 140;
+  const PLATES = [
+    {name:"Today", sub:"the day’s records", color:"#FBF8F0"},
+    {name:"Economic", sub:"jobs, banks, prices", color:"--c-econ"},
+    {name:"Political", sub:"routes, zoning, state law", color:"--c-pol"},
+    {name:"Built & natural", sub:"highway, air, floodplain", color:"--c-env"},
+    {name:"Social & cultural", sub:"languages, congregations", color:"--c-soc"},
+    {name:"Historical", sub:"1938 grades, 1961, 1983", color:"--c-hist"}
+  ];
+  const iso = (c, r, p) => [OX + (c - r) * TW / 2, OY0 + p * GAP + (c + r) * TH / 2];
+  const pt = (c, r, p) => iso(c, r, p).join(",");
+  function cellPoly(g, c, r, p, attrs){
+    return s("polygon", Object.assign({points:[pt(c, r, p), pt(c + 1, r, p), pt(c + 1, r + 1, p), pt(c, r + 1, p)].join(" ")}, attrs), g);
+  }
+  function areaPoly(g, c0, r0, c1, r1, p, attrs){
+    return s("polygon", Object.assign({points:[pt(c0, r0, p), pt(c1, r0, p), pt(c1, r1, p), pt(c0, r1, p)].join(" ")}, attrs), g);
+  }
+  s("rect", {x:0, y:0, width:1100, height:1060, fill:css("--paper")}, svg);
+  label(svg, 24, 36, "Larkin Avenue, exploded", {cls:"disp", size:22});
+  label(svg, 24, 58, "Six plates of the same blocks, lifted apart.", {size:13, fill:"#5A5246"});
+  label(svg, 24, 76, "Threads drop from a record to what shaped it.", {size:13, fill:"#5A5246"});
+
+  const plateG = [];
+  const featEls = {};
+  function reg(id, el){ (featEls[id] = featEls[id] || []).push(el); el.classList.add("hit", "dimmable"); el.addEventListener("click", ev => { ev.stopPropagation(); select(id); }); }
+
+  for(let p = PLATES.length - 1; p >= 0; p--){
+    const P = PLATES[p];
+    const g = s("g", null, svg); plateG[p] = g;
+    const fill = P.color.startsWith("--") ? css(P.color) : P.color;
+    // slab thickness
+    const [lx, ly] = iso(0, R, p), [bx, by] = iso(C, R, p), [rx, ry] = iso(C, 0, p);
+    s("polygon", {points:`${lx},${ly} ${bx},${by} ${bx},${by + 9} ${lx},${ly + 9}`, fill:"#CFC4AC", stroke:"#1E1B17", "stroke-width":1}, g);
+    s("polygon", {points:`${bx},${by} ${rx},${ry} ${rx},${ry + 9} ${bx},${by + 9}`, fill:"#B9AD92", stroke:"#1E1B17", "stroke-width":1}, g);
+    areaPoly(g, 0, 0, C, R, p, {fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.4});
+    if(p > 0) areaPoly(g, 0, 0, C, R, p, {fill, opacity:.22, filter:"url(#wash)"});
+    const grid = s("g", {stroke:"#1E1B17", "stroke-width":.4, opacity:.25}, g);
+    for(let c = 1; c < C; c++) s("line", {x1:iso(c, 0, p)[0], y1:iso(c, 0, p)[1], x2:iso(c, R, p)[0], y2:iso(c, R, p)[1]}, grid);
+    for(let r = 1; r < R; r++) s("line", {x1:iso(0, r, p)[0], y1:iso(0, r, p)[1], x2:iso(C, r, p)[0], y2:iso(C, r, p)[1]}, grid);
+    // plate label with leader
+    const [tx, ty] = iso(0, R / 2, p);
+    s("path", {d:`M${tx - 6} ${ty} H260`, stroke:"#1E1B17", "stroke-width":.8, fill:"none", "stroke-dasharray":"1 3"}, g);
+    if(p > 0) s("rect", {x:236, y:ty - 14, width:12, height:28, fill, opacity:.8}, g);
+    label(g, 230, ty - 2, P.name, {cls:"disp", size:17, anchor:"end"});
+    label(g, 230, ty + 15, P.sub, {size:11.5, anchor:"end", fill:"#5A5246"});
+  }
+
+  /* --- plate 5: history */
+  (function(){
+    const p = 5, g = plateG[p];
+    const h1 = s("g", null, g);
+    areaPoly(h1, 0, 1, 10, R, p, {fill:"#C0392B", opacity:.38, stroke:"#8A2A1E", "stroke-width":1});
+    areaPoly(h1, 0, 1, 10, R, p, {fill:"url(#hatch-light)"});
+    areaPoly(h1, 10, 1, C, R, p, {fill:"#D9B23A", opacity:.4});
+    areaPoly(h1, 0, 0, C, 1, p, {fill:"#5B83B5", opacity:.35});
+    const [ax, ay] = iso(5.5, 4.4, p); label(h1, ax, ay, "D “hazardous”", {anchor:"middle", size:13, cls:"disp", fill:"#6E1E14"});
+    const [cx2, cy2] = iso(11, 4.2, p); label(h1, cx2, cy2, "C", {anchor:"middle", size:13, cls:"disp"});
+    reg("H1", h1);
+    const h2 = s("g", null, g);
+    areaPoly(h2, 3, 0, 5, R, p, {fill:"none", stroke:"#1E1B17", "stroke-width":1.6, "stroke-dasharray":"5 3"});
+    const [hx, hy] = iso(4, 0.2, p); label(h2, hx + 4, hy - 4, "cleared 1961", {size:11});
+    reg("H2", h2);
+    const h3 = s("g", null, g);
+    areaPoly(h3, 9, 0, C, 1, p, {fill:"#8A5A2B", opacity:.5, stroke:"#1E1B17"});
+    const [wx, wy] = iso(10.5, .5, p);
+    s("circle", {cx:wx, cy:wy, r:7, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.4}, h3);
+    for(let i = 0; i < 8; i++){ const a = i * Math.PI / 4; s("line", {x1:wx + Math.cos(a) * 7, y1:wy + Math.sin(a) * 7, x2:wx + Math.cos(a) * 10, y2:wy + Math.sin(a) * 10, stroke:"#1E1B17", "stroke-width":2}, h3); }
+    label(h3, wx + 14, wy - 8, "Works, closed 1983", {size:11});
+    reg("H3", h3);
+  })();
+
+  /* --- plate 4: social & cultural */
+  (function(){
+    const p = 4, g = plateG[p];
+    const s1 = s("g", null, g);
+    areaPoly(s1, 7, 2, C, R, p, {fill:css("--c-soc"), opacity:.35, filter:"url(#wash)"});
+    const [lx, ly] = iso(9.6, 5.4, p);
+    label(s1, lx, ly, "español · tiếng Việt · kreyòl", {anchor:"middle", size:11});
+    reg("S1", s1);
+    const s2 = s("g", null, g);
+    [[9.5, 2.5], [6.5, 6.4]].forEach(([c, r]) => {
+      const [x, y] = iso(c, r, p);
+      s("path", {d:`M${x} ${y - 18} v8 m-4 -5 h8 M${x - 7} ${y} v-10 l7 -6 l7 6 v10 z`, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.2}, s2);
+      for(let i = 0; i < 6; i++){ const a = i * Math.PI / 3; s("circle", {cx:x + Math.cos(a) * 15, cy:y - 4 + Math.sin(a) * 7, r:2.2, fill:css("--c-cult"), stroke:"#1E1B17", "stroke-width":.6}, s2); }
+    });
+    const [sx, sy] = iso(9.5, 2.5, p); label(s2, sx + 22, sy - 10, "savings circles", {size:11});
+    reg("S2", s2);
+  })();
+
+  /* --- plate 3: built & natural */
+  (function(){
+    const p = 3, g = plateG[p];
+    const e2 = s("g", null, g);
+    areaPoly(e2, 1.6, 0, 3, R, p, {fill:"url(#hatch-light)", stroke:"none"});
+    areaPoly(e2, 5, 0, 5.4, R, p, {fill:"url(#hatch-light)", stroke:"none"});
+    const [ex, ey] = iso(1.8, 1.0, p); label(e2, ex - 12, ey - 6, "exhaust zone", {size:11, anchor:"end"});
+    reg("E2", e2);
+    const h2 = s("g", null, g);
+    areaPoly(h2, 3, 0, 5, R, p, {fill:"#9C9486", stroke:"#1E1B17", "stroke-width":1.2});
+    s("line", {x1:iso(4, 0, p)[0], y1:iso(4, 0, p)[1], x2:iso(4, R, p)[0], y2:iso(4, R, p)[1], stroke:"#FBF8F0", "stroke-width":1.4, "stroke-dasharray":"6 5"}, h2);
+    const [hx, hy] = iso(4.4, 6.6, p); label(h2, hx + 10, hy + 18, "interstate spur", {size:11});
+    reg("H2", h2);
+    const e1 = s("g", null, g);
+    areaPoly(e1, 10, 3, C, R, p, {fill:"#3B7FB8", opacity:.4, filter:"url(#wash)"});
+    areaPoly(e1, 10, 3, C, R, p, {fill:"url(#waves)"});
+    const [fx, fy] = iso(12, 5, p); label(e1, fx + 10, fy, "floodplain", {size:11});
+    reg("E1", e1);
+  })();
+
+  /* --- plate 2: political */
+  (function(){
+    const p = 2, g = plateG[p];
+    const p2 = s("g", null, g);
+    areaPoly(p2, 0, 0, C, R, p, {fill:"none", stroke:css("--c-pol"), "stroke-width":3, opacity:.8});
+    const [bx, by] = iso(C, 0, p);
+    s("rect", {x:bx - 6, y:by - 26, width:118, height:20, rx:3, fill:css("--c-pol")}, p2);
+    label(p2, bx + 53, by - 11, "state law, whole plate", {anchor:"middle", size:11, fill:"#FBF8F0"});
+    reg("P2", p2);
+    const p4 = s("g", null, g);
+    areaPoly(p4, 5, 3, 9, 4, p, {fill:css("--c-econ"), opacity:.5});
+    areaPoly(p4, 5, 3, 9, 4, p, {fill:"none", stroke:"#1E1B17", "stroke-width":1});
+    const [zx, zy] = iso(7, 3, p); label(p4, zx + 2, zy - 6, "only shops allowed here", {size:11, anchor:"middle"});
+    reg("P4", p4);
+    const p3 = s("g", null, g);
+    const pts = []; for(let c = 0; c <= C; c++) pts.push(iso(c, 4.5, p));
+    s("polyline", {points:pts.map(q => q.join(",")).join(" "), fill:"none", stroke:css("--c-pol"), "stroke-width":3.4, "stroke-linecap":"round"}, p3);
+    [1, 2.5, 6, 9, 11].forEach(c => { const [x, y] = iso(c, 4.5, p); s("circle", {cx:x, cy:y, r:4, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.2}, p3); });
+    const [rx2, ry2] = iso(.4, 4.5, p); label(p3, rx2 - 8, ry2 + 4, "Route 6 · every 30 min", {size:11, anchor:"end"});
+    reg("P3", p3);
+  })();
+
+  /* --- plate 1: economic */
+  (function(){
+    const p = 1, g = plateG[p];
+    const ec = s("g", null, g);
+    areaPoly(ec, 8, 0, C, 1.6, p, {fill:css("--c-econ"), opacity:.5, filter:"url(#wash)"});
+    [[8.6,.6],[10,.6],[11.2,.9]].forEach(([c, r]) => { const [x, y] = iso(c, r, p); s("path", {d:`M${x - 10} ${y} v-9 l5 -4 v4 l5 -4 v4 l5 -4 v13 z`, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1}, ec); });
+    const [ex, ey] = iso(C, .8, p); label(ec, ex + 8, ey, "hourly employers", {size:11});
+    reg("EC1", ec);
+    const p1 = s("g", null, g);
+    [[6.5, 3.5, "closed 2009"], [4.5, 5.6, "closed 2009"]].forEach(([c, r, t], i) => {
+      const [x, y] = iso(c, r, p);
+      s("path", {d:`M${x - 9} ${y} v-12 h18 v12 M${x - 11} ${y - 12} l11 -6 l11 6`, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.1}, p1);
+      s("path", {d:`M${x - 9} ${y - 14} l18 14 M${x + 9} ${y - 14} l-18 14`, stroke:"#8E2C6E", "stroke-width":2.4}, p1);
+      if(i === 0) label(p1, x + 14, y - 12, "bank branches " + t, {size:11});
+    });
+    reg("P1", p1);
+  })();
+
+  /* --- plate 0: today's records */
+  (function(){
+    const p = 0, g = plateG[p];
+    // street and blocks for orientation
+    areaPoly(g, 0, 3.3, C, 3.7, p, {fill:"#E3DAC4", stroke:"none"});
+    areaPoly(g, 3, 0, 5, R, p, {fill:"#D5CCB8", stroke:"none"});
+    const [sx, sy] = iso(.2, 3.5, p); label(g, sx - 8, sy + 4, "Larkin Ave", {size:11, anchor:"end"});
+    RECORDS.forEach(r => {
+      const [x, y] = iso(r.cell[0] + .5, r.cell[1] + .5, p);
+      const m = s("g", {transform:`translate(${x},${y})`, tabindex:0, role:"button", "aria-label":r.n + ". " + r.title}, g);
+      s("line", {x1:0, y1:0, x2:0, y2:-20, stroke:"#1E1B17", "stroke-width":1.2}, m);
+      s("ellipse", {cx:0, cy:0, rx:5, ry:2.4, fill:"#1E1B17", opacity:.35}, m);
+      const c = s("g", {transform:"translate(0,-30)"}, m);
+      s("circle", {r:11, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.5}, c);
+      s("circle", {r:11, fill:css(KIND_V[r.kind]), opacity:.3}, c);
+      s("text", {y:5, "text-anchor":"middle", class:"disp", "font-size":14, fill:"#1E1B17", text:String(r.n)}, c);
+      m.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); select(r.id); } });
+      reg(r.id, m);
+    });
+  })();
+
+  const threads = s("g", {"pointer-events":"none"}, svg);
+  label(svg, 24, 1048, "Composite circumstances on invented blocks. Plates are aligned: the same square on every plate is the same place.", {size:12, fill:"#5A5246"});
+
+  function repPoint(id){
+    const it = BY[id];
+    if(it.kindOf === "record"){ const [x, y] = iso(it.cell[0] + .5, it.cell[1] + .5, 0); return [x, y - 19]; }
+    return iso(it.cells.rep[0] + .5, it.cells.rep[1] + .5, it.cells.plate);
+  }
+  views.exploded = {
+    highlight(){
+      threads.innerHTML = "";
+      const set = state.sel ? closure(state.sel) : null;
+      Object.entries(featEls).forEach(([id, els]) => els.forEach(el => el.classList.toggle("dim", !!set && !set.has(id))));
+      if(!set) return;
+      // a column of light through every plate at the selected item's cell
+      const it = BY[state.sel];
+      const cell = it.kindOf === "record" ? it.cell : it.cells.rep;
+      const top = iso(cell[0] + .5, cell[1] + .5, 0), bot = iso(cell[0] + .5, cell[1] + .5, 5);
+      s("line", {x1:top[0], y1:top[1], x2:bot[0], y2:bot[1], stroke:"#D9B23A", "stroke-width":10, opacity:.28}, threads);
+      for(let p = 0; p < 6; p++){ cellPoly(threads, cell[0], cell[1], p, {fill:"#D9B23A", opacity:.35, stroke:"#8A5A2B", "stroke-width":1}); }
+      edgesIn(set).forEach(([child, parent]) => {
+        const a = repPoint(child), b = repPoint(parent);
+        const d = `M${a[0]} ${a[1]} C${a[0]} ${(a[1] + b[1]) / 2} ${b[0]} ${(a[1] + b[1]) / 2} ${b[0]} ${b[1]}`;
+        s("path", {d, stroke:"#FBF8F0", "stroke-width":5, fill:"none", opacity:.85}, threads);
+        s("path", {d, stroke:"#1E1B17", "stroke-width":1.8, fill:"none", "stroke-dasharray":"6 4"}, threads);
+        s("circle", {cx:b[0], cy:b[1], r:4, fill:"#1E1B17"}, threads);
+      });
+    }
+  };
+})();
+
+/* ================================================================== 3. THE WORKS */
+(function(){
+  const svg = document.getElementById("v-works");
+  const FLOOR = 700;
+  s("rect", {x:0, y:0, width:1400, height:850, fill:css("--paper")}, svg);
+  label(svg, 440, 40, "Household 0412, cut open", {cls:"disp", size:22});
+  label(svg, 440, 62, "Accounts are tanks, payments are pipes, fees are leaks, rules are valves. Loops are marked R (reinforcing) and B (balancing).", {size:13, fill:"#5A5246"});
+
+  /* ground + foundation of circumstances */
+  washRect(svg, 0, FLOOR, 1400, 120, css("--c-hist"), .18);
+  s("rect", {x:0, y:FLOOR, width:1400, height:120, fill:"url(#strata)"}, svg);
+  s("line", {x1:0, y1:FLOOR, x2:1400, y2:FLOOR, stroke:"#1E1B17", "stroke-width":2, filter:"url(#ink)"}, svg);
+  const stones = s("g", null, svg);
+  const stoneEls = {};
+  const STONES = [["P1",446,738,108],["P2",558,738,108],["P3",670,738,104],["EC1",778,738,108],["S2",890,738,112],["H1",446,778,346],["H3",796,778,206]];
+  STONES.forEach(([id, x, y, w]) => {
+    const c = BY[id];
+    const g = s("g", {class:"hit dimmable", tabindex:0, role:"button", "aria-label":c.title}, stones);
+    s("rect", {x, y, width:w, height:36, rx:5, fill:col(c.types[0]), opacity:.45, filter:"url(#wash)"}, g);
+    s("rect", {x, y, width:w, height:36, rx:5, fill:"none", stroke:"#1E1B17", "stroke-width":1.3, filter:"url(#ink)"}, g);
+    label(g, x + w / 2, y + 15, c.title.length > 30 && w < 200 ? c.lines[0].split(/[:;]/)[0] : c.title, {anchor:"middle", size:10.5});
+    label(g, x + w / 2, y + 29, c.year, {anchor:"middle", size:10, cls:"disp", fill:"#5A5246"});
+    stoneEls[id] = g;
+    g.addEventListener("click", () => select(id));
+    g.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); select(id); } });
+  });
+  label(svg, 724, 834, "The house stands on its circumstances.", {anchor:"middle", size:12.5, fill:"#5A5246"});
+
+  /* house shell */
+  const H = inkG(svg);
+  s("rect", {x:440, y:230, width:570, height:470, fill:"#FBF8F0"}, H);
+  s("path", {d:"M424 232 L725 104 L1026 232 Z", fill:"#C9705A", opacity:.85}, H);
+  s("path", {d:"M424 232 L725 104 L1026 232 Z", fill:"url(#hatch-light)"}, H);
+  s("rect", {x:440, y:230, width:14, height:470, fill:"url(#hatch)"}, H);
+  s("rect", {x:996, y:230, width:14, height:470, fill:"url(#hatch)"}, H);
+  s("rect", {x:440, y:456, width:570, height:10, fill:"url(#hatch)"}, H);
+  label(H, 725, 196, "HOUSEHOLD 0412", {anchor:"middle", size:12, cls:"disp"});
+  label(H, 725, 214, "two adults, two kids · renters", {anchor:"middle", size:11, fill:"#5A5246"});
+  // upstairs life
+  s("rect", {x:690, y:410, width:46, height:16, fill:"#B4505E", opacity:.6}, H); figure(H, 712, 426, {lie:true});
+  s("rect", {x:742, y:410, width:46, height:16, fill:"#3B7FB8", opacity:.6}, H); figure(H, 764, 426, {lie:true});
+  // kitchen
+  s("path", {d:"M862 664 h96 M872 664 v36 M948 664 v36", "stroke-width":1.6}, H);
+  figure(H, 900, 700, {sit:true}); figure(H, 930, 700);
+
+  /* left vignettes */
+  const V = inkG(svg);
+  // employer
+  s("rect", {x:30, y:470, width:170, height:230, fill:"#FBF8F0"}, V);
+  s("path", {d:"M30 470 l28 -24 v24 l28 -24 v24 l28 -24 v24 l28 -24 v24 l28 -24 v24", fill:"#EDE5D1"}, V);
+  label(V, 115, 500, "LARKIN DISTRIBUTION", {anchor:"middle", size:10.5, cls:"disp"});
+  label(V, 115, 516, "employer · paper checks", {anchor:"middle", size:10.5, fill:"#5A5246"});
+  const pump = s("g", {transform:"translate(115,610)"}, V);
+  s("circle", {r:32, fill:"#EDE5D1"}, pump);
+  const pumpSpokes = s("g", null, pump);
+  for(let i = 0; i < 6; i++){ const a = i * Math.PI / 3; s("line", {x1:0, y1:0, x2:Math.cos(a) * 30, y2:Math.sin(a) * 30}, pumpSpokes); }
+  s("circle", {r:6, fill:"#1E1B17"}, pump);
+  figure(V, 60, 700); figure(V, 172, 700);
+  // bus stop
+  s("rect", {x:30, y:250, width:170, height:170, fill:"#FBF8F0", "stroke-dasharray":"4 3"}, V);
+  label(V, 115, 272, "ROUTE 6 STOP", {anchor:"middle", size:10.5, cls:"disp"});
+  const busSched = label(V, 115, 288, "every 30 min", {anchor:"middle", size:11, fill:"#2D4F86"});
+  s("path", {d:"M60 410 V330 M54 330 h12 v-12 h-12 z", fill:"#2D4F86"}, V);
+  s("path", {d:"M90 410 V352 H170 V410"}, V); s("rect", {x:90, y:352, width:80, height:5, fill:"url(#hatch)"}, V);
+  figure(V, 120, 410); figure(V, 145, 410);
+  // kiosk
+  s("rect", {x:235, y:540, width:155, height:160, fill:"#FBF8F0"}, V);
+  s("path", {d:"M229 540 L312 512 L396 540 Z", fill:"#EDE5D1"}, V);
+  [250, 290, 330, 370].forEach(x => s("rect", {x:x - 4, y:568, width:8, height:132, fill:"#FBF8F0"}, V));
+  s("rect", {x:247, y:546, width:130, height:16, fill:"#8E2C6E"}, V);
+  label(V, 312, 558, "QUIKCASH · CHECKS CASHED", {anchor:"middle", size:9.5, fill:"#FBF8F0"});
+
+  /* right vignettes */
+  // bills
+  s("rect", {x:1050, y:150, width:140, height:62, fill:"#FBF8F0"}, V);
+  label(V, 1120, 172, "INSURER · PHONE CO.", {anchor:"middle", size:10, cls:"disp"});
+  label(V, 1120, 190, "autopay on the 3rd", {anchor:"middle", size:10.5, fill:"#5A5246"});
+  const billsX = s("g", {opacity:0}, V);
+  s("path", {d:"M1162 194 l14 14 m0 -14 l-14 14", stroke:"#8E2C6E", "stroke-width":3}, billsX);
+  // church
+  s("rect", {x:1230, y:150, width:150, height:150, fill:"#FBF8F0"}, V);
+  s("path", {d:"M1222 150 L1305 108 L1388 150 Z", fill:"#EDE5D1"}, V);
+  s("path", {d:"M1305 108 V80 M1298 88 h14"}, V);
+  label(V, 1305, 172, "IGLESIA NUEVA VIDA", {anchor:"middle", size:9.5, cls:"disp"});
+    // lender
+  s("rect", {x:1220, y:360, width:165, height:200, fill:"#FBF8F0"}, V);
+  s("rect", {x:1230, y:370, width:145, height:18, fill:"#B8862A"}, V);
+  label(V, 1302, 383, "ADVANCE NOW · PAYDAY", {anchor:"middle", size:9.5, fill:"#FBF8F0"});
+  figure(V, 1270, 560); figure(V, 1330, 560, {color:"#444"});
+  // dollar mart
+  s("rect", {x:1050, y:600, width:150, height:100, fill:"#FBF8F0"}, V);
+  s("rect", {x:1058, y:608, width:134, height:16, fill:"#2D4F86"}, V);
+  label(V, 1125, 620, "DOLLAR MART", {anchor:"middle", size:10, fill:"#FBF8F0"});
+  const dmX = s("g", {opacity:0}, V);
+  s("path", {d:"M1112 650 l18 18 m0 -18 l-18 18", stroke:"#8E2C6E", "stroke-width":3.4}, dmX);
+
+  /* pipes */
+  const PIPES = {
+    "p-pay-paper":   {d:"M147 610 H455 V585 H505 V594", loops:["R3"]},
+    "p-pay-direct":  {d:"M185 470 H700 V502", loops:[]},
+    "p-bills":       {d:"M740 502 V486 H1022 V182 H1050", loops:["R1"]},
+    "p-shop":        {d:"M760 615 H1050", loops:["R1"]},
+    "p-cash-shop":   {d:"M505 690 V714 H1110 V700", loops:[]},
+    "p-cash-payday": {d:"M505 690 V714 H1300 V560", loops:["R2"]},
+    "p-cash-tanda":  {d:"M505 690 V714 H1394 V250 H1380", loops:["B1"]},
+    "p-loan":        {d:"M1220 410 H960", loops:["R2"], dashed:true},
+    "p-time":        {d:"M200 330 H480", loops:["R3"]},
+    "p-payout":      {d:"M1230 250 H630 V346", loops:["B1"], dashed:true}
+  };
+  const pipeLayer = s("g", null, svg);
+  const flowLayer = s("g", {"pointer-events":"none"}, svg);
+  Object.entries(PIPES).forEach(([id, p]) => {
+    const g = s("g", {class:"dimmable"}, pipeLayer);
+    s("path", {d:p.d, stroke:"#1E1B17", "stroke-width":11, fill:"none", "stroke-linejoin":"round", filter:"url(#ink)"}, g);
+    s("path", {d:p.d, stroke: p.dashed ? "#F6F1E4" : "#DCE6EC", "stroke-width":7, fill:"none", "stroke-linejoin":"round"}, g);
+    if(p.dashed) s("path", {d:p.d, stroke:"#1E1B17", "stroke-width":1, fill:"none", "stroke-dasharray":"3 5"}, g);
+    p.el = g;
+    p.flow = s("path", {d:p.d, stroke:"#3B7FB8", "stroke-width":4, fill:"none", "stroke-dasharray":"3 9", "stroke-linecap":"round", opacity:0}, flowLayer);
+  });
+  label(svg, 470, 728, "pipes under the floor: cash", {size:10.5, fill:"#5A5246"});
+  label(svg, 300, 462, "direct deposit (needs the bank to clear it same day)", {size:10.5, fill:"#5A5246"});
+  label(svg, 1100, 404, "rolled over", {size:10.5, fill:"#5A5246"});
+  label(svg, 800, 244, "circle payout, week 10", {size:10.5, fill:"#5A5246"});
+
+  /* tanks */
+  const tankLayer = s("g", null, svg);
+  function tank(id, x, y, w, hh, min, max, title, color, opt){
+    opt = opt || {};
+    const g = s("g", null, tankLayer);
+    s("rect", {x, y, width:w, height:hh, rx:opt.jar ? 10 : 4, fill:"#EEF3F5", stroke:"none"}, g);
+    const clip = s("clipPath", {id:"clip-" + id}, g); s("rect", {x, y, width:w, height:hh, rx:opt.jar ? 10 : 4}, clip);
+    const water = s("rect", {x, y:y + hh, width:w, height:0, fill:color, opacity:.62, "clip-path":`url(#clip-${id})`}, g);
+    const neg = s("rect", {x, y:y + hh, width:w, height:0, fill:"#8E2C6E", opacity:.55, "clip-path":`url(#clip-${id})`}, g);
+    s("rect", {x, y, width:w, height:hh, rx:opt.jar ? 10 : 4, fill:"none", stroke:"#1E1B17", "stroke-width":1.8, filter:"url(#ink)"}, g);
+    for(let i = 1; i < 5; i++) s("line", {x1:x, y1:y + i * hh / 5, x2:x + 7, y2:y + i * hh / 5, stroke:"#1E1B17", "stroke-width":.8}, g);
+    const zeroY = y + hh - (0 - min) / (max - min) * hh;
+    if(min < 0){ s("line", {x1:x - 4, y1:zeroY, x2:x + w + 4, y2:zeroY, stroke:"#1E1B17", "stroke-width":1.2, "stroke-dasharray":"4 2"}, g); label(g, x - 6, zeroY + 4, "$0", {anchor:"end", size:10.5}); }
+    label(g, x + w / 2, y - 22, title, {anchor:"middle", size:12});
+    const val = s("text", {x:x + w / 2, y:y - 6, "text-anchor":"middle", "font-size":13, "font-weight":700, fill:"#1E1B17", style:"font-family:var(--font-ui);font-variant-numeric:tabular-nums"}, g);
+    return {set(v, text){
+      const clamp = Math.max(min, Math.min(max, v));
+      const vy = y + hh - (clamp - min) / (max - min) * hh;
+      if(v >= 0){ water.setAttribute("y", vy); water.setAttribute("height", zeroY - vy); neg.setAttribute("height", 0); }
+      else { water.setAttribute("height", 0); neg.setAttribute("y", zeroY); neg.setAttribute("height", vy - zeroY); }
+      val.textContent = text;
+      val.setAttribute("fill", v < 0 ? css("--r-fail") : "#1E1B17");
+    }, g};
+  }
+  const T = {
+    cash: tank("cash", 470, 594, 70, 96, 0, 800, "Cash on hand", "#5E8A3A", {jar:true}),
+    checking: tank("checking", 640, 502, 120, 188, -150, 900, "Checking", "#3B7FB8"),
+    fees: tank("fees", 772, 640, 46, 50, 0, 160, "Fees", "#8E2C6E", {jar:true}),
+    time: tank("time", 480, 300, 80, 140, 0, 90, "Time lost", "#B8862A"),
+    savings: tank("savings", 600, 350, 60, 90, 0, 1000, "Savings", "#5E8A3A", {jar:true}),
+    debt: tank("debt", 830, 300, 120, 140, 0, 400, "Owed to lender", "#8A5A2B"),
+    pot: tank("pot", 1270, 216, 70, 76, 0, 1000, "Circle pot", "#76569A", {jar:true})
+  };
+
+  /* valves */
+  const VALVES = {
+    pay:{x:300, y:610, label:"V1"}, od:{x:766, y:668, label:"V2"}, bus:{x:330, y:330, label:"V3"}, payday:{x:1300, y:640, label:"V4"}
+  };
+  const valveEls = {};
+  Object.entries(VALVES).forEach(([k, v]) => {
+    const g = s("g", {transform:`translate(${v.x},${v.y})`}, svg);
+    s("circle", {r:13, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":2}, g);
+    const handle = s("line", {x1:-10, y1:0, x2:10, y2:0, stroke:"#8E2C6E", "stroke-width":4, "stroke-linecap":"round"}, g);
+    s("text", {x:0, y:-18, "text-anchor":"middle", class:"disp", "font-size":13, fill:"#1E1B17", text:v.label}, g);
+    valveEls[k] = handle;
+  });
+  // overdraft spout
+  s("path", {d:"M760 668 h10", stroke:"#1E1B17", "stroke-width":5}, svg);
+  // kiosk fee bucket + drip
+  const kioskBucket = s("g", null, svg);
+  s("path", {d:"M286 662 h28 l-3 30 h-22 z", fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":1.4}, kioskBucket);
+  label(kioskBucket, 300, 655, "2% fee", {anchor:"middle", size:10.5});
+
+  /* drips and floating labels */
+  const dripLayer = s("g", {"pointer-events":"none"}, svg);
+  const leaks = { "l-kiosk":[300, 622, 300, 680], "l-od":[772, 672, 795, 688], "l-payday":[1300, 628, 1300, 560] };
+
+  /* loop markers */
+  const LOOPS = {
+    R1:{x:860, y:560, name:"Fee spiral", kind:"R", text:"A low balance lets an autopay overdraw the account. The overdraft fee lowers the balance further, so the next payment is more likely to bounce.", parts:["p-bills","p-shop"], tanks:["checking","fees"]},
+    R2:{x:1130, y:470, name:"Rollover", kind:"R", text:"A short week leads to a payday loan. Each renewal pays the fee without touching the $300, which leaves the next week short again.", parts:["p-cash-payday","p-loan"], tanks:["debt","cash"]},
+    R3:{x:300, y:236, name:"Time tax", kind:"R", text:"A missed bus means a late clock-in and docked pay. Less pay pushes back fixing the car, which keeps the household on the bus.", parts:["p-time","p-pay-paper"], tanks:["time"]},
+    B1:{x:1130, y:300, name:"Circle buffer", kind:"B", text:"Weekly payments into the savings circle come back as a $1,000 payout. The payout covers the next shortfall without a loan, which works against the rollover loop.", parts:["p-cash-tanda","p-payout"], tanks:["savings","pot"]}
+  };
+  const loopEls = {};
+  Object.entries(LOOPS).forEach(([k, L]) => {
+    const g = s("g", {transform:`translate(${L.x},${L.y})`, class:"hit", tabindex:0, role:"button", "aria-label":"Loop " + k + ", " + L.name}, svg);
+    s("circle", {r:22, fill:"#FBF8F0", stroke:"none"}, g);
+    s("path", {d:"M16 -10 A19 19 0 1 1 6 -18", fill:"none", stroke:"#1E1B17", "stroke-width":1.8, "marker-end":"url(#arrow)"}, g);
+    s("text", {y:6, "text-anchor":"middle", class:"disp", "font-size":17, fill:"#1E1B17", text:k}, g);
+    label(g, 0, 36, L.name, {anchor:"middle", size:11});
+    loopEls[k] = g;
+    g.addEventListener("click", () => toggleLoop(k));
+    g.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggleLoop(k); } });
+  });
+
+  /* clock vignette */
+  const clockG = s("g", {transform:"translate(115,130)"}, svg);
+  s("circle", {r:64, fill:"#FBF8F0", stroke:"#1E1B17", "stroke-width":2, filter:"url(#ink)"}, clockG);
+  for(let i = 0; i < 12; i++){ const a = i * Math.PI / 6; s("line", {x1:Math.sin(a) * 54, y1:-Math.cos(a) * 54, x2:Math.sin(a) * 60, y2:-Math.cos(a) * 60, stroke:"#1E1B17", "stroke-width": i % 3 ? 1 : 2.4}, clockG); }
+  const hourHand = s("line", {x1:0, y1:0, x2:0, y2:-32, stroke:"#1E1B17", "stroke-width":4, "stroke-linecap":"round"}, clockG);
+  const minHand = s("line", {x1:0, y1:0, x2:0, y2:-48, stroke:"#1E1B17", "stroke-width":2, "stroke-linecap":"round"}, clockG);
+  s("circle", {r:4, fill:"#8E2C6E"}, clockG);
+  const clockText = s("text", {x:0, y:90, "text-anchor":"middle", "font-size":15, "font-weight":700, fill:"#1E1B17", style:"font-family:var(--font-ui);font-variant-numeric:tabular-nums"}, clockG);
+  const ampm = s("text", {x:0, y:30, "text-anchor":"middle", class:"disp", "font-size":12, fill:"#5A5246"}, clockG);
+
+  /* ---- simulation */
+  const valves = {pay:"paper", od:"fee", bus:30, payday:"fee"};
+  const START = {checking:212, cash:18, debt:300, fees:0, time:0, savings:40, pot:600};
+  function sim(v){
+    const st = Object.assign({}, START);
+    const ev = [];
+    function push(t, text, amt, pipes, deltas, opt){
+      opt = opt || {};
+      Object.entries(deltas).forEach(([k, d]) => st[k] = +(st[k] + d).toFixed(2));
+      ev.push({t, text, amt, pipes, deltas, fail:!!opt.fail, leak:opt.leak, tag:opt.tag, x:opt.x});
+    }
+    push(120, "Phone bill autopay", "−$65.00", ["p-bills"], {checking:-65});
+    if(v.bus === 30) push(462, "Missed Route 6 by a minute, late clock-in", "38 min", ["p-time"], {time:38}, {fail:true, tag:"−38 min", x:[330, 310]});
+    else push(462, "Caught Route 6 after a short wait", "7 min", ["p-time"], {time:7}, {tag:"−7 min", x:[330, 310]});
+    if(v.pay === "paper") push(675, "Paycheck cashed at QuikCash ($710)", "−$14.20 fee", ["p-pay-paper"], {cash:695.80, fees:14.20}, {leak:"l-kiosk", tag:"−$14.20", x:[300, 650]});
+    else push(675, "Paycheck deposited directly ($710)", "+$710.00", ["p-pay-direct"], {checking:710}, {tag:"+$710", x:[600, 460]});
+    const pf = v.payday === "fee" ? 75 : 4.14;
+    const payFrom = st.cash >= pf ? "cash" : "checking";
+    push(785, "Payday loan renewed, $300 still owed", "−$" + pf.toFixed(2) + " fee", payFrom === "cash" ? ["p-cash-payday", "p-loan"] : ["p-loan"], {[payFrom]:-pf, fees:pf}, {leak:"l-payday", tag:"−$" + pf.toFixed(2), x:[1300, 600]});
+    if(st.checking >= 162) push(900, "Car insurance autopay", "−$162.00", ["p-bills"], {checking:-162});
+    else if(v.od === "fee") push(900, "Car insurance autopay overdraws the account", "−$162 − $35 fee", ["p-bills"], {checking:-197, fees:35}, {fail:true, leak:"l-od", tag:"−$35 overdraft", x:[790, 640]});
+    else push(900, "Car insurance autopay returned unpaid, no fee", "$162 unpaid", ["p-bills"], {}, {fail:true, tag:"returned", x:[1120, 230]});
+    if(st.checking >= 23.18) push(1010, "Groceries at Dollar Mart, debit", "−$23.18", ["p-shop"], {checking:-23.18});
+    else push(1010, "Debit declined at Dollar Mart, paid cash", "−$23.18 cash", ["p-shop", "p-cash-shop"], {cash:-23.18, time:6}, {fail:true, tag:"declined", x:[1125, 590]});
+    const tFrom = st.cash >= 100 ? "cash" : "checking";
+    push(1140, "Savings circle, week 7", "−$100.00", ["p-cash-tanda"], {[tFrom]:-100, pot:100});
+    return {events:ev, end:st};
+  }
+  let run = sim(valves);
+
+  function valuesAt(t){
+    const st = Object.assign({}, START);
+    run.events.forEach(e => { if(e.t <= t) Object.entries(e.deltas).forEach(([k, d]) => st[k] += d); });
+    return st;
+  }
+  const money = v => (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(2);
+
+  /* ---- rail panel for this view */
+  const panel = document.createElement("div");
+  panel.innerHTML = `
+    <h3>Turn the valves</h3>
+    <p class="sub">Same household, same day. Change one rule and watch which loops stop.</p>
+    <div class="ctrl"><button type="button" id="w-play">Pause</button><button type="button" id="w-end">Jump to midnight</button><button type="button" id="w-restart">Restart day</button></div>
+    <div class="valve"><div class="vl">V1 How the paycheck arrives <small>employer and bank</small></div><div class="seg" data-k="pay"><button type="button" data-v="paper">Paper check</button><button type="button" data-v="direct">Direct deposit</button></div></div>
+    <div class="valve"><div class="vl">V2 When a payment overdraws <small>bank policy</small></div><div class="seg" data-k="od"><button type="button" data-v="fee">$35 fee</button><button type="button" data-v="decline">Decline, no fee</button></div></div>
+    <div class="valve"><div class="vl">V3 Route 6 service <small>transit agency</small></div><div class="seg" data-k="bus"><button type="button" data-v="30">Every 30 min</button><button type="button" data-v="15">Every 15 min</button></div></div>
+    <div class="valve"><div class="vl">V4 Payday renewal price <small>state law</small></div><div class="seg" data-k="payday"><button type="button" data-v="fee">$15 per $100</button><button type="button" data-v="cap">36% APR cap</button></div></div>
+    <div class="tiles"><div class="tile"><div class="k">Fees today</div><div class="v" id="w-fees"></div></div><div class="tile"><div class="k">Time lost</div><div class="v" id="w-time"></div></div><div class="tile"><div class="k">Checking at midnight</div><div class="v" id="w-chk"></div></div></div>
+    <h3>Loops</h3>
+    <ul class="loops" id="w-loops"></ul>
+    <h3 style="margin-top:14px">Today</h3>
+    <ol class="ledger" id="w-ledger"></ol>`;
+  const loopsUl = panel.querySelector("#w-loops");
+  Object.entries(LOOPS).forEach(([k, L]) => {
+    const li = h("li", null, loopsUl);
+    const b = h("button", {type:"button", "aria-pressed":"false", "data-loop":k}, li);
+    h("span", {class:"badge", text:k}, b);
+    h("span", {html:`<b>${L.name}</b> <span class="st"></span><br>${L.text}`}, b);
+    b.addEventListener("click", () => toggleLoop(k));
+  });
+  panel.querySelectorAll(".seg").forEach(seg => {
+    seg.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      const k = seg.dataset.k; valves[k] = k === "bus" ? +b.dataset.v : b.dataset.v;
+      run = sim(valves); syncPanel(); fired.clear(); run.events.forEach(e => { if(e.t <= simT) fired.add(e); }); drawState(true);
+    }));
+  });
+
+  function activeLoops(){
+    const a = {};
+    a.R1 = run.events.some(e => e.leak === "l-od");
+    a.R2 = valves.payday === "fee";
+    a.R3 = valves.bus === 30;
+    a.B1 = true;
+    return a;
+  }
+  function syncPanel(){
+    panel.querySelectorAll(".seg").forEach(seg => seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === String(valves[seg.dataset.k])))));
+    const e = run.end;
+    const fe = panel.querySelector("#w-fees"); fe.textContent = money(e.fees); fe.classList.toggle("bad", e.fees > 20);
+    const tm = panel.querySelector("#w-time"); tm.textContent = Math.round(e.time) + " min"; tm.classList.toggle("bad", e.time > 20);
+    const ck = panel.querySelector("#w-chk"); ck.textContent = money(e.checking); ck.classList.toggle("bad", e.checking < 0);
+    const act = activeLoops();
+    loopsUl.querySelectorAll("button").forEach(b => {
+      const k = b.dataset.loop; b.querySelector(".st").textContent = act[k] ? "· running today" : "· broken today";
+      b.classList.toggle("off", !act[k]); b.setAttribute("aria-pressed", String(state.loop === k));
+    });
+    Object.entries(loopEls).forEach(([k, g]) => g.setAttribute("opacity", act[k] ? 1 : .35));
+    valveEls.pay.setAttribute("transform", valves.pay === "paper" ? "" : "rotate(90)");
+    valveEls.od.setAttribute("transform", valves.od === "fee" ? "" : "rotate(90)");
+    valveEls.bus.setAttribute("transform", valves.bus === 30 ? "" : "rotate(90)");
+    valveEls.payday.setAttribute("transform", valves.payday === "fee" ? "" : "rotate(90)");
+    busSched.textContent = "every " + valves.bus + " min";
+    PIPES["p-pay-paper"].el.setAttribute("opacity", valves.pay === "paper" ? 1 : .3);
+    PIPES["p-pay-direct"].el.setAttribute("opacity", valves.pay === "direct" ? 1 : .3);
+    kioskBucket.setAttribute("opacity", valves.pay === "paper" ? 1 : .3);
+  }
+  function toggleLoop(k){
+    state.loop = state.loop === k ? null : k;
+    syncPanel(); applyLoopHighlight();
+  }
+  function applyLoopHighlight(){
+    const L = state.loop ? LOOPS[state.loop] : null;
+    Object.entries(PIPES).forEach(([id, p]) => p.el.classList.toggle("dim", !!L && !L.parts.includes(id)));
+    Object.entries(T).forEach(([id, tk]) => tk.g.classList.toggle("dim", !!L && !L.tanks.includes(id)));
+    Object.values(T).forEach(tk => tk.g.classList.add("dimmable"));
+    Object.entries(loopEls).forEach(([k, g]) => g.querySelector("circle").setAttribute("fill", state.loop === k ? "#EED9A8" : "#FBF8F0"));
+  }
+
+  /* ---- time */
+  let simT = 600, playing = !reduced, last = 0;
+  const SPEED = 30; // sim minutes per second
+  const fired = new Set();
+  run.events.forEach(e => { if(e.t <= simT) fired.add(e); });
+  const pulses = [];
+  function fire(e){
+    e.pipes.forEach(pid => pulses.push({pid, until:simT + 70, fail:e.fail}));
+    if(e.leak) pulses.push({leak:e.leak, until:simT + 90});
+    if(e.tag) pulses.push({tag:e.tag, x:e.x, until:simT + 120, fail:e.fail, born:simT});
+    if(e.text.startsWith("Debit declined")) pulses.push({mark:dmX, until:simT + 160});
+    if(e.text.includes("returned unpaid")) pulses.push({mark:billsX, until:simT + 160});
+  }
+  function drawState(force){
+    const v = valuesAt(simT);
+    T.cash.set(v.cash, money(v.cash)); T.checking.set(v.checking, money(v.checking)); T.fees.set(v.fees, money(v.fees));
+    T.time.set(v.time, Math.round(v.time) + " min"); T.savings.set(v.savings, money(v.savings)); T.debt.set(v.debt, money(v.debt)); T.pot.set(v.pot, money(v.pot));
+    const hh = Math.floor(simT / 60) % 24, mm = Math.floor(simT % 60);
+    hourHand.setAttribute("transform", `rotate(${(hh % 12 + mm / 60) * 30})`);
+    minHand.setAttribute("transform", `rotate(${mm * 6})`);
+    clockText.textContent = String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0");
+    ampm.textContent = hh < 12 ? "a.m." : "p.m.";
+    // ledger
+    const ol = panel.querySelector("#w-ledger");
+    if(force || ol.childElementCount !== run.events.length || ol.dataset.t !== String(Math.floor(simT / 10))){
+      ol.dataset.t = String(Math.floor(simT / 10));
+      ol.innerHTML = "";
+      let nowIdx = -1; run.events.forEach((e, i) => { if(e.t <= simT) nowIdx = i; });
+      run.events.forEach((e, i) => {
+        const li = h("li", {class: e.t > simT ? "future" : (i === nowIdx ? "now" : "")}, ol);
+        h("span", {class:"t", text:String(Math.floor(e.t / 60)).padStart(2, "0") + ":" + String(e.t % 60).padStart(2, "0")}, li);
+        h("span", {text:e.text}, li);
+        h("span", {class:"a" + (e.fail ? " fail" : ""), text:e.amt}, li);
+      });
+    }
+  }
+  const tagLayer = s("g", {"pointer-events":"none"}, svg);
+  function tick(ts){
+    const dt = last ? Math.min(.1, (ts - last) / 1000) : 0; last = ts;
+    if(playing && state.view === "works"){
+      const prev = simT; simT = Math.min(1440, simT + dt * SPEED);
+      run.events.forEach(e => { if(e.t > prev && e.t <= simT && !fired.has(e)){ fired.add(e); fire(e); } });
+      if(simT >= 1440){ playing = false; panel.querySelector("#w-play").textContent = "Play"; }
+      drawState(false);
+    }
+    // pulses
+    Object.values(PIPES).forEach(p => p.flow.setAttribute("opacity", 0));
+    dripLayer.innerHTML = ""; tagLayer.innerHTML = ""; dmX.setAttribute("opacity", 0); billsX.setAttribute("opacity", 0);
+    for(let i = pulses.length - 1; i >= 0; i--){
+      const q = pulses[i];
+      if(simT > q.until || simT < (q.born || 0) - 1){ pulses.splice(i, 1); continue; }
+      if(q.pid){ const f = PIPES[q.pid].flow; f.setAttribute("opacity", 1); f.setAttribute("stroke", q.fail ? css("--r-fail") : "#3B7FB8"); f.setAttribute("stroke-dashoffset", String(-(ts / 40) % 12)); }
+      if(q.leak){ const [x1, y1, x2, y2] = leaks[q.leak]; for(let k = 0; k < 3; k++){ const f = ((ts / 600) + k / 3) % 1; s("circle", {cx:x1 + (x2 - x1) * f, cy:y1 + (y2 - y1) * f, r:3.2, fill:"#8E2C6E"}, dripLayer); } }
+      if(q.tag){ const age = simT - q.born; const g = s("g", {transform:`translate(${q.x[0]},${q.x[1] - age * .25})`, opacity: Math.max(0, 1 - age / 120)}, tagLayer);
+        const w = q.tag.length * 7.5 + 16; s("rect", {x:-w / 2, y:-14, width:w, height:20, rx:10, fill: q.fail ? css("--r-fail") : "#1E1B17"}, g);
+        s("text", {y:1, "text-anchor":"middle", "font-size":12, "font-weight":700, fill:"#FBF8F0", style:"font-family:var(--font-ui)", text:q.tag}, g); }
+      if(q.mark) q.mark.setAttribute("opacity", 1);
+    }
+    if(playing && state.view === "works") pumpSpokes.setAttribute("transform", `rotate(${(ts / 30) % 360})`);
+    requestAnimationFrame(tick);
+  }
+
+  views.works = {
+    panel,
+    mount(){
+      const playB = panel.querySelector("#w-play");
+      playB.onclick = () => { if(simT >= 1440){ simT = 0; fired.clear(); } playing = !playing; playB.textContent = playing ? "Pause" : "Play"; };
+      panel.querySelector("#w-end").onclick = () => { simT = 1440; run.events.forEach(e => fired.add(e)); playing = false; playB.textContent = "Play"; drawState(true); };
+      panel.querySelector("#w-restart").onclick = () => { simT = 0; fired.clear(); pulses.length = 0; playing = true; playB.textContent = "Pause"; drawState(true); };
+      playB.textContent = playing ? "Pause" : "Play";
+      syncPanel(); drawState(true); applyLoopHighlight();
+    },
+    highlight(){
+      const set = state.sel ? closure(state.sel) : null;
+      Object.entries(stoneEls).forEach(([id, g]) => g.classList.toggle("dim", !!set && !set.has(id) && BY[state.sel].kindOf === "context"));
+    }
+  };
+  if(reduced){ simT = 1440; run.events.forEach(e => fired.add(e)); }
+  drawState(true); syncPanel();
+  requestAnimationFrame(tick);
+})();
+
+/* ------------------------------------------------------------------ chrome */
+const DIRECTIONS = {
+  section:"<b>Section.</b> The district sliced open like a Biesty cross-section. Today’s records on the street, the circumstances that produced them in layers below, slowest at the bottom. Choose a number or a layer tag to drill down.",
+  exploded:"<b>Exploded view.</b> The same blocks lifted into six aligned plates. A thread drops from a record to every plate that shaped it, and the highlighted square shows the same spot on every plate.",
+  works:"<b>The Works.</b> One household as Biesty machinery: tanks, pipes, leaks and valves, running through the day. Turn a valve in the field notes to see which loops it breaks."
+};
+const NOTES = {
+  section:"<h3>Reading the section</h3><p class=\"sub\">Depth means slowness: the economy changes in years, the bedrock in a century.</p><p class=\"hint\">Try 2, the missed bus: it rests on the 2019 service cut and on the 1961 spur, which rests on the 1938 map. Try a layer tag to go the other way, up to the records it shapes.</p>",
+  exploded:"<h3>Reading the plates</h3><p class=\"sub\">Plates line up square for square.</p><p class=\"hint\">Pick the 1938 map on the bottom plate: the threads rise to the highway, the bank closures, the floodplain and five of today’s nine records.</p>"
+};
+function legend(){
+  const f = document.getElementById("legend");
+  f.innerHTML = "";
+  h("span", {text:"Circumstances:", style:"color:var(--ink-2)"}, f);
+  Object.values(TYPES).forEach(t => { const d = h("span", {class:"lg"}, f); const i = h("i", null, d); i.style.background = css(t.v); h("span", {text:t.name}, d); });
+  h("span", {text:"Records:", style:"color:var(--ink-2);margin-left:10px"}, f);
+  Object.entries(KIND_NAME).forEach(([k, n]) => { const d = h("span", {class:"lg"}, f); const i = h("i", null, d); i.style.background = css(KIND_V[k]); i.style.borderRadius = "50%"; i.style.width = "11px"; h("span", {text:n}, d); });
+}
+function show(view){
+  if(!["section","exploded","works"].includes(view)) view = "section";
+  state.view = view;
+  document.querySelectorAll("nav.tabs a").forEach(a => a.setAttribute("aria-current", a.dataset.view === view ? "page" : "false"));
+  ["section","exploded","works"].forEach(v => { const el = document.getElementById("v-" + v); if(v === view) el.removeAttribute("hidden"); else el.setAttribute("hidden", ""); });
+  document.getElementById("direction").innerHTML = DIRECTIONS[view];
+  const vp = document.getElementById("viewpanel");
+  vp.innerHTML = "";
+  if(view === "works"){ vp.appendChild(views.works.panel); views.works.mount(); }
+  else vp.innerHTML = NOTES[view];
+  renderDetail();
+  Object.values(views).forEach(v => v.highlight && v.highlight());
+}
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+legend();
+show(location.hash.slice(1) || "section");
+})();
+</script>
+</body>
+</html>
