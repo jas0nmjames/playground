@@ -135,6 +135,36 @@ footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px 20px 
 #tl::-moz-range-thumb { width:8px; height:38px; border-radius:6px; background:var(--blue); border:3px solid #fff; box-shadow:0 0 0 1px var(--blue); }
 #tl:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
 .marks { display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink2); margin-top:3px; }
+/* systems lens: a toggle in the header and an overlay that grows out of the details rail */
+.lensbtn { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:0 14px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font-weight:600; font-size:14px; color:var(--ink); cursor:pointer; }
+.lensbtn:hover { background:var(--page); }
+.lensbtn[aria-pressed="true"] { background:var(--blue); border-color:var(--blue); color:#fff; }
+main.body { position:relative; }
+.lens { position:absolute; inset:0; z-index:40; }
+.lens-dim { position:absolute; inset:0; background:rgba(14,27,46,.52); opacity:0; transition:opacity .35s ease; }
+.lens-city { position:absolute; left:0; top:0; bottom:0; width:112px; border:0; background:transparent; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font:600 13px var(--ui); line-height:1.3; text-align:center; padding:0 14px; cursor:pointer; opacity:0; transition:opacity .35s ease; }
+.lens-city:hover { background:rgba(255,255,255,.06); }
+.lens-panel { position:absolute; top:0; right:0; bottom:0; left:112px; background:var(--page); display:grid; grid-template-rows:52px minmax(0,1fr); overflow:hidden; clip-path:inset(0px 0px 0px calc(100% - 360px) round 0px); transition:clip-path .45s cubic-bezier(.2,.7,.2,1); }
+.lens.open .lens-dim, .lens.open .lens-city { opacity:1; }
+.lens.open .lens-panel { clip-path:inset(0px 0px 0px 0px round 16px 0px 0px 0px); }
+.lens-bar { display:flex; align-items:center; gap:12px; padding:0 12px; background:var(--surface); border-bottom:1px solid var(--line); min-width:0; }
+.lens-bar .btn.ghost { font-size:15px; }
+.lens-ctx { font-size:14px; color:var(--ink2); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lens-ctx b { color:var(--ink); font-weight:600; }
+#lens-frame { width:100%; height:100%; border:0; display:block; background:var(--page); }
+body.rm .lens-panel, body.rm .lens-dim, body.rm .lens-city { transition:none !important; }
+/* look closer rows in the record sheet */
+.closer { border-top:1px solid var(--line); }
+.go { display:grid; grid-template-columns:40px minmax(0,1fr) 16px; gap:12px; align-items:center; width:100%; min-height:64px; padding:10px 8px; border:0; border-bottom:1px solid var(--line); background:none; text-align:left; color:var(--ink); cursor:pointer; font:inherit; }
+.go:hover { background:var(--page); }
+.go .gi { width:40px; height:40px; border-radius:10px; background:#E8EEFE; color:var(--blue); display:grid; place-items:center; }
+.go b { display:block; font-size:15px; font-weight:600; }
+.go small { display:block; font-size:13px; color:var(--ink2); margin-top:2px; line-height:1.4; }
+.go .chev { color:var(--ink2); font-size:18px; }
+.go.off { grid-template-columns:40px minmax(0,1fr); cursor:default; }
+.go.off:hover { background:none; }
+.go.off .gi { background:var(--page); color:var(--ink2); }
+.go.off b { color:var(--ink2); }
 /* drawer below 1280 px */
 @media (max-width:1279px) {
   main.body { grid-template-columns:minmax(0,1fr); }
@@ -143,6 +173,7 @@ footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px 20px 
   #drawer-close { display:inline-flex; }
 }
 @media (min-width:1280px) { #drawer-btn { display:none; } }
+@media (max-width:1279px) { .lens-panel { left:0; } .lens-city { display:none; } }
 @media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
 /* printed map sheet */
 svg.quad text { font-family:"Barlow Condensed", "Arial Narrow", sans-serif; }
@@ -208,7 +239,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <input type="radio" name="view" id="v-mini" value="mini" checked><label for="v-mini">Miniature</label>
     <input type="radio" name="view" id="v-map" value="map"><label for="v-map">Map</label>
   </fieldset>
-  <span class="dim small" aria-hidden="true">Press <b>M</b> to switch</span>
+  <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
+  <span class="dim small" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens</span>
   <button class="btn" id="drawer-btn" aria-controls="rail" aria-expanded="false">Activity</button>
 </header>
 <main class="body">
@@ -231,7 +263,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     </div>
     <div class="legend-strip" aria-hidden="true" id="legendstrip"></div>
     <div class="debug" id="debug" hidden></div>
-    <p id="scene-help" class="sr-only">Arrow keys pan. Plus and minus zoom. Left and right square brackets step through records in flight; Enter opens the one in focus. Escape clears. Space plays or pauses. M switches between the miniature and the map. Every record is also listed in the Activity feed.</p>
+    <p id="scene-help" class="sr-only">Arrow keys pan. Plus and minus zoom. Left and right square brackets step through records in flight; Enter opens the one in focus. Escape clears. Space plays or pauses. M switches between the miniature and the map. L opens the Systems lens over the city, and Escape closes it. Every record is also listed in the Activity feed.</p>
   </section>
   <aside id="rail" class="rail" aria-labelledby="rail-h">
     <div class="rail-head"><h2 id="rail-h" tabindex="-1">Activity</h2><button class="btn ghost" id="drawer-close" aria-label="Close activity">Close</button></div>
@@ -245,13 +277,25 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       <div class="filters" role="group" aria-label="Show record types" id="filters"></div>
       <h3 class="feed-h" id="feed-h">Latest records</h3>
       <ul id="feed" class="feed" aria-labelledby="feed-h"></ul>
-      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="../">Night map version</a> · <a href="../systems-lens/">Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
+      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="../">Night map version</a> · <a href="../systems-lens/" data-lens-open>Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
     </div>
     <section id="sheet" class="sheet" hidden aria-labelledby="sheet-title">
       <div class="sheet-top"><button class="btn ghost" id="sheet-back"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button></div>
       <div id="sheet-body"></div>
     </section>
   </aside>
+  <div id="lens" class="lens" hidden>
+    <div class="lens-dim"></div>
+    <button type="button" class="lens-city" id="lens-city"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M13.5 5L7.5 11l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="lens-city-l">The city</span></button>
+    <section class="lens-panel" aria-label="Systems lens">
+      <div class="lens-bar">
+        <button type="button" class="btn ghost" id="lens-back"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</button>
+        <span class="lens-ctx" id="lens-ctx"></span>
+        <span class="dim small">Esc closes the lens</span>
+      </div>
+      <iframe id="lens-frame" title="Systems lens: Larkin Avenue in six layers"></iframe>
+    </section>
+  </div>
 </main>
 <footer class="bar">
   <div id="clock" aria-hidden="true">8:00 a.m.</div>
@@ -1426,6 +1470,62 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     },
   };
 
+  // ---------- systems lens overlay ----------
+  // The lens maps one composite block (Larkin Avenue, D2). A real record opens it when it shows one of the lens's
+  // patterns in D2; the lens then shows the composite record with that pattern, and says so.
+  const Lens = {
+    on: false, ready: false, pending: null, wasPlaying: false, opener: null,
+    PATTERNS: [[/payday_loan/, 'R3'], [/check_cashing/, 'R2'], [/missed_bus/, 'R1'], [/remittance_sent/, 'R5'], [/emergency_(department|visit)/, 'R7']],
+    SUB: { R3: 'Same pattern on Larkin Avenue · Rollover loop', R2: 'Same pattern on Larkin Avenue · six layers', R1: 'Same pattern on Larkin Avenue · Time tax loop', R4: 'Same pattern on Larkin Avenue · Fee spiral loop', R5: 'Same pattern on Larkin Avenue · six layers', R7: 'Same pattern on Larkin Avenue · six layers' },
+    match(r) {
+      if (!r || !r._real || r.district !== 'D2') return null;
+      if (/overdraft_fee|returned_payment_fee/.test(r.fee_type)) return 'R4';
+      for (const [re, k] of this.PATTERNS) if (re.test(r.job_category)) return k;
+      return null;
+    },
+    frame() { return $('#lens-frame'); },
+    load() {
+      if (this.frame().src) return;
+      this.frame().addEventListener('load', () => { this.ready = true; if (this.pending) { this.post(this.pending); this.pending = null; } }, { once: true });
+      this.frame().src = '../systems-lens/?embed=1&rec=';
+    },
+    post(msg) { if (!this.ready) { this.pending = msg; return; } this.frame().contentWindow.postMessage(Object.assign({ source: 'halvern-v3' }, msg), location.origin); },
+    open(rec, fromId, opener) {
+      this.load();
+      const r = fromId ? H.recById.get(fromId) : null;
+      $('#lens-ctx').innerHTML = r
+        ? `<b>Larkin Avenue</b> · D2 Inner suburbs · same pattern as ${esc(H.catLabel(r))} at ${H.fmt(r._t)}`
+        : '<b>Larkin Avenue</b> · D2 Inner suburbs · the one block mapped so far';
+      this.post({ type: 'open', rec: rec || null, from: fromId || null });
+      if (this.on) return;
+      this.on = true; this.opener = opener || document.activeElement;
+      this.wasPlaying = S.playing; if (S.playing) setPlaying(false);
+      $('#lens-city-l').textContent = `The city, paused at ${H.fmt(S.t)}`;
+      const el = $('#lens'); el.hidden = false; void el.offsetWidth; el.classList.add('open');
+      $('#scene').inert = true; $('#rail').inert = true;
+      $('#lens-btn').setAttribute('aria-pressed', 'true');
+      setTimeout(() => $('#lens-back').focus({ preventScroll: true }), S.rm ? 0 : 460);
+      say(r ? 'Systems lens open. Showing a composite record with the same pattern on Larkin Avenue. Escape goes back to the city.' : 'Systems lens open on Larkin Avenue. Pick a record to trace. Escape goes back to the city.');
+    },
+    close() {
+      if (!this.on) return;
+      this.on = false;
+      const el = $('#lens'); el.classList.remove('open');
+      const done = () => { if (!this.on) el.hidden = true; };
+      S.rm ? done() : setTimeout(done, 460);
+      $('#scene').inert = false; syncDrawer();
+      $('#lens-btn').setAttribute('aria-pressed', 'false');
+      if (this.wasPlaying) setPlaying(true);
+      const o = this.opener; this.opener = null;
+      if (o && document.contains(o) && !o.closest('#lens')) o.focus(); else $('#scene').focus();
+    },
+    toggle(opener) {
+      if (this.on) return this.close();
+      const top = Sheet.stack[Sheet.stack.length - 1], r = top && top.type === 'record' ? H.recById.get(top.id) : null, k = this.match(r);
+      this.open(k, k ? r.record_id : null, opener);
+    },
+  };
+
   // ---------- detail sheet ----------
   const Sheet = {
     stack: [], opener: null,
@@ -1480,7 +1580,17 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       <h3>Breakdown</h3>${bd}
       <h3>The job</h3><blockquote class="job">“${esc(r.job_statement)}”</blockquote>
       ${r.narrative ? `<p class="narr">${esc(r.narrative)}</p>` : ''}
-      ${r.household_id ? `<button class="btn primary wide" data-hhday="${r.household_id}">See this household’s day</button>` : ''}`;
+      ${closerHTML(r)}`;
+  }
+  const CLOCK_ICON = '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 5.5V10l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  const LAYERS_ICON = '<svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  function closerHTML(r) {
+    const k = Lens.match(r), day = r.household_id
+      ? `<button class="go" data-hhday="${r.household_id}"><span class="gi">${CLOCK_ICON}</span><span><b>This household’s day</b><small>Every record for ${esc(r.household_id)}, in time order</small></span><span class="chev" aria-hidden="true">›</span></button>` : '';
+    const lens = k
+      ? `<button class="go" data-lens="${k}" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>${Lens.SUB[k]}</small></span><span class="chev" aria-hidden="true">›</span></button>`
+      : `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>Not mapped yet. The lens covers one block of D2 Inner suburbs so far.</small></span></div>`;
+    return `<h3>Look closer</h3><div class="closer">${day}${lens}</div>`;
   }
   function recentFor(pred, n = 25) { const out = []; for (let i = S.idx - 1; i >= 0 && out.length < n; i--) if (pred(H.records[i])) out.push(H.records[i]); return out; }
   function partyHTML(p) {
@@ -1683,12 +1793,12 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function syncDrawer() { const rail = $('#rail'); rail.inert = smallScreen() && !rail.classList.contains('open'); $('#drawer-btn').hidden = !smallScreen(); }
   function setPlaying(p) {
     S.playing = p; const b = $('#play');
-    b.setAttribute('aria-label', p ? 'Pause' : 'Play'); b.querySelector('.pi').hidden = !p; b.querySelector('.pl').hidden = p;
+    b.setAttribute('aria-label', p ? 'Pause' : 'Play'); b.querySelector('.pi').toggleAttribute('hidden', !p); b.querySelector('.pl').toggleAttribute('hidden', p); // SVG elements have no .hidden property
     if (!p) say(`Paused at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, $${Math.round(H.cum.money[S.idx]).toLocaleString('en-US')} moved.`);
   }
   function initControls() {
     Feed.el = $('#feed');
-    $$('input[name="view"]').forEach((i) => i.addEventListener('change', () => setView(i.value)));
+    $$('input[name="view"]').forEach((i) => { i.addEventListener('change', () => { Lens.close(); setView(i.value); }); i.addEventListener('click', () => Lens.close()); });
     $$('input[name="blur"]').forEach((i) => i.addEventListener('change', () => { S.blur = i.value; views.mini && views.mini.setBlur(i.value); }));
     $$('input[name="speed"]').forEach((i) => i.addEventListener('change', () => {
       if (i.value === 'live') { const d = new Date(); S.speed = 1 / 60; seek(d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60); say(`Live: playing at real speed from ${H.fmt(S.t)}.`); }
@@ -1699,6 +1809,11 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     $('#drawer-btn').addEventListener('click', () => openDrawer(!$('#rail').classList.contains('open')));
     $('#drawer-close').addEventListener('click', () => { openDrawer(false); $('#drawer-btn').focus(); });
     $('#sheet-back').addEventListener('click', () => Sheet.back());
+    $('#lens-btn').addEventListener('click', (e) => Lens.toggle(e.currentTarget));
+    $('#lens-back').addEventListener('click', () => Lens.close());
+    $('#lens-city').addEventListener('click', () => Lens.close());
+    window.addEventListener('message', (e) => { if (e.origin === location.origin && e.data && e.data.source === 'halvern-lens' && e.data.type === 'close') Lens.close(); });
+    setTimeout(() => Lens.load(), 4000);
     const tl = $('#tl');
     tl.addEventListener('input', () => { seek(+tl.value); updateTimeline(); });
     tl.addEventListener('keydown', (e) => {
@@ -1715,13 +1830,17 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const row = e.target.closest('button.row, #chooser button[data-id]');
       if (row) { closeChooser(); selectRecord(row.dataset.id, row.closest('#chooser') ? scene() : row); return; }
       const hd = e.target.closest('[data-hhday]'); if (hd) { openHouseholdDay(hd.dataset.hhday); return; }
+      const ln = e.target.closest('[data-lens]'); if (ln) { Lens.open(ln.dataset.lens, ln.dataset.from, ln); return; }
+      const lo = e.target.closest('[data-lens-open]'); if (lo) { e.preventDefault(); Lens.open(null, null, lo); return; }
     });
     document.addEventListener('keydown', (e) => {
       const tag = (e.target.tagName || '').toLowerCase(), typing = tag === 'input' && e.target.type === 'text';
       const onControl = ['button', 'input', 'select', 'textarea', 'a'].includes(tag);
       if (e.key === ' ' && !onControl) { e.preventDefault(); setPlaying(!S.playing); return; }
-      if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { setView(S.view === 'mini' ? 'map' : 'mini'); return; }
+      if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { Lens.close(); setView(S.view === 'mini' ? 'map' : 'mini'); return; }
       if ((e.key === 'D') && e.shiftKey && !typing) { toggleDebug(); return; }
+      if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { Lens.toggle(); return; }
+      if (e.key === 'Escape' && Lens.on) { Lens.close(); return; }
       if (e.key === 'Escape') {
         if (!$('#chooser').hidden) { closeChooser(); scene().focus(); return; }
         if (Sheet.stack.length) { Sheet.back(); return; }
