@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fold sources/raw/_downloads.jsonl into sources/manifest.csv.
+"""Fold sources/download_log.jsonl into sources/manifest.csv.
 
     python3 -I sources/tools/finalize.py
 
@@ -16,7 +16,7 @@ from collections import OrderedDict
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCES = os.path.dirname(HERE)
 MANIFEST = os.path.join(SOURCES, "manifest.csv")
-LOG = os.path.join(SOURCES, "raw", "_downloads.jsonl")
+LOG = os.path.join(SOURCES, "download_log.jsonl")
 
 FED_WORK = "U.S. federal government work; no copyright in the U.S. (17 U.S.C. 105). Summarized, not copied from a terms page."
 CLOUD_BLOCK = ("Publisher refuses requests from this cloud session (HTTP 403 'Access Denied' from the publisher's own server, "
@@ -130,8 +130,8 @@ def main():
         if info:
             vintage, terms, notes, status = info
             r["actual_vintage"], r["license_or_terms"] = vintage, terms
-            if notes not in r["notes"]:
-                r["notes"] = (r["notes"] + " | " if r["notes"] else "") + notes
+            base = r["notes"].split("Log: ")[0].rstrip(" |")   # the manifest's own note; the log part is rebuilt every run
+            r["notes"] = (base + " | " if base else "") + "Log: " + notes
             if status:
                 r["status"] = status
     with open(MANIFEST, "w", newline="", encoding="utf-8") as f:
