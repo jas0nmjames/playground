@@ -6,9 +6,13 @@
     python3 -I sources/tools/fetch.py page ID URL [NAME]      save an HTML page itself into sources/raw/ID/ (for compiled sources)
     python3 -I sources/tools/fetch.py record ID URL FILE      log a file saved into sources/raw/ID/ by other means
     python3 -I sources/tools/fetch.py log                     print the download log
+    python3 -I sources/tools/fetch.py refetch [ID ...]        re-download logged files that are missing here, and check each
+                                                              against its logged SHA-256 (all rows, or only the IDs given)
 
-Every download is appended to sources/raw/_downloads.jsonl (id, url, file, bytes, sha256, time), which
-`finalize.py` folds into the manifest. Files over 1 GB are refused: ask first, then pass --allow-large.
+Every download is appended to sources/download_log.jsonl (id, url, file, bytes, sha256, date). That log is
+committed (it holds no data, only where each file came from and its hash); the files themselves stay in the
+gitignored sources/raw/. `finalize.py` folds the log into the manifest. Files over 1 GB are refused: ask
+first, then pass --allow-large.
 """
 import hashlib
 import html.parser
@@ -23,7 +27,7 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCES = os.path.dirname(HERE)
 RAW = os.path.join(SOURCES, "raw")
-LOG = os.path.join(RAW, "_downloads.jsonl")
+LOG = os.path.join(SOURCES, "download_log.jsonl")
 UA = "halvern-sources/0.1 (public data archiving)"
 LIMIT = 1 << 30
 
@@ -72,7 +76,7 @@ def name_for(resp, url):
     return urllib.parse.unquote(name).replace("/", "_") or "download"
 
 
-def download(rid, url, allow_large=False, name=None):
+def download(rid, url, allow_large=False, name=None, log=True):
     folder = os.path.join(RAW, rid)
     os.makedirs(folder, exist_ok=True)
     with request(url) as r:
@@ -96,11 +100,14 @@ def download(rid, url, allow_large=False, name=None):
                 f.write(b)
         ctype = r.headers.get("Content-Type", "")
     os.replace(path + ".part", path)
+    if not log:
+        return fname, n, h.hexdigest()
     entry = {"id": rid, "url": url, "file": fname, "bytes": n, "sha256": h.hexdigest(), "content_type": ctype,
              "downloaded_on": time.strftime("%Y-%m-%d")}
     with open(LOG, "a") as f:
         f.write(json.dumps(entry) + "\n")
     print("%s\t%s\t%d bytes\t%s" % (rid, fname, n, ctype))
+    return fname, n, h.hexdigest()
 
 
 def record(rid, url, fname):
@@ -115,6 +122,46 @@ def record(rid, url, fname):
     with open(LOG, "a") as f:
         f.write(json.dumps(entry) + "\n")
     print("%s\t%s\t%d bytes (recorded)" % (rid, fname, n))
+
+
+def sha_of(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def refetch(ids):
+    """Bring sources/raw/ up to date with the log on a new machine, checking every hash."""
+    latest = {}
+    with open(LOG) as f:
+        for line in f:
+            e = json.loads(line)
+            latest[(e["id"], e["file"])] = e
+    tally = {"present": 0, "fetched": 0, "CHANGED": 0, "MANUAL": 0, "FAILED": 0}
+    for (rid, fname), e in latest.items():
+        if ids and rid not in ids:
+            continue
+        path = os.path.join(RAW, rid, fname)
+        if os.path.exists(path):
+            state = "present" if sha_of(path) == e["sha256"] else "CHANGED"
+        elif not e["url"].startswith("https://") or " " in e["url"]:
+            state = "MANUAL"   # saved by hand or through a form: see the url field for how
+        else:
+            try:
+                download(rid, e["url"], name=fname, log=False)
+                state = "fetched" if sha_of(path) == e["sha256"] else "CHANGED"
+            except Exception as err:
+                print("FAILED %s %s: %s" % (rid, fname, err))
+                state = "FAILED"
+        tally[state] += 1
+        if state != "present":
+            print("%-8s %s/%s%s" % (state, rid, fname, "  <- " + e["url"] if state in ("MANUAL", "CHANGED") else ""))
+    print("  ".join("%s %d" % kv for kv in tally.items()))
+    if tally["CHANGED"]:
+        print("CHANGED: the publisher's file differs from the one logged; the new file is saved. Check it, then "
+              "`record` it so the manifest matches.")
 
 
 def main(argv):
@@ -136,6 +183,8 @@ def main(argv):
         download(argv[1], argv[2], allow, name=argv[3] if len(argv) > 3 else None)
     elif cmd == "record":  # log a file saved by other means (e.g. a form download): record ID URL FILE
         record(argv[1], argv[2], argv[3])
+    elif cmd == "refetch":
+        refetch(set(argv[1:]))
     elif cmd == "log":
         with open(LOG) as f:
             for line in f:
