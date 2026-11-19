@@ -6,6 +6,11 @@ from .day_b import errand, online, bus_ride, inc
 from .config import SALES_TAX
 
 SCHOOL_COST = [103.6, 97.9, 108.4]          # imputed cost per pupil per school day, by district (see assumptions)
+# unpaid care for someone in the same household, set from ATUS 2023-25 (v2; v1 drew .80 a day and 50-200 minutes)
+CARE_AT_HOME_DAILY = .76                     # chance a household care link produces care on a given day
+CARE_AT_HOME_CARING_SHARE = .44              # of those, physical care and looking after (ATUS 0304) rather than help (0305)
+CARING_TASKS = ["meals and medications", "bathing and dressing", "keeping company and supervising"]
+HELPING_TASKS = ["a ride and an errand", "sorting pills and paying bills", "housework and laundry"]
 LUNCH_COST, BFAST_COST = 4.95, 2.85
 PAY_K12 = "%s general fund (state aid, local property tax, federal Title I and IDEA)"
 
@@ -785,15 +790,22 @@ def gen_care(sim, H, q):
             if c.inpatient:
                 continue
             same = c.hh is H
-            if rng.random() > (.80 if same else .34):
+            if rng.random() > (CARE_AT_HOME_DAILY if same else .34):
                 continue
-            dur = rng.randint(50, 200) if same else rng.randint(40, 140)
-            tasks = rng.choice(["meals and medications", "bathing and dressing", "a ride and an errand", "sorting pills and paying bills", "housework and laundry", "keeping company and supervising"])
+            if same:
+                # ATUS 2023-25 (sources/derived/atus_caregiving.csv): caring for household adults (0304) runs about 84 minutes
+                # among those who do it, helping them (0305) about 28; together about 56 minutes, 2.6 minutes a day per person 15+
+                caring = rng.random() < CARE_AT_HOME_CARING_SHARE
+                tasks = rng.choice(CARING_TASKS if caring else HELPING_TASKS)
+                dur = rng.randint(40, 130) if caring else rng.randint(10, 45)
+            else:
+                tasks = rng.choice(CARING_TASKS + HELPING_TASKS)
+                dur = rng.randint(40, 140)
             if same:
                 t = sim.slot(p, dur, ((390, 560, 1.0), (1020, 1290, 1.5), (600, 1000, .6)))
                 squeezed = t is None
                 if t is None:
-                    dur = rng.randint(25, 45)
+                    dur = min(dur, rng.randint(25, 45))
                     t = sim.slot(p, dur, ((300, 1430, 1.0),))
                     if t is None:
                         continue

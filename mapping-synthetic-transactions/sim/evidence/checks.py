@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Evidence checks: measure simulated days against sim/evidence_targets.csv (plan, sections 2 and 4).
 
-    python3 evidence/checks.py run OUT_DIR [--households N] [--keep]   simulate the typed-day set and report
+    python3 evidence/checks.py run OUT_DIR [--households N] [--keep] [--label TEXT]   simulate the typed-day set and report
     python3 evidence/checks.py measure RUN_DIR                         measure one existing output folder
 
-`run` simulates every day in evidence/typed_days.py with the simulator unchanged, measures each day,
+`run` simulates every day in evidence/typed_days.py with the simulator in sim/, measures each day,
 and writes to OUT_DIR:
     <date>/summary.md, <date>/metrics.json    per day (the large CSVs are deleted unless --keep)
     typed_day_metrics.csv                      one row per day and metric
@@ -162,15 +162,15 @@ def per_day_value(metric, d):
     return year_value(metric, [dict(d, weight=1.0)])
 
 
-def write_report(out, days, baseline=None):
+def write_report(out, days, baseline=None, label="v2 in progress (`sim/`)"):
     targets = read_csv(TARGETS)
     L = ["# Evidence checks: the typed-day set", "",
-         "Simulator unchanged (v1 code in `sim/`). %d simulated days stand for 2027; each day's weight is the number of "
+         "Simulator: %s. %d simulated days stand for 2027; each day's weight is the number of "
          "2027 days in its class (`sim/evidence/typed_days.py`). Annual figures are weighted averages per day, or pooled "
          "shares. Targets are from `sim/evidence_targets.csv`; ranges and tolerances there are drafts until the evidence "
-         "report's ids and grades are filled in." % len(days), "",
+         "report's ids and grades are filled in." % (label, len(days)), "",
          "## Targets against the weighted year", "",
-         "| Target | Item | Year (weighted) | Mar 3 (v1 day) | Target | Verdict | Status |", "|---|---|---|---|---|---|---|"]
+         "| Target | Item | Year (weighted) | Mar 3 | Target | Verdict | Status |", "|---|---|---|---|---|---|---|"]
     for t in targets:
         v = year_value(t["metric"], days)
         b = per_day_value(t["metric"], baseline) if baseline else None
@@ -208,13 +208,13 @@ def write_report(out, days, baseline=None):
         f.write("\n".join(L) + "\n")
 
 
-def run(out, households=None, keep=False):
+def run(out, households=None, keep=False, label="v2 in progress (`sim/`)"):
     import simulate
     from halvern_sim.config import PARAMS
     os.makedirs(out, exist_ok=True)
     days = []
     baseline = None
-    ref = {"date": "2027-03-03", "class": "v1 baseline (not weighted)", "weather": "ordinary", "weight": 0.0}
+    ref = {"date": "2027-03-03", "class": "Mar 3 baseline (not weighted)", "weather": "ordinary", "weight": 0.0}
     for row in typed_days.day_set() + [ref]:
         cfg = dict(PARAMS)
         cfg["SIM_DATE"] = dt.date.fromisoformat(row["date"])
@@ -243,7 +243,7 @@ def run(out, households=None, keep=False):
         for d in days:
             for k2, v in d["m"].items():
                 w.writerow([d["date"], d["cls"], d["weather"], "%.4f" % d["weight"], k2, v])
-    write_report(out, days, baseline)
+    write_report(out, days, baseline, label)
     print("wrote", os.path.join(out, "evidence_checks.md"))
 
 
@@ -252,7 +252,8 @@ def main(argv):
         print(json.dumps(measure_dir(argv[1]), indent=1))
     elif argv[:1] == ["run"]:
         hh = int(argv[argv.index("--households") + 1]) if "--households" in argv else None
-        run(argv[1], hh, "--keep" in argv)
+        label = argv[argv.index("--label") + 1] if "--label" in argv else "v2 in progress (`sim/`)"
+        run(argv[1], hh, "--keep" in argv, label)
     else:
         print(__doc__)
 
