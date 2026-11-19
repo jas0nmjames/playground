@@ -144,3 +144,86 @@ GitHub limits decide the rest: a file over 100 MB is refused, a Pages site shoul
 3. **Where the big bundles live:** Releases, or local only.
 4. **Georgia evidence:** keep Halvern national, using Georgia-specific findings (title pawn rates, Pathways) for field visits and texture only. Recommended.
 5. **Project docs:** revise the evidence report's section 2 and the generator prompt's friction section to match the table in section 1.
+
+## 10. The v2 change list (added 2026-11-19, after the downloads)
+
+Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `sources/manifest.csv`). This is everything they support changing in the simulator. v1's 201,753 records are never edited: every change goes into `sim/`, and v2 is a fresh run over the typed-day set. "v1 now" is the March 3 run unless it says "a day" (the weighted typed-day year).
+
+**Work order.** The rates in Group 1 (overdraft, cash, tax prep, disconnections, payday, scams) all depend on balances, spending, wages and the calendar, so the inputs are reset first and the rates are tuned last; tuning first would have to be redone. Order: calendar and weights (C), inputs (I), missing jobs (J), places and life events (P), then the rate corrections (R). Each batch is rerun across the typed-day year and committed on its own.
+
+**Already done:** home caregiving set from ATUS 2023-25 (about 8,550 hours a day in v1, about 3,490 in v2; visits unchanged at about 1,700). Commit `bcae8f6`.
+
+### C. Calendar and weights
+
+| # | Change | v1 now | Source |
+|---|---|---|---|
+| C1 | Storm and heat day counts, which set the typed-day weights | placeholders, 4 and 8 | NOAA Storm Events 2015-25 |
+| C2 | Federal holidays: closures and shifted payment dates | the holiday runs as an ordinary weekday | OPM 2027 (`sources/derived/federal_holidays_2027.csv`) |
+| C3 | Social Security dates by birth-date cohort; SSI on the 1st | built in from the rule | SSA 2027 schedule |
+| C4 | SNAP load days by state rule | one rule | `sources/derived/snap_issuance.csv` (8 states) |
+| C5 | EITC/ACTC refund landing dates | Feb 26-Mar 5 wave | IRS 2026 releases (2027 notice due in January) |
+| C6 | Time of day for errands, care, school pickup, shopping | hand-set profiles | ATUS 2025 activity file |
+| C7 | Payments by day of week | hand-set | DCPC 2025 |
+
+### I. Inputs that drive everyone
+
+| # | Change | v1 now | Source |
+|---|---|---|---|
+| I1 | What households buy, how often, basket sizes | main grocery trip $92 | CE Diary and Interview 2025 |
+| I2 | Opening balances, debts and assets by household type | rule-built | SCF 2025 |
+| I3 | Fragility on the same households: can't cover $400, behind on bills, skipped care | each drawn separately | SHED 2025 microdata |
+| I4 | Banking status by income and age | 4.3% unbanked, 12.9% underbanked | FDIC 2023 |
+| I5 | Late payments by loan type | rule-built | NY Fed HHDC 2026 Q3 |
+| I6 | Health costs: patient share and payer share by visit type | ER mean $1,885 | MEPS 2024 |
+| I7 | Wages by occupation; fix odd employer-occupation pairs | hand table x 1.23 | OEWS May 2025 (national and by industry) |
+| I8 | Paid sick leave by wage level | 142 stayed home with a sick child, 81 missed shifts | NCS March 2026 |
+| I9 | Child care prices by age of child | median $319 a payment | NDCP 2022 |
+| I10 | Transit fare and subsidy per ride | $9.80 gross a ride | NTD 2025 |
+| I11 | Housing costs, repairs and condition | rule-built | AHS 2023 |
+| I12 | Energy bills and energy hardship | median electric bill $153 | RECS 2024 |
+| I13 | Eviction filings per day | 4 notices, 7 hearings | Eviction Lab monthly |
+| I14 | SNAP benefit amounts and household makeup | median issuance $306 | SNAP QC FY2024 |
+| I15 | Moves in and out | 9 move-ins | IRS migration 2022-23 |
+
+I2, I3, I4 and I7 change the population's money and incomes (not who the people are), which touches decision 1 in section 9.
+
+### J. Jobs to add
+
+| # | Change | v1 now | Source |
+|---|---|---|---|
+| J1 | Title-loan payments, refinances, repossessions, then the lost-car trips | 0 payments (target 15-25 a day) | TX OCCC 2025-26, TN TDFI 2026 |
+| J2 | `transportation.car_disabled_by_lender`, some in error | absent | (texture) |
+| J3 | Care delayed by medical debt; prescriptions over $250 abandoned | absent | MEPS 2024 |
+| J4 | `work.raise_declined_benefits_cliff` | 6.5 tagged records a day, no job | (texture) |
+| J5 | SNAP interview calls that clash with shifts; missed-interview churn | absent | SNAP QC FY2024 |
+| J6 | Medicaid work-report failures and retries | 76 reports | CMS renewals data (work reporting starts January 2027) |
+| J7 | Called in on a day off; keeping availability open | absent | (texture) |
+| J8 | Direct Express call-center failures | absent | (texture) |
+| J9 | H-2A households in open country, seasonal | absent | H-2A FY2025-26, NAWS 1989-2022 |
+| J10 | Out-of-pocket caregiving spending | 5,137 care records a day at $0 | CE 2025 |
+| J11 | Aide no-shows linked to a family member's lost work | 3.6 of about 38 misses a day linked | (check) |
+
+### P. Places, organizations, life events
+
+| # | Change | v1 now | Source |
+|---|---|---|---|
+| P1 | How many organizations of each kind and size | rule-built | County Business Patterns 2023 |
+| P2 | How rural D5 and D6 are | set by hand | RUCC 2023 |
+| P3 | Distances to groceries and dialysis | district table | Food access (SRAM 2025), CMS dialysis list |
+| P4 | Marriages and divorces | zero | NCHS 2000-24 |
+| P5 | Births and deaths | 3 each | NCHS natality and mortality (not yet downloaded) |
+
+### R. Rates tuned last
+
+| # | Change | v1 now | Target | Source |
+|---|---|---|---|---|
+| R1 | Overdraft fees, kept concentrated | 264 a day, $29 average | 120-180 a day | plan; FFIEC Call Reports for revenue |
+| R2 | Rural cash share (D5, D6) | 17.7% | 21%; recheck the city-wide 14% | DCPC 2025 |
+| R3 | Paid tax preparation | 65% of prepared returns | about half | IRS SOI (no EITC-by-preparer table exists) |
+| R4 | Utility disconnections, as a notice-to-shutoff chain | 6.8 a day | 11-12 a day | EIA 2024, RECS 2024 |
+| R5 | Payday loans | 6.5 new a day, average $326 | reset from 2025 state reports | CA DFPI 2025 (average $251, 362% APR, about 70% repeat), TX OCCC, CFPB 2014 |
+| R6 | Scam losses: rare and heavy-tailed, largest for 60+ | all $1,000-1,500 | heavy tail | FTC Sentinel 2024, IC3 2025 |
+
+### What the downloads can't settle
+
+Household structure stays rule-built until ACS PUMS (tier 3). General trip lengths need NHTS. Income swings need SIPP or JPMC. Overdraft concentration and notice-to-shutoff chains can only be checked across the month run (option B).
