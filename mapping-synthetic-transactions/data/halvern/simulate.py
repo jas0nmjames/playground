@@ -14,7 +14,7 @@ import json
 import os
 import time
 
-from halvern_sim import context, main, output
+from halvern_sim import blocks, context, main, output
 from halvern_sim.config import PARAMS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -53,7 +53,7 @@ def load_state(sim, path):
     return st["date"]
 
 
-def run_day(cfg, out, state_in=None, state_out=None, overrides=None, log=print):
+def run_day(cfg, out, state_in=None, state_out=None, overrides=None, blocks_path=None, log=print):
     t0 = time.time()
     log("Halvern %s (seed %s, %s households, weather %s)" % (cfg["SIM_DATE"], cfg["RANDOM_SEED"], cfg["N_HOUSEHOLDS"], cfg["WEATHER"]))
     sim = main.build(cfg, log=log)
@@ -61,11 +61,15 @@ def run_day(cfg, out, state_in=None, state_out=None, overrides=None, log=print):
         log("  carried balances forward from %s" % load_state(sim, state_in))
     main.simulate(sim, log=log)
     os.makedirs(out, exist_ok=True)
-    output.write_tables(sim, out)
+    tagger = None
+    if blocks_path:
+        tagger = blocks.Tagger(sim, blocks.load(blocks_path), income_mix=output.income_mix)
+        log("  tagged %d households into %d mapped blocks from %s" % (len(tagger.block_of), len(tagger.doc["blocks"]), os.path.relpath(blocks_path)))
+    output.write_tables(sim, out, tagger)
     # hand-written text belongs to the baseline day only (same date, seed, size, weather and prices, no carried state)
     baseline = not state_in and all(cfg.get(k) == PARAMS.get(k) for k in PARAMS)
     ov = load_overrides(overrides) if baseline else {}
-    n_ov = sim.write_records(os.path.join(out, "records.csv"), ov)
+    n_ov = sim.write_records(os.path.join(out, "records.csv"), ov, tagger)
     S = output.summarize(sim)
     context.write_context(sim, os.path.join(out, "public_services_context.csv"))
     context.write_assumptions(sim, os.path.join(out, "assumptions.csv"), S)
@@ -90,6 +94,8 @@ def cli():
     ap.add_argument("--gas-price", type=float, default=PARAMS["GAS_PRICE"])
     ap.add_argument("--grocery-price-mult", type=float, default=PARAMS["GROCERY_PRICE_MULT"])
     ap.add_argument("--portal-outage", default="640-805", help="state benefits portal outage as START-END minutes after midnight, or 'none'")
+    ap.add_argument("--blocks", default=blocks.find_blocks(HERE + "/halvern_sim/x"), help="the systems lens's mapped blocks (blocks.json); tags records with block_id, block_pattern and context_ids")
+    ap.add_argument("--no-blocks", action="store_true", help="leave the block columns out")
     ap.add_argument("--overrides", default=os.path.join(HERE, "detailed_overrides.csv"), help="hand-written text for sampled records")
     a = ap.parse_args()
     cfg = dict(PARAMS)
@@ -103,7 +109,7 @@ def cli():
         st_out = a.state_out if a.days == 1 else os.path.join(a.out, "state_%s.json" % cfg["SIM_DATE"].isoformat())
         if a.days > 1:
             os.makedirs(a.out, exist_ok=True)
-        run_day(cfg, out, state_in=state, state_out=st_out, overrides=a.overrides)
+        run_day(cfg, out, state_in=state, state_out=st_out, overrides=a.overrides, blocks_path=None if a.no_blocks else a.blocks)
         state = st_out
 
 
