@@ -1,14 +1,14 @@
 ---
 published: 2026-11-17
-updated: 2026-11-17
+updated: 2026-11-18
 tags: generative
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
 
-Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet.
+Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet. A systems lens opens one district into stacked layers of the circumstances behind its records, with the feedback loops that keep them going.
 
-## Two versions
+## Views
 
 | | Night map | Miniature and Map (v3) |
 |---|---|---|
@@ -18,7 +18,7 @@ Two animated views of Halvern, an invented American city of about 100,000 people
 | Record kinds | 13 colors, one per record type | 6 kinds with their own color, line and head: purchase, income, bill, public service, unpaid work, failure |
 | Needs | Any modern browser | WebGL, plus three.js from a CDN (falls back to the map without it) |
 
-Both pages load the same file, `data/halvern_2027-03-03.zip`, and link to each other in their footers.
+Both animated pages load the same file, `data/halvern_2027-03-03.zip`, and link to each other and to the systems lens in their footers.
 
 ### Night map
 
@@ -35,6 +35,12 @@ The Miniature view at 12:15 p.m., playing at five minutes a second. Purple dashe
 ![The same moment on the Map view, drawn as a printed map sheet with numbered failure triangles](screenshots/v3-map.jpg)
 
 The same moment in the Map view, zoomed out to show most of the sheet.
+
+### Systems lens
+
+![The systems lens: six stacked layers of Larkin Avenue, with record 6 selected, lines dropping to the circumstances behind it, callouts on the right and the Rollover loop drawn through the top two layers](screenshots/systems-lens.jpg)
+
+[systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/) is a prototype third view, in v3's style. It opens on record 6, a $75 payday loan renewal, with the Rollover loop drawn. Unlike the other two pages, it doesn't load the run: its district, circumstances and nine records are written for the prototype. The [design record](reference/halvern-systems-lens.md) explains why, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
 
 The screenshots were taken from these pages in headless Chromium with software WebGL, at twice the pixel density.
 
@@ -60,9 +66,21 @@ v3's own placeholder day plays while the real one downloads. The chip in the hea
 - **Timeline.** Bars show records per ten minutes. Plum marks flag ten-minute stretches where failures run well above the day's usual share: overnight, when autopays bounce, and in the evening. Speeds are Live (the real clock), 1, 5 and 20 minutes a second. Page Up and Page Down move an hour.
 - With reduced motion requested, v3 starts paused and draws paths without animating them.
 
+## Reading the systems lens
+
+The lens takes two ideas into the project: system dynamics (stocks, flows and feedback) and societal context, after Donald Martin Jr.: "the dynamic and complex collection of social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems." It shows one district, Larkin Avenue in the inner suburbs, as six aligned layers of the same blocks.
+
+- **Layers.** From the top: Today (the day's records), Economic, Political, Built & natural, Social & cultural, and Historical. Each label says how fast that layer changes, from "by the minute" to "bedrock, lasts a century". The same square on every layer is the same place.
+- **A story.** Select a record or a circumstance. A blue column marks its square on every layer, dashed lines drop to what it rests on, and the layers in its story spread apart while the rest fold away. Each circumstance in the story gets a callout with its year and full text, such as "1983 · Historical: Halvern Works closes: 1,900 union jobs gone."
+- **Lifting a layer.** Point at a layer in the list on the left to lift it, or select it to see it alone. **Esc** brings the rest back.
+- **Loops.** Four feedback loops are drawn one at a time through the layers they cross: R1 Fee spiral, R2 Rollover, R3 Time tax and B1 Circle buffer. R loops reinforce and B loops balance; the + and − on each link say which way it pushes. Dotted arrows show circumstances on other layers that push a loop.
+- **Details.** The right column describes the selection in v3's transaction-sheet style, and lists what shaped it, what it shapes and the loops it belongs to.
+
+Everything in the lens is a composite of documented US patterns on invented blocks, and every loop is a hypothesis for the next run to test. **Back to the city**, Miniature and Map all open v3; carrying a selected record between the views isn't built yet.
+
 ## Running them locally
 
-No build step. Serve the folder, then open `/` for the night map and `/v3/` for v3:
+No build step. Serve the folder, then open `/` for the night map, `/v3/` for v3 and `/systems-lens/` for the systems lens:
 
 ```bash
 python3 -m http.server 5181 --directory mapping-synthetic-transactions
@@ -77,13 +95,15 @@ Opening an `index.html` as a file can't fetch the data, so each page then plays 
 | `index.html` | The night map: canvas map, timeline, ticker, record sheets and filters |
 | `v3/index.html` | Miniature and Map (v3): the city plan, both views, the activity panel and playback |
 | `v3/real-day.js` | Loads the run for v3 and folds it onto v3's town (see below) |
+| `systems-lens/index.html` | The systems lens: the layers, callouts, loops and details sheet, with its prototype content built in |
+| `systems-lens/directions.html` | The three directions tried first (Section, Exploded view, The Works), in their original hand-drawn style |
 | `fflate.js` | [fflate](https://github.com/101arrowz/fflate) (MIT), used by both pages to unzip the run in the browser |
 | `data/halvern_2027-03-03.zip` | The complete run, exactly as delivered: the data tables, the simulator, and the hand-written records. Both pages load this file. |
 | `data/halvern/` | The same package unpacked so it can be read on GitHub, without the four large tables (`records.csv`, 77 MB; `persons.csv`; `households.csv`; `household_ledger.csv`), which are only in the zip |
 | `data/halvern/out/summary.md` | Counts, calibration against the anchors, fees, public dollars and the costliest frictions |
 | `data/halvern/detailed_sample_500.csv` | The 500 hand-written records |
 | `data/halvern/simulate.py`, `halvern_sim/` | The simulator (Python 3.10+ and numpy). The package's own [README](data/halvern/README.md) explains how to re-run it for another date, a storm, or several days in a row. |
-| `screenshots/` | The three screenshots above |
+| `screenshots/` | The four screenshots above |
 | `reference/` | The documents behind the project, listed below |
 
 ### Reference documents
@@ -93,6 +113,7 @@ Opening an `index.html` as a file can't fetch the data, so each page then plays 
 - [Halvern transaction generator prompt](reference/halvern-transaction-generator-prompt.md): the prompt that generated the data.
 - [How the Halvern day was built](reference/halvern-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed.
 - [Halvern run record](reference/halvern-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
+- [Halvern Systems Lens: design record](reference/halvern-systems-lens.md): the directions tried for the systems lens, what was decided, and what waits for the next run.
 
 Everything in the data is synthetic. People, businesses and local agencies are invented. Federal programs keep their real names because the specification requires them. Synthetic data suggests where to look; it isn't evidence.
 
@@ -161,6 +182,8 @@ The work in this repository was one Claude Code session (claude-opus-5-5) on Nov
 2. **Finding v3.** Found "Halvern in Motion: Miniature and Map" among the artifacts and checked what it needed to show the real day.
 3. **v3 on the real day.** Read v3 in full, wrote `v3/real-day.js`, and changed v3 for real volumes: the public-service kind, the path budget, place-only pins, failure marks, real labels and sheets, and the header status. Fixed the garbled names and the failure count in both versions. Tested v3 in headless Chromium with three.js served locally: the day loaded in about 15 seconds with no errors, the counters matched the run's summary, and the record, household, building and pin sheets showed the right data. Took the screenshots, updated this README and the root README, and opened the pull request into `development`.
 
+The systems lens was one Claude app session (claude-opus-5-5) on November 18, 2026, with the repository attached at the end. It explored three directions in the Biesty style, settled on the exploded view, added loops and callouts, restyled it to match v3, and then added the pages, the design record and the screenshot here, and opened the pull request into `development`. Its row is an estimate of about 90 model requests, counted from the session's tool calls rather than measured.
+
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | November 16, 2026 | Claude app | claude-fable-5-2 | not measurable from here | — | — |
@@ -168,6 +191,7 @@ The work in this repository was one Claude Code session (claude-opus-5-5) on Nov
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 0.702 kWh | 0.271 kg CO₂ | 0.351 L |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 0.108 kWh | 0.042 kg CO₂ | 0.054 L |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 1.008 kWh | 0.389 kg CO₂ | 0.504 L |
-| **Total (countable)** | | | **1.818 kWh** | **0.702 kg CO₂** | **0.909 L** |
+| November 18, 2026 | Claude app (systems lens) | claude-opus-5-5 | 1.620 kWh | 0.625 kg CO₂ | 0.810 L |
+| **Total (countable)** | | | **3.438 kWh** | **1.327 kg CO₂** | **1.719 L** |
 
 [^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads.

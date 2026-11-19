@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halvern Exploded Lens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Same system as Halvern in Motion: slate page, white surfaces, Figtree with tabular figures, 12px radius, soft shadow. Layout: layers and loops on the left, the exploded stack in the middle, the detail sheet on the right. */
+:root{
+  --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797;
+  --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
+  --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08);
+  --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --cond:"Barlow Condensed", "Arial Narrow", sans-serif;
+  --loop:#1F5AF0;
+  --c-hist:#8C6239; --c-pol:#3457A6; --c-econ:#B7832A; --c-env:#3F8758; --c-soc:#C2556A; --c-cult:#7A5BB0;
+  --r-purchase:#A65300; --r-income:#145A33; --r-bill:#2F5E9E; --r-fail:#8E3B6D; --r-unpaid:#0E1B2E;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--ui);color:var(--ink);background:var(--page);font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums lining-nums;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+[hidden]{display:none!important}
+.app{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;min-height:100%}
+
+header.top{display:flex;align-items:center;gap:12px 18px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-right:auto}
+h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em}
+.chip{font-size:13px;font-weight:600;color:var(--ink2);background:var(--page);border:1px solid var(--line);border-radius:999px;padding:5px 11px;white-space:nowrap}
+nav.seg{display:inline-flex;border:1px solid var(--ctrl);border-radius:999px;padding:3px;background:var(--surface);gap:2px}
+nav.seg a{min-height:32px;padding:5px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--ink2);display:flex;align-items:center;text-decoration:none}
+nav.seg a:hover{background:var(--page)}
+nav.seg a[aria-current="page"]{background:var(--ink);color:#fff}
+
+.ctxbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:8px 20px;background:var(--surface);border-bottom:1px solid var(--line);font-size:13.5px}
+.btn{min-height:36px;border-radius:10px;font-weight:600;font-size:14px;padding:6px 12px;cursor:pointer;border:1px solid var(--ctrl);background:#fff;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.btn.ghost{border-color:transparent;background:transparent;text-decoration:none}
+.btn.ghost:hover{background:var(--page)}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.wide{width:100%;justify-content:center;margin-top:8px}
+.muted{color:var(--ink2)}
+.small{font-size:12.5px}
+.recchip{display:inline-flex;align-items:center;gap:8px;background:#E8EEFE;border-radius:999px;padding:4px 12px 4px 6px;font-weight:500}
+.recchip .ic{width:22px;height:22px;font-size:11px}
+.recchip .amt{font-weight:700}
+.ctxbar .place{margin-left:auto}
+
+main.body{display:grid;grid-template-columns:212px minmax(0,1fr) 360px;min-height:0}
+.tools{background:var(--surface);border-right:1px solid var(--line);padding:14px 12px 18px;display:flex;flex-direction:column;gap:20px;overflow:auto}
+.tools h2{font-size:16px;font-weight:700;margin:0 8px 2px}
+.tools .hint{font-size:12.5px;color:var(--ink2);margin:0 8px 8px}
+.tools ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.pbtn,.lbtn{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center;width:100%;padding:7px 8px;border-radius:10px;min-height:44px}
+.pbtn:hover,.lbtn:hover{background:var(--page)}
+.pbtn:focus-visible,.lbtn:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.pbtn[aria-pressed="true"],.lbtn[aria-pressed="true"]{background:#E8EEFE;box-shadow:inset 3px 0 0 var(--blue)}
+.pbtn .sw{width:28px;height:28px;border-radius:8px;opacity:.9}
+.pbtn b,.lbtn b{font-weight:600;font-size:14px;display:block;line-height:1.2}
+.pbtn small,.lbtn small{font-size:12.5px;color:var(--ink2);display:block;line-height:1.3}
+.pbtn.inchain b::after{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-left:7px;vertical-align:2px}
+.lbtn .badge{width:28px;height:28px;border-radius:999px;border:2px solid var(--loop);color:var(--loop);display:grid;place-items:center;font-weight:700;font-size:12.5px}
+
+.stage{position:relative;overflow:auto;padding:8px 10px;background:var(--page)}
+#plates{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);min-width:640px;margin:0 auto}
+.soloNote{position:absolute;left:18px;top:14px;font-size:13px;font-weight:600;background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:7px 12px;color:var(--ink2)}
+
+aside.rail{background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;overflow:auto}
+.rail-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 4px}
+.rail-head h2{font-size:20px;font-weight:700;margin:0}
+.railbody{padding:0 20px 28px}
+.sheet + .sheet{border-top:1px solid var(--line);margin-top:18px;padding-top:6px}
+.eyebrow{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);font-weight:600;margin:10px 0 4px}
+.title{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.2;text-wrap:balance}
+.big{font-size:32px;font-weight:700;margin:6px 0 0;letter-spacing:-.02em}
+.big.fail{color:var(--plum)}
+.big.in{color:var(--green)}
+.status{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;line-height:1.4}
+.pill.ok{background:#E2F0E8;color:#08663F}
+.pill.fail{background:var(--plum);color:#fff}
+.pill.neutral{background:var(--page);color:var(--ink2)}
+.pill.loopp{background:#E8EEFE;color:var(--blue)}
+.pill.type{color:#fff}
+.why{font-size:14px;margin:0 0 12px}
+.kv{margin:0 0 6px;border-top:1px solid var(--line)}
+.kv div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.kv dt{color:var(--ink2)}
+.kv dd{margin:0;text-align:right;font-weight:500}
+.sheet h3{font-size:13px;font-weight:700;color:var(--ink2);margin:16px 0 4px}
+.sheet h3.title{font-size:22px;color:var(--ink);margin:0}
+.rows{list-style:none;margin:0 -10px;padding:0}
+.row{display:grid;grid-template-columns:32px minmax(0,1fr) 16px;gap:12px;align-items:center;width:100%;border:0;background:none;text-align:left;padding:8px 10px;border-radius:10px;color:inherit;cursor:pointer;min-height:52px;font:inherit}
+.row:hover{background:var(--page)}
+.row .nm{font-weight:500;font-size:14px;display:block;line-height:1.3}
+.row .sub{display:block;font-size:12.5px;color:var(--ink2);margin-top:1px}
+.ic{width:32px;height:32px;border-radius:999px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.ic.sq{border-radius:9px}
+.none{color:var(--ink2);font-size:13.5px;margin:2px 0}
+.chain{margin:4px 0 6px;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;counter-reset:c}
+.chain li{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.chain li::before{counter-increment:c;content:counter(c);width:22px;height:22px;border-radius:999px;background:var(--page);color:var(--ink2);font-size:12px;font-weight:700;display:grid;place-items:center}
+.chain .sign{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:999px;background:var(--loop);color:#fff;font-weight:700;font-size:13px;margin:0 5px;line-height:1;vertical-align:-3px}
+.chain .because{display:block;color:var(--ink2);font-size:13px}
+.note{margin:14px 0 0;padding:10px 12px;background:var(--page);border-left:3px solid var(--ctrl);border-radius:0 10px 10px 0;font-size:13px;color:var(--ink2)}
+
+footer.bar{display:flex;align-items:center;gap:6px 16px;padding:9px 20px;background:var(--surface);border-top:1px solid var(--line);flex-wrap:wrap;font-size:12.5px;font-weight:600}
+footer .lg{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+footer .lg i{width:14px;height:14px;border-radius:4px;display:inline-block}
+footer .k{color:var(--ink2);font-weight:600}
+footer .credit{margin-left:auto;font-weight:500;color:var(--ink2)}
+footer .credit a{color:var(--ink2)}
+
+/* drawing type */
+.hand,.ui{font-family:var(--ui)}
+.disp{font-family:var(--cond);font-weight:600}
+.pn{font-family:var(--cond);font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.hit{cursor:pointer}
+.dimmable{transition:opacity .25s}
+.dim{opacity:.25}
+.plate.quiet .flabel{display:none}
+.plate.ghost .pname{display:none}
+.hit:focus-visible{outline:none}
+.hit:focus-visible .focusring{stroke:#1F5AF0;stroke-width:3}
+
+@media (max-width:1240px){
+  main.body{grid-template-columns:1fr}
+  .tools{border-right:none;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap}
+  .tools section{flex:1 1 280px}
+  aside.rail{border-left:none;border-top:1px solid var(--line)}
+  #plates{max-height:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0">
+  <defs>
+    <filter id="ink" x="-2%" y="-2%" width="104%" height="104%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wash" x="-4%" y="-8%" width="108%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="2" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0" result="ga"/>
+      <feComposite in="d" in2="ga" operator="arithmetic" k1="-0.35" k2="1" k3="0" k4="0"/>
+    </filter>
+    <filter id="lift" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0E1B2E" flood-opacity=".10"/></filter>
+    <filter id="liftsm" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0E1B2E" flood-opacity=".12"/></filter>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#0E1B2E" stroke-width="1"/></pattern>
+    <pattern id="hatch-light" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#0E1B2E" stroke-width=".6" opacity=".45"/></pattern>
+    <pattern id="stipple" width="14" height="12" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r=".9" fill="#0E1B2E" opacity=".35"/><circle cx="10" cy="8" r=".7" fill="#0E1B2E" opacity=".3"/></pattern>
+    <pattern id="ruled" width="40" height="9" patternUnits="userSpaceOnUse"><line x1="0" y1="8.5" x2="40" y2="8.5" stroke="#2D4F86" stroke-width=".6" opacity=".45"/></pattern>
+    <pattern id="gravel" width="22" height="16" patternUnits="userSpaceOnUse"><ellipse cx="5" cy="5" rx="3" ry="2" fill="none" stroke="#0E1B2E" stroke-width=".6" opacity=".35"/><ellipse cx="15" cy="12" rx="2.4" ry="1.6" fill="none" stroke="#0E1B2E" stroke-width=".6" opacity=".3"/></pattern>
+    <pattern id="strata" width="60" height="10" patternUnits="userSpaceOnUse"><path d="M0 5 Q15 2 30 5 T60 5" fill="none" stroke="#0E1B2E" stroke-width=".6" opacity=".35"/></pattern>
+    <pattern id="brick" width="16" height="8" patternUnits="userSpaceOnUse"><path d="M0 0H16M0 4H16M4 0V4M12 4V8" stroke="#0E1B2E" stroke-width=".5" opacity=".35" fill="none"/></pattern>
+    <pattern id="waves" width="18" height="8" patternUnits="userSpaceOnUse"><path d="M0 4 Q4.5 1 9 4 T18 4" fill="none" stroke="#0E1B2E" stroke-width=".7" opacity=".45"/></pattern>
+    <marker id="drv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5B6676"/></marker>
+  </defs>
+</svg>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>Halvern in Motion</h1>
+      <span class="chip">Simulated city · no real people</span>
+      <span class="chip">Composite context · patterns from US history</span>
+    </div>
+    <nav class="seg" aria-label="View">
+      <a href="../v3/">Miniature</a>
+      <a href="../v3/">Map</a>
+      <a aria-current="page">Systems lens</a>
+    </nav>
+  </header>
+  <div class="ctxbar">
+    <a class="btn ghost" href="../v3/" title="Opens Miniature and Map. Carrying the selected record across is not built yet."><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</a>
+    <span class="muted">Opened from</span>
+    <span class="recchip"><span class="ic" style="background:var(--r-bill)">6</span>13:05 · Payday loan renewed at Advance Now <span class="amt">−$75.00</span></span>
+    <span class="muted small place">Larkin Avenue · D2 Inner suburbs · Wed, Mar 3, 2027</span>
+  </div>
+  <main class="body">
+    <nav class="tools" aria-label="Layers and loops">
+      <section>
+        <h2>Layers</h2>
+        <p class="hint">Point at a layer to lift it. Select one to see it alone. A blue dot marks layers in the current story.</p>
+        <ul id="platelist"></ul>
+        <button class="btn wide" type="button" id="allplates" disabled>Show all layers</button>
+      </section>
+      <section>
+        <h2>Loops</h2>
+        <p class="hint">Feedback drawn through the layers. R reinforces, B balances.</p>
+        <ul id="looplist"></ul>
+        <button class="btn wide" type="button" id="noloop">Hide loop</button>
+      </section>
+    </nav>
+    <div class="stage">
+      <div class="soloNote" id="soloNote" hidden>One layer shown. Links and loops return with all layers.</div>
+      <svg id="plates" viewBox="0 0 1158 930" role="img" aria-label="Exploded view of Larkin Avenue as six aligned layers, with links from records to circumstances and a feedback loop"></svg>
+    </div>
+    <aside id="rail" class="rail" aria-labelledby="rail-h">
+      <div class="rail-head"><h2 id="rail-h">Details</h2></div>
+      <div class="railbody">
+        <section id="detail" aria-live="polite"></section>
+        <section id="loopcard" aria-live="polite"></section>
+      </div>
+    </aside>
+  </main>
+  <footer class="bar" id="legend"></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+function s(tag, attrs, parent){
+  const e = document.createElementNS(NS, tag);
+  if(attrs) for(const k in attrs){ if(k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); }
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function h(tag, attrs, parent){
+  const e = document.createElement(tag);
+  if(attrs) for(const k in attrs){ if(k === "text") e.textContent = attrs[k]; else if(k === "html") e.innerHTML = attrs[k]; else e.setAttribute(k, attrs[k]); }
+  if(parent) parent.appendChild(e);
+  return e;
+}
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function label(g, x, y, text, opt){
+  opt = opt || {};
+  const a = {x, y, class: opt.cls || "hand", "font-size": opt.size || 13, fill: opt.fill || "#0E1B2E", "text-anchor": opt.anchor || "start", stroke:"none", text};
+  if(opt.weight) a["font-weight"] = opt.weight;
+  return s("text", a, g);
+}
+function onActivate(el, fn){
+  el.addEventListener("click", ev => { ev.stopPropagation(); fn(); });
+  el.addEventListener("keydown", ev => { if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); fn(); } });
+}
+
+/* ================================================================ data */
+const TYPES = {
+  hist:{name:"Historical", v:"--c-hist"}, pol:{name:"Political", v:"--c-pol"}, econ:{name:"Economic", v:"--c-econ"},
+  env:{name:"Environmental", v:"--c-env"}, soc:{name:"Social", v:"--c-soc"}, cult:{name:"Cultural", v:"--c-cult"}
+};
+const col = t => css(TYPES[t].v);
+const LAYER_PLATE = {econ:1, pol:2, env:3, soc:4, hist:5};
+
+const CONTEXT = [
+  {id:"H1", types:["hist","pol"], year:"1938", layer:"hist", rep:[6,3], under:[],
+   lines:["Federal appraisal map rates", "these blocks “hazardous”"], title:"Rated “hazardous” on the 1938 appraisal map",
+   body:"A federal appraisal map graded the Larkin Avenue blocks red, citing the race of residents and the age of the housing. For decades lenders treated red-rated blocks as too risky for mortgages and deposits, so home ownership, equity and bank branches stayed thin here."},
+  {id:"H3", types:["hist","econ"], year:"1983", layer:"hist", rep:[10,0], under:[],
+   lines:["Halvern Works closes:", "1,900 union jobs gone"], title:"Halvern Works closes",
+   body:"The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly."},
+  {id:"H2", types:["hist","pol","env"], year:"1961", layer:"env", rep:[3,3], under:["H1"],
+   lines:["Interstate spur cut through;", "about 300 homes cleared"], title:"The interstate spur goes through",
+   body:"The state routed an interstate spur through the red-rated blocks, where land was cheapest and residents had the least say. It cleared about 300 homes and split the district. The nearest walkable crossing is now 0.6 miles from the Route 6 stop."},
+  {id:"E1", types:["env"], year:"today", layer:"env", rep:[10,5], under:["H1"],
+   lines:["Cutler Run floodplain:", "flood insurance required"], title:"Cutler Run floodplain",
+   body:"A third of the blocks by the creek sit in the 100-year floodplain. Homes with a mortgage there must carry flood insurance, a bill most of the city never sees. These were the cheapest lots, and the ones red-rated buyers could get."},
+  {id:"E2", types:["env"], year:"today", layer:"env", rep:[2,2], under:["H2"],
+   lines:["Highway air: more asthma", "within 500 ft of the spur"], title:"Highway air",
+   body:"Homes beside the spur breathe more traffic exhaust. Childhood asthma is higher here than in the rest of the city, and an attack often means the ER rather than a scheduled visit."},
+  {id:"P1", types:["econ"], year:"2009", layer:"econ", rep:[6,3], under:["H1"],
+   lines:["Last two bank branches", "close after a merger"], title:"The last bank branches close",
+   body:"After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Halvern Savings building is a check casher."},
+  {id:"EC1", types:["econ"], year:"today", layer:"econ", rep:[9,1], under:["H3"],
+   lines:["Hourly work, schedules", "posted under a week out"], title:"Hourly work, short-notice schedules",
+   body:"Most jobs open to people here are hourly, with schedules posted less than a week ahead and pay docked for lateness. Income moves week to week, which makes autopay dates hard to plan around."},
+  {id:"P2", types:["pol"], year:"state law", layer:"pol", rep:[7,3], under:[],
+   lines:["State allows 2–3% check", "fees and ~390% APR loans"], title:"State rules on check cashing and payday loans",
+   body:"State law lets check cashers charge 2 to 3 percent of a check and lets payday lenders charge $15 per $100 borrowed every two weeks, about 390% a year. A renewal pays the fee again without paying down the loan."},
+  {id:"P3", types:["pol"], year:"2019", layer:"pol", rep:[2,4], under:[],
+   lines:["Route 6 cut from every", "15 to every 30 minutes"], title:"Route 6 service cut",
+   body:"Facing a budget gap, the transit agency cut Route 6 from every 15 to every 30 minutes. Missing a bus now costs half an hour, and a late clock-in can cost part of a shift."},
+  {id:"P4", types:["pol","econ"], year:"2011", layer:"pol", rep:[5,3], under:["H1"],
+   lines:["Single-use zoning; no new", "grocery since 2011"], title:"Zoning and the missing grocery",
+   body:"Zoning keeps most blocks residential and allows shops only on the Larkin strip. The last supermarket closed in 2011 and none has replaced it, so daily food comes from the corner market and the dollar store."},
+  {id:"S1", types:["soc","cult"], year:"1990s on", layer:"soc", rep:[9,5], under:["H3"],
+   lines:["Immigrant gateway: Spanish,", "Vietnamese, Haitian Creole"], title:"An immigrant gateway",
+   body:"Low rents after the plant closed made Larkin a first stop for new arrivals. Many households send money home every week, and many neighbors work and bank in more than one language."},
+  {id:"S2", types:["cult","econ"], year:"today", layer:"soc", rep:[9,2], under:["S1","P1"],
+   lines:["Church savings circles", "(tandas, hụi, sòl)"], title:"Church savings circles",
+   body:"Several congregations run rotating savings circles. Each member pays in every week and takes the whole pot in turn. With no branch nearby, the circle is the neighborhood’s savings account and emergency fund."}
+];
+const RECORDS = [
+  {id:"R8", n:1, time:"01:30", kind:"bill", place:"creek", cell:[11,5], title:"Flood insurance autopay, $112", links:["E1"],
+   body:"Household 0391’s flood policy drafts on the 3rd. Neighbors two streets uphill do not pay it."},
+  {id:"R1", n:2, time:"07:42", kind:"fail", place:"bus", cell:[2,4], title:"Missed the Route 6 bus by a minute", links:["P3","H2"],
+   body:"The next bus is 30 minutes out. Walking around the spur to the next stop takes longer. 38 minutes lost and a late clock-in at the warehouse."},
+  {id:"R10", n:3, time:"08:10", kind:"purchase", place:"market", cell:[5,3], title:"Groceries at Larkin Market, $31.40", links:["P4"],
+   body:"Milk, eggs, rice and bread at corner-store prices. The nearest supermarket is 3.1 miles away."},
+  {id:"R7", n:4, time:"09:20", kind:"purchase", place:"house", cell:[2,2], title:"ER visit for a child’s asthma attack, $250 copay", links:["E2"],
+   body:"The family lives 200 feet from the spur. The ER copay is the day’s largest health expense in the district."},
+  {id:"R2", n:5, time:"11:15", kind:"income", place:"bank", cell:[6,3], title:"Paycheck cashed at QuikCash, $14.20 fee", links:["P1","P2"],
+   body:"A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Halvern Savings branch, for 2%."},
+  {id:"R3", n:6, time:"13:05", kind:"bill", place:"payday", cell:[7,3], title:"Payday loan renewed, $75 fee", links:["P2","EC1"],
+   body:"$500 borrowed after a short week in February. The fee is paid again and the $500 is still owed."},
+  {id:"R4", n:7, time:"16:50", kind:"fail", place:"dollar", cell:[8,3], title:"Debit card declined at Dollar Mart, $23.18", links:["EC1"],
+   body:"An insurance autopay overdrew the account at 3 p.m. Paid in cash instead, after a second try."},
+  {id:"R6", n:8, time:"19:00", kind:"unpaid", place:"church", cell:[9,2], title:"Savings circle, $100 paid in", links:["S2"],
+   body:"Week 7 of a 10-week circle at Iglesia Nueva Vida. This household takes the $1,000 pot in week 10."},
+  {id:"R5", n:9, time:"19:40", kind:"bill", place:"envios", cell:[9,4], title:"Money sent to family abroad, $200 plus $9 fee", links:["S1","P1"],
+   body:"Sent from Envíos Larkin, the only transfer counter open after 6 p.m. within walking distance."}
+];
+const FACTS = {
+  R8:{amt:"−$112.00", status:"Completed", with:"Flood insurer, autopay", type:"Bill"},
+  R1:{amt:"38 min lost", status:"Missed", with:"Halvern Transit, Route 6", type:"Trip", fail:true},
+  R10:{amt:"−$31.40", status:"Completed", with:"Larkin Market", type:"Purchase"},
+  R7:{amt:"−$250.00", status:"Completed", with:"Halvern Regional, emergency room", type:"Health care"},
+  R2:{amt:"−$14.20", status:"Completed", with:"QuikCash Larkin", type:"Check cashing fee", note:"on a $710 paycheck"},
+  R3:{amt:"−$75.00", status:"Completed", with:"Advance Now", type:"Loan fee", note:"$500 still owed"},
+  R4:{amt:"−$23.18", status:"Declined", with:"Dollar Mart", type:"Purchase", fail:true},
+  R6:{amt:"−$100.00", status:"Completed", with:"Iglesia Nueva Vida savings circle", type:"Informal savings"},
+  R5:{amt:"−$209.00", status:"Completed", with:"Envíos Larkin", type:"Money transfer", note:"$200 sent, $9 fee"}
+};
+const KIND_V = {purchase:"--r-purchase", income:"--r-income", bill:"--r-bill", fail:"--r-fail", unpaid:"--r-unpaid"};
+const KIND_NAME = {purchase:"Purchase", income:"Income", bill:"Bill or fee", fail:"Failed job", unpaid:"Unpaid or informal"};
+const BY = {};
+CONTEXT.forEach(c => { c.kindOf = "context"; c.plate = LAYER_PLATE[c.layer]; BY[c.id] = c; });
+RECORDS.forEach(r => { r.kindOf = "record"; r.plate = 0; BY[r.id] = r; });
+
+/* Loops: hypotheses drawn for the prototype. Nodes sit on the plate they belong to. */
+const LOOPS = {
+  R1:{name:"Fee spiral", kind:"R", seen:["R4"],
+    text:"A low balance lets a payment overdraw the account. The overdraft fee lowers the balance again, so the next payment is more likely to bounce.",
+    nodes:[{k:"a", p:0, c:10.4, r:5.9, t:"Balance after bills"}, {k:"b", p:0, c:6.6, r:6.4, t:"Payments that overdraw"}, {k:"c", p:1, c:8.6, r:5.4, t:"Overdraft fees"}],
+    links:[["a","b","−","A lower balance means more payments overdraw."], ["b","c","+","More overdrafts mean more fees."], ["c","a","−","More fees mean a lower balance."]],
+    drivers:[{from:"EC1", to:"b", sign:"+", t:"Pay that moves week to week makes autopay dates miss."}]},
+  R2:{name:"Rollover", kind:"R", seen:["R3"],
+    text:"A short week leads to a payday loan. Each renewal pays the fee without paying down the loan, which leaves the next week short again.",
+    nodes:[{k:"a", p:0, c:5.6, r:0.7, t:"Cash left after bills"}, {k:"b", p:1, c:4.8, r:0.9, t:"Payday renewals"}, {k:"c", p:1, c:7.9, r:2.2, t:"Fees paid to the lender"}],
+    links:[["a","b","−","Less cash left means more renewals."], ["b","c","+","More renewals mean more fees."], ["c","a","−","More fees leave less cash."]],
+    drivers:[{from:"P2", to:"c", sign:"+", t:"State law sets the fee at $15 per $100 per renewal."}, {from:"P1", to:"b", sign:"+", t:"With no branch nearby there is no small-dollar loan from a bank."}]},
+  R3:{name:"Time tax", kind:"R", seen:["R1"],
+    text:"A missed bus means a late clock-in and docked pay. Less pay pushes back fixing the car, which keeps the household on the bus.",
+    nodes:[{k:"a", p:0, c:2.4, r:4.6, t:"Rides Route 6"}, {k:"b", p:0, c:1.6, r:0.6, t:"Late clock-ins"}, {k:"c", p:1, c:9.8, r:1.6, t:"Docked pay"}, {k:"d", p:0, c:4.4, r:0.2, t:"Money to fix the car"}],
+    links:[["a","b","+","More bus trips mean more late clock-ins."], ["b","c","+","More late clock-ins mean more docked pay."], ["c","d","−","More docked pay leaves less for the car."], ["d","a","−","Less for the car means more bus trips."]],
+    drivers:[{from:"P3", to:"a", sign:"+", t:"Buses every 30 minutes make each miss cost more."}, {from:"H2", to:"a", sign:"+", t:"The spur forces a long walk to the next stop."}]},
+  B1:{name:"Circle buffer", kind:"B", seen:["R6"],
+    text:"A shortfall sends the household to its savings circle instead of a lender. The payout covers the gap, which works against the rollover loop.",
+    nodes:[{k:"a", p:0, c:11.0, r:2.4, t:"Shortfall this week"}, {k:"b", p:4, c:10.8, r:0.9, t:"Turns to the circle"}, {k:"c", p:4, c:7.4, r:1.6, t:"Payout covers the gap"}],
+    links:[["a","b","+","A shortfall means turning to the circle."], ["b","c","+","Turning to the circle brings a payout."], ["c","a","−","A payout shrinks the shortfall."]],
+    drivers:[{from:"S2", to:"b", sign:"+", t:"Congregations run the circles."}],
+    cross:[{to:["R2","b"], from:"c", sign:"−", t:"A payout means one less payday renewal."}]}
+};
+
+/* graph */
+function parents(id){ const it = BY[id]; return it.kindOf === "record" ? it.links : it.under; }
+function children(id){
+  const out = [];
+  RECORDS.forEach(r => { if(r.links.includes(id)) out.push(r.id); });
+  CONTEXT.forEach(c => { if(c.under.includes(id)) out.push(c.id); });
+  return out;
+}
+function closure(id){
+  const set = new Set([id]);
+  const up = [id]; while(up.length){ const x = up.pop(); parents(x).forEach(p => { if(!set.has(p)){ set.add(p); up.push(p); } }); }
+  const seen = new Set([id]); const dn = [id];
+  while(dn.length){ const x = dn.pop(); children(x).forEach(c => { if(!seen.has(c)){ seen.add(c); set.add(c); dn.push(c); } }); }
+  return set;
+}
+function edgesIn(set){ const e = []; set.forEach(id => parents(id).forEach(p => { if(set.has(p)) e.push([id, p]); })); return e; }
+function loopPlates(k){
+  const L = LOOPS[k], ps = new Set();
+  L.nodes.forEach(n => ps.add(n.p)); (L.drivers || []).forEach(d => ps.add(BY[d.from].plate));
+  return ps;
+}
+
+/* state */
+const state = {sel:"R3", loop:"R2", hover:null, solo:null};
+
+/* ================================================================ drawing helpers */
+const SKIN = ["#F1D3B8","#E2B48E","#C98E62","#A56B43","#7D4E2E","#5A3620","#EBC4A0","#B7825A"];
+const CLOTH = ["#2D4F86","#B4505E","#5E8A3A","#B8862A","#76569A","#3B7FB8","#8A5A2B","#444"];
+let figSeed = 3;
+function figure(g, x, y, opt){
+  opt = opt || {};
+  figSeed = (figSeed * 7 + 3) % 97;
+  const sk = SKIN[figSeed % SKIN.length], cl = opt.color || CLOTH[(figSeed >> 1) % CLOTH.length];
+  const f = s("g", {transform:`translate(${x},${y}) scale(${opt.scale || 1})`}, g);
+  if(opt.sit){
+    s("path", {d:"M-3 -14 L3 -14 L4 -6 L9 -6 L9 0 M-3 -14 L-3 -6 L4 -6", fill:"none", stroke:"#0E1B2E", "stroke-width":1.1}, f);
+    s("path", {d:"M-3.5 -15 L3.5 -15 L4 -6 L-3 -6 Z", fill:cl, stroke:"#0E1B2E", "stroke-width":1}, f);
+    s("circle", {cx:0, cy:-18.5, r:3.3, fill:sk, stroke:"#0E1B2E", "stroke-width":1}, f);
+  } else if(opt.lie){
+    s("rect", {x:-10, y:-5, width:16, height:5, rx:2, fill:cl, stroke:"#0E1B2E", "stroke-width":1}, f);
+    s("circle", {cx:9, cy:-3.5, r:3.2, fill:sk, stroke:"#0E1B2E", "stroke-width":1}, f);
+  } else {
+    s("path", {d:"M-2.2 0 L-1.6 -7 M2.2 0 L1.6 -7", stroke:"#0E1B2E", "stroke-width":1.2}, f);
+    s("path", {d:"M-3.6 -7 L-3 -15 L3 -15 L3.6 -7 Z", fill:cl, stroke:"#0E1B2E", "stroke-width":1}, f);
+    s("circle", {cx:0, cy:-18.5, r:3.3, fill:sk, stroke:"#0E1B2E", "stroke-width":1}, f);
+  }
+}
+function inkG(parent){ return s("g", {filter:"url(#ink)", fill:"none", stroke:"#0E1B2E", "stroke-width":1.4, "stroke-linejoin":"round", "stroke-linecap":"round"}, parent); }
+
+/* ================================================================ exploded plates */
+const svgP = document.getElementById("plates");
+const COLS = 12, ROWS = 7, TW = 60, TH = 26, OX = 432;
+const CX = 922, CW = 230; // callout column
+const PH = (COLS + ROWS) * TH / 2; // projected plate height, 247
+const TOP = 30, BOTTOM = 900;
+const lp = (c, r, hgt) => [(c - r) * TW / 2, (c + r) * TH / 2 - (hgt || 0)];
+const pts = arr => arr.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" ");
+function area(g, c0, r0, c1, r1, attrs){ return s("polygon", Object.assign({points:pts([lp(c0, r0), lp(c1, r0), lp(c1, r1), lp(c0, r1)])}, attrs), g); }
+function box(g, c0, r0, c1, r1, hh, k){
+  const A = lp(c0, r0), B = lp(c1, r0), Cc = lp(c1, r1), D = lp(c0, r1), up = q => [q[0], q[1] - hh];
+  const st = {stroke:"#0E1B2E", "stroke-width":.7, "stroke-linejoin":"round"};
+  s("polygon", Object.assign({points:pts([D, Cc, up(Cc), up(D)]), fill:k.l}, st), g);
+  s("polygon", Object.assign({points:pts([Cc, B, up(B), up(Cc)]), fill:k.r}, st), g);
+  s("polygon", Object.assign({points:pts([up(A), up(B), up(Cc), up(D)]), fill:k.t}, st), g);
+}
+const PLATES = [
+  {name:"Today", sub:"the day\u2019s records", pace:"changes by the minute", color:null},
+  {name:"Economic", sub:"jobs, banks, prices", pace:"changes over years", color:"--c-econ"},
+  {name:"Political", sub:"routes, zoning, state law", pace:"changes over decades", color:"--c-pol"},
+  {name:"Built & natural", sub:"highway, air, floodplain", pace:"changes over generations", color:"--c-env"},
+  {name:"Social & cultural", sub:"languages, congregations", pace:"changes over generations", color:"--c-soc"},
+  {name:"Historical", sub:"1938 grades, 1961, 1983", pace:"bedrock, lasts a century", color:"--c-hist"}
+];
+s("rect", {x:0, y:0, width:1158, height:930, fill:"#F3F5F8", class:"bg"}, svgP);
+const stack = s("g", null, svgP);
+const overlay = s("g", {"pointer-events":"none"}, svgP);
+const calloutLayer = s("g", null, svgP);
+const plateEls = [];
+const featEls = {};
+const pinTopH = {};
+function reg(id, el, p){
+  (featEls[id] = featEls[id] || []).push(el);
+  el.classList.add("hit", "dimmable");
+  el.setAttribute("tabindex", "0"); el.setAttribute("role", "button");
+  el.setAttribute("aria-label", BY[id].kindOf === "record" ? `${BY[id].n}. ${BY[id].time} ${BY[id].title}` : `${BY[id].title}, ${BY[id].year}`);
+  onActivate(el, () => select(id));
+}
+
+PLATES.forEach((P, p) => {
+  const g = s("g", {class:"plate"}, stack);
+  const fill = P.color ? css(P.color) : "#FFFFFF";
+  const L = lp(0, ROWS), Bt = lp(COLS, ROWS), Rt = lp(COLS, 0);
+  s("polygon", {points:pts([L, Bt, [Bt[0], Bt[1] + 8], [L[0], L[1] + 8]]), fill:"#D3DAE4", stroke:"#C3CBD7", "stroke-width":1}, g);
+  s("polygon", {points:pts([Bt, Rt, [Rt[0], Rt[1] + 8], [Bt[0], Bt[1] + 8]]), fill:"#BCC5D2", stroke:"#C3CBD7", "stroke-width":1}, g);
+  area(g, 0, 0, COLS, ROWS, {fill:"#FFFFFF", stroke:"#C3CBD7", "stroke-width":1.2, filter:"url(#lift)"});
+  if(P.color) area(g, 0, 0, COLS, ROWS, {fill, opacity:.13});
+  const grid = s("g", {stroke:"#0E1B2E", "stroke-width":.4, opacity:.12}, g);
+  for(let c = 1; c < COLS; c++){ const a = lp(c, 0), b = lp(c, ROWS); s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1]}, grid); }
+  for(let r = 1; r < ROWS; r++){ const a = lp(0, r), b = lp(COLS, r); s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1]}, grid); }
+  // name sits left of the plate's left corner, where no plate above can cover it
+  const [tx, ty] = lp(0, ROWS);
+  const nameG = s("g", {class:"pname"}, g);
+  s("path", {d:`M${tx - 4} ${ty} H${tx - 20}`, stroke:"#0E1B2E", "stroke-width":.8, fill:"none", "stroke-dasharray":"1 3"}, nameG);
+  s("rect", {x:tx - 32, y:ty - 12, width:10, height:24, rx:3, fill:P.color ? fill : "#C3CBD7"}, nameG);
+  label(nameG, tx - 42, ty + 2, P.name, {cls:"disp", size:18, anchor:"end", fill:"#0E1B2E", weight:700});
+    label(nameG, tx - 42, ty + 19, P.pace, {size:13.5, anchor:"end", fill:"#1F5AF0", weight:600}).classList.add("flabel");
+  plateEls[p] = {g, content:s("g", null, g)};
+});
+const flab = (g, x, y, t, opt) => { const e = label(g, x, y, t, Object.assign({size:14}, opt || {})); e.classList.add("flabel"); return e; };
+function haloText(g, x, y, t, opt){
+  opt = Object.assign({size:14}, opt || {});
+  opt.weight = opt.weight || 500; const back = label(g, x, y, t, opt); back.setAttribute("stroke", "#FFFFFF"); back.setAttribute("stroke-width", "4"); back.setAttribute("stroke-linejoin", "round"); back.classList.add("flabel");
+  return flab(g, x, y, t, opt);
+}
+
+/* --- plate 0: today */
+(function(){
+  const g = plateEls[0].content;
+  area(g, 3, 0, 5, ROWS, {fill:"#B9B2A4", stroke:"#0E1B2E", "stroke-width":.6});
+  { const a = lp(4, 0), b = lp(4, ROWS); s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:"#FFFFFF", "stroke-width":1.2, "stroke-dasharray":"6 5"}, g); }
+  area(g, 0, 3.86, 3, 4.14, {fill:"#E3E8EF", stroke:"none"});
+  area(g, 5, 3.86, 11.7, 4.14, {fill:"#E3E8EF", stroke:"none"});
+  area(g, 11.7, 0, COLS, ROWS, {fill:"#9EC3DE", stroke:"none"});
+  const [sx, sy] = lp(COLS, 4); haloText(g, sx + 8, sy + 10, "Larkin Ave", {size:12.5});
+  const HOUSE = {t:"#D7A48F", l:"#EFE6D2", r:"#D9CFBA"}, SHOP = {t:"#EEF1F5", l:"#F4EEDF", r:"#DCD3BF"}, WARE = {t:"#D3CBB9", l:"#E6DFCE", r:"#CBC2AE"}, CH = {t:"#F4EEDF", l:"#FFFFFF", r:"#E3E8EF"};
+  const boxes = [];
+  const recAt = {}; RECORDS.forEach(r => recAt[r.cell.join(",")] = r);
+  for(let c = 0; c < 12; c++) for(let r = 0; r < ROWS; r++){
+    if(c === 3 || c === 4) continue;
+    if(r <= 1 && c >= 8) continue;
+    const key = c + "," + r, rec = recAt[key];
+    if(rec && rec.place === "bus"){ boxes.push({c0:c + .55, r0:r + .05, c1:c + .9, r1:r + .3, h:7, k:SHOP, key}); continue; }
+    if(c === 11 && r >= 3){ boxes.push({c0:c + .18, r0:r + .22, c1:c + .66, r1:r + .74, h:11, k:HOUSE, key}); continue; }
+    if(r === 3 && c >= 5 && c <= 8){ boxes.push({c0:c + .06, r0:r + .08, c1:c + .94, r1:r + .82, h:c === 6 ? 20 : 15, k:SHOP, key}); continue; }
+    if(c === 9 && r === 2){ boxes.push({c0:9.2, r0:2.2, c1:9.8, r1:2.8, h:26, k:CH, key, spire:true}); continue; }
+    if(rec && rec.place === "envios"){ boxes.push({c0:c + .1, r0:r + .1, c1:c + .9, r1:r + .7, h:13, k:SHOP, key}); continue; }
+    if(!rec && (c * 5 + r * 3) % 7 === 0) continue;
+    boxes.push({c0:c + .2, r0:r + .2, c1:c + .8, r1:r + .8, h:9 + ((c * 3 + r) % 4) * 2, k:HOUSE, key});
+  }
+  boxes.push({c0:8.1, r0:.12, c1:11.55, r1:1.7, h:20, k:WARE, key:"ware"});
+  boxes.sort((a, b) => (a.c0 + a.c1 + a.r0 + a.r1) - (b.c0 + b.c1 + b.r0 + b.r1));
+  const heights = {};
+  boxes.forEach(b => {
+    box(g, b.c0, b.r0, b.c1, b.r1, b.h, b.k); heights[b.key] = b.h;
+    if(b.spire){ const top = lp((b.c0 + b.c1) / 2, (b.r0 + b.r1) / 2, b.h); s("path", {d:`M${top[0] - 5} ${top[1]} L${top[0]} ${top[1] - 20} L${top[0] + 5} ${top[1]} Z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":.8}, g); heights[b.key] += 18; }
+  });
+  { const w = lp(9.8, .9, 20); haloText(g, w[0] + 30, w[1] - 6, "warehouses", {size:12.5}); }
+  RECORDS.slice().sort((a, b) => (a.cell[0] + a.cell[1]) - (b.cell[0] + b.cell[1])).forEach(r => {
+    const hh = heights[r.cell.join(",")] || 0; pinTopH[r.id] = hh;
+    const [x, y] = lp(r.cell[0] + .5, r.cell[1] + .5, hh);
+    const m = s("g", {transform:`translate(${x},${y})`}, g);
+    s("line", {x1:0, y1:0, x2:0, y2:-22, stroke:"#5B6676", "stroke-width":1.3}, m);
+    s("circle", {cy:-34, r:13, fill:css(KIND_V[r.kind]), stroke:"#FFFFFF", "stroke-width":2.5, filter:"url(#liftsm)", class:"focusring"}, m);
+    s("text", {y:-29.5, "text-anchor":"middle", class:"ui", "font-size":13.5, "font-weight":700, fill:"#FFFFFF", text:String(r.n)}, m);
+    reg(r.id, m, 0);
+  });
+})();
+
+/* --- plate 1: economic */
+(function(){
+  const g = plateEls[1].content;
+  const ec = s("g", null, g);
+  area(ec, 8, 0, COLS, 1.7, {fill:css("--c-econ"), opacity:.5});
+  [[8.7,.7],[10.1,.7],[11.3,1]].forEach(([c, r]) => { const [x, y] = lp(c, r); s("path", {d:`M${x - 10} ${y} v-9 l5 -4 v4 l5 -4 v4 l5 -4 v13 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1}, ec); });
+  { const [x, y] = lp(COLS, .4); haloText(ec, x + 8, y, "hourly employers"); }
+  reg("EC1", ec, 1);
+  const p1 = s("g", null, g);
+  [[6.5, 3.5], [1.5, 5.6]].forEach(([c, r], i) => {
+    const [x, y] = lp(c, r);
+    s("path", {d:`M${x - 9} ${y} v-12 h18 v12 M${x - 11} ${y - 12} l11 -6 l11 6`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, p1);
+    s("path", {d:`M${x - 9} ${y - 14} l18 14 M${x + 9} ${y - 14} l-18 14`, stroke:"#8E2C6E", "stroke-width":2.4}, p1);
+    if(i === 0) haloText(p1, x + 16, y - 8, "branches closed 2009");
+  });
+  reg("P1", p1, 1);
+})();
+
+/* --- plate 2: political */
+(function(){
+  const g = plateEls[2].content;
+  const p2 = s("g", null, g);
+  area(p2, 0, 0, COLS, ROWS, {fill:"none", stroke:css("--c-pol"), "stroke-width":3.2, opacity:.85});
+  const [bx, by] = lp(COLS, 0);
+  s("rect", {x:bx - 150, y:by - 30, width:150, height:22, rx:3, fill:css("--c-pol"), class:"focusring"}, p2);
+  label(p2, bx - 75, by - 14, "state law covers the plate", {anchor:"middle", size:12, fill:"#FFFFFF"});
+  reg("P2", p2, 2);
+  const p4 = s("g", null, g);
+  area(p4, 5, 3, 9, 3.86, {fill:css("--c-econ"), opacity:.55});
+  area(p4, 5, 3, 9, 3.86, {fill:"none", stroke:"#0E1B2E", "stroke-width":1});
+  { const [x, y] = lp(7, 3); haloText(p4, x + 4, y - 8, "only strip where shops are allowed", {anchor:"middle"}); }
+  reg("P4", p4, 2);
+  const p3 = s("g", null, g);
+  const line = []; for(let c = 0; c <= 11.7; c += .5) line.push(lp(c, 4));
+  s("polyline", {points:pts(line), fill:"none", stroke:css("--c-pol"), "stroke-width":3.6, "stroke-linecap":"round"}, p3);
+  [1, 2.5, 6, 9, 11].forEach(c => { const [x, y] = lp(c, 4); s("circle", {cx:x, cy:y, r:4.2, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, p3); });
+  { const [x, y] = lp(11.7, 4); haloText(p3, x + 10, y + 18, "Route 6, every 30 min"); }
+  reg("P3", p3, 2);
+})();
+
+/* --- plate 3: built & natural */
+(function(){
+  const g = plateEls[3].content;
+  const e2 = s("g", null, g);
+  area(e2, 1.5, 0, 3, ROWS, {fill:"url(#hatch-light)", stroke:"none"});
+  area(e2, 5, 0, 5.5, ROWS, {fill:"url(#hatch-light)", stroke:"none"});
+  area(e2, 1.5, 0, 3, ROWS, {fill:"#5E8A3A", opacity:.14, stroke:"none"});
+  { const [x, y] = lp(1.5, .4); haloText(e2, x - 8, y - 4, "exhaust zone", {anchor:"end"}); }
+  reg("E2", e2, 3);
+  const h2 = s("g", null, g);
+  area(h2, 3, 0, 5, ROWS, {fill:"#9C9486", stroke:"#0E1B2E", "stroke-width":1.2});
+  { const a = lp(4, 0), b = lp(4, ROWS); s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:"#FFFFFF", "stroke-width":1.4, "stroke-dasharray":"6 5"}, h2); }
+  { const [x, y] = lp(4.6, ROWS); haloText(h2, x + 12, y + 16, "interstate spur"); }
+  reg("H2", h2, 3);
+  const e1 = s("g", null, g);
+  area(e1, 9.6, 3, COLS, ROWS, {fill:"#3B7FB8", opacity:.4});
+  area(e1, 9.6, 3, COLS, ROWS, {fill:"url(#waves)"});
+  { const [x, y] = lp(COLS, 5); haloText(e1, x + 10, y, "floodplain"); }
+  reg("E1", e1, 3);
+})();
+
+/* --- plate 4: social & cultural */
+(function(){
+  const g = plateEls[4].content;
+  const s1 = s("g", null, g);
+  area(s1, 7, 3, COLS, ROWS, {fill:css("--c-soc"), opacity:.36});
+  { const [x, y] = lp(9.8, 6.2); haloText(s1, x, y, "español · tiếng Việt · kreyòl", {anchor:"middle"}); }
+  reg("S1", s1, 4);
+  const s2 = s("g", null, g);
+  [[9.5, 2.5], [6.4, 6.2]].forEach(([c, r]) => {
+    const [x, y] = lp(c, r);
+    s("path", {d:`M${x} ${y - 18} v8 m-4 -5 h8 M${x - 7} ${y} v-10 l7 -6 l7 6 v10 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.2}, s2);
+    for(let i = 0; i < 6; i++){ const a = i * Math.PI / 3; s("circle", {cx:x + Math.cos(a) * 15, cy:y - 4 + Math.sin(a) * 7, r:2.4, fill:css("--c-cult"), stroke:"#0E1B2E", "stroke-width":.6}, s2); }
+  });
+  { const [x, y] = lp(9.5, 2.5); haloText(s2, x + 24, y - 10, "savings circles"); }
+  reg("S2", s2, 4);
+})();
+
+/* --- plate 5: historical */
+(function(){
+  const g = plateEls[5].content;
+  const h1 = s("g", null, g);
+  area(h1, 0, 1, 10, ROWS, {fill:"#C0392B", opacity:.36, stroke:"#8A2A1E", "stroke-width":1});
+  area(h1, 0, 1, 10, ROWS, {fill:"url(#hatch-light)"});
+  area(h1, 10, 1, COLS, ROWS, {fill:"#D9B23A", opacity:.4});
+  area(h1, 0, 0, COLS, 1, {fill:"#5B83B5", opacity:.32});
+  { const [x, y] = lp(6.2, 5.2); haloText(h1, x, y, "Grade D, “hazardous”", {anchor:"middle", size:14, fill:"#7A2418", weight:700}); }
+  { const [x, y] = lp(11, 4.4); haloText(h1, x, y, "C", {anchor:"middle", cls:"disp", size:15}); }
+  { const [x, y] = lp(5.5, .5); haloText(h1, x, y + 4, "B", {anchor:"middle", cls:"disp", size:15}); }
+  reg("H1", h1, 5);
+  const h2 = s("g", null, g);
+  area(h2, 3, 0, 5, ROWS, {fill:"none", stroke:"#0E1B2E", "stroke-width":1.6, "stroke-dasharray":"5 3"});
+  { const [x, y] = lp(4.6, ROWS); haloText(h2, x + 12, y + 16, "homes cleared 1961"); }
+  reg("H2", h2, 5);
+  const h3 = s("g", null, g);
+  area(h3, 9, 0, COLS, 1, {fill:"#8A5A2B", opacity:.5, stroke:"#0E1B2E"});
+  const [wx, wy] = lp(10.5, .5);
+  s("circle", {cx:wx, cy:wy, r:7, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.4}, h3);
+  for(let i = 0; i < 8; i++){ const a = i * Math.PI / 4; s("line", {x1:wx + Math.cos(a) * 7, y1:wy + Math.sin(a) * 7, x2:wx + Math.cos(a) * 10, y2:wy + Math.sin(a) * 10, stroke:"#0E1B2E", "stroke-width":2}, h3); }
+  haloText(h3, wx - 16, wy - 12, "Halvern Works, closed 1983", {anchor:"end"});
+  reg("H3", h3, 5);
+})();
+
+label(svgP, 24, 922, "Composite circumstances on invented blocks. The same square on every layer is the same place. Loops are hypotheses for run 2 to test.", {size:13, fill:"#5B6676", cls:"ui"});
+
+/* ---------------- layout and motion */
+let cur = null;
+function activePlates(){
+  if(!state.sel && !state.loop) return null;
+  const ps = new Set();
+  if(state.sel) closure(state.sel).forEach(id => ps.add(BY[id].plate));
+  if(state.loop) loopPlates(state.loop).forEach(p => ps.add(p));
+  return ps;
+}
+function targetLayout(){
+  const y = [], sc = [], op = [], quiet = [];
+  if(state.solo != null){
+    const p = state.solo, S = 1.1, ph = PH * S;
+    const yp = Math.max(TOP + 16 * p + 10, (BOTTOM + TOP - ph) / 2 - 20);
+    for(let i = 0; i < 6; i++){
+      if(i === p){ y[i] = yp; sc[i] = S; op[i] = 1; quiet[i] = false; }
+      else if(i < p){ y[i] = yp - 16 * (p - i) - 8; sc[i] = 1; op[i] = .12; quiet[i] = true; }
+      else { y[i] = yp + ph - PH + 18 * (i - p) + 8; sc[i] = 1; op[i] = .12; quiet[i] = true; }
+    }
+    return {y, sc, op, quiet};
+  }
+  const act = activePlates();
+  const w = [];
+  for(let p = 0; p < 6; p++){
+    w[p] = !act ? 1 : (act.has(p) ? 1.55 : .42);
+    if(state.hover === p) w[p] += 1.3;
+    sc[p] = 1;
+    op[p] = act && !act.has(p) && state.hover !== p ? .5 : 1;
+    quiet[p] = !!act && !act.has(p) && state.hover !== p;
+  }
+  let sum = 0; for(let p = 1; p < 6; p++) sum += w[p];
+  const unit = (BOTTOM - TOP - PH) / sum;
+  y[0] = TOP;
+  for(let p = 1; p < 6; p++) y[p] = y[p - 1] + unit * w[p];
+  return {y, sc, op, quiet};
+}
+function applyLayout(L){
+  for(let p = 0; p < 6; p++){
+    const g = plateEls[p].g;
+    g.setAttribute("transform", `translate(${OX},${L.y[p].toFixed(2)}) scale(${L.sc[p].toFixed(4)})`);
+    g.setAttribute("opacity", L.op[p].toFixed(3));
+  }
+}
+function setOrder(){
+  // lower plates first so upper plates sit on top; a soloed plate goes last
+  for(let p = 5; p >= 0; p--) if(p !== state.solo) stack.appendChild(plateEls[p].g);
+  if(state.solo != null) stack.appendChild(plateEls[state.solo].g);
+}
+let animToken = 0;
+function relayout(){
+  const to = targetLayout();
+  for(let p = 0; p < 6; p++){ plateEls[p].g.classList.toggle("quiet", to.quiet[p]); plateEls[p].g.classList.toggle("ghost", state.solo != null && state.solo !== p); }
+  setOrder();
+  if(!cur || reduced){ cur = to; applyLayout(cur); drawOverlay(); return; }
+  const from = {y:cur.y.slice(), sc:cur.sc.slice(), op:cur.op.slice()};
+  const t0 = performance.now(), token = ++animToken;
+  function step(now){
+    if(token !== animToken) return;
+    const k = Math.min(1, (now - t0) / 420), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    cur = {y:[], sc:[], op:[], quiet:to.quiet};
+    for(let p = 0; p < 6; p++){ cur.y[p] = from.y[p] + (to.y[p] - from.y[p]) * e; cur.sc[p] = from.sc[p] + (to.sc[p] - from.sc[p]) * e; cur.op[p] = from.op[p] + (to.op[p] - from.op[p]) * e; }
+    applyLayout(cur); drawOverlay();
+    if(k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const gpt = (p, c, r, hgt) => { const q = lp(c, r, hgt); return [OX + cur.sc[p] * q[0], cur.y[p] + cur.sc[p] * q[1]]; };
+function anchor(id){
+  const it = BY[id];
+  if(it.kindOf === "record") return gpt(0, it.cell[0] + .5, it.cell[1] + .5, pinTopH[id] + 21);
+  return gpt(it.plate, it.rep[0] + .5, it.rep[1] + .5, 0);
+}
+
+/* ---------------- overlay: column, threads, loop */
+function arrowHead(g, x, y, ang, color, size){
+  const z = size || 7;
+  const p = [[x + Math.cos(ang) * z, y + Math.sin(ang) * z], [x + Math.cos(ang + 2.5) * z, y + Math.sin(ang + 2.5) * z], [x + Math.cos(ang - 2.5) * z, y + Math.sin(ang - 2.5) * z]];
+  s("polygon", {points:pts(p), fill:color}, g);
+}
+function bez(p0, c1, c2, p1, t){
+  const u = 1 - t;
+  return [u*u*u*p0[0] + 3*u*u*t*c1[0] + 3*u*t*t*c2[0] + t*t*t*p1[0], u*u*u*p0[1] + 3*u*u*t*c1[1] + 3*u*t*t*c2[1] + t*t*t*p1[1]];
+}
+function bezD(p0, c1, c2, p1, t){
+  const u = 1 - t;
+  return [3*u*u*(c1[0] - p0[0]) + 6*u*t*(c2[0] - c1[0]) + 3*t*t*(p1[0] - c2[0]), 3*u*u*(c1[1] - p0[1]) + 6*u*t*(c2[1] - c1[1]) + 3*t*t*(p1[1] - c2[1])];
+}
+function drawOverlay(){
+  overlay.innerHTML = "";
+  const set = state.sel ? closure(state.sel) : null;
+  Object.entries(featEls).forEach(([id, els]) => els.forEach(el => el.classList.toggle("dim", !!set && !set.has(id))));
+  document.getElementById("soloNote").hidden = state.solo == null;
+  if(state.solo != null){
+    if(state.sel){
+      const it = BY[state.sel], cell = it.kindOf === "record" ? it.cell : it.rep, p = state.solo;
+      s("polygon", {points:pts([gpt(p, cell[0], cell[1]), gpt(p, cell[0] + 1, cell[1]), gpt(p, cell[0] + 1, cell[1] + 1), gpt(p, cell[0], cell[1] + 1)]), fill:"#1F5AF0", opacity:.16, stroke:"#1F5AF0", "stroke-width":1}, overlay);
+    }
+    return;
+  }
+  if(state.sel){
+    const it = BY[state.sel], cell = it.kindOf === "record" ? it.cell : it.rep;
+    const a = gpt(0, cell[0] + .5, cell[1] + .5), b = gpt(5, cell[0] + .5, cell[1] + .5);
+    s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:"#1F5AF0", "stroke-width":12, opacity:.10}, overlay);
+    for(let p = 0; p < 6; p++) s("polygon", {points:pts([gpt(p, cell[0], cell[1]), gpt(p, cell[0] + 1, cell[1]), gpt(p, cell[0] + 1, cell[1] + 1), gpt(p, cell[0], cell[1] + 1)]), fill:"#1F5AF0", opacity:.14, stroke:"#1F5AF0", "stroke-width":.8}, overlay);
+    edgesIn(set).forEach(([child, parent]) => {
+      const A = anchor(child), B = anchor(parent), my = (A[1] + B[1]) / 2;
+      const d = `M${A[0]} ${A[1]} C${A[0]} ${my} ${B[0]} ${my} ${B[0]} ${B[1]}`;
+      s("path", {d, stroke:"#FFFFFF", "stroke-width":5, fill:"none", opacity:.85}, overlay);
+      s("path", {d, stroke:"#0E1B2E", "stroke-width":1.6, fill:"none", "stroke-dasharray":"5 4", opacity:.75}, overlay);
+      s("circle", {cx:B[0], cy:B[1], r:4, fill:"#0E1B2E"}, overlay);
+    });
+  }
+  if(state.loop) drawLoop(state.loop);
+  drawCallouts(set);
+}
+/* Biesty-style callouts: full text for the circumstances in the selected story, in a column beside the stack */
+function drawCallouts(set){
+  calloutLayer.innerHTML = "";
+  if(!set || state.solo != null) return;
+  const items = [...set].filter(id => BY[id].kindOf === "context").map(id => ({id, a:anchor(id)})).sort((p, q) => p.a[1] - q.a[1]);
+  const TH2 = 66, GAP = 8, TOPY = 14, BOTY = 900;
+  let last = TOPY - GAP;
+  items.forEach(o => { o.y = Math.max(o.a[1] - TH2 / 2, last + GAP); last = o.y + TH2; });
+  let next = BOTY + GAP;
+  for(let i = items.length - 1; i >= 0; i--){ items[i].y = Math.min(items[i].y, next - GAP - TH2); next = items[i].y; }
+  items.forEach(o => {
+    const c = BY[o.id], y = o.y, my = y + TH2 / 2;
+    const d = `M${o.a[0]} ${o.a[1]} L${CX - 18} ${my} H${CX}`;
+    s("path", {d, stroke:"#FFFFFF", "stroke-width":4, fill:"none", opacity:.8, "pointer-events":"none"}, calloutLayer);
+    s("path", {d, stroke:"#7D8797", "stroke-width":1, fill:"none", "pointer-events":"none"}, calloutLayer);
+    s("circle", {cx:o.a[0], cy:o.a[1], r:4, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.4, "pointer-events":"none"}, calloutLayer);
+    const g = s("g", {class:"hit", tabindex:0, role:"button", "aria-label":`${c.title}, ${c.year}`}, calloutLayer);
+    s("rect", {x:CX, y, width:CW, height:TH2, rx:10, fill:"#FFFFFF", stroke: state.sel === o.id ? "#1F5AF0" : "#DDE2EA", "stroke-width": state.sel === o.id ? 2 : 1, filter:"url(#liftsm)", class:"focusring"}, g);
+    c.types.forEach((ty, j) => s("rect", {x:CX + 10 + j * 14, y:y + 9, width:10, height:10, rx:3, fill:col(ty)}, g));
+    s("text", {x:CX + 14 + c.types.length * 14, y:y + 18, class:"ui", "font-size":13, "font-weight":600, fill:"#5B6676", text:`${c.year} \u00b7 ${PLATES[c.plate].name}`}, g);
+    label(g, CX + 10, y + 38, c.lines[0], {size:15, weight:500});
+    label(g, CX + 10, y + 56, c.lines[1], {size:15, weight:500});
+    onActivate(g, () => select(o.id));
+  });
+}
+function nodePt(L, k){ const n = L.nodes.find(x => x.k === k); return gpt(n.p, n.c, n.r, 0); }
+function drawLoop(key){
+  const L = LOOPS[key], LC = css("--loop");
+  const g = s("g", null, overlay);
+  const P = L.nodes.map(n => gpt(n.p, n.c, n.r, 0));
+  const n = P.length;
+  const cx = P.reduce((a, q) => a + q[0], 0) / n, cy = P.reduce((a, q) => a + q[1], 0) / n;
+  // drivers from other layers: dashed, drawn first
+  const drvG = s("g", null, g);
+  (L.drivers || []).forEach(d => {
+    const A = anchor(d.from), B = nodePt(L, d.to);
+    const mx = (A[0] + B[0]) / 2 + (A[1] > B[1] ? -40 : 40), my = (A[1] + B[1]) / 2;
+    const dd = `M${A[0]} ${A[1]} Q${mx} ${my} ${B[0]} ${B[1]}`;
+    s("path", {d:dd, stroke:"#FFFFFF", "stroke-width":5, fill:"none", opacity:.8}, drvG);
+    s("path", {d:dd, stroke:"#5B6676", "stroke-width":1.6, fill:"none", "stroke-dasharray":"2 4", "marker-end":"url(#drv)"}, drvG);
+    s("circle", {cx:A[0], cy:A[1], r:4, fill:"#5B6676"}, drvG);
+    const sx = .25 * A[0] + .5 * mx + .25 * B[0], sy = .25 * A[1] + .5 * my + .25 * B[1];
+    s("circle", {cx:sx, cy:sy, r:9, fill:"#FFFFFF", stroke:"#5B6676", "stroke-width":1.2}, drvG);
+    s("text", {x:sx, y:sy + 4.5, "text-anchor":"middle", "font-size":13, "font-weight":700, fill:"#5B6676", class:"ui", text:d.sign}, drvG);
+  });
+  (L.cross || []).forEach(x => {
+    const L2 = LOOPS[x.to[0]], A = nodePt(L, x.from), B = nodePt(L2, x.to[1]);
+    const n2 = L2.nodes.find(q => q.k === x.to[1]);
+    const dd = `M${A[0]} ${A[1]} Q${(A[0] + B[0]) / 2} ${Math.min(A[1], B[1]) - 60} ${B[0]} ${B[1]}`;
+    s("path", {d:dd, stroke:LC, "stroke-width":1.6, fill:"none", "stroke-dasharray":"2 4", opacity:.8, "marker-end":"url(#drv)"}, drvG);
+    s("circle", {cx:B[0], cy:B[1], r:5, fill:"#FFFFFF", stroke:LC, "stroke-width":1.5}, drvG);
+    haloSvg(drvG, B[0] + 10, B[1] + 18, `${n2.t} (loop ${x.to[0]}) ${x.sign}`, {size:12.5, fill:LC});
+  });
+  // the loop itself: closed Catmull-Rom through the nodes
+  const segs = [];
+  for(let i = 0; i < n; i++){
+    const p0 = P[(i - 1 + n) % n], p1 = P[i], p2 = P[(i + 1) % n], p3 = P[(i + 2) % n], T = 1 / 5;
+    const c1 = [p1[0] + (p2[0] - p0[0]) * T, p1[1] + (p2[1] - p0[1]) * T];
+    const c2 = [p2[0] - (p3[0] - p1[0]) * T, p2[1] - (p3[1] - p1[1]) * T];
+    segs.push([p1, c1, c2, p2]);
+  }
+  const d = "M" + P[0].join(" ") + segs.map(q => ` C${q[1].join(" ")} ${q[2].join(" ")} ${q[3].join(" ")}`).join("");
+  s("path", {d, stroke:"#FFFFFF", "stroke-width":8, fill:"none", opacity:.9}, g);
+  s("path", {d, stroke:LC, "stroke-width":3, fill:"none"}, g);
+  segs.forEach((q, i) => {
+    const t = .62, pt = bez(...q, t), dv = bezD(...q, t);
+    arrowHead(g, pt[0], pt[1], Math.atan2(dv[1], dv[0]), LC, 9);
+    const sp = bez(...q, .4), sd = bezD(...q, .4);
+    const len = Math.hypot(sd[0], sd[1]) || 1; let nx = -sd[1] / len, ny = sd[0] / len;
+    if((sp[0] + nx - cx) ** 2 + (sp[1] + ny - cy) ** 2 < (sp[0] - cx) ** 2 + (sp[1] - cy) ** 2){ nx = -nx; ny = -ny; }
+    const lx = sp[0] + nx * 15, ly = sp[1] + ny * 15;
+    s("circle", {cx:lx, cy:ly, r:10, fill:"#FFFFFF", stroke:LC, "stroke-width":1.5}, g);
+    s("text", {x:lx, y:ly + 5, "text-anchor":"middle", "font-size":15, "font-weight":700, fill:LC, class:"ui", text:L.links[i][2]}, g);
+  });
+  // loop marker at the centroid, with the turning direction
+  const area2 = P.reduce((a, q, i) => { const r2 = P[(i + 1) % n]; return a + (q[0] * r2[1] - r2[0] * q[1]); }, 0);
+  const cw = area2 > 0;
+  const mk = s("g", {transform:`translate(${cx},${cy})`}, g);
+  s("circle", {r:22, fill:"#FFFFFF", stroke:"none", opacity:.95}, mk);
+  s("path", {d: cw ? "M15 -12 A18 18 0 1 1 4 -18" : "M-15 -12 A18 18 0 1 0 -4 -18", fill:"none", stroke:LC, "stroke-width":1.8}, mk);
+  arrowHead(mk, cw ? 4 : -4, -18, cw ? -0.35 : Math.PI + 0.35, LC, 6);
+  s("text", {y:5.5, "text-anchor":"middle", class:"ui", "font-size":15, "font-weight":700, fill:LC, text:key}, mk);
+  // node chips
+  L.nodes.forEach((nd, i) => {
+    const [x, y] = P[i];
+    s("circle", {cx:x, cy:y, r:5.5, fill:LC, stroke:"#FFFFFF", "stroke-width":2}, g);
+    const w = nd.t.length * 7.4 + 18, right = x >= cx ? (x + 10 + w < CX - 12) : (x - 10 - w < 20);
+    const bx = right ? x + 10 : x - 10 - w;
+    s("rect", {x:bx, y:y - 13, width:w, height:26, rx:13, fill:"#FFFFFF", stroke:LC, "stroke-width":1.4, filter:"url(#liftsm)"}, g);
+    s("text", {x:bx + w / 2, y:y + 4, "text-anchor":"middle", "font-size":13.5, "font-weight":600, fill:"#0E1B2E", class:"ui", text:nd.t}, g);
+  });
+}
+function haloSvg(g, x, y, t, opt){
+  const a = label(g, x, y, t, Object.assign({cls:"ui"}, opt)); a.setAttribute("stroke", "#FFFFFF"); a.setAttribute("stroke-width", "4"); a.setAttribute("stroke-linejoin", "round");
+  return label(g, x, y, t, Object.assign({cls:"ui"}, opt));
+}
+svgP.addEventListener("click", ev => { if(ev.target.classList && ev.target.classList.contains("bg")) select(null); });
+
+/* ================================================================ rail: detail sheet */
+const detailEl = document.getElementById("detail"), loopEl = document.getElementById("loopcard");
+const swatchFor = id => BY[id].kindOf === "record" ? css(KIND_V[BY[id].kind]) : col(BY[id].types[0]);
+const CHEV = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="#7D8797" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function icon(id){
+  const it = BY[id];
+  const sp = document.createElement("span");
+  sp.className = "ic" + (it.kindOf === "context" ? " sq" : "");
+  sp.style.background = swatchFor(id);
+  sp.textContent = it.kindOf === "record" ? String(it.n) : TYPES[it.types[0]].name[0];
+  sp.setAttribute("aria-hidden", "true");
+  return sp;
+}
+function rowList(parent, ids){
+  if(!ids.length){ h("p", {class:"none", text:"Nothing in this view"}, parent); return; }
+  const ul = h("ul", {class:"rows"}, parent);
+  ids.forEach(x => {
+    const it = BY[x];
+    const b = h("button", {type:"button", class:"row"}, h("li", null, ul));
+    b.appendChild(icon(x));
+    const m = h("span", null, b);
+    h("span", {class:"nm", text: it.kindOf === "record" ? it.title : it.title}, m);
+    h("span", {class:"sub", text: it.kindOf === "record" ? `${it.time} · ${FACTS[x].with}` : `${it.year} · ${PLATES[it.plate].name} layer`}, m);
+    h("span", {html:CHEV}, b);
+    b.addEventListener("click", () => select(x));
+  });
+}
+function kv(parent, pairs){
+  const dl = h("dl", {class:"kv"}, parent);
+  pairs.forEach(([k, v]) => { const d = h("div", null, dl); h("dt", {text:k}, d); h("dd", {text:v}, d); });
+}
+function renderDetail(){
+  detailEl.innerHTML = "";
+  const id = state.sel;
+  if(!id){ h("p", {class:"none", text:"Select a record or a circumstance in the layers to see its details."}, detailEl); return; }
+  const it = BY[id];
+  const sh = h("div", {class:"sheet"}, detailEl);
+  const eb = h("div", {class:"eyebrow"}, sh);
+  eb.appendChild(icon(id));
+  if(it.kindOf === "record"){
+    const f = FACTS[id];
+    h("span", {text:`Record ${it.n} · ${it.time}`}, eb);
+    h("h3", {class:"title", text:it.title.replace(/, \$[\d.,]+( fee| copay| plus \$9 fee)?$/, "")}, sh);
+    h("p", {class:"big" + (f.fail ? " fail" : ""), text:f.amt}, sh);
+    const st = h("div", {class:"status"}, sh);
+    h("span", {class:"pill " + (f.fail ? "fail" : "ok"), text:f.status}, st);
+    h("span", {class:"pill neutral", text:f.type}, st);
+    if(f.note) h("span", {class:"muted small", text:f.note}, st);
+    h("p", {class:"why", text:it.body}, sh);
+    kv(sh, [["Time", it.time], ["With", f.with], ["Kind", KIND_NAME[it.kind]], ["Layer", "Today"]]);
+    h("h3", {text:"Shaped by"}, sh);
+    rowList(sh, parents(id));
+  } else {
+    h("span", {text:`Circumstance · ${PLATES[it.plate].name} layer`}, eb);
+    h("h3", {class:"title", text:it.title}, sh);
+    const st = h("div", {class:"status"}, sh);
+    it.types.forEach(ty => { const p = h("span", {class:"pill type", text:TYPES[ty].name}, st); p.style.background = col(ty); });
+    h("p", {class:"why", text:it.body}, sh);
+    kv(sh, [["When", it.year === "today" ? "Now" : it.year], ["Layer", PLATES[it.plate].name], ["Pace", PLATES[it.plate].pace.replace(/^./, c => c.toUpperCase())]]);
+    h("h3", {text:"Rests on"}, sh); rowList(sh, parents(id));
+    h("h3", {text:"Shapes"}, sh); rowList(sh, children(id));
+  }
+  const inLoops = Object.entries(LOOPS).filter(([, L]) => L.seen.includes(id) || (L.drivers || []).some(d => d.from === id)).map(([kk]) => kk);
+  if(inLoops.length){
+    h("h3", {text:"In loops"}, sh);
+    const ul = h("ul", {class:"rows"}, sh);
+    inLoops.forEach(kk => {
+      const b = h("button", {type:"button", class:"row"}, h("li", null, ul));
+      const ic = h("span", {class:"ic", text:kk}, b); ic.style.background = "#fff"; ic.style.color = "var(--loop)"; ic.style.border = "2px solid var(--loop)"; ic.style.fontSize = "12px";
+      const m = h("span", null, b); h("span", {class:"nm", text:LOOPS[kk].name}, m); h("span", {class:"sub", text:LOOPS[kk].kind === "R" ? "Reinforcing loop" : "Balancing loop"}, m);
+      h("span", {html:CHEV}, b);
+      b.addEventListener("click", () => setLoop(kk));
+    });
+  }
+}
+function renderLoopCard(){
+  loopEl.innerHTML = "";
+  if(!state.loop) return;
+  const L = LOOPS[state.loop];
+  const sh = h("div", {class:"sheet"}, loopEl);
+  const eb = h("div", {class:"eyebrow"}, sh);
+  const ic = h("span", {class:"ic", text:state.loop}, eb); ic.style.background = "var(--loop)"; ic.style.fontSize = "12px";
+  h("span", {text:"Feedback loop"}, eb);
+  h("h3", {class:"title", text:L.name}, sh);
+  const st = h("div", {class:"status"}, sh);
+  h("span", {class:"pill loopp", text: L.kind === "R" ? "Reinforcing" : "Balancing"}, st);
+  h("span", {class:"pill neutral", text:`${L.links.length} links`}, st);
+  h("p", {class:"why", text:L.text}, sh);
+  h("h3", {text:"How it runs"}, sh);
+  const ol = h("ol", {class:"chain"}, sh);
+  L.links.forEach(([a, b, sg, tx]) => {
+    const na = L.nodes.find(q => q.k === a).t, nb = L.nodes.find(q => q.k === b).t;
+    h("li", {html:`<span>${na}<span class="sign" aria-label="${sg === "+" ? "raises" : "lowers"}">${sg}</span>${nb}<span class="because">${tx}</span></span>`}, ol);
+  });
+  h("p", {class:"muted small", style:"margin:4px 0 0", text: L.kind === "R" ? "An even number of minus links, so each turn pushes the same way." : "An odd number of minus links, so each turn pushes back."}, sh);
+  if(L.drivers && L.drivers.length){ h("h3", {text:"Pushed from other layers"}, sh); rowList(sh, L.drivers.map(d => d.from)); }
+  if(L.cross){ h("h3", {text:"Touches another loop"}, sh); L.cross.forEach(x => h("p", {class:"why", style:"margin:0 0 6px", text:`${x.to[0]} ${LOOPS[x.to[0]].name}: ${x.t}`}, sh)); }
+  h("h3", {text:"Seen today"}, sh); rowList(sh, L.seen);
+  h("p", {class:"note", text:"This loop is a hypothesis drawn for the prototype, not a finding. Run 2’s caused_by links and repeated days can test whether it holds."}, sh);
+}
+
+/* ================================================================ tools */
+const plateList = document.getElementById("platelist"), loopList = document.getElementById("looplist");
+const plateBtns = [], loopBtns = {};
+PLATES.forEach((P, p) => {
+  const b = h("button", {type:"button", class:"pbtn", "aria-pressed":"false"}, h("li", null, plateList));
+  const sw = h("span", {class:"sw"}, b); sw.style.background = P.color ? css(P.color) : "#C3CBD7";
+  h("span", {html:`<b>${P.name}</b><small>${P.sub}</small>`}, b);
+  b.addEventListener("mouseenter", () => setHover(p)); b.addEventListener("mouseleave", () => setHover(null));
+  b.addEventListener("focus", () => setHover(p)); b.addEventListener("blur", () => setHover(null));
+  b.addEventListener("click", () => setSolo(state.solo === p ? null : p));
+  plateBtns[p] = b;
+});
+Object.entries(LOOPS).forEach(([k, L]) => {
+  const b = h("button", {type:"button", class:"lbtn", "aria-pressed":"false"}, h("li", null, loopList));
+  h("span", {class:"badge", text:k}, b);
+  h("span", {html:`<b>${L.name}</b><small>${L.kind === "R" ? "reinforcing" : "balancing"} · ${L.nodes.length} links</small>`}, b);
+  b.addEventListener("click", () => setLoop(state.loop === k ? null : k));
+  loopBtns[k] = b;
+});
+document.getElementById("allplates").addEventListener("click", () => setSolo(null));
+document.getElementById("noloop").addEventListener("click", () => setLoop(null));
+let hoverTimer = null;
+function setHover(p){
+  if(state.solo != null) return;
+  clearTimeout(hoverTimer);
+  hoverTimer = setTimeout(() => { if(state.hover !== p){ state.hover = p; relayout(); } }, p == null ? 120 : 40);
+}
+function setSolo(p){ state.solo = p; state.hover = null; syncTools(); relayout(); }
+function setLoop(k){ state.loop = k; syncTools(); renderLoopCard(); renderDetail(); relayout(); }
+function select(id){ state.sel = id; syncTools(); renderDetail(); relayout(); }
+function syncTools(){
+  const act = activePlates();
+  plateBtns.forEach((b, p) => { b.setAttribute("aria-pressed", String(state.solo === p)); b.classList.toggle("inchain", !!act && act.has(p)); });
+  Object.entries(loopBtns).forEach(([k, b]) => b.setAttribute("aria-pressed", String(state.loop === k)));
+  document.getElementById("allplates").disabled = state.solo == null;
+  document.getElementById("noloop").disabled = !state.loop;
+}
+document.addEventListener("keydown", e => {
+  if(e.key !== "Escape") return;
+  if(state.solo != null) setSolo(null); else if(state.loop) setLoop(null); else if(state.sel) select(null);
+});
+
+/* legend */
+(function(){
+  const f = document.getElementById("legend");
+  h("span", {class:"k", text:"Circumstances"}, f);
+  Object.values(TYPES).forEach(t2 => { const d = h("span", {class:"lg"}, f); h("i", null, d).style.background = css(t2.v); h("span", {text:t2.name}, d); });
+  h("span", {class:"k", text:"Records", style:"margin-left:8px"}, f);
+  Object.entries(KIND_NAME).forEach(([k, n]) => { const d = h("span", {class:"lg"}, f); const i = h("i", null, d); i.style.background = css(KIND_V[k]); i.style.borderRadius = "50%"; h("span", {text:n}, d); });
+  h("span", {class:"k", text:"Lines", style:"margin-left:8px"}, f);
+  h("span", {class:"lg", html:'<svg width="22" height="8" aria-hidden="true"><path d="M1 4h20" stroke="#0E1B2E" stroke-width="1.6" stroke-dasharray="5 4"/></svg>Rests on'}, f);
+  h("span", {class:"lg", html:'<svg width="22" height="8" aria-hidden="true"><path d="M1 4h16" stroke="#1F5AF0" stroke-width="3"/><path d="M15 0l6 4-6 4z" fill="#1F5AF0"/></svg>Loop'}, f);
+  h("span", {class:"lg", html:'<svg width="22" height="8" aria-hidden="true"><path d="M1 4h16" stroke="#5B6676" stroke-width="1.6" stroke-dasharray="2 3"/><path d="M15 0l6 4-6 4z" fill="#5B6676"/></svg>Pushed by'}, f);
+  h("span", {class:"credit", html:'Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> \u00b7 <a href="directions.html">Earlier directions</a> \u00b7 <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#systems-lens">Data and method</a>'}, f);
+})();
+
+syncTools(); renderDetail(); renderLoopCard(); relayout();
+})();
+</script>
+</body>
+</html>
