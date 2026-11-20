@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Evidence checks: measure simulated days against sim/evidence_targets.csv (plan, sections 2 and 4).
 
-    python3 evidence/checks.py run OUT_DIR [--households N] [--keep]   simulate the typed-day set and report
+    python3 evidence/checks.py run OUT_DIR [--households N] [--keep] [--label TEXT]   simulate the typed-day set and report
     python3 evidence/checks.py measure RUN_DIR                         measure one existing output folder
 
-`run` simulates every day in evidence/typed_days.py with the simulator unchanged, measures each day,
+`run` simulates every day in evidence/typed_days.py with the simulator in sim/, measures each day,
 and writes to OUT_DIR:
     <date>/summary.md, <date>/metrics.json    per day (the large CSVs are deleted unless --keep)
     typed_day_metrics.csv                      one row per day and metric
@@ -56,7 +56,7 @@ def measure_rows(records, households, S=None):
     m["payday_rollovers"] = k["payday_loan_rollover"]
     m["payday_repayments"] = k["payday_loan_repayment"]
     m["title_loans_new"] = k["title_loan_disbursed"]
-    m["title_loan_payments"] = sum(v for kk, v in k.items() if "title_loan_payment" in kk)
+    m["title_loan_payments"] = sum(v for kk, v in k.items() if "title_loan_payment" in kk or "title_loan_rollover" in kk)
     m["title_repossessions"] = sum(v for kk, v in k.items() if "reposs" in kk)
     m["utility_disconnections"] = k["service_disconnected_for_nonpayment"]
     m["utility_shutoff_notices"] = k["shutoff_notice_received"]
@@ -81,6 +81,7 @@ def measure_rows(records, households, S=None):
     m["benefits_cliff_tagged"] = sum(1 for r in records if "benefits_cliff" in r["friction_tags"])
     m["paid_tax_prep"] = k["paid_tax_preparation"]
     m["free_tax_prep"] = k["free_tax_preparation"]
+    m["self_tax_filing"] = k["tax_software_filing"] + k["tax_return_filed_free"]
     m["pawn"] = k["pawn_loan"] + k["pawn_redemption"] + k["sold_item_to_pawn_shop"]
     m["check_cashing"] = k["check_cashing"]
     m["money_orders"] = k["money_order_purchase"]
@@ -114,7 +115,7 @@ def year_value(metric, days):
         return num / den if den else None
     if metric == "paid_prep_share":
         num = sum(d["weight"] * d["m"]["paid_tax_prep"] for d in days)
-        den = num + sum(d["weight"] * d["m"]["free_tax_prep"] for d in days)
+        den = num + sum(d["weight"] * (d["m"]["free_tax_prep"] + d["m"].get("self_tax_filing", 0)) for d in days)
         return num / den if den else None
     if metric == "aide_visit_miss_share":
         num = sum(d["weight"] * d["m"]["aide_visits_missed"] for d in days)
@@ -162,15 +163,15 @@ def per_day_value(metric, d):
     return year_value(metric, [dict(d, weight=1.0)])
 
 
-def write_report(out, days, baseline=None):
+def write_report(out, days, baseline=None, label="v2 in progress (`sim/`)"):
     targets = read_csv(TARGETS)
     L = ["# Evidence checks: the typed-day set", "",
-         "Simulator unchanged (v1 code in `sim/`). %d simulated days stand for 2027; each day's weight is the number of "
+         "Simulator: %s. %d simulated days stand for 2027; each day's weight is the number of "
          "2027 days in its class (`sim/evidence/typed_days.py`). Annual figures are weighted averages per day, or pooled "
          "shares. Targets are from `sim/evidence_targets.csv`; ranges and tolerances there are drafts until the evidence "
-         "report's ids and grades are filled in." % len(days), "",
+         "report's ids and grades are filled in." % (label, len(days)), "",
          "## Targets against the weighted year", "",
-         "| Target | Item | Year (weighted) | Mar 3 (v1 day) | Target | Verdict | Status |", "|---|---|---|---|---|---|---|"]
+         "| Target | Item | Year (weighted) | Mar 3 | Target | Verdict | Status |", "|---|---|---|---|---|---|---|"]
     for t in targets:
         v = year_value(t["metric"], days)
         b = per_day_value(t["metric"], baseline) if baseline else None
@@ -202,19 +203,22 @@ def write_report(out, days, baseline=None):
           "notice to shutoff, and the concentration of overdraft fees, need the month run (option B).",
           "- Most classes are represented by October days. Heating-season (Nov-Mar) and cooling-season (Jun-Sep) effects are "
           "only in the days that fall in those months.",
-          "- The simulator has no federal-holiday logic, so the holiday day runs as an ordinary weekday.",
-          "- Storm and heat day counts (%d and %d) are placeholders until NOAA Storm Events data is downloaded." % (typed_days.STORM_DAYS, typed_days.HEAT_DAYS)]
+          "- Storm (%.2f) and heat (%.2f) weekdays a year are 2015-2025 averages for Halvern's counties (`sources/derived/weather_days.csv`); "
+          "afternoon thunderstorms are not modeled." % (typed_days.STORM_DAYS, typed_days.HEAT_DAYS),
+          "- Wages are boosted on purpose: every worker is paid 1.23 times the national pay for their occupation (about 14% above "
+          "real 2027 pay) to make up for Halvern's smaller households. Household money is closer to right this way; pay for a single "
+          "job is not. Kept for v2, dropped in v3 (see WAGE_SCALE in `sim/halvern_sim/config.py`)."]
     with open(os.path.join(out, "evidence_checks.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(L) + "\n")
 
 
-def run(out, households=None, keep=False):
+def run(out, households=None, keep=False, label="v2 in progress (`sim/`)"):
     import simulate
     from halvern_sim.config import PARAMS
     os.makedirs(out, exist_ok=True)
     days = []
     baseline = None
-    ref = {"date": "2027-03-03", "class": "v1 baseline (not weighted)", "weather": "ordinary", "weight": 0.0}
+    ref = {"date": "2027-03-03", "class": "Mar 3 baseline (not weighted)", "weather": "ordinary", "weight": 0.0}
     for row in typed_days.day_set() + [ref]:
         cfg = dict(PARAMS)
         cfg["SIM_DATE"] = dt.date.fromisoformat(row["date"])
@@ -243,7 +247,7 @@ def run(out, households=None, keep=False):
         for d in days:
             for k2, v in d["m"].items():
                 w.writerow([d["date"], d["cls"], d["weather"], "%.4f" % d["weight"], k2, v])
-    write_report(out, days, baseline)
+    write_report(out, days, baseline, label)
     print("wrote", os.path.join(out, "evidence_checks.md"))
 
 
@@ -252,7 +256,8 @@ def main(argv):
         print(json.dumps(measure_dir(argv[1]), indent=1))
     elif argv[:1] == ["run"]:
         hh = int(argv[argv.index("--households") + 1]) if "--households" in argv else None
-        run(argv[1], hh, "--keep" in argv)
+        label = argv[argv.index("--label") + 1] if "--label" in argv else "v2 in progress (`sim/`)"
+        run(argv[1], hh, "--keep" in argv, label)
     else:
         print(__doc__)
 

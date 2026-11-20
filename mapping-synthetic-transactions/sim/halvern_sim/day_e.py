@@ -225,17 +225,20 @@ def life_events(sim, q):
             sim.pay(t + 5, kin, kin.hh, W, None, "civic_legal", "death_certificates", fee, ctx=dict(n=n, org=cty.name), tmin=3, to=cty, ben=p, quiet_fail=1.0)
         push(q, t2, run)
     # ---- marriages and divorces
+    # NCHS 2024 (sources/raw/nchs_vital): 6.3 marriages and 2.3 divorces per 1,000 people a year, so about 628 and 229
+    # for Halvern; licenses and filings happen on the ~249 days the courthouse is open (v1: 1.25 and .66 a weekday).
+    court = sim.cal["weekday"] and not sim.cal["holiday"]
     reg = [H for H in sim.households if not H.gq]
     cohab = [H for H in reg if any(m.rel == "unmarried_partner" for m in H.members)]
     married = [H for H in reg if any(m.rel == "spouse" for m in H.members)]
     courts = sim.by_kind["courthouse"]
-    for H in rng.sample(cohab, min(len(cohab), rround(rng, 1.25 * sc * (1.0 if sim.cal["weekday"] else .1)))):
+    for H in rng.sample(cohab, min(len(cohab), rround(rng, 2.41 * sc * (1.0 if court else .1)))):
         P = H.head
         org = courts[0] if H.district != "D5" and H.district != "D6" else courts[-1]
         fee = float(rng.choice([56, 62, 66, 76]))
         errand(sim, q, P, H, org, "civic_legal", "marriage_license", fee, rng.randint(20, 35), OFFICE, taxable=False, wait=(5, 40), ctx=dict(), quiet_fail=0.0,
                fee=("courthouse_ceremony_fee", 50.0) if rng.random() < .3 else None)
-    for H in rng.sample(married, min(len(married), rround(rng, .66 * sc * (1.0 if sim.cal["weekday"] else 0)))):
+    for H in rng.sample(married, min(len(married), rround(rng, .92 * sc * (1.0 if court else 0)))):
         P = rng.choice([m for m in H.members if m.rel in ("head", "spouse")])
         org = courts[0]
         errand(sim, q, P, H, org, "civic_legal", "divorce_filing_fee", float(rng.choice([232, 268, 295, 310])), rng.randint(20, 40), OFFICE, taxable=False, wait=(5, 45), ctx=dict(),
@@ -292,7 +295,7 @@ def life_events(sim, q):
                fr=("paperwork",), lens=("housing",))
     # ---- eviction filings and hearings
     strained = [H for H in renters if H.alice != "above" and not H.subsidized]
-    for H in rng.sample(strained, min(len(strained), rround(rng, 4.4 * sc * (1.0 if sim.cal["weekday"] else 0)))):
+    for H in rng.sample(strained, min(len(strained), rround(rng, 4.4 * sc * (1.0 if court else 0)))):
         P = H.head
         ct = courts[0]
         fee = float(rng.choice([95, 110, 135, 160]))
@@ -301,7 +304,7 @@ def life_events(sim, q):
                  lens=("housing", "small_business"), ctx=dict(org=H.landlord.name, amt="%.0f" % fee))
         emit(rng.randint(960, 1140), "non_monetary_job", "housing", "eviction_notice_received", P, H, ct, P, tmin=rng.randint(5, 20), outcome="partial", fr=("insufficient_funds", "paperwork"),
              lens=("housing",), related=i, ctx=dict(org=H.landlord.name, amt="%.0f" % owed, days=7))
-    for H in rng.sample(strained, min(len(strained), pois(rng, 4.0 * sc * (1.0 if sim.cal["weekday"] else 0)))):
+    for H in rng.sample(strained, min(len(strained), pois(rng, 4.0 * sc * (1.0 if court else 0)))):
         P = next((a for a in H.adults if not a.inpatient), None)
         if P is None:
             continue
@@ -321,7 +324,7 @@ def life_events(sim, q):
 def civic(sim, q):
     rng, X, sc, cal = sim.rng, sim.X, sim.scale, sim.cal
     emit = sim.emit
-    if not cal["weekday"]:
+    if not cal["weekday"] or cal["holiday"]:   # counters and courts are closed on federal holidays
         return
     adults = [p for p in sim.persons if p.age >= 18 and p.wallet is not None and not p.inpatient and not p.hh.gq]
     if not adults:

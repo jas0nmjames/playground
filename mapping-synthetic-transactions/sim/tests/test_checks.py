@@ -168,12 +168,15 @@ def test_identical_output_under_a_changed_hash_seed(run10, tmp_path):
 
 @pytest.mark.slow
 def test_v1_reproduces_byte_for_byte(tmp_path):
-    """The full baseline day from sim/, with v1's hand-written text, matches data/halvern_2027-03-03.zip exactly."""
+    """The frozen v1 simulator (data/halvern/), with v1's hand-written text, matches data/halvern_2027-03-03.zip exactly.
+
+    sim/ is where v2 changes land, so it no longer reproduces v1; data/halvern/ keeps the v1 code as it shipped."""
     import zipfile
     zpath = os.path.join(REPO_DIR, "data", "halvern_2027-03-03.zip")
-    overrides = os.path.join(REPO_DIR, "data", "halvern", "detailed_overrides.csv")
-    subprocess.run([sys.executable, os.path.join(SIM_DIR, "simulate.py"), "--out", str(tmp_path), "--overrides", overrides],
-                   check=True, cwd=SIM_DIR, capture_output=True)
+    v1_dir = os.path.join(REPO_DIR, "data", "halvern")
+    overrides = os.path.join(v1_dir, "detailed_overrides.csv")
+    subprocess.run([sys.executable, os.path.join(v1_dir, "simulate.py"), "--out", str(tmp_path), "--overrides", overrides],
+                   check=True, cwd=v1_dir, capture_output=True)
     with zipfile.ZipFile(zpath) as z:
         for name in ("records.csv", "household_ledger.csv", "households.csv", "persons.csv", "organizations.csv",
                      "public_services_context.csv", "assumptions.csv", "summary.md"):

@@ -24,9 +24,25 @@ EVE = ((1020, 1275, 1.0),)
 DAY = ((540, 1020, 1.0),)
 ANY = ((400, 1300, 1.0),)
 MEAL = ((390, 545, .5), (660, 815, 2.0), (1020, 1240, 2.0))
-SHOP = ((540, 720, 1.0), (720, 1020, 1.2), (1020, 1250, 1.7))
+# Shopping and gas windows: hourly preference weights, filled in for the day by set_day_windows() (lists, so the modules
+# that import them see the day's values). Fitted so the realized hours match ATUS 2025 (see config.SHOP_HOURS).
+SHOP = [(540, 720, 1.0), (720, 1020, 1.2), (1020, 1250, 1.7)]
+GAS = [(330, 560, 1.2), (690, 800, .5), (930, 1290, 1.5)]
+
+
+def set_day_windows(cal):
+    from .config import SHOP_HOURS, GAS_HOURS
+    k = "weekday" if cal["weekday"] and not cal["holiday"] else "weekend"
+    SHOP[:] = [(h * 60, h * 60 + 60, w) for h, w in sorted(SHOP_HOURS[k].items()) if w > 0]
+    GAS[:] = [(h * 60, h * 60 + 60, w) for h, w in sorted(GAS_HOURS[k].items()) if w > 0]
 OFFICE = ((525, 960, 1.0),)
 NIGHT = ((1140, 1410, 1.0),)
+
+
+# Extra cash use in the rural districts (v2). DCPC 2025 (sources/raw/dcpc): cash is 13.5% of payments overall and 18.7% for
+# respondents in urban_cat 1, the 14% group taken to be rural (the codebook does not label the field). Fitted on the typed-day
+# year so D5 and D6 land near 18.7%.
+RURAL_CASH = {"D5": 1.12, "D6": 1.12}
 
 
 def base_cash(a):
@@ -39,6 +55,9 @@ class Sim:
         self.rng = random.Random(cfg["RANDOM_SEED"])
         self.nrg = np.random.default_rng(cfg["RANDOM_SEED"])
         self.cal = calendar(cfg["SIM_DATE"])
+        set_day_windows(self.cal)
+        from . import config as _C
+        self.dow_mult = _C.DOW_PURCHASE[self.cal["dow"]]
         self.wx = weather_mult(cfg["WEATHER"])
         self.scale = cfg["N_HOUSEHOLDS"] / float(FULL_CITY_HOUSEHOLDS)
         self.rows, self.kinds = [], []
@@ -171,6 +190,8 @@ class Sim:
                 mode = "ride_from_family_or_friend"
             if mode != "transit" and ts < .5 and base > .9:
                 fr.append("no_transit")
+            if H.flags and "car_lost_today" in H.flags and P.age >= 16:
+                fr.append("vehicle_lost")
         mins = {"car": base * 2.1 + 4, "transit": base * 4.6 + 14, "walk": base * 19, "bike": base * 6 + 3}.get(mode, base * 2.1 + 12)
         return round(miles, 1), mode, int(min(mins, 75)), fr
 
@@ -322,7 +343,7 @@ class Sim:
         else:
             out = []
             cash_ok = "cash" in acc and W.cash >= amt
-            pcash = base_cash(amt) * (.35 + 2.6 * P.cashpref) * self.cash_mult
+            pcash = base_cash(amt) * (.35 + 2.6 * P.cashpref) * self.cash_mult * RURAL_CASH.get(P.hh.district, 1.0)
             if W.bank is None:
                 pcash = .62 if has_p else .9
             if cash_ok and rng.random() < min(.95, pcash):

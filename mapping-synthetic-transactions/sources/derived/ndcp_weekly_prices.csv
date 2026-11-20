@@ -1,0 +1,9 @@
+care_type,age_group,median_weekly_price,counties,study_years,share_from_2022,ndcp_column
+center,infant,236.00,2988,2013-2022,0.89,MCINFANT
+center,toddler,202.41,2990,2013-2022,0.89,MCTODDLER
+center,preschool,185.00,2991,2013-2022,0.89,MCPRESCHOOL
+center,school_age,148.02,2982,2012-2022,0.89,MCSA
+family,infant,181.67,2960,2013-2022,0.87,MFCCINFANT
+family,toddler,171.45,2960,2013-2022,0.87,MFCCTODDLER
+family,preschool,170.00,2960,2013-2022,0.87,MFCCPRESCHOOL
+family,school_age,148.77,2931,2012-2022,0.87,MFCCSA

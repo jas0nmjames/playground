@@ -235,7 +235,20 @@ OCC = {
              ("utility field technician", 61000, .16, 1, "early", 0), ("utility customer service rep", 46500, .15, 1, "day", 0),
              ("quarry equipment operator", 58500, .21, 0, "early", 0), ("utility engineer", 109000, .10, 4, "day", 0)],
 }
-WAGE_SCALE = 1.23   # global wage multiplier tuned in calibration
+# WAGE_SCALE: read this before using any one person's pay.
+# The OCC table above is close to the national median pay for each occupation (OEWS May 2025; registered nurse $98,000
+# against OEWS's $97,550). Every wage is then multiplied by WAGE_SCALE, so a typical full-time worker in Halvern earns
+# 1.23 times the table. Wage growth from May 2025 to 2027 would justify only about 1.08, so each worker is paid about 14%
+# more than a real worker in the same job (a Halvern nurse about $120,000 against roughly $105,000).
+# Why: Halvern's households are smaller than real ones (2.36 people against about 2.58 nationally, 1.14 earners each), so
+# fewer paychecks reach each home. v1 set the boost to make up for that (and to put 41.5% of households under the ALICE
+# budget). Even with it, median household income is about $78,000, against about $86,700 implied by SCF 2025 in 2027
+# dollars; at 1.08 it would fall to roughly $70,000 and Halvern would look poorer than the country.
+# So household money (balances, bills, overdrafts, who can cover $400) is closer to right with the boost, and pay for a
+# single job is not. Compare households, not occupations.
+# Decided 2026-11-20: keep 1.23 for v2 (same people as v1). v3 rebuilds households at their real size from ACS PUMS;
+# it should then set this to wage growth alone (about 1.08) and re-check household income against SCF.
+WAGE_SCALE = 1.23
 
 # ---- federal program parameters for 2027 (see assumptions.csv for sources)
 SS_AVG_RETIRED = 2170.0        # SSA: average retired-worker benefit, Jan 2027 after 3.6% COLA
@@ -248,6 +261,29 @@ PART_B_DEDUCTIBLE = 292.0
 PART_D_OOP_CAP = 2400.0
 SNAP_MAX = {1: 306, 2: 562, 3: 808, 4: 1023, 5: 1217, 6: 1463, 7: 1616, 8: 1841}   # FY2027, 48 states
 POVERTY_BASE, POVERTY_STEP = 16400.0, 5750.0   # estimated 2027 HHS guideline
+# Day of the month SNAP loads: eight states' rules weighted by their SNAP households (FY2024 QC), from
+# sources/derived/snap_load_days.csv (sources/tools/snap_load_days.py). 87 percent load by the 10th; Georgia and Missouri run later.
+SNAP_LOAD_DAYS = [(1, 0.0826), (2, 0.0783), (3, 0.0783), (4, 0.0846), (5, 0.0964), (6, 0.0846), (7, 0.0987), (8, 0.0846), (9, 0.0964), (10, 0.0846), (11, 0.0204), (12, 0.0086), (13, 0.0204), (14, 0.0023), (15, 0.0141), (16, 0.0023), (17, 0.0141), (18, 0.0023), (19, 0.0141), (20, 0.0023), (21, 0.0141), (22, 0.0046), (23, 0.0118)]
+# Hourly preference weights for shopping trips and gas fill-ups (hour of day: weight), weekday and weekend/holiday.
+# Fitted (7 rounds, 12,000-household runs of 2027-03-03 and 2027-10-09) so the realized start hours of grocery, big-box,
+# clothing and dollar-store trips (60/40 grocery to other shopping) and of gas fill-ups match ATUS 2023-25
+# (sources/derived/atus_start_hours.csv). Distance from ATUS (total variation): weekday shopping 0.27 -> 0.08, weekend
+# shopping 0.23 -> 0.04, gas about 0.2 -> 0.03. Evening weights are low because workers are only free then anyway.
+SHOP_HOURS = {
+    "weekday": {7: .05, 8: .263, 9: .791, 10: 1.0, 11: .964, 12: .973, 13: .923, 14: .904, 15: .663, 16: .381, 17: .129,
+                18: .029, 19: .019, 20: .019, 21: .019},
+    "weekend": {7: .121, 8: .307, 9: .445, 10: .876, 11: .874, 12: .955, 13: 1.0, 14: .693, 15: .432, 16: .398, 17: .144,
+                18: .037, 19: .019, 20: .019, 21: .019}}
+GAS_HOURS = {
+    "weekday": {5: .27, 6: .286, 7: .21, 8: .315, 9: .316, 10: .35, 11: .777, 12: 1.0, 13: .453, 14: .585, 15: .566, 16: .435,
+                17: .66, 18: .463, 19: .242, 20: .16, 21: .043, 22: .069},
+    "weekend": {6: .421, 7: .235, 8: .314, 9: .331, 10: .399, 11: .598, 12: 1.0, 13: .568, 14: .661, 15: .517, 16: .612,
+                17: .84, 18: .826, 19: .37, 20: .133, 21: .159, 22: .11}}
+# Day-of-week factor on everyday purchase rates (Mon=0; holidays use their own weekday). Fitted (4 rounds, 12,000-household
+# runs of Oct 18-24, 2027) so purchases per resident by weekday match DCPC 2025 (transactions with payment=1 and bill=0,
+# weighted by daily_weight): Sun 1.06, Mon .89, Tue .92, Wed 1.03, Thu 1.01, Fri 1.07, Sat 1.02 of the weekly mean.
+# The factors average 1, so the weekly total (calibrated by PURCHASE_FREQ) is unchanged.
+DOW_PURCHASE = {0: .827, 1: .872, 2: 1.012, 3: 1.002, 4: 1.079, 5: 1.057, 6: 1.15}
 FED_MIN_WAGE = 7.25
 STATE_INCOME_TAX = 0.035       # stand-in for a national-average state
 
@@ -255,32 +291,127 @@ GENERATIONS = [(2013, "gen_alpha"), (1997, "gen_z"), (1981, "millennial"), (1965
                (1946, "baby_boomer"), (1928, "silent"), (0, "greatest")]
 
 
+# Federal holidays (5 U.S.C. 6103). A Saturday holiday is observed the Friday before, a Sunday one the Monday after.
+# Banks and the ACH network close on the observed date, so pay and benefits due that day move to the business day before
+# and ACH autopays post the business day after. "Major" holidays are the six nearly every employer with paid holidays gives
+# (NCS March 2026: 81% of private-industry workers have paid holidays, 8 a year on average; state and local government 11).
+MAJOR_HOLIDAYS = {"New Year's Day", "Memorial Day", "Independence Day", "Labor Day", "Thanksgiving Day", "Christmas Day"}
+SCHOOL_OPEN_HOLIDAYS = {"Columbus Day", "Veterans Day"}   # most school districts hold classes (estimate)
+
+
+def side_rng(seed, *key):
+    """A random stream of its own for a v2 attribute, keyed by the run seed and (say) a household id. v2 draws new
+    population attributes from these so the main stream, and with it v1's people, stay exactly as they were."""
+    import random
+    return random.Random("%s|%s" % (seed, "|".join(str(k) for k in key)))
+
+
+def draw_table(r, table):
+    """Pick a value from [(value, share), ...] with a uniform draw r in [0, 1)."""
+    acc = 0.0
+    for v, w in table:
+        acc += w
+        if r < acc:
+            return v
+    return table[-1][0]
+
+
+def _nth_weekday(year, month, weekday, n):
+    d = dt.date(year, month, 1)
+    d += dt.timedelta(days=(weekday - d.weekday()) % 7)
+    if n > 0:
+        return d + dt.timedelta(weeks=n - 1)
+    last = dt.date(year + (month == 12), month % 12 + 1, 1) - dt.timedelta(days=1)   # n == -1: last such weekday
+    return last - dt.timedelta(days=(last.weekday() - weekday) % 7)
+
+
+def federal_holidays(year):
+    """{observed date: name} for the holidays of `year` (New Year's Day of year+1 can be observed on Dec 31)."""
+    fixed = [("New Year's Day", dt.date(year, 1, 1)), ("Juneteenth National Independence Day", dt.date(year, 6, 19)),
+             ("Independence Day", dt.date(year, 7, 4)), ("Veterans Day", dt.date(year, 11, 11)),
+             ("Christmas Day", dt.date(year, 12, 25)), ("New Year's Day", dt.date(year + 1, 1, 1))]
+    out = {}
+    for name, d in fixed:
+        if d.weekday() == 5:
+            d -= dt.timedelta(days=1)
+        elif d.weekday() == 6:
+            d += dt.timedelta(days=1)
+        if d.year == year:
+            out[d] = name
+    for name, m, wd, n in (("Birthday of Martin Luther King, Jr.", 1, 0, 3), ("Washington's Birthday", 2, 0, 3),
+                           ("Memorial Day", 5, 0, -1), ("Labor Day", 9, 0, 1), ("Columbus Day", 10, 0, 2),
+                           ("Thanksgiving Day", 11, 3, 4)):
+        out[_nth_weekday(year, m, wd, n)] = name
+    return out
+
+
+def _holidays_near(d):
+    h = {}
+    for y in (d.year - 1, d.year, d.year + 1):
+        h.update(federal_holidays(y))
+    return h
+
+
+def bank_day(d, hol=None):
+    hol = _holidays_near(d) if hol is None else hol
+    return d.weekday() < 5 and d not in hol
+
+
+def _mini(d):
+    """The few calendar fields that decide paydays and bill dates, for a day other than SIM_DATE."""
+    return dict(date=d, dow=d.weekday(), dom=d.day, week_parity=(d.isocalendar()[1] % 2))
+
+
 def calendar(sim_date):
     """Everything the simulator needs to know about SIM_DATE."""
     dow = sim_date.weekday()                      # Mon=0
     dom = sim_date.day
     first = sim_date.replace(day=1)
+    hol = _holidays_near(sim_date)
+    holiday = hol.get(sim_date) if dow < 5 else None
+    is_bank = bank_day(sim_date, hol)
     nth_wed = None
     if dow == 2:
         nth_wed = (dom - 1) // 7 + 1
 
     def biz_on_or_before(d):
-        while d.weekday() >= 5:
+        while not bank_day(d, hol):
             d -= dt.timedelta(days=1)
         return d
-    third = biz_on_or_before(sim_date.replace(day=3))
-    ssi_day = biz_on_or_before(first)
+    nxt = (first + dt.timedelta(days=32)).replace(day=1)
+    # Social Security: the 3rd, or the 2nd, 3rd and 4th Wednesdays; SSI and VA: the 1st. Each moves to the business day
+    # before when it falls on a weekend or holiday, which can pull next month's payment into this month.
     cohorts = set()
-    if sim_date == third:
-        cohorts.add("3rd")
-    if nth_wed in (2, 3, 4):
-        cohorts.add("wed%d" % nth_wed)
+    for m1 in (first, nxt):
+        if biz_on_or_before(m1.replace(day=3)) == sim_date:
+            cohorts.add("3rd")
+        for n in (2, 3, 4):
+            if biz_on_or_before(_nth_weekday(m1.year, m1.month, 2, n)) == sim_date:
+                cohorts.add("wed%d" % n)
+    ssi_day = biz_on_or_before(first)
+    ssi_today = sim_date in (ssi_day, biz_on_or_before(nxt))
+    # Paydays and ACH autopays that fall on days the banks are closed
+    pay_ahead, ach_catchup = [], []
+    if is_bank:
+        d = sim_date + dt.timedelta(days=1)
+        while not bank_day(d, hol):
+            pay_ahead.append(_mini(d))
+            d += dt.timedelta(days=1)
+        d = sim_date - dt.timedelta(days=1)
+        while not bank_day(d, hol):
+            ach_catchup.append(_mini(d))
+            d -= dt.timedelta(days=1)
     month = sim_date.month
+    school = dow < 5 and month not in (6, 7) and not (month == 8 and dom < 10)
+    if holiday and holiday not in SCHOOL_OPEN_HOLIDAYS:
+        school = False
     c = dict(date=sim_date, dow=dow, dom=dom, weekday=dow < 5, nth_wed=nth_wed, ss_cohorts=cohorts,
-             ssi_today=(sim_date == ssi_day), days_since_first=(sim_date - ssi_day).days,
+             ssi_today=ssi_today, days_since_first=(sim_date - ssi_day).days,
+             holiday=holiday, holiday_major=holiday in MAJOR_HOLIDAYS, bank_day=is_bank,
+             pay_ahead=pay_ahead, ach_catchup=ach_catchup,
              tax_season=(dt.date(sim_date.year, 1, 25) <= sim_date <= dt.date(sim_date.year, 4, 20)),
              eitc_wave=(dt.date(sim_date.year, 2, 26) <= sim_date <= dt.date(sim_date.year, 3, 5)),
-             school_day=(dow < 5 and month not in (6, 7) and not (month == 8 and dom < 10)),
+             school_day=school,
              heating=(month in (11, 12, 1, 2, 3)), cooling=(month in (6, 7, 8, 9)),
              growing=(month in (4, 5, 6, 7, 8, 9, 10)), month=month,
              snap_day=(dom if dom <= 10 else None), week_parity=(sim_date.isocalendar()[1] % 2),

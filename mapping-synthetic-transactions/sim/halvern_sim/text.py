@@ -12,11 +12,11 @@ OWN_FAIL = {"missed_bus", "car_wont_start", "grocery_item_out_of_stock", "sent_h
             "repair_estimate_too_high", "check_not_cashed_yet", "appointment_rescheduled_no_free_time", "shutoff_notice_received", "eviction_notice_received",
             "card_charge_dispute", "online_order_return_dropoff", "payday_loan_rollover", "housing_case_management_meeting"}
 FR_TEXT = {"insufficient_funds": "there was not enough money to cover it", "hours_mismatch": "the hours did not line up with a workday", "missing_document": "a required document was missing",
-           "outage": "the system was down", "out_of_stock": "it was out of stock", "wait": "the wait was too long", "no_transit": "there was no way to get there",
+           "outage": "the system was down", "vehicle_lost": "the car was taken by the lender", "out_of_stock": "it was out of stock", "wait": "the wait was too long", "no_transit": "there was no way to get there",
            "paperwork": "the paperwork was not accepted", "digital_barrier": "it could only be done online", "caregiving_conflict": "nobody else could watch the family",
            "schedule_volatility": "the work schedule changed", "language": "nobody there spoke the language", "price_spike": "the price was higher than expected",
            "other": "it did not go through", "pending_hold": "a hold tied up the money", "eligibility_confusion": "the rules were not clear", "distance": "it was too far to get to today"}
-TAIL = {"language": " Needed help with the English-only forms.", "digital_barrier": " Done on a phone because there is no internet at home.",
+TAIL = {"vehicle_lost": " No car today: the lender took it.", "language": " Needed help with the English-only forms.", "digital_barrier": " Done on a phone because there is no internet at home.",
         "disability_access": " The place was not set up for someone with a disability.", "distance": " A long drive each way.",
         "no_transit": " No bus goes there, so it took a ride from someone.", "pending_hold": " The money is on hold for a few days.",
         "price_spike": " It cost more than last time.", "out_of_stock": " One thing on the list was out.", "eligibility_confusion": " The rules were hard to follow."}

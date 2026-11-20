@@ -1,10 +1,16 @@
 """Household day, part B: food, shopping, getting around, health care."""
 import math
-from .config import SALES_TAX, TRANSIT_SERVED, PART_B_DEDUCTIBLE
-from .engine import ANY, DAY, EVE, OFFICE, SHOP, LUNCH, MORN, MEAL, AFT, NIGHT
+from .config import SALES_TAX, TRANSIT_SERVED, PART_B_DEDUCTIBLE, PART_D_OOP_CAP
+from .engine import ANY, DAY, EVE, GAS, OFFICE, SHOP, LUNCH, MORN, MEAL, AFT, NIGHT
 from .day_a import push
 
-TRANSIT_COST = 9.80
+# Bus and paratransit, set from NTD 2025 (sources/raw/ntd, Master sheet of the September 2026 monthly ridership file):
+# agencies in urbanized areas of 50,000-400,000 people, trip-weighted. Bus: $8.74 operating cost and $0.79 in fares per
+# unlinked trip; demand response (paratransit): $50.42 and $4.13. Costs carried to 2027 at 3% a year. v1 had $9.80 a bus
+# ride, a $1.75 fare (riders paid $1.01 a ride on average) and $58 a paratransit ride.
+TRANSIT_COST = 9.27
+PARATRANSIT_COST = 53.50
+BUS_FARE, BUS_FARE_REDUCED = 1.50, 0.75   # half fare for seniors and riders with disabilities (federal rule)
 
 
 def bus_ride(sim, q, P, H, t, o_d, d_d, purpose="errand"):
@@ -13,7 +19,7 @@ def bus_ride(sim, q, P, H, t, o_d, d_d, purpose="errand"):
     tr = sim.one("transit")
     W = P.wallet
     reduced = P.age >= 65 or P.dis not in ("none", None)
-    fare = 0.85 if reduced else 1.75
+    fare = BUS_FARE_REDUCED if reduced else BUS_FARE
     if P.pid in sim.passholders or (P.age < 19 and rng.random() < .5):
         fare, how = 0.0, "prepaid"
     else:
@@ -214,7 +220,7 @@ def gen_shopping(sim, H, q):
         gqm = .5 if H.gq else 1.0
         work_d = P.wd if (P.works and not P.wfh and P.wd in TRANSIT_SERVED) else None
         for (kind, cat, rate, mult, kinds, amtf, taxable, dur, wait, prefs, scale, pwork) in SIMPLE:
-            pr = rate * tm * gqm * sim.cfg.get("PURCHASE_FREQ", 1.0)
+            pr = rate * tm * gqm * sim.cfg.get("PURCHASE_FREQ", 1.0) * sim.dow_mult
             if rng.random() >= pr * 2.5:
                 continue
             if rng.random() >= mult(P, H) / 2.5:
@@ -243,7 +249,7 @@ def gen_shopping(sim, H, q):
             push(q, t, lambda t=t, P=P, W=W, amt=amt: sim.pay(t, P, H, W, None, "food", "workplace_cafeteria_or_vending", amt, taxable=True,
                                                                ctx=dict(org=P.org.name), tmin=6, to=P.org))
         for (kind, cat, rate, mult, kinds, amtf, taxable) in ONLINE:
-            pr = rate * (1.15 if tm < .9 else 1.0) * sim.cfg.get("PURCHASE_FREQ", 1.0)
+            pr = rate * (1.15 if tm < .9 else 1.0) * sim.cfg.get("PURCHASE_FREQ", 1.0) * sim.dow_mult
             if rng.random() >= pr * 2.5 or rng.random() >= mult(P, H) / 2.5:
                 continue
             org = sim.X[rng.choice(kinds)]
@@ -275,9 +281,27 @@ def gen_shopping(sim, H, q):
                    ctx=dict(), channel="app", dur=(14, 30), prefs=((420, 600, 1), (960, 1410, 2)))
 
 
+# Rural grocery trips. USDA's Food Access Research Atlas (2019; sources/raw/food_access_atlas): 7.1% of rural residents
+# live more than 10 miles from a supermarket and 0.7% more than 20. v1 sent about 30% of rural grocery trips more than 20
+# miles, because the rural districts have no supercenter or discount grocer and every household that drew one drove to
+# the suburbs and far stores outweighed the one local one. Now, when the kind drawn has no outlet in the household's
+# district, 70% shop at a local grocery instead and 30% still make the long stock-up run, and distance counts for more
+# (estimates: trips can bypass the nearest store, so they run longer than the atlas's nearest-store distances).
+RURAL_GROCERY_SCALE = {"D6": .9, "D5": .5}   # distance multipliers in pick() (v1: 2.2 and 1.3); with them about 5% of
+                                             # rural-town and 10% of open-country trips run over 20 miles one way
+RURAL_LOCAL_SUB = .7
+
+
 def gen_food(sim, H, q):
     rng, cal, X, wx = sim.rng, sim.cal, sim.X, sim.wx
     if H.gq:
+        if H.gq == "h2a_worker_housing" and cal["dow"] == 5:
+            # the grower's van runs crews to a supercenter on Saturday afternoon (H-2A employers must provide transport)
+            P = H.head
+            org = sim.pick(("supercenter", "grocery_discount", "grocery_indep"), "D5", 4.0)
+            errand(sim, q, P, H, org, "food", "grocery_main_trip", round(rng.uniform(45, 115), 2), rng.randint(30, 50), ((840, 1080, 1.0),), taxable=False,
+                   ctx=dict(n=1, org=org.name if org else ""), fr=("no_transit",), quiet_fail=.2)
+            return
         if H.gq == "college_dorm" and rng.random() < .10:
             P = H.head
             org = sim.pick(("grocery_full", "supercenter", "dollar"), H.district, 4.0)
@@ -289,7 +313,7 @@ def gen_food(sim, H, q):
         return
     W0 = H.wallets[0]
     dsince = (cal["dom"] - H.snap_day) if H.snap else 99
-    pm = .20 * wx["trips"] * (1.2 if n >= 4 else .75 if n == 1 else 1.0)
+    pm = .20 * wx["trips"] * (1.2 if n >= 4 else .75 if n == 1 else 1.0) * sim.dow_mult
     if 0 <= dsince <= 2:
         pm *= 2.1
     if any(p.ss_cohort in cal["ss_cohorts"] for p in H.members if p.ss):
@@ -303,7 +327,9 @@ def gen_food(sim, H, q):
 
     def store(scale=6.0):
         k = rng.choices([x[0] for x in kindw], [x[1] for x in kindw])[0]
-        sc = scale * (2.2 if H.district == "D6" else 1.3 if H.district == "D5" else 1.0)
+        if H.district in RURAL_GROCERY_SCALE and not sim.by_kd.get((k, H.district)) and rng.random() < RURAL_LOCAL_SUB:
+            k = next((kk for kk in ("grocery_full", "grocery_indep", "grocery_discount", "dollar") if sim.by_kd.get((kk, H.district))), k)
+        sc = scale * RURAL_GROCERY_SCALE.get(H.district, 1.0)
         return sim.pick((k,), H.district, sc) or sim.pick(("grocery_full", "supercenter", "grocery_indep", "dollar"), H.district, sc)
 
     eq = 1 + .6 * (len(H.adults) - 1) + .45 * len(H.kids)
@@ -519,7 +545,7 @@ def gen_transport(sim, H, q):
             org = sim.pick(("gas",), P.wd if (P.works and P.wd in TRANSIT_SERVED and rng.random() < .4) else H.district, 3.5)
             if org is None:
                 continue
-            t = sim.slot(P, 8, ((330, 560, 1.2), (690, 800, .5), (930, 1290, 1.5)), org.open, org.close)
+            t = sim.slot(P, 8, GAS, org.open, org.close)
             if t is None:
                 continue
 
@@ -661,7 +687,12 @@ def visit(sim, q, P, H, kinds, svc, kind, base, dur, wait, prefs=OFFICE, tele=Fa
             org = sim.pick(kinds, H.district, scale * (1.6 if H.district in ("D5", "D6") else 1.0))
     if org is None or org.open is None:
         return
-    allowed = round(base * PAYF.get(cov, 1.15) * rng.uniform(.85, 1.2), 2)
+    if svc in ("primary", "specialist"):
+        # MEPS 2024 office-based visits (sources/raw/meps/h254g): median $146, mean $308, so a long tail of visits with
+        # tests and procedures; lognormal with sigma 1.2 keeps v1's median and gives about twice it as the mean
+        allowed = round(base * PAYF.get(cov, 1.15) * min(25.0, max(.45, rng.lognormvariate(0.0, 1.2))), 2)
+    else:
+        allowed = round(base * PAYF.get(cov, 1.15) * rng.uniform(.85, 1.2), 2)
     now, third, payer, fund, later = cover(sim, P, allowed, svc)
     if org.kind == "fqhc" and cov == "uninsured":
         now = float(rng.choice([25, 30, 40, 45]))
@@ -731,8 +762,14 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
         return
     fills = []
     for _ in range(nfill):
-        brand = rng.random() < .12
-        cash = round(min(1600, max(9, rng.lognormvariate(math.log(520 if brand else 28), .7))), 2)
+        # MEPS 2024 prescribed medicines (h254a): median payment per fill $15, mean $233, so a few very costly fills.
+        # 2% specialty (median $5,000), 10% other brand, 88% generic; v1 had 12% brand capped at $1,600 and no specialty.
+        r = rng.random()
+        specialty, brand = r < .02, r < .12
+        if specialty:
+            cash = round(min(40000, max(900, rng.lognormvariate(math.log(5000), .9))), 2)
+        else:
+            cash = round(min(5000 if brand else 400, max(4, rng.lognormvariate(math.log(520 if brand else 20), .8))), 2)
         neg = cash * (.82 if brand else .45)
         if cov in ("medicaid",):
             cp = float(rng.choice([0, 0, 1, 3]))
@@ -744,10 +781,16 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             cp = round(.25 * neg, 2) if brand else float(rng.choice([0, 0, 2, 5, 8, 12]))
             if brand and rng.random() < .15:
                 cp = 35.0
+            if specialty:   # coinsurance runs into the Part D out-of-pocket cap within a fill or two
+                cp = round(min(cp, rng.uniform(150, PART_D_OOP_CAP)), 2)
             third, payer, fund = neg - cp, "Medicare Part D plan", "federal"
         elif cov in ("employer", "marketplace", "other_private", "military"):
-            if P.plan == "hdhp" and rng.random() < .75:
-                cp = round(neg, 2)
+            # High-deductible plans: the full price until the deductible is met (capped at what is left of it). v1 charged full
+            # price on 75% of fills; 45% brings fills with over $250 to pay near MEPS 2024 (0.84% of purchased fills).
+            if P.plan == "hdhp" and rng.random() < .45:
+                cp = round(min(neg, rng.uniform(100, 2500)), 2)
+            elif specialty:   # specialty-tier coinsurance with a per-fill cap; most commercial patients use a manufacturer copay card
+                cp = float(rng.choice([0, 5, 10])) if rng.random() < .55 else round(min(.25 * neg, rng.uniform(150, 1000)), 2)
             else:
                 cp = float(rng.choice([40, 50, 60, 90])) if brand else float(rng.choice([0, 5, 10, 10, 15]))
             cp = min(cp, neg)
@@ -756,8 +799,8 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             cp = float(rng.choice([0, 5, 8, 11]))
             third, payer, fund = neg - cp, "VA pharmacy", "federal"
         else:
-            disc = rng.random() < .55 and not brand
-            cp = round(cash * (.38 if disc else 1.0), 2)
+            disc = rng.random() < (.4 if brand else .55)   # v1 gave brand drugs no discount; manufacturer and discount-card programs
+            cp = round(cash * ((.5 if brand else .38) if disc else 1.0), 2)
             third, payer, fund = 0.0, ("pharmacy discount card (no payer)" if disc else ""), ""
         fills.append((brand, cash, round(max(cp, 0), 2), round(max(third, 0), 2), payer, fund))
     W = actor.wallet
@@ -801,6 +844,14 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             if r < .078:
                 prev = sim.emit(t, "failed_attempt", "health", "prescription_pickup", actor, H, actor, org, ben=P, gross=cash, tmin=8, wait=w, miles=miles if k == 0 else 0,
                                 mode=mode, outcome="failed", fr=F + ["out_of_stock", "repeat_trip"], lens=("health_cost",), ctx=dict(c, reason="the drug was on back order"))
+                continue
+            if cp > 250 and rng.random() < (.6 if H.fragile else .35):
+                # Fills costing over $250 at the counter: pharmacy-industry reports put abandonment near half (estimate;
+                # not in the downloaded sources), more often where the household could not cover a $400 emergency (SHED).
+                prev = sim.emit(t, "failed_attempt", "health", "prescription_abandoned_over_cost", actor, H, actor, org, ben=P, gross=cp, tmin=7, wait=w,
+                                miles=miles if k == 0 else 0, mode=mode, outcome="abandoned", fr=F + ["insufficient_funds"], lens=("health_cost",),
+                                ctx=dict(c, reason="the share to pay at the counter was $%.2f" % cp))
+                sim.bump("rx_abandoned")
                 continue
             if cp > 55 and rng.random() < (.42 if not third else .2):
                 prev = sim.emit(t, "failed_attempt", "health", "prescription_pickup", actor, H, actor, org, ben=P, gross=cash, tmin=7, wait=w, miles=miles if k == 0 else 0,
@@ -937,7 +988,9 @@ def ed_visit(sim, q, P, H):
     hosp = sim.by_kind["hospital"]
     org = hosp[1] if (H.district in ("D1", "D2") and rng.random() < .7) or (H.district == "D3" and rng.random() < .5) else hosp[0]
     cov = P.cov
-    allowed = round(min(9000, max(520, rng.lognormvariate(math.log(1650), .55))) * (PAYF.get(cov, 1.15) if cov != "uninsured" else 1.0), 2)
+    # MEPS 2024 emergency room visits (h254e, facility plus doctor): median $674, mean $1,405; about $741 and $1,545 in 2027.
+    # v1 drew a median near $1,280 with a short tail.
+    allowed = round(min(40000, max(150, rng.lognormvariate(math.log(950), 1.2))) * (PAYF.get(cov, 1.15) if cov != "uninsured" else 1.0), 2)
     dur = rng.randint(150, 420)
     w = rng.randint(12, 190)
     t = sim.slot(P, 60, ((0, 1320, 1),))
@@ -1022,9 +1075,9 @@ def dialysis(sim, q, P, H):
                      mode="car", fr=("caregiving_conflict",) if helper.works else (), lens=("family_care",), related=i, ctx=dict(org=org.name, rel=P.rel, dialysis="1"))
         elif not car:
             for tt in (t - 40, t + 255):
-                sim.emit(tt, "public_service_encounter", "transportation", "paratransit_ride", P, H, sim.one("paratransit"), P, ben=P, method="none", gross=58.0,
-                         user=0.0, third=58.0, payer="Medicaid non-emergency medical transportation" if cov in ("medicaid", "medicare_medicaid_dual") else "HAT Access paratransit subsidy",
-                         fund="mixed", imputed=58.0, tmin=40, wait=rng.randint(5, 35), miles=miles / 2, mode="paratransit", lens=("disability", "land_use"),
+                sim.emit(tt, "public_service_encounter", "transportation", "paratransit_ride", P, H, sim.one("paratransit"), P, ben=P, method="none", gross=PARATRANSIT_COST,
+                         user=0.0, third=PARATRANSIT_COST, payer="Medicaid non-emergency medical transportation" if cov in ("medicaid", "medicare_medicaid_dual") else "HAT Access paratransit subsidy",
+                         fund="mixed", imputed=PARATRANSIT_COST, tmin=40, wait=rng.randint(5, 35), miles=miles / 2, mode="paratransit", lens=("disability", "land_use"),
                          related=i, ctx=dict(org=org.name))
     push(q, start, run)
 
@@ -1050,8 +1103,21 @@ def home_visit(sim, q, P, H):
 
     def run(t=t):
         if noshow:
-            sim.emit(t, "failed_attempt", "health", kind, P, H, org, P, ben=P, gross=allowed, tmin=hrs * 60, wait=rng.randint(40, 120), outcome="failed",
-                     fr=("wait", "caregiving_conflict"), lens=("family_care", "labor"), ctx=dict(org=org.name, reason="the aide's shift went unfilled"))
+            i = sim.emit(t, "failed_attempt", "health", kind, P, H, org, P, ben=P, gross=allowed, tmin=hrs * 60, wait=rng.randint(40, 120), outcome="failed",
+                         fr=("wait", "caregiving_conflict"), lens=("family_care", "labor"), ctx=dict(org=org.name, reason="the aide's shift went unfilled"))
+            # who covers (v2): the family caregiver, or another adult at home. A working caregiver leaves work or goes without.
+            cover = next((c for c in (P.cared_by or []) if c.age >= 18 and not c.inpatient), None) or next((a for a in H.adults if a is not P and not a.inpatient), None)
+            if cover is None:
+                return
+            at_work = cover.works and any(s <= t <= e for s, e in (cover.shift or []))
+            if at_work and rng.random() < .6:
+                lost = round(hrs * cover.wage / 2080.0, 2)
+                sim.emit(t + rng.randint(20, 60), "failed_attempt", "work", "left_work_aide_no_show", cover, cover.hh, cover, cover.org or "", ben=P, gross=lost,
+                         tmin=hrs * 60, outcome="partial", fr=("caregiving_conflict", "schedule_volatility"), lens=("family_care", "labor"), related=i,
+                         ctx=dict(org=org.name, lost="%.2f" % lost, hrs=hrs, rel=P.rel, age=P.age))
+            elif not at_work:
+                sim.emit(t + rng.randint(10, 40), "non_monetary_job", "care_and_household", "covered_missed_aide_shift", cover, cover.hh, cover, P, ben=P,
+                         tmin=hrs * 60, fr=("caregiving_conflict",), lens=("family_care",), related=i, ctx=dict(org=org.name, hrs=hrs, rel=P.rel, age=P.age))
             return
         if now:
             W = P.wallet
@@ -1062,3 +1128,34 @@ def home_visit(sim, q, P, H):
             sim.emit(t, "insurance_claim", "health", kind, P, H, org, P, ben=P, method="insurance", gross=allowed, third=third, payer=payer, fund=fund,
                      tmin=hrs * 60, lens=("family_care",), ctx=dict(org=org.name, hrs=hrs))
     push(q, t, run)
+
+
+# Care put off because of cost. SHED 2025 (sources/derived/shed_care_by_fragility.csv): in the past year 27.9% of adults
+# who could not cover a $400 emergency went without a doctor because of the cost, against 7.0% of those who could; for
+# dental care 33.0% and 8.6%. Taken as one such decision a year per adult who reports it, spread over the days.
+SKIP_CARE = {"doctor": (.279, .070), "dental": (.330, .086)}
+
+
+def gen_skipped_care(sim, H, q):
+    if H.gq:
+        return
+    rng = sim.rng
+    debt = next((b for b in H.bills if b[0] == "medical_payment_plan"), None)
+    for P in H.adults:
+        if P.inpatient:
+            continue
+        for what, (frag, ok) in SKIP_CARE.items():
+            if rng.random() >= (frag if H.fragile else ok) / 365.0:
+                continue
+            t = sim.slot_soft(P, 10, EVE)
+            if what == "dental":
+                kind, cost = "dental_care_put_off_over_cost", float(rng.choice([180, 240, 320, 650, 1100]))
+                why = "a filling or crown would cost about $%.0f" % cost
+            elif debt is not None:
+                kind, cost = "care_delayed_by_medical_debt", 160.0
+                why = "the last medical bill is still being paid off at $%.0f a month" % debt[2]
+            else:
+                kind, cost = "care_delayed_by_cost", 160.0
+                why = "a visit would cost more than there was to spare"
+            sim.emit(t, "failed_attempt", "health", kind, P, H, P, "", ben=P, gross=cost, tmin=5, outcome="abandoned",
+                     fr=("insufficient_funds",), lens=("health_cost",), ctx=dict(reason=why, debt="%.0f" % (debt[2] if debt else 0)))

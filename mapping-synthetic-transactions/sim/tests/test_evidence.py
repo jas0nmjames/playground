@@ -41,7 +41,7 @@ def test_every_target_metric_is_measured(run10):
     day = [dict(date="x", cls="x", weather="ordinary", weight=1.0, m=m)]
     with open(checks.TARGETS, newline="") as f:
         targets = list(csv.DictReader(f))
-    assert len(targets) == 14
+    assert len(targets) == 16
     for t in targets:
         v = checks.year_value(t["metric"], day)
         assert v is not None, t["metric"]
