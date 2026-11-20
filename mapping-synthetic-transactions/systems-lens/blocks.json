@@ -1,0 +1,6739 @@
+{
+ "version": 1,
+ "note": "Composite circumstances on invented blocks, drawn from documented US patterns. Loops are hypotheses. The simulator reads 'select' and each pattern's 'match' to tag records; the lens reads everything else.",
+ "blocks": [
+  {
+   "id": "pelham",
+   "name": "Pelham Street",
+   "district": "D1",
+   "districtName": "Downtown and core neighborhoods",
+   "street": "Pelham St",
+   "summary": "Rowhouses cleared for a civic center in 1962, rooming hotels torn down in the 1980s, and rents climbing as the towers fill.",
+   "plateSubs": [
+    "the day’s records",
+    "rents, plasma, pay",
+    "night buses, landlord law",
+    "garages, walk-ups",
+    "services, doubling up",
+    "1962 renewal, 1980s"
+   ],
+   "select": {
+    "n": 520,
+    "prefer": {
+     "housing_tenure": "^renter$",
+     "vehicles": "^0$",
+     "alice_status": "^(alice|poverty)$",
+     "household_type": "^(roommates|alone|group_quarters:shelter)"
+    }
+   },
+   "today": [
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 3.86,
+     "c1": 12,
+     "r1": 4.14,
+     "fill": "#B9B2A4",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       4
+      ],
+      [
+       12,
+       4
+      ]
+     ],
+     "stroke": "#FFFFFF",
+     "sw": 1.2,
+     "dash": "6 5"
+    },
+    {
+     "t": "area",
+     "c0": 5.86,
+     "r0": 0,
+     "c1": 6.14,
+     "r1": 7,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "label",
+     "c": 12,
+     "r": 4,
+     "text": "Pelham St",
+     "dx": 8,
+     "dy": 10,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 0.1,
+     "r0": 0.15,
+     "c1": 2.6,
+     "r1": 2.6,
+     "h": 22,
+     "k": "ware"
+    },
+    {
+     "t": "label",
+     "c": 1.3,
+     "r": 1.3,
+     "text": "garage",
+     "h": 22,
+     "dx": -40,
+     "dy": -14,
+     "size": 12.5,
+     "anchor": "end"
+    },
+    {
+     "t": "box",
+     "c0": 8.1,
+     "r0": 0.1,
+     "c1": 8.9,
+     "r1": 0.9,
+     "h": 46,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 9.1,
+     "r0": 0.1,
+     "c1": 9.9,
+     "r1": 0.9,
+     "h": 58,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 10.1,
+     "r0": 0.1,
+     "c1": 10.9,
+     "r1": 0.9,
+     "h": 40,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 11.1,
+     "r0": 0.1,
+     "c1": 11.9,
+     "r1": 0.9,
+     "h": 52,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 8.1,
+     "r0": 1.1,
+     "c1": 8.9,
+     "r1": 1.9,
+     "h": 34,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 10.1,
+     "r0": 1.1,
+     "c1": 10.9,
+     "r1": 1.9,
+     "h": 44,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 7.1,
+     "r0": 4.25,
+     "c1": 9.4,
+     "r1": 5.1,
+     "h": 12,
+     "k": "civic"
+    },
+    {
+     "t": "label",
+     "c": 8.2,
+     "r": 5.1,
+     "text": "transit center",
+     "dx": 30,
+     "dy": 24,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 3.12,
+     "r0": 5.15,
+     "c1": 3.88,
+     "r1": 5.85,
+     "h": 14,
+     "k": "civic"
+    },
+    {
+     "t": "box",
+     "c0": 1.12,
+     "r0": 3.12,
+     "c1": 1.88,
+     "r1": 3.8,
+     "h": 12,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 2.12,
+     "r0": 3.12,
+     "c1": 2.88,
+     "r1": 3.8,
+     "h": 12,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 9.1,
+     "r0": 3.1,
+     "c1": 10.9,
+     "r1": 3.82,
+     "h": 16,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 6.3,
+     "r0": 3.12,
+     "c1": 7.6,
+     "r1": 3.82,
+     "h": 15,
+     "k": "shop"
+    },
+    {
+     "t": "houses",
+     "c0": 0,
+     "r0": 0,
+     "c1": 12,
+     "r1": 7,
+     "k": "walkup",
+     "except": [
+      [
+       0,
+       0,
+       3,
+       3
+      ],
+      [
+       8,
+       0,
+       12,
+       2
+      ],
+      [
+       5.8,
+       0,
+       6.2,
+       7
+      ],
+      [
+       0,
+       3.8,
+       12,
+       4.2
+      ],
+      [
+       7,
+       4,
+       10,
+       5.2
+      ]
+     ]
+    }
+   ],
+   "contexts": [
+    {
+     "id": "H1",
+     "types": [
+      "hist",
+      "pol"
+     ],
+     "year": "1962",
+     "layer": "hist",
+     "title": "Urban renewal clears the Pelham rowhouses",
+     "lines": [
+      "Urban renewal clears",
+      "the Pelham rowhouses, 1962"
+     ],
+     "body": "A federal urban renewal grant paid the city to clear eleven blocks of rowhouses west of the courthouse for a civic center and parking. About 900 households were moved, most of them renters, and few were offered a place to come back to.",
+     "under": [],
+     "rep": [
+      1.5,
+      1.5
+     ],
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 5.8,
+        "r1": 3.8,
+        "fill": "#C0392B",
+        "opacity": 0.3,
+        "stroke": "#8A2A1E",
+        "sw": 1
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 5.8,
+        "r1": 3.8,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "label",
+        "c": 2.9,
+        "r": 2,
+        "text": "cleared 1962",
+        "anchor": "middle",
+        "size": 14,
+        "fill": "#7A2418",
+        "weight": 700
+       }
+      ]
+     }
+    },
+    {
+     "id": "H2",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1979–86",
+     "layer": "hist",
+     "title": "The rooming hotels come down",
+     "lines": [
+      "Rooming hotels torn down,",
+      "1979–86: 600 rooms gone"
+     ],
+     "body": "Downtown had four single-room hotels where a worker could rent by the week without a deposit. They were demolished for office towers in the 1980s, and nothing that cheap replaced them. The shelter on Pelham opened in 1988.",
+     "under": [],
+     "rep": [
+      8.5,
+      1
+     ],
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 7,
+        "r0": 0,
+        "c1": 12,
+        "r1": 2,
+        "fill": "#8A5A2B",
+        "opacity": 0.45,
+        "stroke": "#0E1B2E"
+       },
+       {
+        "t": "label",
+        "c": 9.5,
+        "r": 1,
+        "text": "rooming hotels, gone by 1986",
+        "dx": 0,
+        "dy": -14,
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC1",
+     "types": [
+      "econ"
+     ],
+     "year": "since 2018",
+     "layer": "econ",
+     "title": "Rents up 40 percent as offices become lofts",
+     "lines": [
+      "Rents up 40% since 2018",
+      "as offices become lofts"
+     ],
+     "body": "Empty office floors are being converted to apartments that rent at the top of the market, and older walk-ups have raised rents to match. Wages for the jobs downtown have not kept pace, so rent takes more than half of many paychecks.",
+     "under": [
+      "H2"
+     ],
+     "rep": [
+      9.5,
+      1
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 8,
+        "r0": 0,
+        "c1": 12,
+        "r1": 2,
+        "fill": "--c-econ",
+        "opacity": 0.5
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 0.6,
+        "text": "loft conversions",
+        "dx": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC2",
+     "types": [
+      "econ"
+     ],
+     "year": "2014",
+     "layer": "econ",
+     "title": "A plasma center in the old department store",
+     "lines": [
+      "Plasma center opens in the",
+      "old department store, 2014"
+     ],
+     "body": "The plasma center pays about $40 a visit, more for new donors, up to twice a week. For people between paychecks it is the fastest legal cash downtown.",
+     "under": [],
+     "rep": [
+      10,
+      3.4
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "icon",
+        "kind": "sign",
+        "c": 10,
+        "r": 3.4,
+        "text": "+"
+       },
+       {
+        "t": "label",
+        "c": 10,
+        "r": 3.4,
+        "text": "plasma center",
+        "dx": 16,
+        "dy": -10
+       }
+      ]
+     }
+    },
+    {
+     "id": "P1",
+     "types": [
+      "pol"
+     ],
+     "year": "2021",
+     "layer": "pol",
+     "title": "Night buses end at 11 p.m.",
+     "lines": [
+      "Last buses leave the",
+      "transit center at 11:04 p.m."
+     ],
+     "body": "After ridership fell in 2020 the transit agency ended most routes at 11 p.m. Late shifts in hospitals, restaurants and warehouses still end after midnight, so the trip home is a ride-hail or a long walk.",
+     "under": [],
+     "rep": [
+      6,
+      4
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "line",
+        "pts": [
+         [
+          0,
+          4
+         ],
+         [
+          0.5,
+          4
+         ],
+         [
+          1.0,
+          4
+         ],
+         [
+          1.5,
+          4
+         ],
+         [
+          2.0,
+          4
+         ],
+         [
+          2.5,
+          4
+         ],
+         [
+          3.0,
+          4
+         ],
+         [
+          3.5,
+          4
+         ],
+         [
+          4.0,
+          4
+         ],
+         [
+          4.5,
+          4
+         ],
+         [
+          5.0,
+          4
+         ],
+         [
+          5.5,
+          4
+         ],
+         [
+          6.0,
+          4
+         ],
+         [
+          6.5,
+          4
+         ],
+         [
+          7.0,
+          4
+         ],
+         [
+          7.5,
+          4
+         ],
+         [
+          8.0,
+          4
+         ],
+         [
+          8.5,
+          4
+         ],
+         [
+          9.0,
+          4
+         ],
+         [
+          9.5,
+          4
+         ],
+         [
+          10.0,
+          4
+         ],
+         [
+          10.5,
+          4
+         ],
+         [
+          11.0,
+          4
+         ],
+         [
+          11.5,
+          4
+         ],
+         [
+          12.0,
+          4
+         ]
+        ],
+        "stroke": "--c-pol",
+        "sw": 3.6,
+        "cap": "round"
+       },
+       {
+        "t": "stops",
+        "pts": [
+         [
+          1.5,
+          4
+         ],
+         [
+          4,
+          4
+         ],
+         [
+          6,
+          4
+         ],
+         [
+          9,
+          4
+         ],
+         [
+          11,
+          4
+         ]
+        ]
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 4,
+        "text": "last bus 11:04 p.m.",
+        "dx": 10,
+        "dy": 18
+       }
+      ]
+     }
+    },
+    {
+     "id": "P2",
+     "types": [
+      "pol"
+     ],
+     "year": "state law",
+     "layer": "pol",
+     "title": "Landlord law: late fees and fast evictions",
+     "lines": [
+      "State allows 10% late fees",
+      "and 10-day eviction filings"
+     ],
+     "body": "State law lets landlords charge a late fee of 10 percent of the rent after five days and file for eviction ten days after a missed payment. A short month becomes a fee, then a court date.",
+     "under": [],
+     "rep": [
+      4,
+      6
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 12,
+        "r1": 7,
+        "fill": "none",
+        "stroke": "--c-pol",
+        "sw": 3.2,
+        "opacity": 0.85
+       },
+       {
+        "t": "badge",
+        "c": 12,
+        "r": 0,
+        "dx": -170,
+        "dy": -30,
+        "w": 170,
+        "text": "state landlord law covers it",
+        "fill": "--c-pol"
+       }
+      ]
+     }
+    },
+    {
+     "id": "E1",
+     "types": [
+      "env",
+      "econ"
+     ],
+     "year": "pre-1950",
+     "layer": "env",
+     "title": "Walk-ups with no laundry hookups",
+     "lines": [
+      "Pre-1950 walk-ups:",
+      "no laundry hookups"
+     ],
+     "body": "Most of the older apartments were built without washer hookups, and landlords have not added them. Laundry means a trip to the laundromat with quarters or a card, several times a week for a family.",
+     "under": [],
+     "rep": [
+      2,
+      6
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 4.2,
+        "c1": 5.8,
+        "r1": 7,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 4.2,
+        "c1": 5.8,
+        "r1": 7,
+        "fill": "#5E8A3A",
+        "opacity": 0.12
+       },
+       {
+        "t": "label",
+        "c": 2.9,
+        "r": 6.6,
+        "text": "walk-ups, no hookups",
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "E2",
+     "types": [
+      "env",
+      "pol"
+     ],
+     "year": "1964",
+     "layer": "env",
+     "title": "Parking where the homes stood",
+     "lines": [
+      "Garages and surface lots",
+      "on the cleared blocks"
+     ],
+     "body": "Much of the cleared land became surface lots and a five-level garage for county workers. Residents without a car pay the same meter rates as commuters for a short stop.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      1.3,
+      1.3
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 3,
+        "r1": 3,
+        "fill": "#9C9486",
+        "stroke": "#0E1B2E",
+        "sw": 1.2
+       },
+       {
+        "t": "icon",
+        "kind": "sign",
+        "c": 1.5,
+        "r": 1.5,
+        "text": "P"
+       },
+       {
+        "t": "label",
+        "c": 0,
+        "r": 1.5,
+        "text": "lots and the garage",
+        "dx": -8,
+        "anchor": "end"
+       }
+      ]
+     }
+    },
+    {
+     "id": "S1",
+     "types": [
+      "soc",
+      "pol"
+     ],
+     "year": "1988 on",
+     "layer": "soc",
+     "title": "Services clustered downtown",
+     "lines": [
+      "Shelter, clinic and meal sites",
+      "clustered on Pelham"
+     ],
+     "body": "The shelter, a free clinic and two meal programs sit within two blocks of each other on Pelham, because other neighborhoods objected to them. People who need them stay close, and their days are organized around intake hours.",
+     "under": [
+      "H2"
+     ],
+     "rep": [
+      3.5,
+      5.5
+     ],
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 2.5,
+        "r0": 4.4,
+        "c1": 5.2,
+        "r1": 7,
+        "fill": "--c-soc",
+        "opacity": 0.36
+       },
+       {
+        "t": "label",
+        "c": 3.8,
+        "r": 6.8,
+        "text": "shelter · clinic · meals",
+        "anchor": "middle",
+        "dy": 14
+       }
+      ]
+     }
+    },
+    {
+     "id": "S2",
+     "types": [
+      "soc",
+      "econ"
+     ],
+     "year": "today",
+     "layer": "soc",
+     "title": "Doubling up",
+     "lines": [
+      "Roommates and relatives",
+      "share one lease"
+     ],
+     "body": "To keep up with rent, many households here are two or three earners on one lease: roommates, adult children, cousins. Each owes a share to whoever holds the lease, often by app the night before rent is due.",
+     "under": [
+      "EC1"
+     ],
+     "rep": [
+      9,
+      6
+     ],
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 6.2,
+        "r0": 4.4,
+        "c1": 12,
+        "r1": 7,
+        "fill": "--c-cult",
+        "opacity": 0.26
+       },
+       {
+        "t": "label",
+        "c": 9.2,
+        "r": 6.2,
+        "text": "doubled up",
+        "anchor": "middle"
+       }
+      ]
+     }
+    }
+   ],
+   "patterns": [
+    {
+     "id": "A1",
+     "n": 1,
+     "cell": [
+      6,
+      4
+     ],
+     "kind": "fail",
+     "title": "Missed buses",
+     "links": [
+      "P1"
+     ],
+     "match": [
+      {
+       "cat": "missed_bus"
+      }
+     ],
+     "example": {
+      "time": "23:12",
+      "title": "Missed the last Route 3 bus",
+      "body": "A dinner shift ran late. The last bus had left at 11:04, so the walk home was 40 minutes in the dark.",
+      "amt": "40 min lost",
+      "status": "Missed",
+      "type": "Trip",
+      "fail": true,
+      "with": "Halvern Transit, Route 3"
+     }
+    },
+    {
+     "id": "A2",
+     "n": 2,
+     "cell": [
+      7,
+      3
+     ],
+     "kind": "purchase",
+     "title": "Late-night rides",
+     "links": [
+      "P1"
+     ],
+     "match": [
+      {
+       "cat": "ride_hail_trip"
+      }
+     ],
+     "example": {
+      "time": "00:20",
+      "title": "Ride home after a closing shift, $17.40",
+      "body": "No bus after 11. The fare is most of an hour's pay.",
+      "amt": "−$17.40",
+      "status": "Completed",
+      "type": "Ride",
+      "with": "Ride-hail app"
+     }
+    },
+    {
+     "id": "A3",
+     "n": 3,
+     "cell": [
+      4,
+      6
+     ],
+     "kind": "fail",
+     "title": "Rent short",
+     "links": [
+      "EC1",
+      "P2"
+     ],
+     "match": [
+      {
+       "cat": "^housing\\.rent$",
+       "outcome": "^(declined|failed|partial|abandoned|rescheduled)$"
+      }
+     ],
+     "example": {
+      "time": "09:00",
+      "title": "Rent payment came up $180 short",
+      "body": "Rent went up $140 in January. The landlord's portal took a partial payment and added the late fee.",
+      "amt": "−$1,020.00",
+      "status": "Partial",
+      "type": "Rent",
+      "note": "$180 still owed",
+      "fail": true,
+      "with": "Pelham Street Rentals LLC"
+     }
+    },
+    {
+     "id": "A4",
+     "n": 4,
+     "cell": [
+      9,
+      6
+     ],
+     "kind": "bill",
+     "title": "Shares of the rent",
+     "links": [
+      "S2",
+      "EC1"
+     ],
+     "match": [
+      {
+       "cat": "roommate_rent_share"
+      }
+     ],
+     "example": {
+      "time": "21:40",
+      "title": "Rent share sent to the leaseholder, $425",
+      "body": "Three roommates on a two-bedroom lease. The share goes by app the night before rent is due.",
+      "amt": "−$425.00",
+      "status": "Completed",
+      "type": "Rent share",
+      "with": "Roommate, by app"
+     }
+    },
+    {
+     "id": "A5",
+     "n": 5,
+     "cell": [
+      2,
+      3
+     ],
+     "kind": "purchase",
+     "title": "Laundromat",
+     "links": [
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "laundromat"
+      }
+     ],
+     "example": {
+      "time": "19:30",
+      "title": "Two loads at the laundromat, $11.50",
+      "body": "Wash and dry for a family of four, twice a week.",
+      "amt": "−$11.50",
+      "status": "Completed",
+      "type": "Purchase",
+      "with": "Pelham Coin Laundry"
+     }
+    },
+    {
+     "id": "A6",
+     "n": 6,
+     "cell": [
+      3,
+      5
+     ],
+     "kind": "unpaid",
+     "title": "Shelter nights",
+     "links": [
+      "S1",
+      "H2"
+     ],
+     "match": [
+      {
+       "cat": "shelter_night"
+      }
+     ],
+     "example": {
+      "time": "19:00",
+      "title": "A night at the Pelham shelter",
+      "body": "Intake opens at 7. A bed is held only for people inside by 8.",
+      "amt": "No charge",
+      "status": "Completed",
+      "type": "Public service",
+      "with": "Pelham Street Shelter"
+     }
+    },
+    {
+     "id": "A7",
+     "n": 7,
+     "cell": [
+      10,
+      3
+     ],
+     "kind": "income",
+     "title": "Plasma payments",
+     "links": [
+      "EC2"
+     ],
+     "match": [
+      {
+       "cat": "plasma_donation_payment"
+      }
+     ],
+     "example": {
+      "time": "10:15",
+      "title": "Plasma donation paid, $45",
+      "body": "The second visit this week. Paid onto a prepaid card the same day.",
+      "amt": "+$45.00",
+      "status": "Completed",
+      "type": "Income",
+      "with": "Plasma center"
+     }
+    },
+    {
+     "id": "A8",
+     "n": 8,
+     "cell": [
+      1,
+      2
+     ],
+     "kind": "bill",
+     "title": "Parking",
+     "links": [
+      "E2"
+     ],
+     "match": [
+      {
+       "cat": "parking_fee"
+      }
+     ],
+     "example": {
+      "time": "12:05",
+      "title": "Meter on Pelham, $3.00",
+      "body": "Twenty minutes to drop off a form at the county building.",
+      "amt": "−$3.00",
+      "status": "Completed",
+      "type": "Parking",
+      "with": "City parking meters"
+     }
+    }
+   ],
+   "loops": {
+    "R1": {
+     "name": "Late-fee ladder",
+     "kind": "R",
+     "seen": [
+      "A3"
+     ],
+     "text": "A short month means a partial rent payment. The late fee makes next month's bill bigger, so the next payment is more likely to fall short too.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 5.0,
+       "r": 5.4,
+       "t": "Rent paid in full"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 3.4,
+       "r": 6.0,
+       "t": "Short payments"
+      },
+      {
+       "k": "c",
+       "p": 2,
+       "c": 4.4,
+       "r": 6.2,
+       "t": "Late fees owed"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "Less rent paid in full means more short payments."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More short payments mean more late fees."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "More fees owed leave less to pay rent in full."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "State law allows a 10% fee after five days.",
+       "to": "c",
+       "from": "P2"
+      },
+      {
+       "sign": "−",
+       "t": "Rising rents make full payment harder.",
+       "to": "a",
+       "from": "EC1"
+      }
+     ]
+    },
+    "B1": {
+     "name": "Doubling up",
+     "kind": "B",
+     "seen": [
+      "A4"
+     ],
+     "text": "When rent outruns one paycheck, a household takes on a roommate or a relative. The shared lease closes the gap, which holds the late-fee ladder back, at the cost of space.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 8.6,
+       "r": 6.6,
+       "t": "Rent gap"
+      },
+      {
+       "k": "b",
+       "p": 4,
+       "c": 10.4,
+       "r": 5.4,
+       "t": "Roommates on the lease"
+      },
+      {
+       "k": "c",
+       "p": 4,
+       "c": 7.4,
+       "r": 5.2,
+       "t": "Shares paid in"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "A bigger gap means more roommates."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More roommates mean more shares paid in."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "More shares shrink the gap."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "Rents up 40% since 2018 widen the gap.",
+       "to": "a",
+       "from": "EC1"
+      }
+     ]
+    }
+   },
+   "start": {
+    "pattern": "A3",
+    "loop": "R1"
+   }
+  },
+  {
+   "id": "larkin",
+   "name": "Larkin Avenue",
+   "district": "D2",
+   "districtName": "Inner suburbs",
+   "street": "Larkin Ave",
+   "summary": "Red-rated in 1938, split by the interstate spur in 1961, and left with check cashers when the branches closed.",
+   "plateSubs": [
+    "the day’s records",
+    "jobs, banks, prices",
+    "routes, zoning, state law",
+    "highway, air, floodplain",
+    "languages, congregations",
+    "1938 grades, 1961, 1983"
+   ],
+   "select": {
+    "n": 420,
+    "prefer": {
+     "alice_status": "^(alice|poverty)$",
+     "banked_status": "^(underbanked|unbanked)$",
+     "primary_language": "^(?!English$)",
+     "housing_tenure": "^renter$"
+    }
+   },
+   "today": [
+    {
+     "t": "area",
+     "c0": 3,
+     "r0": 0,
+     "c1": 5,
+     "r1": 7,
+     "fill": "#B9B2A4",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       4,
+       0
+      ],
+      [
+       4,
+       7
+      ]
+     ],
+     "stroke": "#FFFFFF",
+     "sw": 1.2,
+     "dash": "6 5"
+    },
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 3.86,
+     "c1": 3,
+     "r1": 4.14,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "area",
+     "c0": 5,
+     "r0": 3.86,
+     "c1": 11.7,
+     "r1": 4.14,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "area",
+     "c0": 11.7,
+     "r0": 0,
+     "c1": 12,
+     "r1": 7,
+     "fill": "#9EC3DE"
+    },
+    {
+     "t": "label",
+     "c": 12,
+     "r": 4,
+     "text": "Larkin Ave",
+     "dx": 8,
+     "dy": 10,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 2.55,
+     "r0": 4.05,
+     "c1": 2.9,
+     "r1": 4.3,
+     "h": 7,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 11.18,
+     "r0": 3.22,
+     "c1": 11.66,
+     "r1": 3.74,
+     "h": 11,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 11.18,
+     "r0": 4.22,
+     "c1": 11.66,
+     "r1": 4.74,
+     "h": 11,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 11.18,
+     "r0": 5.22,
+     "c1": 11.66,
+     "r1": 5.74,
+     "h": 11,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 11.18,
+     "r0": 6.22,
+     "c1": 11.66,
+     "r1": 6.74,
+     "h": 11,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 5.06,
+     "r0": 3.08,
+     "c1": 5.9399999999999995,
+     "r1": 3.82,
+     "h": 15,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 6.06,
+     "r0": 3.08,
+     "c1": 6.9399999999999995,
+     "r1": 3.82,
+     "h": 20,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 7.06,
+     "r0": 3.08,
+     "c1": 7.9399999999999995,
+     "r1": 3.82,
+     "h": 15,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 8.06,
+     "r0": 3.08,
+     "c1": 8.94,
+     "r1": 3.82,
+     "h": 15,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 9.2,
+     "r0": 2.2,
+     "c1": 9.8,
+     "r1": 2.8,
+     "h": 26,
+     "k": "church",
+     "spire": true
+    },
+    {
+     "t": "box",
+     "c0": 9.1,
+     "r0": 4.1,
+     "c1": 9.9,
+     "r1": 4.7,
+     "h": 13,
+     "k": "shop"
+    },
+    {
+     "t": "houses",
+     "c0": 0,
+     "r0": 0,
+     "c1": 12,
+     "r1": 7,
+     "k": "house",
+     "except": [
+      [
+       3,
+       0,
+       5,
+       7
+      ],
+      [
+       8,
+       0,
+       12,
+       2
+      ]
+     ]
+    },
+    {
+     "t": "box",
+     "c0": 8.1,
+     "r0": 0.12,
+     "c1": 11.55,
+     "r1": 1.7,
+     "h": 20,
+     "k": "ware"
+    },
+    {
+     "t": "label",
+     "c": 9.8,
+     "r": 0.9,
+     "text": "warehouses",
+     "h": 20,
+     "dx": 30,
+     "dy": -6,
+     "size": 12.5
+    }
+   ],
+   "contexts": [
+    {
+     "id": "H1",
+     "types": [
+      "hist",
+      "pol"
+     ],
+     "year": "1938",
+     "layer": "hist",
+     "rep": [
+      6,
+      3
+     ],
+     "under": [],
+     "lines": [
+      "Federal appraisal map rates",
+      "these blocks “hazardous”"
+     ],
+     "title": "Rated “hazardous” on the 1938 appraisal map",
+     "body": "A federal appraisal map graded the Larkin Avenue blocks red, citing the race of residents and the age of the housing. For decades lenders treated red-rated blocks as too risky for mortgages and deposits, so home ownership, equity and bank branches stayed thin here.",
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 1,
+        "c1": 10,
+        "r1": 7,
+        "fill": "#C0392B",
+        "opacity": 0.36,
+        "stroke": "#8A2A1E",
+        "sw": 1
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 1,
+        "c1": 10,
+        "r1": 7,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "area",
+        "c0": 10,
+        "r0": 1,
+        "c1": 12,
+        "r1": 7,
+        "fill": "#D9B23A",
+        "opacity": 0.4
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 12,
+        "r1": 1,
+        "fill": "#5B83B5",
+        "opacity": 0.32
+       },
+       {
+        "t": "label",
+        "c": 6.2,
+        "r": 5.2,
+        "text": "Grade D, “hazardous”",
+        "anchor": "middle",
+        "size": 14,
+        "fill": "#7A2418",
+        "weight": 700
+       },
+       {
+        "t": "label",
+        "c": 11,
+        "r": 4.4,
+        "text": "C",
+        "anchor": "middle",
+        "cls": "disp",
+        "size": 15
+       },
+       {
+        "t": "label",
+        "c": 5.5,
+        "r": 0.5,
+        "text": "B",
+        "dy": 4,
+        "anchor": "middle",
+        "cls": "disp",
+        "size": 15
+       }
+      ]
+     }
+    },
+    {
+     "id": "H3",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1983",
+     "layer": "hist",
+     "rep": [
+      10,
+      0
+     ],
+     "under": [],
+     "lines": [
+      "Halvern Works closes:",
+      "1,900 union jobs gone"
+     ],
+     "title": "Halvern Works closes",
+     "body": "The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly.",
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 9,
+        "r0": 0,
+        "c1": 12,
+        "r1": 1,
+        "fill": "#8A5A2B",
+        "opacity": 0.5,
+        "stroke": "#0E1B2E"
+       },
+       {
+        "t": "icon",
+        "kind": "gear",
+        "c": 10.5,
+        "r": 0.5
+       },
+       {
+        "t": "label",
+        "c": 10.5,
+        "r": 0.5,
+        "text": "Halvern Works, closed 1983",
+        "dx": -16,
+        "dy": -12,
+        "anchor": "end"
+       }
+      ]
+     }
+    },
+    {
+     "id": "H2",
+     "types": [
+      "hist",
+      "pol",
+      "env"
+     ],
+     "year": "1961",
+     "layer": "env",
+     "rep": [
+      3,
+      3
+     ],
+     "under": [
+      "H1"
+     ],
+     "lines": [
+      "Interstate spur cut through;",
+      "about 300 homes cleared"
+     ],
+     "title": "The interstate spur goes through",
+     "body": "The state routed an interstate spur through the red-rated blocks, where land was cheapest and residents had the least say. It cleared about 300 homes and split the district. The nearest walkable crossing is now 0.6 miles from the Route 6 stop.",
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 3,
+        "r0": 0,
+        "c1": 5,
+        "r1": 7,
+        "fill": "#9C9486",
+        "stroke": "#0E1B2E",
+        "sw": 1.2
+       },
+       {
+        "t": "line",
+        "pts": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          7
+         ]
+        ],
+        "stroke": "#FFFFFF",
+        "sw": 1.4,
+        "dash": "6 5"
+       },
+       {
+        "t": "label",
+        "c": 4.6,
+        "r": 7,
+        "text": "interstate spur",
+        "dx": 12,
+        "dy": 16
+       }
+      ],
+      "5": [
+       {
+        "t": "area",
+        "c0": 3,
+        "r0": 0,
+        "c1": 5,
+        "r1": 7,
+        "fill": "none",
+        "stroke": "#0E1B2E",
+        "sw": 1.6,
+        "dash": "5 3"
+       },
+       {
+        "t": "label",
+        "c": 4.6,
+        "r": 7,
+        "text": "homes cleared 1961",
+        "dx": 12,
+        "dy": 16
+       }
+      ]
+     }
+    },
+    {
+     "id": "E1",
+     "types": [
+      "env"
+     ],
+     "year": "today",
+     "layer": "env",
+     "rep": [
+      10,
+      5
+     ],
+     "under": [
+      "H1"
+     ],
+     "lines": [
+      "Cutler Run floodplain:",
+      "flood insurance required"
+     ],
+     "title": "Cutler Run floodplain",
+     "body": "A third of the blocks by the creek sit in the 100-year floodplain. Homes with a mortgage there must carry flood insurance, a bill most of the city never sees. These were the cheapest lots, and the ones red-rated buyers could get.",
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 9.6,
+        "r0": 3,
+        "c1": 12,
+        "r1": 7,
+        "fill": "#3B7FB8",
+        "opacity": 0.4
+       },
+       {
+        "t": "area",
+        "c0": 9.6,
+        "r0": 3,
+        "c1": 12,
+        "r1": 7,
+        "fill": "url(#waves)"
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 5,
+        "text": "floodplain",
+        "dx": 10
+       }
+      ]
+     }
+    },
+    {
+     "id": "E2",
+     "types": [
+      "env"
+     ],
+     "year": "today",
+     "layer": "env",
+     "rep": [
+      2,
+      2
+     ],
+     "under": [
+      "H2"
+     ],
+     "lines": [
+      "Highway air: more asthma",
+      "within 500 ft of the spur"
+     ],
+     "title": "Highway air",
+     "body": "Homes beside the spur breathe more traffic exhaust. Childhood asthma is higher here than in the rest of the city, and an attack often means the ER rather than a scheduled visit.",
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 1.5,
+        "r0": 0,
+        "c1": 3,
+        "r1": 7,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "area",
+        "c0": 5,
+        "r0": 0,
+        "c1": 5.5,
+        "r1": 7,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "area",
+        "c0": 1.5,
+        "r0": 0,
+        "c1": 3,
+        "r1": 7,
+        "fill": "#5E8A3A",
+        "opacity": 0.14
+       },
+       {
+        "t": "label",
+        "c": 1.5,
+        "r": 0.4,
+        "text": "exhaust zone",
+        "dx": -8,
+        "dy": -4,
+        "anchor": "end"
+       }
+      ]
+     }
+    },
+    {
+     "id": "P1",
+     "types": [
+      "econ"
+     ],
+     "year": "2009",
+     "layer": "econ",
+     "rep": [
+      6,
+      3
+     ],
+     "under": [
+      "H1"
+     ],
+     "lines": [
+      "Last two bank branches",
+      "close after a merger"
+     ],
+     "title": "The last bank branches close",
+     "body": "After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Halvern Savings building is a check casher.",
+     "draw": {
+      "1": [
+       {
+        "t": "icon",
+        "kind": "bankx",
+        "c": 6.5,
+        "r": 3.5
+       },
+       {
+        "t": "icon",
+        "kind": "bankx",
+        "c": 1.5,
+        "r": 5.6
+       },
+       {
+        "t": "label",
+        "c": 6.5,
+        "r": 3.5,
+        "text": "branches closed 2009",
+        "dx": 16,
+        "dy": -8
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC1",
+     "types": [
+      "econ"
+     ],
+     "year": "today",
+     "layer": "econ",
+     "rep": [
+      9,
+      1
+     ],
+     "under": [
+      "H3"
+     ],
+     "lines": [
+      "Hourly work, schedules",
+      "posted under a week out"
+     ],
+     "title": "Hourly work, short-notice schedules",
+     "body": "Most jobs open to people here are hourly, with schedules posted less than a week ahead and pay docked for lateness. Income moves week to week, which makes autopay dates hard to plan around.",
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 8,
+        "r0": 0,
+        "c1": 12,
+        "r1": 1.7,
+        "fill": "--c-econ",
+        "opacity": 0.5
+       },
+       {
+        "t": "icon",
+        "kind": "factory",
+        "c": 8.7,
+        "r": 0.7
+       },
+       {
+        "t": "icon",
+        "kind": "factory",
+        "c": 10.1,
+        "r": 0.7
+       },
+       {
+        "t": "icon",
+        "kind": "factory",
+        "c": 11.3,
+        "r": 1
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 0.4,
+        "text": "hourly employers",
+        "dx": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "P2",
+     "types": [
+      "pol"
+     ],
+     "year": "state law",
+     "layer": "pol",
+     "rep": [
+      7,
+      3
+     ],
+     "under": [],
+     "lines": [
+      "State allows 2–3% check",
+      "fees and ~390% APR loans"
+     ],
+     "title": "State rules on check cashing and payday loans",
+     "body": "State law lets check cashers charge 2 to 3 percent of a check and lets payday lenders charge $15 per $100 borrowed every two weeks, about 390% a year. A renewal pays the fee again without paying down the loan.",
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 12,
+        "r1": 7,
+        "fill": "none",
+        "stroke": "--c-pol",
+        "sw": 3.2,
+        "opacity": 0.85
+       },
+       {
+        "t": "badge",
+        "c": 12,
+        "r": 0,
+        "dx": -150,
+        "dy": -30,
+        "w": 150,
+        "text": "state law covers the plate",
+        "fill": "--c-pol"
+       }
+      ]
+     }
+    },
+    {
+     "id": "P3",
+     "types": [
+      "pol"
+     ],
+     "year": "2019",
+     "layer": "pol",
+     "rep": [
+      2,
+      4
+     ],
+     "under": [],
+     "lines": [
+      "Route 6 cut from every",
+      "15 to every 30 minutes"
+     ],
+     "title": "Route 6 service cut",
+     "body": "Facing a budget gap, the transit agency cut Route 6 from every 15 to every 30 minutes. Missing a bus now costs half an hour, and a late clock-in can cost part of a shift.",
+     "draw": {
+      "2": [
+       {
+        "t": "line",
+        "pts": [
+         [
+          0,
+          4
+         ],
+         [
+          0.5,
+          4
+         ],
+         [
+          1.0,
+          4
+         ],
+         [
+          1.5,
+          4
+         ],
+         [
+          2.0,
+          4
+         ],
+         [
+          2.5,
+          4
+         ],
+         [
+          3.0,
+          4
+         ],
+         [
+          3.5,
+          4
+         ],
+         [
+          4.0,
+          4
+         ],
+         [
+          4.5,
+          4
+         ],
+         [
+          5.0,
+          4
+         ],
+         [
+          5.5,
+          4
+         ],
+         [
+          6.0,
+          4
+         ],
+         [
+          6.5,
+          4
+         ],
+         [
+          7.0,
+          4
+         ],
+         [
+          7.5,
+          4
+         ],
+         [
+          8.0,
+          4
+         ],
+         [
+          8.5,
+          4
+         ],
+         [
+          9.0,
+          4
+         ],
+         [
+          9.5,
+          4
+         ],
+         [
+          10.0,
+          4
+         ],
+         [
+          10.5,
+          4
+         ],
+         [
+          11.0,
+          4
+         ],
+         [
+          11.5,
+          4
+         ]
+        ],
+        "stroke": "--c-pol",
+        "sw": 3.6,
+        "cap": "round"
+       },
+       {
+        "t": "stops",
+        "pts": [
+         [
+          1,
+          4
+         ],
+         [
+          2.5,
+          4
+         ],
+         [
+          6,
+          4
+         ],
+         [
+          9,
+          4
+         ],
+         [
+          11,
+          4
+         ]
+        ]
+       },
+       {
+        "t": "label",
+        "c": 11.7,
+        "r": 4,
+        "text": "Route 6, every 30 min",
+        "dx": 10,
+        "dy": 18
+       }
+      ]
+     }
+    },
+    {
+     "id": "P4",
+     "types": [
+      "pol",
+      "econ"
+     ],
+     "year": "2011",
+     "layer": "pol",
+     "rep": [
+      5,
+      3
+     ],
+     "under": [
+      "H1"
+     ],
+     "lines": [
+      "Single-use zoning; no new",
+      "grocery since 2011"
+     ],
+     "title": "Zoning and the missing grocery",
+     "body": "Zoning keeps most blocks residential and allows shops only on the Larkin strip. The last supermarket closed in 2011 and none has replaced it, so daily food comes from the corner market and the dollar store.",
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 5,
+        "r0": 3,
+        "c1": 9,
+        "r1": 3.86,
+        "fill": "--c-econ",
+        "opacity": 0.55
+       },
+       {
+        "t": "area",
+        "c0": 5,
+        "r0": 3,
+        "c1": 9,
+        "r1": 3.86,
+        "fill": "none",
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "label",
+        "c": 7,
+        "r": 3,
+        "text": "only strip where shops are allowed",
+        "dx": 4,
+        "dy": -8,
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "S1",
+     "types": [
+      "soc",
+      "cult"
+     ],
+     "year": "1990s on",
+     "layer": "soc",
+     "rep": [
+      9,
+      5
+     ],
+     "under": [
+      "H3"
+     ],
+     "lines": [
+      "Immigrant gateway: Spanish,",
+      "Vietnamese, Haitian Creole"
+     ],
+     "title": "An immigrant gateway",
+     "body": "Low rents after the plant closed made Larkin a first stop for new arrivals. Many households send money home every week, and many neighbors work and bank in more than one language.",
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 7,
+        "r0": 3,
+        "c1": 12,
+        "r1": 7,
+        "fill": "--c-soc",
+        "opacity": 0.36
+       },
+       {
+        "t": "label",
+        "c": 9.8,
+        "r": 6.2,
+        "text": "español · tiếng Việt · kreyòl",
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "S2",
+     "types": [
+      "cult",
+      "econ"
+     ],
+     "year": "today",
+     "layer": "soc",
+     "rep": [
+      9,
+      2
+     ],
+     "under": [
+      "S1",
+      "P1"
+     ],
+     "lines": [
+      "Church savings circles",
+      "(tandas, hụi, sòl)"
+     ],
+     "title": "Church savings circles",
+     "body": "Several congregations run rotating savings circles. Each member pays in every week and takes the whole pot in turn. With no branch nearby, the circle is the neighborhood’s savings account and emergency fund.",
+     "draw": {
+      "4": [
+       {
+        "t": "icon",
+        "kind": "circle",
+        "c": 9.5,
+        "r": 2.5
+       },
+       {
+        "t": "icon",
+        "kind": "circle",
+        "c": 6.4,
+        "r": 6.2
+       },
+       {
+        "t": "label",
+        "c": 9.5,
+        "r": 2.5,
+        "text": "savings circles",
+        "dx": 24,
+        "dy": -10
+       }
+      ]
+     }
+    }
+   ],
+   "patterns": [
+    {
+     "id": "R8",
+     "n": 1,
+     "cell": [
+      11,
+      5
+     ],
+     "kind": "bill",
+     "title": "Home and flood insurance bills",
+     "links": [
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "^housing\\.(home_insurance|renters_insurance)$"
+      }
+     ],
+     "example": {
+      "time": "01:30",
+      "title": "Flood insurance autopay, $112",
+      "body": "Household 0391’s flood policy drafts on the 3rd. Neighbors two streets uphill do not pay it.",
+      "amt": "−$112.00",
+      "status": "Completed",
+      "type": "Bill",
+      "with": "Flood insurer, autopay"
+     }
+    },
+    {
+     "id": "R1",
+     "n": 2,
+     "cell": [
+      2,
+      4
+     ],
+     "kind": "fail",
+     "title": "Missed buses",
+     "links": [
+      "P3",
+      "H2"
+     ],
+     "match": [
+      {
+       "cat": "missed_bus"
+      }
+     ],
+     "example": {
+      "time": "07:42",
+      "title": "Missed the Route 6 bus by a minute",
+      "body": "The next bus is 30 minutes out. Walking around the spur to the next stop takes longer. 38 minutes lost and a late clock-in at the warehouse.",
+      "amt": "38 min lost",
+      "status": "Missed",
+      "type": "Trip",
+      "with": "Halvern Transit, Route 6",
+      "fail": true
+     }
+    },
+    {
+     "id": "R10",
+     "n": 3,
+     "cell": [
+      5,
+      3
+     ],
+     "kind": "purchase",
+     "title": "Groceries at the corner market",
+     "links": [
+      "P4"
+     ],
+     "match": [
+      {
+       "cat": "^food\\.(convenience_store|grocery_fill_in)$"
+      }
+     ],
+     "example": {
+      "time": "08:10",
+      "title": "Groceries at Larkin Market, $31.40",
+      "body": "Milk, eggs, rice and bread at corner-store prices. The nearest supermarket is 3.1 miles away.",
+      "amt": "−$31.40",
+      "status": "Completed",
+      "type": "Purchase",
+      "with": "Larkin Market"
+     }
+    },
+    {
+     "id": "R7",
+     "n": 4,
+     "cell": [
+      2,
+      2
+     ],
+     "kind": "purchase",
+     "title": "Emergency room visits",
+     "links": [
+      "E2"
+     ],
+     "match": [
+      {
+       "cat": "emergency_(department_visit|visit_uncompensated)"
+      }
+     ],
+     "example": {
+      "time": "09:20",
+      "title": "ER visit for a child’s asthma attack, $250 copay",
+      "body": "The family lives 200 feet from the spur. The ER copay is the day’s largest health expense in the district.",
+      "amt": "−$250.00",
+      "status": "Completed",
+      "type": "Health care",
+      "with": "Halvern Regional, emergency room"
+     }
+    },
+    {
+     "id": "R2",
+     "n": 5,
+     "cell": [
+      6,
+      3
+     ],
+     "kind": "income",
+     "title": "Paychecks cashed for a fee",
+     "links": [
+      "P1",
+      "P2"
+     ],
+     "match": [
+      {
+       "cat": "check_cashing|paycheck_paper_check"
+      }
+     ],
+     "example": {
+      "time": "11:15",
+      "title": "Paycheck cashed at QuikCash, $14.20 fee",
+      "body": "A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Halvern Savings branch, for 2%.",
+      "amt": "−$14.20",
+      "status": "Completed",
+      "type": "Check cashing fee",
+      "with": "QuikCash Larkin",
+      "note": "on a $710 paycheck"
+     }
+    },
+    {
+     "id": "R3",
+     "n": 6,
+     "cell": [
+      7,
+      3
+     ],
+     "kind": "bill",
+     "title": "Payday loan renewals",
+     "links": [
+      "P2",
+      "EC1"
+     ],
+     "match": [
+      {
+       "cat": "payday_loan"
+      }
+     ],
+     "example": {
+      "time": "13:05",
+      "title": "Payday loan renewed, $75 fee",
+      "body": "$500 borrowed after a short week in February. The fee is paid again and the $500 is still owed.",
+      "amt": "−$75.00",
+      "status": "Completed",
+      "type": "Loan fee",
+      "with": "Advance Now",
+      "note": "$500 still owed"
+     }
+    },
+    {
+     "id": "R4",
+     "n": 7,
+     "cell": [
+      8,
+      3
+     ],
+     "kind": "fail",
+     "title": "Overdrafts and declined cards",
+     "links": [
+      "EC1"
+     ],
+     "match": [
+      {
+       "fee": "overdraft_fee|returned_payment_fee"
+      },
+      {
+       "cat": "^food\\.dollar_store$",
+       "outcome": "^(declined|failed|partial|abandoned|rescheduled)$"
+      }
+     ],
+     "example": {
+      "time": "16:50",
+      "title": "Debit card declined at Dollar Mart, $23.18",
+      "body": "An insurance autopay overdrew the account at 3 p.m. Paid in cash instead, after a second try.",
+      "amt": "−$23.18",
+      "status": "Declined",
+      "type": "Purchase",
+      "with": "Dollar Mart",
+      "fail": true
+     }
+    },
+    {
+     "id": "R6",
+     "n": 8,
+     "cell": [
+      9,
+      2
+     ],
+     "kind": "unpaid",
+     "title": "Savings circle payments",
+     "links": [
+      "S2"
+     ],
+     "match": [],
+     "example": {
+      "time": "19:00",
+      "title": "Savings circle, $100 paid in",
+      "body": "Week 7 of a 10-week circle at Iglesia Nueva Vida. This household takes the $1,000 pot in week 10.",
+      "amt": "−$100.00",
+      "status": "Completed",
+      "type": "Informal savings",
+      "with": "Iglesia Nueva Vida savings circle"
+     }
+    },
+    {
+     "id": "R5",
+     "n": 9,
+     "cell": [
+      9,
+      4
+     ],
+     "kind": "bill",
+     "title": "Money sent abroad",
+     "links": [
+      "S1",
+      "P1"
+     ],
+     "match": [
+      {
+       "cat": "remittance_sent"
+      }
+     ],
+     "example": {
+      "time": "19:40",
+      "title": "Money sent to family abroad, $200 plus $9 fee",
+      "body": "Sent from Envíos Larkin, the only transfer counter open after 6 p.m. within walking distance.",
+      "amt": "−$209.00",
+      "status": "Completed",
+      "type": "Money transfer",
+      "with": "Envíos Larkin",
+      "note": "$200 sent, $9 fee"
+     }
+    }
+   ],
+   "loops": {
+    "R1": {
+     "name": "Fee spiral",
+     "kind": "R",
+     "seen": [
+      "R4"
+     ],
+     "text": "A low balance lets a payment overdraw the account. The overdraft fee lowers the balance again, so the next payment is more likely to bounce.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 10.4,
+       "r": 5.9,
+       "t": "Balance after bills"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 6.6,
+       "r": 6.4,
+       "t": "Payments that overdraw"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 8.6,
+       "r": 5.4,
+       "t": "Overdraft fees"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "A lower balance means more payments overdraw."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More overdrafts mean more fees."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "More fees mean a lower balance."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "EC1",
+       "to": "b",
+       "sign": "+",
+       "t": "Pay that moves week to week makes autopay dates miss."
+      }
+     ]
+    },
+    "R2": {
+     "name": "Rollover",
+     "kind": "R",
+     "seen": [
+      "R3"
+     ],
+     "text": "A short week leads to a payday loan. Each renewal pays the fee without paying down the loan, which leaves the next week short again.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 5.6,
+       "r": 0.7,
+       "t": "Cash left after bills"
+      },
+      {
+       "k": "b",
+       "p": 1,
+       "c": 4.8,
+       "r": 0.9,
+       "t": "Payday renewals"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 7.9,
+       "r": 2.2,
+       "t": "Fees paid to the lender"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "Less cash left means more renewals."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More renewals mean more fees."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "More fees leave less cash."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "P2",
+       "to": "c",
+       "sign": "+",
+       "t": "State law sets the fee at $15 per $100 per renewal."
+      },
+      {
+       "from": "P1",
+       "to": "b",
+       "sign": "+",
+       "t": "With no branch nearby there is no small-dollar loan from a bank."
+      }
+     ]
+    },
+    "R3": {
+     "name": "Time tax",
+     "kind": "R",
+     "seen": [
+      "R1"
+     ],
+     "text": "A missed bus means a late clock-in and docked pay. Less pay pushes back fixing the car, which keeps the household on the bus.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 2.4,
+       "r": 4.6,
+       "t": "Rides Route 6"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 1.6,
+       "r": 0.6,
+       "t": "Late clock-ins"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 9.8,
+       "r": 1.6,
+       "t": "Docked pay"
+      },
+      {
+       "k": "d",
+       "p": 0,
+       "c": 4.4,
+       "r": 0.2,
+       "t": "Money to fix the car"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More bus trips mean more late clock-ins."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More late clock-ins mean more docked pay."
+      ],
+      [
+       "c",
+       "d",
+       "−",
+       "More docked pay leaves less for the car."
+      ],
+      [
+       "d",
+       "a",
+       "−",
+       "Less for the car means more bus trips."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "P3",
+       "to": "a",
+       "sign": "+",
+       "t": "Buses every 30 minutes make each miss cost more."
+      },
+      {
+       "from": "H2",
+       "to": "a",
+       "sign": "+",
+       "t": "The spur forces a long walk to the next stop."
+      }
+     ]
+    },
+    "B1": {
+     "name": "Circle buffer",
+     "kind": "B",
+     "seen": [
+      "R6"
+     ],
+     "text": "A shortfall sends the household to its savings circle instead of a lender. The payout covers the gap, which works against the rollover loop.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 11,
+       "r": 2.4,
+       "t": "Shortfall this week"
+      },
+      {
+       "k": "b",
+       "p": 4,
+       "c": 10.8,
+       "r": 0.9,
+       "t": "Turns to the circle"
+      },
+      {
+       "k": "c",
+       "p": 4,
+       "c": 7.4,
+       "r": 1.6,
+       "t": "Payout covers the gap"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "A shortfall means turning to the circle."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "Turning to the circle brings a payout."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "A payout shrinks the shortfall."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "S2",
+       "to": "b",
+       "sign": "+",
+       "t": "Congregations run the circles."
+      }
+     ],
+     "cross": [
+      {
+       "to": [
+        "R2",
+        "b"
+       ],
+       "from": "c",
+       "sign": "−",
+       "t": "A payout means one less payday renewal."
+      }
+     ]
+    }
+   },
+   "start": {
+    "pattern": "R3",
+    "loop": "R2"
+   }
+  },
+  {
+   "id": "foxhollow",
+   "name": "Fox Hollow",
+   "district": "D3",
+   "districtName": "Outer suburbs",
+   "street": "Fox Hollow Dr",
+   "summary": "Dairy farms subdivided after 1994, reached by a private toll road, and run by homeowners’ associations instead of a city.",
+   "plateSubs": [
+    "the day’s records",
+    "commutes, escrow, cars",
+    "tolls, HOAs, county",
+    "cul-de-sacs, no sidewalks",
+    "the activity economy",
+    "dairy farms, 1994–2008"
+   ],
+   "select": {
+    "n": 420,
+    "prefer": {
+     "housing_tenure": "^owner_with_mortgage$",
+     "household_type": "^(married_kids|cohab_kids|single_parent)$",
+     "vehicles": "^[2-9]$"
+    }
+   },
+   "today": [
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 0.2,
+     "c1": 12,
+     "r1": 1.1,
+     "fill": "#B9B2A4",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       0.65
+      ],
+      [
+       12,
+       0.65
+      ]
+     ],
+     "stroke": "#FFFFFF",
+     "sw": 1.2,
+     "dash": "6 5"
+    },
+    {
+     "t": "label",
+     "c": 12,
+     "r": 0.65,
+     "text": "Hollow Parkway (toll)",
+     "dx": 8,
+     "dy": 8,
+     "size": 12.5
+    },
+    {
+     "t": "area",
+     "c0": 5.86,
+     "r0": 1.1,
+     "c1": 6.14,
+     "r1": 7,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 3.86,
+     "c1": 12,
+     "r1": 4.14,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "label",
+     "c": 12,
+     "r": 4,
+     "text": "Fox Hollow Dr",
+     "dx": 8,
+     "dy": 10,
+     "size": 12.5
+    },
+    {
+     "t": "icon",
+     "kind": "toll",
+     "c": 3,
+     "r": 0.65
+    },
+    {
+     "t": "box",
+     "c0": 6.3,
+     "r0": 1.4,
+     "c1": 8.6,
+     "r1": 2.3,
+     "h": 13,
+     "k": "shop"
+    },
+    {
+     "t": "label",
+     "c": 7.4,
+     "r": 2.3,
+     "text": "Hollow Commons",
+     "dx": 40,
+     "dy": -20,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 8.7,
+     "r0": 4.3,
+     "c1": 9.8,
+     "r1": 5.2,
+     "h": 10,
+     "k": "civic"
+    },
+    {
+     "t": "area",
+     "c0": 9.95,
+     "r0": 4.4,
+     "c1": 10.7,
+     "r1": 5,
+     "fill": "#9EC3DE",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "box",
+     "c0": 1.2,
+     "r0": 5.5,
+     "c1": 3.4,
+     "r1": 6.7,
+     "h": 14,
+     "k": "civic"
+    },
+    {
+     "t": "label",
+     "c": 2.3,
+     "r": 6.7,
+     "text": "elementary school",
+     "dx": -12,
+     "dy": 22,
+     "size": 12.5,
+     "anchor": "end"
+    },
+    {
+     "t": "houses",
+     "c0": 0,
+     "r0": 1.2,
+     "c1": 12,
+     "r1": 7,
+     "k": "bighouse",
+     "gap": 2,
+     "except": [
+      [
+       5.8,
+       1,
+       6.2,
+       7
+      ],
+      [
+       0,
+       3.8,
+       12,
+       4.2
+      ],
+      [
+       6.2,
+       1.2,
+       8.8,
+       2.4
+      ],
+      [
+       8.6,
+       4.2,
+       10.8,
+       5.3
+      ],
+      [
+       1,
+       5.4,
+       3.6,
+       6.8
+      ]
+     ]
+    }
+   ],
+   "contexts": [
+    {
+     "id": "H1",
+     "types": [
+      "hist",
+      "env"
+     ],
+     "year": "1994–2008",
+     "layer": "hist",
+     "title": "The dairy farms are subdivided",
+     "lines": [
+      "Kettle and Yoder dairies",
+      "sold for subdivisions, 1994–2008"
+     ],
+     "body": "Two family dairies sold out as milk prices fell and land values rose. Builders platted them into cul-de-sacs of four-bedroom houses, sold with builder financing to families moving out from the inner suburbs.",
+     "under": [],
+     "rep": [
+      6,
+      4
+     ],
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 1.2,
+        "c1": 12,
+        "r1": 7,
+        "fill": "#D9B23A",
+        "opacity": 0.35
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 1.2,
+        "c1": 12,
+        "r1": 7,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "line",
+        "pts": [
+         [
+          6,
+          1.2
+         ],
+         [
+          6,
+          7
+         ]
+        ],
+        "stroke": "#8A5A2B",
+        "sw": 1.6,
+        "dash": "5 3"
+       },
+       {
+        "t": "label",
+        "c": 3,
+        "r": 3,
+        "text": "Kettle dairy",
+        "anchor": "middle",
+        "cls": "disp",
+        "size": 15
+       },
+       {
+        "t": "label",
+        "c": 9,
+        "r": 3,
+        "text": "Yoder dairy",
+        "anchor": "middle",
+        "cls": "disp",
+        "size": 15
+       }
+      ]
+     }
+    },
+    {
+     "id": "P1",
+     "types": [
+      "pol",
+      "econ"
+     ],
+     "year": "2006",
+     "layer": "pol",
+     "title": "The Parkway: a private toll road",
+     "lines": [
+      "Private toll concession, 2006:",
+      "$4.50 fee per mailed bill"
+     ],
+     "body": "The state leased the Parkway to a private operator for 50 years. There are no booths: cameras read plates and mail a bill, with a $4.50 administrative fee each time, and the fees double when a bill goes unpaid.",
+     "under": [],
+     "rep": [
+      3,
+      0.65
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0.2,
+        "c1": 12,
+        "r1": 1.1,
+        "fill": "--c-pol",
+        "opacity": 0.5
+       },
+       {
+        "t": "icon",
+        "kind": "toll",
+        "c": 3,
+        "r": 0.65
+       },
+       {
+        "t": "label",
+        "c": 3,
+        "r": 0.65,
+        "text": "pay-by-plate bills",
+        "dx": 18,
+        "dy": -12
+       }
+      ]
+     }
+    },
+    {
+     "id": "P2",
+     "types": [
+      "pol"
+     ],
+     "year": "1996",
+     "layer": "pol",
+     "title": "An HOA for every new subdivision",
+     "lines": [
+      "County requires an HOA",
+      "for every new subdivision"
+     ],
+     "body": "To avoid paying for new roads, pools and storm ponds, the county required each subdivision to form a homeowners' association. Dues pay for what a city would, and an association can fine and file liens.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      9.2,
+      4.7
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 0.2,
+        "r0": 1.3,
+        "c1": 11.8,
+        "r1": 6.9,
+        "fill": "none",
+        "stroke": "--c-pol",
+        "sw": 2.4,
+        "dash": "7 4"
+       },
+       {
+        "t": "label",
+        "c": 9.2,
+        "r": 4.7,
+        "text": "HOA covenants",
+        "dx": 18,
+        "dy": -14
+       }
+      ]
+     }
+    },
+    {
+     "id": "P3",
+     "types": [
+      "pol"
+     ],
+     "year": "today",
+     "layer": "pol",
+     "title": "Unincorporated: no city services",
+     "lines": [
+      "Unincorporated county land:",
+      "no city trash pickup"
+     ],
+     "body": "Fox Hollow was never annexed by a city. Trash, recycling and snow plowing come from private contractors billed to each household, and the county sheriff patrols from 13 miles away.",
+     "under": [],
+     "rep": [
+      10.5,
+      6.3
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "badge",
+        "c": 12,
+        "r": 7,
+        "dx": -190,
+        "dy": 14,
+        "w": 190,
+        "text": "unincorporated county land",
+        "fill": "--c-pol"
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC1",
+     "types": [
+      "econ"
+     ],
+     "year": "today",
+     "layer": "econ",
+     "title": "Jobs 13 miles away, two cars needed",
+     "lines": [
+      "Job centers 13 miles away:",
+      "two cars per household"
+     ],
+     "body": "Most jobs are downtown or along the interstate, 13 miles or more by the Parkway. With two earners and no bus, a family needs two cars, and car payments and insurance are the second-largest bill after the mortgage.",
+     "under": [],
+     "rep": [
+      7.5,
+      6
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "icon",
+        "kind": "car",
+        "c": 7.5,
+        "r": 6
+       },
+       {
+        "t": "icon",
+        "kind": "car",
+        "c": 8.4,
+        "r": 6.4
+       },
+       {
+        "t": "label",
+        "c": 8.4,
+        "r": 6.4,
+        "text": "two cars, 13 miles",
+        "dx": 18,
+        "dy": 4
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC2",
+     "types": [
+      "econ",
+      "pol"
+     ],
+     "year": "2026",
+     "layer": "econ",
+     "title": "The reassessment raises escrow",
+     "lines": [
+      "2026 reassessment raises",
+      "escrow payments 18%"
+     ],
+     "body": "The county reassessed every home last year. Mortgage servicers recalculated escrow, and monthly payments rose about $210 with no change in the loan.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      3,
+      3
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 0.2,
+        "r0": 1.3,
+        "c1": 5.6,
+        "r1": 3.7,
+        "fill": "--c-econ",
+        "opacity": 0.42
+       },
+       {
+        "t": "label",
+        "c": 2.9,
+        "r": 2.5,
+        "text": "escrow +18%",
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "E1",
+     "types": [
+      "env",
+      "pol"
+     ],
+     "year": "1990s",
+     "layer": "env",
+     "title": "Cul-de-sacs, no sidewalks or bus",
+     "lines": [
+      "Cul-de-sacs with no sidewalks",
+      "and no bus within 3 miles"
+     ],
+     "body": "The streets were laid out as loops and dead ends, with no sidewalks to the school or the shops. Every trip is a drive, including the half-mile to school.",
+     "under": [],
+     "rep": [
+      2.3,
+      5.5
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 1.2,
+        "c1": 12,
+        "r1": 7,
+        "fill": "#9C9486",
+        "opacity": 0.14
+       },
+       {
+        "t": "area",
+        "c0": 5.86,
+        "r0": 1.1,
+        "c1": 6.14,
+        "r1": 7,
+        "fill": "#9C9486",
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 3.86,
+        "c1": 12,
+        "r1": 4.14,
+        "fill": "#9C9486",
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "label",
+        "c": 2.3,
+        "r": 5,
+        "text": "no sidewalks",
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "S1",
+     "types": [
+      "soc",
+      "cult"
+     ],
+     "year": "today",
+     "layer": "soc",
+     "title": "The activity economy",
+     "lines": [
+      "Lessons, travel teams,",
+      "tutoring and private school"
+     ],
+     "body": "Children's evenings and weekends are filled with paid activities. The schedule is a status marker and a second job for whichever parent drives.",
+     "under": [],
+     "rep": [
+      8.5,
+      3
+     ],
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 6.2,
+        "r0": 2.4,
+        "c1": 12,
+        "r1": 3.8,
+        "fill": "--c-soc",
+        "opacity": 0.32
+       },
+       {
+        "t": "label",
+        "c": 9.1,
+        "r": 3.1,
+        "text": "lessons · teams · tutoring",
+        "anchor": "middle"
+       }
+      ]
+     }
+    }
+   ],
+   "patterns": [
+    {
+     "id": "F1",
+     "n": 1,
+     "cell": [
+      3,
+      1
+     ],
+     "kind": "bill",
+     "title": "Toll bills",
+     "links": [
+      "P1"
+     ],
+     "match": [
+      {
+       "cat": "^transportation\\.(toll|toll_account_reload)$",
+       "outcome": "^completed$"
+      }
+     ],
+     "example": {
+      "time": "07:10",
+      "title": "Parkway toll by plate, $6.25 plus $4.50 fee",
+      "body": "The camera read the plate on the way to work. The bill comes by mail with the fee added.",
+      "amt": "−$10.75",
+      "status": "Completed",
+      "type": "Toll",
+      "with": "Hollow Parkway operator"
+     }
+    },
+    {
+     "id": "F2",
+     "n": 2,
+     "cell": [
+      4,
+      1
+     ],
+     "kind": "fail",
+     "title": "Unpaid tolls and fees",
+     "links": [
+      "P1"
+     ],
+     "match": [
+      {
+       "fee": "pay_by_plate"
+      },
+      {
+       "cat": "^transportation\\.toll",
+       "outcome": "^(declined|failed|partial|abandoned|rescheduled)$"
+      }
+     ],
+     "example": {
+      "time": "08:30",
+      "title": "Toll bill returned unpaid, $9.00 late fee",
+      "body": "The bill went to an old address. The fee doubled.",
+      "amt": "−$9.00",
+      "status": "Declined",
+      "type": "Fee",
+      "fail": true,
+      "with": "Hollow Parkway operator"
+     }
+    },
+    {
+     "id": "F3",
+     "n": 3,
+     "cell": [
+      9,
+      4
+     ],
+     "kind": "bill",
+     "title": "HOA dues",
+     "links": [
+      "P2"
+     ],
+     "match": [
+      {
+       "cat": "hoa_dues"
+      }
+     ],
+     "example": {
+      "time": "06:00",
+      "title": "HOA dues by autopay, $96",
+      "body": "Pool, storm pond, entrance landscaping and the management company.",
+      "amt": "−$96.00",
+      "status": "Completed",
+      "type": "Dues",
+      "with": "Fox Hollow HOA"
+     }
+    },
+    {
+     "id": "F4",
+     "n": 4,
+     "cell": [
+      10,
+      6
+     ],
+     "kind": "bill",
+     "title": "Private trash pickup",
+     "links": [
+      "P3"
+     ],
+     "match": [
+      {
+       "cat": "trash_bill"
+      }
+     ],
+     "example": {
+      "time": "06:00",
+      "title": "Trash and recycling, $38 a month",
+      "body": "Billed by the hauler the HOA chose.",
+      "amt": "−$38.00",
+      "status": "Completed",
+      "type": "Bill",
+      "with": "Private hauler"
+     }
+    },
+    {
+     "id": "F5",
+     "n": 5,
+     "cell": [
+      2,
+      6
+     ],
+     "kind": "unpaid",
+     "title": "School drop-off and pickup",
+     "links": [
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "school_(dropoff|pickup)$"
+      }
+     ],
+     "example": {
+      "time": "07:40",
+      "title": "School drop-off, 25 minutes",
+      "body": "Half a mile, but no sidewalk on the Parkway frontage.",
+      "amt": "0.4 hr",
+      "status": "Done · unpaid",
+      "type": "Unpaid work",
+      "with": "Fox Hollow Elementary"
+     }
+    },
+    {
+     "id": "F6",
+     "n": 6,
+     "cell": [
+      8,
+      3
+     ],
+     "kind": "bill",
+     "title": "Lessons and activities",
+     "links": [
+      "S1"
+     ],
+     "match": [
+      {
+       "cat": "lessons_tuition|youth_sports_registration|private_school_tuition|after_school_fee"
+      }
+     ],
+     "example": {
+      "time": "16:00",
+      "title": "Swim lessons for the term, $180",
+      "body": "Two evenings a week at the club pool.",
+      "amt": "−$180.00",
+      "status": "Completed",
+      "type": "Activity",
+      "with": "Swim school"
+     }
+    },
+    {
+     "id": "F7",
+     "n": 7,
+     "cell": [
+      3,
+      3
+     ],
+     "kind": "bill",
+     "title": "Mortgage and escrow",
+     "links": [
+      "EC2",
+      "H1"
+     ],
+     "match": [
+      {
+       "cat": "property_tax_escrow|^housing\\.mortgage$"
+      }
+     ],
+     "example": {
+      "time": "06:00",
+      "title": "Mortgage payment, $2,340",
+      "body": "Up $210 a month since the escrow was recalculated.",
+      "amt": "−$2,340.00",
+      "status": "Completed",
+      "type": "Mortgage",
+      "with": "Mortgage servicer"
+     }
+    },
+    {
+     "id": "F8",
+     "n": 8,
+     "cell": [
+      7,
+      6
+     ],
+     "kind": "bill",
+     "title": "Car payments",
+     "links": [
+      "EC1",
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "^transportation\\.car_payment$"
+      }
+     ],
+     "example": {
+      "time": "06:00",
+      "title": "Second car payment, $512",
+      "body": "The second car is for the second commute.",
+      "amt": "−$512.00",
+      "status": "Completed",
+      "type": "Car payment",
+      "with": "Auto lender"
+     }
+    }
+   ],
+   "loops": {
+    "R1": {
+     "name": "Plate-bill pileup",
+     "kind": "R",
+     "seen": [
+      "F2"
+     ],
+     "text": "A toll bill that goes unpaid gets a fee, and the fee doubles. The bigger bill is harder to pay on time, so more of the next bills go unpaid.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 5.2,
+       "r": 1.6,
+       "t": "Bills paid on time"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 2.4,
+       "r": 2.2,
+       "t": "Unpaid tolls"
+      },
+      {
+       "k": "c",
+       "p": 2,
+       "c": 4.4,
+       "r": 2.6,
+       "t": "Fees added"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "Fewer bills paid on time means more unpaid tolls."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More unpaid tolls mean more fees."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "More fees make the next bill harder to pay on time."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "The concession sets a $4.50 fee that doubles.",
+       "to": "c",
+       "from": "P1"
+      }
+     ]
+    },
+    "B1": {
+     "name": "Carpool",
+     "kind": "B",
+     "seen": [
+      "F5"
+     ],
+     "text": "School trips by car pile up for every family. Neighbors trade drop-offs, which cuts each family's trips and eases the load.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 2.6,
+       "r": 5.0,
+       "t": "School trips by car"
+      },
+      {
+       "k": "b",
+       "p": 4,
+       "c": 4.4,
+       "r": 5.8,
+       "t": "Carpools with neighbors"
+      },
+      {
+       "k": "c",
+       "p": 0,
+       "c": 4.6,
+       "r": 6.6,
+       "t": "Trips per family"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More trips mean more carpools."
+      ],
+      [
+       "b",
+       "c",
+       "−",
+       "More carpools mean fewer trips per family."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "Fewer trips per family mean fewer school trips by car."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "No sidewalks make every trip a drive.",
+       "to": "a",
+       "from": "E1"
+      }
+     ]
+    }
+   },
+   "start": {
+    "pattern": "F2",
+    "loop": "R1"
+   }
+  },
+  {
+   "id": "ashford",
+   "name": "Mill Street, Ashford Mills",
+   "district": "D4",
+   "districtName": "Satellite city",
+   "street": "Mill St",
+   "summary": "A textile town whose mill closed in 1998; the county jail went into the mill yard and the college became the biggest employer.",
+   "plateSubs": [
+    "the day’s records",
+    "the college, pay advances",
+    "jail contracts, the bus",
+    "the river, urgent care",
+    "visiting families",
+    "the mill, 1902–1998"
+   ],
+   "select": {
+    "n": 480,
+    "prefer": {
+     "household_type": "^(group_quarters:(jail|college_dorm)|roommates|single_parent)",
+     "alice_status": "^(alice|poverty)$",
+     "vehicles": "^0$",
+     "housing_tenure": "^(renter|group_quarters)$"
+    }
+   },
+   "today": [
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 0,
+     "c1": 0.5,
+     "r1": 7,
+     "fill": "#9EC3DE"
+    },
+    {
+     "t": "label",
+     "c": 0.25,
+     "r": 1.6,
+     "text": "Ash River",
+     "dx": -14,
+     "size": 12.5,
+     "anchor": "end"
+    },
+    {
+     "t": "area",
+     "c0": 0.5,
+     "r0": 3.86,
+     "c1": 12,
+     "r1": 4.14,
+     "fill": "#B9B2A4",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0.5,
+       4
+      ],
+      [
+       12,
+       4
+      ]
+     ],
+     "stroke": "#FFFFFF",
+     "sw": 1.2,
+     "dash": "6 5"
+    },
+    {
+     "t": "label",
+     "c": 12,
+     "r": 4,
+     "text": "Mill St",
+     "dx": 8,
+     "dy": 10,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 0.7,
+     "r0": 0.2,
+     "c1": 1.6,
+     "r1": 2.7,
+     "h": 24,
+     "k": "ware"
+    },
+    {
+     "t": "box",
+     "c0": 1.8,
+     "r0": 0.3,
+     "c1": 3.9,
+     "r1": 2.2,
+     "h": 18,
+     "k": "jail"
+    },
+    {
+     "t": "label",
+     "c": 2.8,
+     "r": 1.2,
+     "text": "county jail",
+     "h": 18,
+     "dx": -60,
+     "dy": -18,
+     "size": 12.5,
+     "anchor": "end"
+    },
+    {
+     "t": "box",
+     "c0": 8.2,
+     "r0": 0.2,
+     "c1": 9.8,
+     "r1": 1.6,
+     "h": 22,
+     "k": "civic"
+    },
+    {
+     "t": "box",
+     "c0": 10.1,
+     "r0": 0.2,
+     "c1": 11.8,
+     "r1": 1.1,
+     "h": 30,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 10.2,
+     "r0": 1.4,
+     "c1": 11.8,
+     "r1": 2.6,
+     "h": 26,
+     "k": "tower"
+    },
+    {
+     "t": "box",
+     "c0": 8.3,
+     "r0": 2,
+     "c1": 9.7,
+     "r1": 2.8,
+     "h": 14,
+     "k": "civic"
+    },
+    {
+     "t": "label",
+     "c": 10.5,
+     "r": 0.6,
+     "text": "Wexley College",
+     "h": 30,
+     "dx": 30,
+     "dy": -10,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 4.08,
+     "r0": 3.1,
+     "c1": 4.92,
+     "r1": 3.82,
+     "h": 14,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 5.08,
+     "r0": 3.1,
+     "c1": 5.92,
+     "r1": 3.82,
+     "h": 14,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 6.08,
+     "r0": 3.1,
+     "c1": 6.92,
+     "r1": 3.82,
+     "h": 18,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 7.08,
+     "r0": 3.1,
+     "c1": 7.92,
+     "r1": 3.82,
+     "h": 14,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 9.1,
+     "r0": 5.1,
+     "c1": 9.9,
+     "r1": 5.85,
+     "h": 13,
+     "k": "civic"
+    },
+    {
+     "t": "box",
+     "c0": 6.1,
+     "r0": 5.1,
+     "c1": 7.9,
+     "r1": 6.0,
+     "h": 26,
+     "k": "tower"
+    },
+    {
+     "t": "label",
+     "c": 7,
+     "r": 6,
+     "text": "Ashford Arms",
+     "dx": -10,
+     "dy": 26,
+     "size": 12.5,
+     "anchor": "end"
+    },
+    {
+     "t": "houses",
+     "c0": 0.5,
+     "r0": 0,
+     "c1": 12,
+     "r1": 7,
+     "k": "house",
+     "except": [
+      [
+       0.5,
+       0,
+       4,
+       3
+      ],
+      [
+       8,
+       0,
+       12,
+       3
+      ],
+      [
+       4,
+       3,
+       8,
+       3.9
+      ],
+      [
+       6,
+       5,
+       8,
+       6.1
+      ],
+      [
+       0.5,
+       3.8,
+       12,
+       4.2
+      ]
+     ]
+    }
+   ],
+   "contexts": [
+    {
+     "id": "H1",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1998",
+     "layer": "hist",
+     "title": "Ashford Mills closes",
+     "lines": [
+      "Ashford Mills closes, 1998:",
+      "1,100 jobs move overseas"
+     ],
+     "body": "The textile mill that gave the town its name ran for 96 years. It closed in 1998 as production moved overseas, and the mill houses along the river were sold to absentee landlords.",
+     "under": [],
+     "rep": [
+      2,
+      1.4
+     ],
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 0.5,
+        "r0": 0,
+        "c1": 4,
+        "r1": 3,
+        "fill": "#8A5A2B",
+        "opacity": 0.5,
+        "stroke": "#0E1B2E"
+       },
+       {
+        "t": "icon",
+        "kind": "gear",
+        "c": 2.2,
+        "r": 1.4
+       },
+       {
+        "t": "area",
+        "c0": 0.5,
+        "r0": 4.2,
+        "c1": 6,
+        "r1": 7,
+        "fill": "#D9B23A",
+        "opacity": 0.35
+       },
+       {
+        "t": "label",
+        "c": 3.2,
+        "r": 6,
+        "text": "mill houses",
+        "anchor": "middle",
+        "cls": "disp",
+        "size": 15
+       },
+       {
+        "t": "label",
+        "c": 2.2,
+        "r": 1.4,
+        "text": "the mill, 1902–1998",
+        "dx": 24,
+        "dy": -16
+       }
+      ]
+     }
+    },
+    {
+     "id": "P1",
+     "types": [
+      "pol",
+      "hist"
+     ],
+     "year": "2004",
+     "layer": "pol",
+     "title": "The county jail goes into the mill yard",
+     "lines": [
+      "County jail built in the",
+      "old mill yard, 2004"
+     ],
+     "body": "The county needed a bigger jail and the mill site was cheap and already zoned industrial. It holds about 240 people, most of them waiting for trial because they could not post bail.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      2.8,
+      1.2
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 1.8,
+        "r0": 0.3,
+        "c1": 3.9,
+        "r1": 2.2,
+        "fill": "--c-pol",
+        "opacity": 0.45,
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "icon",
+        "kind": "jail",
+        "c": 2.8,
+        "r": 1.2
+       },
+       {
+        "t": "label",
+        "c": 3.9,
+        "r": 1.2,
+        "text": "county jail",
+        "dx": 10,
+        "dy": -10
+       }
+      ]
+     }
+    },
+    {
+     "id": "P2",
+     "types": [
+      "pol",
+      "econ"
+     ],
+     "year": "contract",
+     "layer": "pol",
+     "title": "Jail phone and commissary contracts",
+     "lines": [
+      "Calls cost 21¢ a minute;",
+      "the county keeps a commission"
+     ],
+     "body": "The county contracts phone calls, video visits and the commissary to private vendors and keeps a share of what families pay. A 15-minute call costs $3.15, and money for snacks or soap goes through a deposit fee.",
+     "under": [],
+     "rep": [
+      3.2,
+      1.6
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "badge",
+        "c": 12,
+        "r": 0,
+        "dx": -230,
+        "dy": -30,
+        "w": 230,
+        "text": "county vendor contracts cover it",
+        "fill": "--c-pol"
+       }
+      ]
+     }
+    },
+    {
+     "id": "P3",
+     "types": [
+      "pol"
+     ],
+     "year": "2015",
+     "layer": "pol",
+     "title": "The bus to Halvern is cut",
+     "lines": [
+      "Route 14 to Halvern",
+      "discontinued in 2015"
+     ],
+     "body": "The regional bus that ran to Halvern every hour was cut in 2015. A county van runs twice a day by reservation. People without a car pay neighbors or apps for rides, or search for one each morning.",
+     "under": [],
+     "rep": [
+      6,
+      4
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "line",
+        "pts": [
+         [
+          0.5,
+          4
+         ],
+         [
+          1.0,
+          4
+         ],
+         [
+          1.5,
+          4
+         ],
+         [
+          2.0,
+          4
+         ],
+         [
+          2.5,
+          4
+         ],
+         [
+          3.0,
+          4
+         ],
+         [
+          3.5,
+          4
+         ],
+         [
+          4.0,
+          4
+         ],
+         [
+          4.5,
+          4
+         ],
+         [
+          5.0,
+          4
+         ],
+         [
+          5.5,
+          4
+         ],
+         [
+          6.0,
+          4
+         ],
+         [
+          6.5,
+          4
+         ],
+         [
+          7.0,
+          4
+         ],
+         [
+          7.5,
+          4
+         ],
+         [
+          8.0,
+          4
+         ],
+         [
+          8.5,
+          4
+         ],
+         [
+          9.0,
+          4
+         ],
+         [
+          9.5,
+          4
+         ],
+         [
+          10.0,
+          4
+         ],
+         [
+          10.5,
+          4
+         ],
+         [
+          11.0,
+          4
+         ],
+         [
+          11.5,
+          4
+         ],
+         [
+          12.0,
+          4
+         ]
+        ],
+        "stroke": "--c-pol",
+        "sw": 3.2,
+        "dash": "8 6"
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 4,
+        "text": "Route 14, cut 2015",
+        "dx": 10,
+        "dy": 18
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC1",
+     "types": [
+      "econ"
+     ],
+     "year": "today",
+     "layer": "econ",
+     "title": "The college is the biggest employer",
+     "lines": [
+      "Wexley College: the biggest",
+      "employer and landlord"
+     ],
+     "body": "With the mill gone, Wexley College employs more people than anyone else in town, and its students fill the rentals near campus. Dining services and housekeeping are hourly work with semester breaks.",
+     "under": [],
+     "rep": [
+      9.6,
+      1.4
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 8,
+        "r0": 0,
+        "c1": 12,
+        "r1": 3,
+        "fill": "--c-econ",
+        "opacity": 0.5
+       },
+       {
+        "t": "icon",
+        "kind": "college",
+        "c": 9,
+        "r": 1.2
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 1,
+        "text": "college jobs and rentals",
+        "dx": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC2",
+     "types": [
+      "econ"
+     ],
+     "year": "2010s",
+     "layer": "econ",
+     "title": "Rent-to-own and pay advances on Mill Street",
+     "lines": [
+      "Rent-to-own and pay-advance",
+      "storefronts on Mill Street"
+     ],
+     "body": "Where the mill workers' shops were, Mill Street now has a rent-to-own store and a pay-advance app's kiosk. Both serve people with thin credit, and both cost far more over a year than buying or borrowing from a bank.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      5.5,
+      3.5
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 4,
+        "r0": 3,
+        "c1": 8,
+        "r1": 3.86,
+        "fill": "--c-econ",
+        "opacity": 0.55
+       },
+       {
+        "t": "area",
+        "c0": 4,
+        "r0": 3,
+        "c1": 8,
+        "r1": 3.86,
+        "fill": "none",
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "label",
+        "c": 6,
+        "r": 3,
+        "text": "rent-to-own · pay advances",
+        "dx": 0,
+        "dy": -8,
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "E1",
+     "types": [
+      "env",
+      "econ"
+     ],
+     "year": "2017",
+     "layer": "env",
+     "title": "The hospital closes; urgent care stays",
+     "lines": [
+      "Ashford hospital closes, 2017:",
+      "urgent care only"
+     ],
+     "body": "The 60-bed hospital closed in 2017 after it was bought by a regional system. An urgent care clinic stayed in part of the building. Anything serious means a 19-mile trip to Halvern.",
+     "under": [],
+     "rep": [
+      9.5,
+      5.5
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "icon",
+        "kind": "cross",
+        "c": 9.5,
+        "r": 5.5
+       },
+       {
+        "t": "area",
+        "c0": 0.5,
+        "r0": 0,
+        "c1": 12,
+        "r1": 7,
+        "fill": "#5E8A3A",
+        "opacity": 0.08
+       },
+       {
+        "t": "label",
+        "c": 9.5,
+        "r": 5.5,
+        "text": "urgent care only",
+        "dx": 16,
+        "dy": -10
+       }
+      ]
+     }
+    },
+    {
+     "id": "S1",
+     "types": [
+      "soc"
+     ],
+     "year": "today",
+     "layer": "soc",
+     "title": "Families who visit the jail",
+     "lines": [
+      "Families visit, call and",
+      "send money in"
+     ],
+     "body": "Most people held in the jail are from Halvern and the county, so their families come in by car or not at all. Calls and deposits are how most of them stay in touch.",
+     "under": [
+      "P1"
+     ],
+     "rep": [
+      2.8,
+      2.6
+     ],
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 0.5,
+        "r0": 2.2,
+        "c1": 5.6,
+        "r1": 5,
+        "fill": "--c-soc",
+        "opacity": 0.32
+       },
+       {
+        "t": "label",
+        "c": 3,
+        "r": 3.6,
+        "text": "visiting families",
+        "anchor": "middle"
+       }
+      ]
+     }
+    }
+   ],
+   "patterns": [
+    {
+     "id": "M1",
+     "n": 1,
+     "cell": [
+      9,
+      1
+     ],
+     "kind": "purchase",
+     "title": "Dining hall meals",
+     "links": [
+      "EC1"
+     ],
+     "match": [
+      {
+       "cat": "dining_hall_meal"
+      }
+     ],
+     "example": {
+      "time": "12:10",
+      "title": "Dining hall lunch on the meal plan, $9.85",
+      "body": "A swipe between classes.",
+      "amt": "−$9.85",
+      "status": "Completed",
+      "type": "Purchase",
+      "with": "Wexley College"
+     }
+    },
+    {
+     "id": "M2",
+     "n": 2,
+     "cell": [
+      2,
+      1
+     ],
+     "kind": "bill",
+     "title": "Calls from the jail",
+     "links": [
+      "P2",
+      "S1"
+     ],
+     "match": [
+      {
+       "cat": "jail_phone_call"
+      }
+     ],
+     "example": {
+      "time": "18:30",
+      "title": "A 15-minute call from the jail, $3.15",
+      "body": "Paid from the family's prepaid account with the vendor.",
+      "amt": "−$3.15",
+      "status": "Completed",
+      "type": "Call",
+      "with": "Jail phone vendor"
+     }
+    },
+    {
+     "id": "M3",
+     "n": 3,
+     "cell": [
+      3,
+      1
+     ],
+     "kind": "purchase",
+     "title": "Commissary and deposits",
+     "links": [
+      "P2",
+      "P1"
+     ],
+     "match": [
+      {
+       "cat": "jail_commissary_purchase|jail_account_deposit"
+      }
+     ],
+     "example": {
+      "time": "14:00",
+      "title": "Deposit to a jail account, $40 plus $3.95 fee",
+      "body": "For soap, snacks and phone time.",
+      "amt": "−$43.95",
+      "status": "Completed",
+      "type": "Deposit",
+      "with": "Commissary vendor"
+     }
+    },
+    {
+     "id": "M4",
+     "n": 4,
+     "cell": [
+      6,
+      4
+     ],
+     "kind": "fail",
+     "title": "Searching for a ride",
+     "links": [
+      "P3"
+     ],
+     "match": [
+      {
+       "cat": "ride_search|ride_to_work_fee"
+      }
+     ],
+     "example": {
+      "time": "06:40",
+      "title": "No ride found to the Halvern shift",
+      "body": "The county van was full. An app ride would have cost $34.",
+      "amt": "1.2 hr lost",
+      "status": "Failed",
+      "type": "Trip",
+      "fail": true,
+      "with": "Ride search"
+     }
+    },
+    {
+     "id": "M5",
+     "n": 5,
+     "cell": [
+      5,
+      3
+     ],
+     "kind": "bill",
+     "title": "Rent-to-own payments",
+     "links": [
+      "EC2",
+      "H1"
+     ],
+     "match": [
+      {
+       "cat": "rent_to_own_payment"
+      }
+     ],
+     "example": {
+      "time": "10:30",
+      "title": "Rent-to-own washer, $28 a week",
+      "body": "Week 31 of 78. The washer retails for $640.",
+      "amt": "−$28.00",
+      "status": "Completed",
+      "type": "Payment",
+      "with": "Rent-to-own store"
+     }
+    },
+    {
+     "id": "M6",
+     "n": 6,
+     "cell": [
+      7,
+      3
+     ],
+     "kind": "income",
+     "title": "Pay advances",
+     "links": [
+      "EC2"
+     ],
+     "match": [
+      {
+       "cat": "earned_wage_advance"
+      }
+     ],
+     "example": {
+      "time": "07:55",
+      "title": "Pay advance, $100 with a $4.99 fee",
+      "body": "Taken out of Friday's check.",
+      "amt": "+$95.01",
+      "status": "Completed",
+      "type": "Advance",
+      "with": "Pay-advance app"
+     }
+    },
+    {
+     "id": "M7",
+     "n": 7,
+     "cell": [
+      9,
+      5
+     ],
+     "kind": "purchase",
+     "title": "Urgent care",
+     "links": [
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "urgent_care_visit"
+      }
+     ],
+     "example": {
+      "time": "16:20",
+      "title": "Urgent care visit, $75 copay",
+      "body": "A child's ear infection. The nearest pediatrician is in Halvern.",
+      "amt": "−$75.00",
+      "status": "Completed",
+      "type": "Health care",
+      "with": "Ashford Urgent Care"
+     }
+    }
+   ],
+   "loops": {
+    "R1": {
+     "name": "Advance loop",
+     "kind": "R",
+     "seen": [
+      "M6"
+     ],
+     "text": "A pay advance covers the gap now and comes out of the next paycheck with a fee. The smaller paycheck leaves the next week short, so the next advance comes sooner.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 8.6,
+       "r": 2.6,
+       "t": "Paycheck left"
+      },
+      {
+       "k": "b",
+       "p": 1,
+       "c": 7.4,
+       "r": 3.4,
+       "t": "Pay advances"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 5.2,
+       "r": 2.6,
+       "t": "Fees and repayments"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "A smaller paycheck means more advances."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More advances mean more fees and repayments."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "More repayments leave less of the paycheck."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "Mill Street storefronts make advances the nearest credit.",
+       "to": "b",
+       "from": "EC2"
+      }
+     ]
+    },
+    "R2": {
+     "name": "Distance tax",
+     "kind": "R",
+     "seen": [
+      "M4"
+     ],
+     "text": "Without a bus, getting to work means paying for rides or searching for one. Paid rides drain the money that would go toward a car, which keeps the household paying for rides.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 4.8,
+       "r": 5.4,
+       "t": "A working car"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 7.0,
+       "r": 4.6,
+       "t": "Paid rides and searches"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 6.2,
+       "r": 6.2,
+       "t": "Cash left"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "No car means more paid rides."
+      ],
+      [
+       "b",
+       "c",
+       "−",
+       "More paid rides leave less cash."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "More cash makes a working car possible."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "With Route 14 gone there is no other way to Halvern.",
+       "to": "b",
+       "from": "P3"
+      }
+     ]
+    }
+   },
+   "start": {
+    "pattern": "M4",
+    "loop": "R2"
+   }
+  },
+  {
+   "id": "dunmore",
+   "name": "Main Street, Dunmore",
+   "district": "D5",
+   "districtName": "Rural town",
+   "street": "Main St",
+   "summary": "A grain-and-rail town that lost its railroad, its bank and its grocery; the mobile home park was sold to an investor in 2019.",
+   "plateSubs": [
+    "the day’s records",
+    "lot rent, ATMs, dollar stores",
+    "Medicare help, home care",
+    "35 miles to the hospital",
+    "aging in place",
+    "the railroad, 1879–1979"
+   ],
+   "select": {
+    "n": 380,
+    "prefer": {
+     "alice_status": "^(alice|poverty)$",
+     "income_source_mix": "social_security|ss",
+     "housing_tenure": "^(owner_free_and_clear|renter)$",
+     "household_type": "^(alone|married_nokids)$"
+    }
+   },
+   "today": [
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 3.86,
+     "c1": 8,
+     "r1": 4.14,
+     "fill": "#B9B2A4",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       4
+      ],
+      [
+       8,
+       4
+      ]
+     ],
+     "stroke": "#FFFFFF",
+     "sw": 1.2,
+     "dash": "6 5"
+    },
+    {
+     "t": "area",
+     "c0": 7.86,
+     "r0": 0,
+     "c1": 8.14,
+     "r1": 7,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "label",
+     "c": 4,
+     "r": 4,
+     "text": "Main St",
+     "dy": -6,
+     "size": 12.5,
+     "anchor": "middle"
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       1.2
+      ],
+      [
+       12,
+       1.2
+      ]
+     ],
+     "stroke": "#7D8797",
+     "sw": 2.2,
+     "dash": "2 4"
+    },
+    {
+     "t": "box",
+     "c0": 10.1,
+     "r0": 0.3,
+     "c1": 10.9,
+     "r1": 1,
+     "h": 44,
+     "k": "silo"
+    },
+    {
+     "t": "box",
+     "c0": 11,
+     "r0": 0.3,
+     "c1": 11.8,
+     "r1": 1,
+     "h": 44,
+     "k": "silo"
+    },
+    {
+     "t": "label",
+     "c": 11,
+     "r": 0.6,
+     "text": "grain elevator",
+     "h": 44,
+     "dx": 24,
+     "dy": -6,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 2.15,
+     "r0": 3.15,
+     "c1": 3.85,
+     "r1": 3.82,
+     "h": 12,
+     "k": "civic"
+    },
+    {
+     "t": "box",
+     "c0": 4.1,
+     "r0": 3.1,
+     "c1": 4.9,
+     "r1": 3.82,
+     "h": 11,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 5.7,
+     "r0": 3.05,
+     "c1": 7.6,
+     "r1": 3.82,
+     "h": 13,
+     "k": "shop"
+    },
+    {
+     "t": "box",
+     "c0": 1.25,
+     "r0": 5.25,
+     "c1": 1.75,
+     "r1": 5.75,
+     "h": 18,
+     "k": "church",
+     "spire": true
+    },
+    {
+     "t": "houses",
+     "c0": 0,
+     "r0": 0,
+     "c1": 7.8,
+     "r1": 7,
+     "k": "house",
+     "gap": 2,
+     "except": [
+      [
+       0,
+       1,
+       12,
+       1.4
+      ],
+      [
+       2,
+       3,
+       8,
+       3.9
+      ],
+      [
+       0,
+       3.8,
+       8,
+       4.2
+      ],
+      [
+       1,
+       5,
+       2,
+       6
+      ]
+     ]
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 4.6000000000000005,
+     "c1": 9.200000000000001,
+     "r1": 4.95,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 5.5,
+     "c1": 9.200000000000001,
+     "r1": 5.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 6.4,
+     "c1": 9.200000000000001,
+     "r1": 6.75,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 9.4,
+     "r0": 4.6000000000000005,
+     "c1": 10.200000000000001,
+     "r1": 4.95,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 9.4,
+     "r0": 5.5,
+     "c1": 10.200000000000001,
+     "r1": 5.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 9.4,
+     "r0": 6.4,
+     "c1": 10.200000000000001,
+     "r1": 6.75,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 10.4,
+     "r0": 4.6000000000000005,
+     "c1": 11.200000000000001,
+     "r1": 4.95,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 10.4,
+     "r0": 5.5,
+     "c1": 11.200000000000001,
+     "r1": 5.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 10.4,
+     "r0": 6.4,
+     "c1": 11.200000000000001,
+     "r1": 6.75,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 11.2,
+     "r0": 4.6000000000000005,
+     "c1": 12.0,
+     "r1": 4.95,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 11.2,
+     "r0": 5.5,
+     "c1": 12.0,
+     "r1": 5.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 11.2,
+     "r0": 6.4,
+     "c1": 12.0,
+     "r1": 6.75,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "label",
+     "c": 10,
+     "r": 7,
+     "text": "Prairie View mobile home park",
+     "dx": 24,
+     "dy": 20,
+     "size": 12.5
+    }
+   ],
+   "contexts": [
+    {
+     "id": "H1",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1979",
+     "layer": "hist",
+     "title": "The railroad is abandoned",
+     "lines": [
+      "The branch railroad is",
+      "abandoned, 1979"
+     ],
+     "body": "Dunmore grew up around a rail siding and a grain elevator. The railroad abandoned the branch in 1979, the elevator went to trucks, and Main Street lost the trade that came with the trains.",
+     "under": [],
+     "rep": [
+      6,
+      1.2
+     ],
+     "draw": {
+      "5": [
+       {
+        "t": "line",
+        "pts": [
+         [
+          0,
+          1.2
+         ],
+         [
+          12,
+          1.2
+         ]
+        ],
+        "stroke": "#8A5A2B",
+        "sw": 3.2,
+        "dash": "2 4"
+       },
+       {
+        "t": "area",
+        "c0": 9.8,
+        "r0": 0,
+        "c1": 12,
+        "r1": 1.6,
+        "fill": "#8A5A2B",
+        "opacity": 0.45,
+        "stroke": "#0E1B2E"
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 1.6,
+        "c1": 7.8,
+        "r1": 7,
+        "fill": "#D9B23A",
+        "opacity": 0.3
+       },
+       {
+        "t": "label",
+        "c": 6,
+        "r": 1.2,
+        "text": "rail line, 1879–1979",
+        "dy": -10,
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC1",
+     "types": [
+      "econ"
+     ],
+     "year": "2019",
+     "layer": "econ",
+     "title": "The park is sold to an investor",
+     "lines": [
+      "Park sold to an investor, 2019:",
+      "lot rent $310 → $455"
+     ],
+     "body": "The family that owned Prairie View sold it to an out-of-state investment firm in 2019. Lot rent has gone up four times since. Residents own their homes but not the land, and moving a home costs more than it is worth.",
+     "under": [],
+     "rep": [
+      10,
+      5.5
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 8.2,
+        "r0": 4.3,
+        "c1": 12,
+        "r1": 7,
+        "fill": "--c-econ",
+        "opacity": 0.5
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 5.5,
+        "text": "lot rent $310 → $455",
+        "dx": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC2",
+     "types": [
+      "econ"
+     ],
+     "year": "2016",
+     "layer": "econ",
+     "title": "The last bank branch closes",
+     "lines": [
+      "Bank branch closes, 2016:",
+      "only out-of-network ATMs"
+     ],
+     "body": "The last branch closed in 2016. The two ATMs in town belong to other networks and charge $3 to $5 a withdrawal, and many older residents still pay with cash.",
+     "under": [],
+     "rep": [
+      4.5,
+      3.4
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "icon",
+        "kind": "bankx",
+        "c": 4.5,
+        "r": 3.4
+       },
+       {
+        "t": "label",
+        "c": 4.5,
+        "r": 3.4,
+        "text": "branch closed 2016",
+        "dx": 16,
+        "dy": -8
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC3",
+     "types": [
+      "econ"
+     ],
+     "year": "2014",
+     "layer": "econ",
+     "title": "Dollar stores replace the grocery",
+     "lines": [
+      "Two dollar stores; the",
+      "nearest grocery 19 miles"
+     ],
+     "body": "The independent grocery closed in 2014, a year after the second dollar store opened. Fresh food now means a 19-mile drive, so most shopping is canned and packaged food from the dollar store.",
+     "under": [],
+     "rep": [
+      6.6,
+      3.4
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "icon",
+        "kind": "sign",
+        "c": 6.6,
+        "r": 3.4,
+        "text": "$"
+       },
+       {
+        "t": "label",
+        "c": 6.6,
+        "r": 3.4,
+        "text": "dollar stores",
+        "dx": 16,
+        "dy": -10
+       }
+      ]
+     }
+    },
+    {
+     "id": "P1",
+     "types": [
+      "pol"
+     ],
+     "year": "state program",
+     "layer": "pol",
+     "title": "The state pays Medicare premiums for low incomes",
+     "lines": [
+      "State Medicare Savings Program",
+      "pays Part B for low incomes"
+     ],
+     "body": "For older residents with low incomes, the state pays the Medicare Part B premium, about $200 a month. Enrollment takes paperwork that many eligible people never finish.",
+     "under": [],
+     "rep": [
+      3,
+      3.4
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "badge",
+        "c": 12,
+        "r": 0,
+        "dx": -210,
+        "dy": -30,
+        "w": 210,
+        "text": "state Medicare help covers it",
+        "fill": "--c-pol"
+       }
+      ]
+     }
+    },
+    {
+     "id": "P2",
+     "types": [
+      "pol",
+      "econ"
+     ],
+     "year": "state rates",
+     "layer": "pol",
+     "title": "Medicaid home care rates",
+     "lines": [
+      "Low Medicaid home-care rates:",
+      "aides drive in from Halvern"
+     ],
+     "body": "Medicaid pays home-care agencies about $19 an hour. Aides earn far less, with no pay for the 35-mile drive between clients, so visits are short and often cancelled.",
+     "under": [],
+     "rep": [
+      1.5,
+      6
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 4.4,
+        "c1": 7.8,
+        "r1": 7,
+        "fill": "--c-pol",
+        "opacity": 0.22
+       },
+       {
+        "t": "label",
+        "c": 3.9,
+        "r": 6.8,
+        "text": "home-care visits",
+        "anchor": "middle",
+        "dy": 14
+       }
+      ]
+     }
+    },
+    {
+     "id": "E1",
+     "types": [
+      "env"
+     ],
+     "year": "today",
+     "layer": "env",
+     "title": "Thirty-five miles to the hospital",
+     "lines": [
+      "Hospital and specialists",
+      "35 miles away"
+     ],
+     "body": "The nearest hospital and specialists are in Halvern, 35 miles on a two-lane highway. A routine appointment takes most of a day and someone to drive.",
+     "under": [],
+     "rep": [
+      8,
+      1
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 7.86,
+        "r0": 0,
+        "c1": 8.14,
+        "r1": 7,
+        "fill": "#9C9486",
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "label",
+        "c": 8,
+        "r": 0,
+        "text": "35 miles to Halvern Regional",
+        "dx": 10,
+        "dy": -8
+       }
+      ]
+     }
+    },
+    {
+     "id": "S1",
+     "types": [
+      "soc",
+      "cult"
+     ],
+     "year": "today",
+     "layer": "soc",
+     "title": "Aging in place",
+     "lines": [
+      "Grown children moved away;",
+      "neighbors and kin give care"
+     ],
+     "body": "Most young adults left for Halvern or farther. Older residents stay in their homes, and care comes from a spouse, a neighbor, a church member or a relative who drives in.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      3,
+      5.5
+     ],
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 4.4,
+        "c1": 7.8,
+        "r1": 7,
+        "fill": "--c-soc",
+        "opacity": 0.34
+       },
+       {
+        "t": "icon",
+        "kind": "circle",
+        "c": 1.5,
+        "r": 5.5
+       },
+       {
+        "t": "label",
+        "c": 4.2,
+        "r": 6,
+        "text": "neighbors and kin",
+        "anchor": "middle"
+       }
+      ]
+     }
+    }
+   ],
+   "patterns": [
+    {
+     "id": "N1",
+     "n": 1,
+     "cell": [
+      9,
+      5
+     ],
+     "kind": "bill",
+     "title": "Lot rent",
+     "links": [
+      "EC1"
+     ],
+     "match": [
+      {
+       "cat": "lot_rent"
+      }
+     ],
+     "example": {
+      "time": "06:00",
+      "title": "Lot rent, $455",
+      "body": "Up from $310 in 2019. The home itself has been paid off since 2008.",
+      "amt": "−$455.00",
+      "status": "Completed",
+      "type": "Rent",
+      "with": "Prairie View MHC LLC"
+     }
+    },
+    {
+     "id": "N2",
+     "n": 2,
+     "cell": [
+      4,
+      3
+     ],
+     "kind": "bill",
+     "title": "ATM fees",
+     "links": [
+      "EC2"
+     ],
+     "match": [
+      {
+       "fee": "out_of_network_atm"
+      }
+     ],
+     "example": {
+      "time": "10:40",
+      "title": "Cash from the store ATM, $60 plus $4.25 in fees",
+      "body": "The only ATM open on Main Street.",
+      "amt": "−$4.25",
+      "status": "Completed",
+      "type": "Fee",
+      "with": "Out-of-network ATM"
+     }
+    },
+    {
+     "id": "N3",
+     "n": 3,
+     "cell": [
+      6,
+      3
+     ],
+     "kind": "purchase",
+     "title": "Dollar store groceries",
+     "links": [
+      "EC3"
+     ],
+     "match": [
+      {
+       "cat": "^food\\.dollar_store$"
+      }
+     ],
+     "example": {
+      "time": "15:20",
+      "title": "Groceries at the dollar store, $23.40",
+      "body": "Canned soup, bread, eggs and milk.",
+      "amt": "−$23.40",
+      "status": "Completed",
+      "type": "Purchase",
+      "with": "Dollar store"
+     }
+    },
+    {
+     "id": "N4",
+     "n": 4,
+     "cell": [
+      3,
+      3
+     ],
+     "kind": "income",
+     "title": "Medicare help from the state",
+     "links": [
+      "P1"
+     ],
+     "match": [
+      {
+       "cat": "medicare_part_b_state_buy_in"
+      }
+     ],
+     "example": {
+      "time": "00:30",
+      "title": "State pays the Part B premium, $202.90",
+      "body": "Enrolled last year after a pharmacist mentioned it.",
+      "amt": "No charge",
+      "status": "Completed",
+      "type": "Benefit",
+      "with": "State Medicaid agency"
+     }
+    },
+    {
+     "id": "N5",
+     "n": 5,
+     "cell": [
+      1,
+      6
+     ],
+     "kind": "unpaid",
+     "title": "Home-care visits",
+     "links": [
+      "P2",
+      "S1"
+     ],
+     "match": [
+      {
+       "cat": "personal_care_aide_visit|home_health_nurse_visit"
+      }
+     ],
+     "example": {
+      "time": "09:00",
+      "title": "Aide visit, 1 hour of 2 scheduled",
+      "body": "The aide had to leave early for a client 20 miles away.",
+      "amt": "1 hr",
+      "status": "Completed",
+      "type": "Care",
+      "with": "Home-care agency"
+     }
+    },
+    {
+     "id": "N6",
+     "n": 6,
+     "cell": [
+      4,
+      6
+     ],
+     "kind": "unpaid",
+     "title": "Care from neighbors and kin",
+     "links": [
+      "S1",
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "caregiving_visit|escort_to_appointment"
+      }
+     ],
+     "example": {
+      "time": "08:00",
+      "title": "Drove a neighbor to the eye doctor, 4.5 hours",
+      "body": "35 miles each way and the wait.",
+      "amt": "4.5 hr",
+      "status": "Done · unpaid",
+      "type": "Unpaid work",
+      "with": "Neighbor"
+     }
+    },
+    {
+     "id": "N7",
+     "n": 7,
+     "cell": [
+      1,
+      2
+     ],
+     "kind": "bill",
+     "title": "Car repairs",
+     "links": [
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "car_repair|car_wont_start|jump_start|tow_and_roadside"
+      }
+     ],
+     "example": {
+      "time": "11:30",
+      "title": "Car repair, $410",
+      "body": "Without the car there is no way to the clinic.",
+      "amt": "−$410.00",
+      "status": "Completed",
+      "type": "Repair",
+      "with": "Garage"
+     }
+    }
+   ],
+   "loops": {
+    "R1": {
+     "name": "Lot-rent squeeze",
+     "kind": "R",
+     "seen": [
+      "N1"
+     ],
+     "text": "Each lot-rent increase leaves less cash. With less cash, moving the home out of the park is out of reach, so the owner can keep raising the rent.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 1,
+       "c": 10.4,
+       "r": 4.8,
+       "t": "Rent increases"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 9.6,
+       "r": 6.6,
+       "t": "Cash left after rent"
+      },
+      {
+       "k": "c",
+       "p": 0,
+       "c": 11.4,
+       "r": 6.2,
+       "t": "Able to move out"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "More increases leave less cash."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More cash makes moving possible."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "Fewer able to leave means increases stick."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "An investor owner prices to what residents cannot escape.",
+       "to": "a",
+       "from": "EC1"
+      }
+     ]
+    },
+    "B1": {
+     "name": "Neighbor care",
+     "kind": "B",
+     "seen": [
+      "N6"
+     ],
+     "text": "When an older neighbor needs care, others step in to visit and drive. Their help shrinks the unmet need, which holds the load in balance, until the helpers age too.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 2.6,
+       "r": 6.6,
+       "t": "Care needed"
+      },
+      {
+       "k": "b",
+       "p": 4,
+       "c": 4.6,
+       "r": 5.6,
+       "t": "Neighbors and kin help"
+      },
+      {
+       "k": "c",
+       "p": 0,
+       "c": 5.2,
+       "r": 6.8,
+       "t": "Unmet care"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More need brings more help."
+      ],
+      [
+       "b",
+       "c",
+       "−",
+       "More help leaves less unmet care."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "Unmet care turns into more need."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "−",
+       "t": "Short, cancelled aide visits leave more to neighbors.",
+       "to": "c",
+       "from": "P2"
+      }
+     ]
+    }
+   },
+   "start": {
+    "pattern": "N1",
+    "loop": "R1"
+   }
+  },
+  {
+   "id": "crossroads",
+   "name": "Route 9 Crossroads",
+   "district": "D6",
+   "districtName": "Open country",
+   "street": "County Rd 12",
+   "summary": "Farm country consolidated in the 1980s, eleven miles from town, with no bus, no pharmacy and broadband that stops at Route 9.",
+   "plateSubs": [
+    "the day’s records",
+    "patchwork work, the pharmacy",
+    "no transit, one school district",
+    "broadband, distance",
+    "church ride lists",
+    "the farm crisis, 1980s"
+   ],
+   "select": {
+    "n": 360,
+    "prefer": {
+     "internet_at_home": "^(mobile_only|no)$",
+     "vehicles": "^(0|1)$",
+     "alice_status": "^(alice|poverty)$",
+     "income_source_mix": "self_employment|se"
+    }
+   },
+   "today": [
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 0,
+     "c1": 5.8,
+     "r1": 3.8,
+     "fill": "#C9D6A8"
+    },
+    {
+     "t": "area",
+     "c0": 6.2,
+     "r0": 0,
+     "c1": 12,
+     "r1": 3.8,
+     "fill": "#E2D3A2"
+    },
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 4.2,
+     "c1": 5.8,
+     "r1": 7,
+     "fill": "#E2D3A2"
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       0.6
+      ],
+      [
+       5.8,
+       0.6
+      ]
+     ],
+     "stroke": "#9AAE73",
+     "sw": 0.8
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       1.4
+      ],
+      [
+       5.8,
+       1.4
+      ]
+     ],
+     "stroke": "#9AAE73",
+     "sw": 0.8
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       2.2
+      ],
+      [
+       5.8,
+       2.2
+      ]
+     ],
+     "stroke": "#9AAE73",
+     "sw": 0.8
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       0,
+       3
+      ],
+      [
+       5.8,
+       3
+      ]
+     ],
+     "stroke": "#9AAE73",
+     "sw": 0.8
+    },
+    {
+     "t": "area",
+     "c0": 5.86,
+     "r0": 0,
+     "c1": 6.14,
+     "r1": 7,
+     "fill": "#B9B2A4",
+     "stroke": "#0E1B2E",
+     "sw": 0.6
+    },
+    {
+     "t": "line",
+     "pts": [
+      [
+       6,
+       0
+      ],
+      [
+       6,
+       7
+      ]
+     ],
+     "stroke": "#FFFFFF",
+     "sw": 1.2,
+     "dash": "6 5"
+    },
+    {
+     "t": "area",
+     "c0": 0,
+     "r0": 3.86,
+     "c1": 12,
+     "r1": 4.14,
+     "fill": "#E3E8EF"
+    },
+    {
+     "t": "label",
+     "c": 6,
+     "r": 0,
+     "text": "Route 9",
+     "dx": 12,
+     "dy": -8,
+     "size": 12.5
+    },
+    {
+     "t": "label",
+     "c": 12,
+     "r": 4,
+     "text": "County Rd 12",
+     "dx": 8,
+     "dy": 10,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 6.3,
+     "r0": 3.1,
+     "c1": 7.8,
+     "r1": 3.8,
+     "h": 13,
+     "k": "shop"
+    },
+    {
+     "t": "label",
+     "c": 7,
+     "r": 3.1,
+     "text": "store and post office",
+     "dx": 40,
+     "dy": -22,
+     "size": 12.5
+    },
+    {
+     "t": "box",
+     "c0": 1.2,
+     "r0": 1.5,
+     "c1": 2.3,
+     "r1": 2.3,
+     "h": 16,
+     "k": "barn"
+    },
+    {
+     "t": "box",
+     "c0": 2.5,
+     "r0": 1.6,
+     "c1": 3,
+     "r1": 2.1,
+     "h": 10,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 9.2,
+     "r0": 1.2,
+     "c1": 10.4,
+     "r1": 2.0,
+     "h": 16,
+     "k": "barn"
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 1.3,
+     "c1": 8.9,
+     "r1": 1.8,
+     "h": 10,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 3.2,
+     "r0": 5.2,
+     "c1": 3.75,
+     "r1": 5.75,
+     "h": 18,
+     "k": "church",
+     "spire": true
+    },
+    {
+     "t": "box",
+     "c0": 1.6,
+     "r0": 5.0,
+     "c1": 2.2,
+     "r1": 5.5,
+     "h": 10,
+     "k": "house"
+    },
+    {
+     "t": "box",
+     "c0": 7.2,
+     "r0": 1.8,
+     "c1": 8.0,
+     "r1": 2.6,
+     "h": 13,
+     "k": "civic"
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 4.8,
+     "c1": 9.200000000000001,
+     "r1": 5.1499999999999995,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 5.7,
+     "c1": 9.200000000000001,
+     "r1": 6.05,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 8.4,
+     "r0": 6.5,
+     "c1": 9.200000000000001,
+     "r1": 6.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 9.4,
+     "r0": 4.8,
+     "c1": 10.200000000000001,
+     "r1": 5.1499999999999995,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 9.4,
+     "r0": 5.7,
+     "c1": 10.200000000000001,
+     "r1": 6.05,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 9.4,
+     "r0": 6.5,
+     "c1": 10.200000000000001,
+     "r1": 6.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 10.4,
+     "r0": 4.8,
+     "c1": 11.200000000000001,
+     "r1": 5.1499999999999995,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 10.4,
+     "r0": 5.7,
+     "c1": 11.200000000000001,
+     "r1": 6.05,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "box",
+     "c0": 10.4,
+     "r0": 6.5,
+     "c1": 11.200000000000001,
+     "r1": 6.85,
+     "h": 6,
+     "k": "trailer"
+    },
+    {
+     "t": "label",
+     "c": 9.5,
+     "r": 7,
+     "text": "Route 9 mobile home park",
+     "dx": 24,
+     "dy": 20,
+     "size": 12.5
+    }
+   ],
+   "contexts": [
+    {
+     "id": "H1",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1980–95",
+     "layer": "hist",
+     "title": "The farm crisis",
+     "lines": [
+      "Farm crisis: 40% of farms",
+      "sold or merged, 1980–95"
+     ],
+     "body": "High interest rates and falling land prices in the 1980s broke many family farms. Neighbors bought them out, and today four operations farm what forty families did. Former farm families stayed on and found other work.",
+     "under": [],
+     "rep": [
+      3,
+      2
+     ],
+     "draw": {
+      "5": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 12,
+        "r1": 3.8,
+        "fill": "#8A5A2B",
+        "opacity": 0.3
+       },
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 0,
+        "c1": 12,
+        "r1": 3.8,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "line",
+        "pts": [
+         [
+          2,
+          0
+         ],
+         [
+          2,
+          3.8
+         ]
+        ],
+        "stroke": "#8A5A2B",
+        "sw": 1.2,
+        "dash": "4 3"
+       },
+       {
+        "t": "line",
+        "pts": [
+         [
+          4,
+          0
+         ],
+         [
+          4,
+          3.8
+         ]
+        ],
+        "stroke": "#8A5A2B",
+        "sw": 1.2,
+        "dash": "4 3"
+       },
+       {
+        "t": "line",
+        "pts": [
+         [
+          8,
+          0
+         ],
+         [
+          8,
+          3.8
+         ]
+        ],
+        "stroke": "#8A5A2B",
+        "sw": 1.2,
+        "dash": "4 3"
+       },
+       {
+        "t": "line",
+        "pts": [
+         [
+          10,
+          0
+         ],
+         [
+          10,
+          3.8
+         ]
+        ],
+        "stroke": "#8A5A2B",
+        "sw": 1.2,
+        "dash": "4 3"
+       },
+       {
+        "t": "label",
+        "c": 6,
+        "r": 1.9,
+        "text": "forty farms, now four",
+        "anchor": "middle",
+        "cls": "disp",
+        "size": 15
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC1",
+     "types": [
+      "econ"
+     ],
+     "year": "today",
+     "layer": "econ",
+     "title": "Patchwork work",
+     "lines": [
+      "Seasonal packing, gig and",
+      "self-employed work"
+     ],
+     "body": "Year-round jobs are 11 miles away. Many households here piece together seasonal work at the packing shed, small self-employed jobs and gig work, paid irregularly and often through apps.",
+     "under": [
+      "H1"
+     ],
+     "rep": [
+      2.5,
+      5.6
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 4.2,
+        "c1": 5.8,
+        "r1": 7,
+        "fill": "--c-econ",
+        "opacity": 0.42
+       },
+       {
+        "t": "icon",
+        "kind": "factory",
+        "c": 1.4,
+        "r": 6.2
+       },
+       {
+        "t": "label",
+        "c": 2.9,
+        "r": 6.6,
+        "text": "packing shed, seasonal",
+        "anchor": "middle",
+        "dy": 14
+       }
+      ]
+     }
+    },
+    {
+     "id": "EC2",
+     "types": [
+      "econ"
+     ],
+     "year": "2018",
+     "layer": "econ",
+     "title": "The pharmacy closes",
+     "lines": [
+      "The crossroads pharmacy",
+      "closes, 2018"
+     ],
+     "body": "The pharmacy at the crossroads closed in 2018 when its owner retired and no buyer came forward. Prescriptions come by mail now, a few days late when the mail is.",
+     "under": [],
+     "rep": [
+      7,
+      3.4
+     ],
+     "draw": {
+      "1": [
+       {
+        "t": "icon",
+        "kind": "sign",
+        "c": 7,
+        "r": 3.4,
+        "text": "Rx"
+       },
+       {
+        "t": "label",
+        "c": 7,
+        "r": 3.4,
+        "text": "pharmacy closed 2018",
+        "dx": 16,
+        "dy": -10
+       }
+      ]
+     }
+    },
+    {
+     "id": "P1",
+     "types": [
+      "pol"
+     ],
+     "year": "today",
+     "layer": "pol",
+     "title": "No public transit in the county",
+     "lines": [
+      "No county transit; one",
+      "reservation van a week"
+     ],
+     "body": "The county has no bus. A volunteer van runs to Halvern once a week by reservation for medical trips. Anyone without a car pays a neighbor for rides to work.",
+     "under": [],
+     "rep": [
+      6,
+      4
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "badge",
+        "c": 12,
+        "r": 0,
+        "dx": -150,
+        "dy": -30,
+        "w": 150,
+        "text": "no county transit",
+        "fill": "--c-pol"
+       }
+      ]
+     }
+    },
+    {
+     "id": "P2",
+     "types": [
+      "pol"
+     ],
+     "year": "2009",
+     "layer": "pol",
+     "title": "School districts consolidated",
+     "lines": [
+      "Districts consolidated, 2009:",
+      "a 50-minute bus ride"
+     ],
+     "body": "The township schools merged into a county district in 2009. Children ride the bus 50 minutes each way, and the district serves breakfast to everyone because so many leave home before 6:30.",
+     "under": [],
+     "rep": [
+      7.6,
+      2.2
+     ],
+     "draw": {
+      "2": [
+       {
+        "t": "line",
+        "pts": [
+         [
+          12,
+          2.2
+         ],
+         [
+          8,
+          2.2
+         ],
+         [
+          6,
+          2.2
+         ],
+         [
+          6,
+          7
+         ]
+        ],
+        "stroke": "--c-pol",
+        "sw": 3.2,
+        "dash": "8 6"
+       },
+       {
+        "t": "label",
+        "c": 12,
+        "r": 2.2,
+        "text": "50-minute bus ride",
+        "dx": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "E1",
+     "types": [
+      "env",
+      "pol"
+     ],
+     "year": "today",
+     "layer": "env",
+     "title": "Broadband stops at Route 9",
+     "lines": [
+      "Broadband stops at Route 9;",
+      "phones only to the east"
+     ],
+     "body": "The cable line follows Route 9 and stops. East of the highway, internet means a phone plan, which works for deposits and payments but not much else.",
+     "under": [],
+     "rep": [
+      9.5,
+      5.5
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 6.2,
+        "r0": 0,
+        "c1": 12,
+        "r1": 7,
+        "fill": "url(#hatch-light)"
+       },
+       {
+        "t": "area",
+        "c0": 6.2,
+        "r0": 0,
+        "c1": 12,
+        "r1": 7,
+        "fill": "#5E8A3A",
+        "opacity": 0.12
+       },
+       {
+        "t": "label",
+        "c": 9.1,
+        "r": 3.2,
+        "text": "phone signal only",
+        "anchor": "middle"
+       }
+      ]
+     }
+    },
+    {
+     "id": "E2",
+     "types": [
+      "env"
+     ],
+     "year": "today",
+     "layer": "env",
+     "title": "Eleven miles to town",
+     "lines": [
+      "Eleven miles to Dunmore,",
+      "twenty-five to Halvern"
+     ],
+     "body": "The nearest town is 11 miles away and the nearest city 25. Every errand, shift and appointment starts with a drive.",
+     "under": [],
+     "rep": [
+      6,
+      6.5
+     ],
+     "draw": {
+      "3": [
+       {
+        "t": "area",
+        "c0": 5.86,
+        "r0": 0,
+        "c1": 6.14,
+        "r1": 7,
+        "fill": "#9C9486",
+        "stroke": "#0E1B2E",
+        "sw": 1
+       },
+       {
+        "t": "label",
+        "c": 6,
+        "r": 7,
+        "text": "11 miles to Dunmore",
+        "dx": 12,
+        "dy": 16
+       }
+      ]
+     }
+    },
+    {
+     "id": "S1",
+     "types": [
+      "soc",
+      "cult"
+     ],
+     "year": "today",
+     "layer": "soc",
+     "title": "Church ride lists",
+     "lines": [
+      "The church keeps a ride list",
+      "for work and appointments"
+     ],
+     "body": "The church at the crossroads keeps a list of who can drive when. Rides to work are paid, a few dollars toward gas; rides to the doctor usually are not.",
+     "under": [],
+     "rep": [
+      3.5,
+      5.5
+     ],
+     "draw": {
+      "4": [
+       {
+        "t": "area",
+        "c0": 0,
+        "r0": 4.2,
+        "c1": 5.8,
+        "r1": 7,
+        "fill": "--c-soc",
+        "opacity": 0.3
+       },
+       {
+        "t": "icon",
+        "kind": "circle",
+        "c": 3.5,
+        "r": 5.5
+       },
+       {
+        "t": "label",
+        "c": 3.5,
+        "r": 5.5,
+        "text": "ride lists",
+        "dx": 24,
+        "dy": -10
+       }
+      ]
+     }
+    }
+   ],
+   "patterns": [
+    {
+     "id": "C1",
+     "n": 1,
+     "cell": [
+      6,
+      4
+     ],
+     "kind": "bill",
+     "title": "Paid rides to work",
+     "links": [
+      "P1",
+      "E2"
+     ],
+     "match": [
+      {
+       "cat": "ride_to_work_fee"
+      }
+     ],
+     "example": {
+      "time": "05:50",
+      "title": "Ride to the early shift, $10 toward gas",
+      "body": "A neighbor drives three people to the plant.",
+      "amt": "−$10.00",
+      "status": "Completed",
+      "type": "Ride",
+      "with": "Neighbor"
+     }
+    },
+    {
+     "id": "C2",
+     "n": 2,
+     "cell": [
+      2,
+      5
+     ],
+     "kind": "income",
+     "title": "Self-employed and seasonal pay",
+     "links": [
+      "EC1",
+      "H1"
+     ],
+     "match": [
+      {
+       "cat": "self_employment_receipts|self_employed_supplies"
+      }
+     ],
+     "example": {
+      "time": "17:30",
+      "title": "Paid for a fence repair, $220",
+      "body": "Cash, for two days of work.",
+      "amt": "+$220.00",
+      "status": "Completed",
+      "type": "Income",
+      "with": "Neighbor"
+     }
+    },
+    {
+     "id": "C3",
+     "n": 3,
+     "cell": [
+      9,
+      5
+     ],
+     "kind": "purchase",
+     "title": "Prescriptions by mail",
+     "links": [
+      "EC2"
+     ],
+     "match": [
+      {
+       "cat": "prescription_mail_order"
+      }
+     ],
+     "example": {
+      "time": "10:00",
+      "title": "Mail-order prescription, $12 copay",
+      "body": "A 90-day supply. The last order arrived four days late.",
+      "amt": "−$12.00",
+      "status": "Completed",
+      "type": "Purchase",
+      "with": "Mail-order pharmacy"
+     }
+    },
+    {
+     "id": "C4",
+     "n": 4,
+     "cell": [
+      10,
+      6
+     ],
+     "kind": "income",
+     "title": "Instant cash-outs",
+     "links": [
+      "EC1",
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "p2p_instant_cash_out|gig_payout_instant"
+      }
+     ],
+     "example": {
+      "time": "21:15",
+      "title": "Instant cash-out, $180 less a $2.70 fee",
+      "body": "Gig pay moved to the debit card tonight instead of in three days.",
+      "amt": "+$177.30",
+      "status": "Completed",
+      "type": "Transfer",
+      "with": "Payment app"
+     }
+    },
+    {
+     "id": "C5",
+     "n": 5,
+     "cell": [
+      8,
+      6
+     ],
+     "kind": "income",
+     "title": "Deposits by phone",
+     "links": [
+      "E1"
+     ],
+     "match": [
+      {
+       "cat": "mobile_check_deposit"
+      }
+     ],
+     "example": {
+      "time": "19:40",
+      "title": "Check deposited by phone, $340",
+      "body": "The bank is 25 miles away.",
+      "amt": "+$340.00",
+      "status": "Completed",
+      "type": "Deposit",
+      "with": "Bank app"
+     }
+    },
+    {
+     "id": "C6",
+     "n": 6,
+     "cell": [
+      7,
+      2
+     ],
+     "kind": "unpaid",
+     "title": "School breakfast",
+     "links": [
+      "P2"
+     ],
+     "match": [
+      {
+       "cat": "school_breakfast"
+      }
+     ],
+     "example": {
+      "time": "07:20",
+      "title": "Breakfast at school",
+      "body": "The bus left at 6:25.",
+      "amt": "No charge",
+      "status": "Completed",
+      "type": "Public service",
+      "with": "County school district"
+     }
+    },
+    {
+     "id": "C7",
+     "n": 7,
+     "cell": [
+      3,
+      6
+     ],
+     "kind": "unpaid",
+     "title": "Care from neighbors",
+     "links": [
+      "S1",
+      "E2"
+     ],
+     "match": [
+      {
+       "cat": "caregiving_visit|escort_to_appointment"
+      }
+     ],
+     "example": {
+      "time": "13:00",
+      "title": "Drove a neighbor to dialysis, 5 hours",
+      "body": "Three times a week, 25 miles each way.",
+      "amt": "5 hr",
+      "status": "Done · unpaid",
+      "type": "Unpaid work",
+      "with": "Neighbor"
+     }
+    }
+   ],
+   "loops": {
+    "R1": {
+     "name": "Ride debt",
+     "kind": "R",
+     "seen": [
+      "C1"
+     ],
+     "text": "Without a working car, getting to work means paying for rides. What goes to rides doesn't go to repairs, so the car stays broken and the rides continue.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 4.6,
+       "r": 4.8,
+       "t": "A working car"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 6.8,
+       "r": 4.6,
+       "t": "Paid rides"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 5.2,
+       "r": 6.2,
+       "t": "Money for repairs"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "−",
+       "No car means more paid rides."
+      ],
+      [
+       "b",
+       "c",
+       "−",
+       "More paid rides leave less for repairs."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "Money for repairs keeps the car running."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "With no county transit, rides are the only option.",
+       "to": "b",
+       "from": "P1"
+      }
+     ]
+    },
+    "B1": {
+     "name": "Ride list",
+     "kind": "B",
+     "seen": [
+      "C7"
+     ],
+     "text": "When someone needs a ride, the church list finds a driver. The more drivers on the list, the fewer trips go unmade.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 2.2,
+       "r": 6.6,
+       "t": "Rides needed"
+      },
+      {
+       "k": "b",
+       "p": 4,
+       "c": 3.8,
+       "r": 5.0,
+       "t": "Drivers on the list"
+      },
+      {
+       "k": "c",
+       "p": 0,
+       "c": 4.8,
+       "r": 6.6,
+       "t": "Trips not made"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More need recruits more drivers."
+      ],
+      [
+       "b",
+       "c",
+       "−",
+       "More drivers mean fewer trips missed."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "Missed trips come back as more need."
+      ]
+     ],
+     "drivers": [
+      {
+       "sign": "+",
+       "t": "Eleven miles to town makes every trip a ride.",
+       "to": "a",
+       "from": "E2"
+      }
+     ]
+    }
+   },
+   "start": {
+    "pattern": "C1",
+    "loop": "R1"
+   }
+  }
+ ]
+}
