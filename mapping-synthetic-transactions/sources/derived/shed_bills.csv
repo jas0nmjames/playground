@@ -1,0 +1,4 @@
+group,share_of_adults,cannot_pay_all_bills_in_full_this_month,paid_a_bill_late
+all,1.0000,0.1523,0.1170
+covers_400,0.6314,0.0492,0.0276
+cannot_cover_400,0.3686,0.3288,0.2701

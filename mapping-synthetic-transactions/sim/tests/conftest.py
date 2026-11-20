@@ -83,6 +83,19 @@ def carried10(tmp_path_factory):
     return {"days": days, "states": states, "out": root}
 
 
+def chains(carried, chain=None):
+    """{chain_id: [(date, links.csv row, records.csv row), ...]} across a carried run, in date and record order."""
+    out = {}
+    for date, folder in carried["days"]:
+        recs = {r["record_id"]: r for r in read_csv(os.path.join(folder, "records.csv"))}
+        for l in read_csv(os.path.join(folder, "links.csv")):
+            if chain is None or l["chain"] == chain:
+                out.setdefault(l["chain_id"], []).append((date, l, recs[l["record_id"]]))
+    for v in out.values():
+        v.sort(key=lambda x: (x[0], x[1]["record_id"]))
+    return out
+
+
 @pytest.fixture(scope="session")
 def records(run10):
     return read_csv(os.path.join(run10[1], "records.csv"))
