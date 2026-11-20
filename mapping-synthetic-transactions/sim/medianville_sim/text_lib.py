@@ -279,6 +279,14 @@ T["reconnection_payment"] = k("get the {what} turned back on", "When service has
                               "Paid {org} by phone to restore the {what}.")
 T["sought_emergency_utility_help"] = k("ask {org} for emergency help", "When I cannot pay to get service back, I want an agency to pledge the difference, so I can get reconnected.",
                                        "Called {org} about emergency help with the {what} bill.")
+T["past_due_utility_payment"] = k("pay the past-due {what} balance", "When a shutoff notice gives me a date, I want the past-due balance paid before it, so I can keep the {what} on.",
+                                  ["Paid ${amt} past due to {org} before the shutoff date.", "Cleared the past-due {what} balance with {org}."])
+T["utility_payment_arrangement"] = k("set up a payment plan with {org}", "When a shutoff date is coming and I cannot pay it all, I want a payment plan, so I can keep the {what} on while I catch up.",
+                                     "Called {org} and set up a payment plan on the {what} account: ${down} now, ${rest} over the next weeks.")
+T["utility_assistance_pledge"] = k("get help with the {what} bill", "When I cannot pay the shutoff amount myself, I want an agency to help, so I can keep the {what} on.",
+                                   "{agency} pledged ${amt} toward the {what} bill at {org}.")
+T["service_reconnected"] = k("get the {what} back on", "When I have paid to get service back, I want it on as soon as possible, so I can get the household back to normal.",
+                             ["{org} turned the {what} back on after {days} days off.", "The {what} is back on; it was off {days} days."])
 T["utility_connection_deposit"] = k("put down a utility deposit", "When I open an account at a new address, I want the deposit paid, so I can have power on move-in day.",
                                     "Deposit to {org} to start service.")
 T["energy_assistance_application"] = k("apply for energy assistance at {org}", "When the heating bills pile up, I want to apply for help, so I can keep the heat on.",

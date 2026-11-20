@@ -77,6 +77,7 @@ class Carry:
         """After the day's schedules are drawn and before the households' own plans: carried obligations come first."""
         set_aside_for_bills(self, sim)
         retry_day(self, sim, q)
+        shutoff_day(self, sim, q)
 
     def end_day(self, sim):
         """After the day's queue has run and card payments have posted."""
@@ -368,9 +369,10 @@ def _settle(c, sim, e, W, i, step, paid, owed):
     if step == "partial":
         fees = e["fees"]
         e["fees"] = round(max(0.0, fees - paid), 2)
-        if not e["fees"]:
-            e["ret"] = False
         e["owed"] = round(owed - max(0.0, paid - fees), 2)
+        if e["fees"] < 1.0:                 # a few cents of fee left over go back on the bill
+            e["owed"] = round(e["owed"] + e["fees"], 2)
+            e["fees"], e["ret"] = 0.0, False
         if e["owed"] < 1.0:
             c.retries.remove(e)
             return
@@ -385,3 +387,212 @@ def _settle(c, sim, e, W, i, step, paid, owed):
         if e["mode"] == "represent":
             e["mode"] = "manual"
         e["next"] = next_money_day(c, sim, W).isoformat() if e["tries"] <= MAX_MANUAL else None
+
+
+# ---------------------------------------------------------------------------------------------- 2. notice-to-shutoff timers
+# A shutoff notice gives a date. Before it, the household pays the past-due balance, sets up a payment plan, or asks the
+# community action agency for crisis help; if none of that happens, a crew disconnects the service on a business day
+# (Monday to Thursday) soon after the date. Getting it back costs the past-due amount (or the part the utility asks
+# for) plus a reconnection fee, a phone call with a wait, a trip to a payment counter for anyone paying cash, and a
+# reconnection the next business day; gas needs a technician and someone at home for a four-hour window.
+# Sources: Form EIA-112, 2024 (sources/derived/eia112_disconnections_2024.csv): 85% of electric and 71% of gas
+# disconnections are followed by a reconnection. The target pair T16 (40-55 notices a day) and T05 (11-12 disconnections a
+# day) means about one notice in four ends in a shutoff (EIA counts every final notice, often several per household, and
+# finds one in seven). The response shares below are estimates fitted to those two figures on the carried month.
+CREW_DAYS = (0, 1, 2, 3)                # Monday to Thursday
+CREW_LAG = (0, 0, 1, 2)                 # business days after the notice date before the crew comes (estimate)
+PAY_IN_FULL, PLAN, PLAN_DOWN, ASK_HELP, HELP_PLEDGE = .85, .55, (.3, .5), .70, .30
+RECONNECT_FEE = (35.0, 45.0, 50.0, 75.0)
+NOTICE_WARM_DAYS = 10
+
+
+def can_notice(c, H):
+    """No second notice while one is running or the service is off."""
+    return H.hid not in c.util
+
+
+def notice_sent(c, sim, H, util, P, idx, past, days):
+    """Today's notice (day_c.gen_misc) starts a timer."""
+    tid = c.new_id("U")
+    first = c.link(idx, "utility_shutoff", tid, "notice", W=H.wallets[0])
+    due = c.today + dt.timedelta(days=days)
+    c.util[H.hid] = dict(id=tid, hid=H.hid, pid=P.pid, bill=util[0], org=util[1].oid, past=round(past, 2), notice=c.date, due=due.isoformat(),
+                         state="notice", off=None, plan=False, tries=0, last=first)
+
+
+def warm_notices(c, sim):
+    """A run's first day inherits the notices sent in the ten days before it that are still running (no records; those
+    days are not simulated). Same rate and eligibility as day_c.gen_misc."""
+    from .day_c import SHUTOFF_NOTICE
+    for H in sim.households:
+        if H.gq or H.alice == "above" or H.util_incl or H.hid in c.util:
+            continue
+        util = next((b for b in H.bills if b[0] in ("electric_bill", "gas_bill", "water_bill")), None)
+        ad = [p for p in H.adults if not p.inpatient and p.wallet is not None]
+        if util is None or not ad:
+            continue
+        for k in range(1, NOTICE_WARM_DAYS + 1):
+            if c.crng.random() < SHUTOFF_NOTICE:
+                days = c.crng.choice([5, 7, 10])
+                due = c.today - dt.timedelta(days=k) + dt.timedelta(days=days)
+                if due >= c.today:
+                    c.util[H.hid] = dict(id=c.new_id("U"), hid=H.hid, pid=c.crng.choice(ad).pid, bill=util[0], org=util[1].oid,
+                                         past=round(util[2] * c.crng.uniform(1.6, 3.2), 2), notice=(c.today - dt.timedelta(days=k)).isoformat(),
+                                         due=due.isoformat(), state="notice", off=None, plan=False, tries=0, last=None, warm=True)
+                break
+
+
+def shutoff_day(c, sim, q):
+    from .day_a import push
+    if c.n == 0 and not c.util:
+        warm_notices(c, sim)
+    for hid in list(c.util):
+        T = c.util[hid]
+        H = c.hh.get(hid)
+        P = c.per.get(T["pid"])
+        if H is None or P is None:
+            del c.util[hid]
+            continue
+        if P.inpatient:
+            P = next((a for a in H.adults if not a.inpatient and a.wallet is not None), None)
+            if P is None:
+                continue
+        if T["state"] == "notice":
+            due = D(T["due"])
+            if c.today >= due - dt.timedelta(days=1) and not T.get("decided"):
+                T["decided"] = True
+                t = sim.slot_soft(P, 15, ((480, 1260, 1.0),))
+                push(q, t, lambda T=T, H=H, P=P, t=t: notice_response(c, sim, T, H, P, t))
+            elif c.today >= due and sim.cal["bank_day"] and sim.cal["dow"] in CREW_DAYS:
+                lag = c.crng.choice(CREW_LAG)
+                if (c.today - due).days >= lag:
+                    t = c.crng.randint(480, 660)
+                    push(q, t, lambda T=T, H=H, P=P, t=t: disconnect(c, sim, T, H, P, t))
+        elif T["state"] == "off":
+            if T.get("reconnect_on") == c.date:
+                t = c.crng.randint(540, 960)
+                push(q, t, lambda T=T, H=H, P=P, t=t: reconnect(c, sim, T, H, P, t))
+            elif not T.get("reconnect_on") and T.get("next") and T["next"] <= c.date:
+                t = sim.slot_soft(P, 20, ((540, 1200, 1.0),))
+                push(q, t, lambda T=T, H=H, P=P, t=t: try_reconnect(c, sim, T, H, P, t))
+
+
+def _util(c, T):
+    return c.org[T["org"]], T["bill"].replace("_bill", "")
+
+
+def notice_response(c, sim, T, H, P, t):
+    """The day before the shutoff date: pay, set up a plan, or ask for help. Whatever is not settled is shut off."""
+    org, what = _util(c, T)
+    W = H.wallets[0]
+    past = T["past"]
+    have = max(W.bank or 0.0, 0.0) + W.cash
+    if have >= past * 1.1 and c.crng.random() < PAY_IN_FULL:
+        i, oc, m = sim.pay(t, P, H, W, None, "utilities", "past_due_utility_payment", past, channel="phone" if W.bank is not None else "in_person",
+                           ctx=dict(org=org.name, what=what), tmin=c.crng.randint(6, 15), wait=c.crng.randint(0, 20), rtype="bill_payment", quiet_fail=0.0,
+                           to=org, lens=("housing",))
+        if oc == "completed":
+            c.link(i, "utility_shutoff", T["id"], "paid_before_shutoff", W=W, earlier=T["last"])
+            del c.util[H.hid]
+            return
+    if have >= past * PLAN_DOWN[0] and c.crng.random() < PLAN:
+        down = round(past * c.crng.uniform(*PLAN_DOWN), 2)
+        i, oc, m = sim.pay(t, P, H, W, None, "utilities", "utility_payment_arrangement", down, channel="phone", ctx=dict(org=org.name, what=what, down="%.2f" % down,
+                           rest="%.2f" % (past - down)), tmin=c.crng.randint(15, 35), wait=c.crng.randint(8, 40), rtype="bill_payment", quiet_fail=0.0, to=org,
+                           lens=("housing",))
+        if oc == "completed":
+            T["last"] = c.link(i, "utility_shutoff", T["id"], "payment_plan", W=W, earlier=T["last"])
+            T["past"] = round(past - down, 2)
+            T["due"] = (c.today + dt.timedelta(days=c.crng.choice([14, 21, 28]))).isoformat()
+            T["decided"], T["plan"] = False, True
+            return
+    if c.crng.random() < ASK_HELP:
+        ca = sim.one("community_action")
+        pledge = c.crng.random() < HELP_PLEDGE and sim.cal["weekday"]
+        i = sim.emit(t, "non_monetary_job", "utilities", "sought_emergency_utility_help", P, H, P, ca, channel="phone", tmin=c.crng.randint(15, 40),
+                     wait=c.crng.randint(5, 30), outcome="completed" if pledge else c.crng.choice(["rescheduled", "abandoned"]),
+                     fr=("insufficient_funds", "paperwork"), lens=("housing",), ctx=dict(org=ca.name, what=what))
+        T["last"] = c.link(i, "utility_shutoff", T["id"], "asked_for_help", W=W, earlier=T["last"])
+        if pledge:
+            amt = round(past * c.crng.uniform(.6, 1.0), 2)
+            j = sim.emit(t + 60, "bill_payment", "utilities", "utility_assistance_pledge", P, H, ca, org, ben=P, channel="phone", method="none", gross=amt,
+                         third=amt, payer="LIHEAP crisis assistance (via %s)" % ca.name, fund="federal", tmin=0, lens=("housing", "public_finance"),
+                         related=i, ctx=dict(org=org.name, amt="%.2f" % amt, what=what, agency=ca.name))
+            c.link(j, "utility_shutoff", T["id"], "assistance_pledged", W=W, earlier=T["last"])
+            del c.util[H.hid]
+            return
+    # nothing settled: the timer runs out on the notice date (a later day's shutoff_day sends the crew)
+
+
+def disconnect(c, sim, T, H, P, t):
+    org, what = _util(c, T)
+    i = sim.emit(t, "failed_attempt", "utilities", "service_disconnected_for_nonpayment", P, H, org, P, tmin=10, outcome="failed",
+                 fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, what=what, amt="%.2f" % T["past"],
+                                                                         reason="the past-due balance was not paid by the notice date"))
+    T["last"] = c.link(i, "utility_shutoff", T["id"], "disconnected", W=H.wallets[0], earlier=T["last"],
+                       note="notice sent before the run began" if T.get("warm") and T["last"] is None else "")
+    T["state"], T["off"] = "off", c.date
+    from .day_a import push
+    t2 = sim.slot_soft(P, 20, ((t + 20, 1260, 1.0),))
+    push(sim.q, max(t2, t + 20), lambda: try_reconnect(c, sim, T, H, P, max(t2, t + 20)))
+
+
+def try_reconnect(c, sim, T, H, P, t):
+    """Call, pay what the utility asks plus the reconnection fee, and book the reconnection; or ask for help and wait."""
+    org, what = _util(c, T)
+    W = H.wallets[0]
+    T["tries"] += 1
+    fee = float(c.crng.choice(RECONNECT_FEE))
+    need = round(T["past"] * (1.0 if T["plan"] else c.crng.choice([.5, .5, 1.0])), 2)
+    cash_only = W.bank is None
+    kw = dict(channel="phone", tmin=c.crng.randint(12, 30), wait=c.crng.randint(5, 25))
+    if cash_only:
+        dest = sim.pick(("check_casher", "grocery_full", "supercenter"), H.district, 6.0) or org
+        miles, mode, mins, tfr = sim.trip(P, H, H.district, dest.district if dest.district != "EXT" else H.district)
+        kw = dict(channel="in_person", tmin=15 + mins, wait=c.crng.randint(3, 20), miles=miles, mode=mode, fr=tuple(tfr))
+    i, oc, m = sim.pay(t, P, H, W, None, "utilities", "reconnection_payment", need, ctx=dict(org=org.name, what=what), rtype="bill_payment",
+                       fee=("reconnection_fee", fee), to=org, quiet_fail=0.0, lens=("housing",), **kw)
+    if oc == "completed":
+        T["last"] = c.link(i, "utility_shutoff", T["id"], "reconnection_paid", W=W, earlier=T["last"])
+        T["past"] = round(max(0.0, T["past"] - need), 2)
+        T["reconnect_on"] = c.next_bank_day(c.today + dt.timedelta(days=1)).isoformat()
+        return
+    T["last"] = c.link(i, "utility_shutoff", T["id"], "reconnection_unpaid", W=W, earlier=T["last"])
+    ca = sim.one("community_action")
+    pledge = sim.cal["weekday"] and c.crng.random() < HELP_PLEDGE
+    j = sim.emit(t + 45, "non_monetary_job", "utilities", "sought_emergency_utility_help", P, H, P, ca, channel="phone", tmin=c.crng.randint(15, 40),
+                 wait=c.crng.randint(5, 30), outcome="completed" if pledge else c.crng.choice(["rescheduled", "abandoned"]), related=i,
+                 fr=("insufficient_funds", "paperwork"), lens=("housing",), ctx=dict(org=ca.name, what=what))
+    T["last"] = c.link(j, "utility_shutoff", T["id"], "asked_for_help", W=W, earlier=T["last"])
+    if pledge:
+        amt = round(need + fee, 2)
+        k = sim.emit(t + 120, "bill_payment", "utilities", "utility_assistance_pledge", P, H, ca, org, ben=P, channel="phone", method="none", gross=amt,
+                     third=amt, payer="LIHEAP crisis assistance (via %s)" % ca.name, fund="federal", tmin=0, lens=("housing", "public_finance"),
+                     related=j, ctx=dict(org=org.name, amt="%.2f" % amt, what=what, agency=ca.name))
+        T["last"] = c.link(k, "utility_shutoff", T["id"], "assistance_pledged", W=W, earlier=T["last"])
+        T["past"] = round(max(0.0, T["past"] - need), 2)
+        T["reconnect_on"] = c.next_bank_day(c.today + dt.timedelta(days=1)).isoformat()
+        return
+    T["next"] = next_money_day(c, sim, W).isoformat()
+
+
+def reconnect(c, sim, T, H, P, t):
+    """The service comes back. Gas needs a technician to relight the pilots, with someone home for the window."""
+    org, what = _util(c, T)
+    days = (c.today - D(T["off"])).days
+    home = what == "gas"
+    i = sim.emit(t, "non_monetary_job", "utilities", "service_reconnected", P, H, org, P, channel="in_person" if home else "automatic",
+                 tmin=240 if home else 0, wait=c.crng.randint(30, 200) if home else 0, fr=("wait",) if home else (), lens=("housing",),
+                 ctx=dict(org=org.name, what=what, days=days))
+    back = c.link(i, "utility_shutoff", T["id"], "reconnected", W=H.wallets[0], earlier=T["last"], note="%d days without %s" % (days, what))
+    if home and P.works and P.wage and P.wsched != "fixed" and c.crng.random() < .5:
+        lost = round(4 * P.wage / 2080.0, 2)
+        j = sim.emit(t, "failed_attempt", "work", "late_or_missed_shift", P, H, P, P.org if P.org is not None else "", gross=lost, tmin=240, outcome="partial",
+                     fr=("schedule_volatility", "wait"), lens=("labor", "housing"), related=i,
+                     ctx=dict(hrs=4, lost="%.2f" % lost, why="someone had to be home for the gas technician"))
+        c.link(j, "utility_shutoff", T["id"], "lost_work_hours", W=H.wallets[0], earlier=back)
+    if T["past"] < 1.0:
+        del c.util[H.hid]
+    else:                       # the rest of a plan is still owed; a new notice can follow later
+        T.update(state="notice", off=None, reconnect_on=None, decided=False, plan=True,
+                 due=(c.today + dt.timedelta(days=c.crng.choice([21, 28]))).isoformat())

@@ -1,5 +1,6 @@
 """Group 3, change 1: unpaid bills are retried on a schedule and pick up the late fee from the bill's terms."""
 import datetime as dt
+import re
 
 from conftest import chains
 from medianville_sim.carry import CARD_GAPS, CARD_ONLY, GRACE, REPRESENT, REPRESENT_GAPS
@@ -28,26 +29,25 @@ def test_each_chain_starts_with_a_missed_bill_and_links_back(carried10):
 
 
 def test_some_bills_are_paid_late_with_the_late_fee(carried10):
-    # A late fee is charged once the grace period has run out. The one-day simulator already treats a few hand-made
-    # payments as late (day_a.gen_bills, 4.5%); a retry of one of those carries the fee from the start.
-    late = early = 0
+    # A late fee from the bill's terms is charged once the grace period has run out, and the payment that charges it
+    # says so ("Includes a $N late fee"). The one-day simulator already treats a few hand-made payments as late
+    # (day_a.gen_bills, 4.5%); a retry of one of those carries the fee from the start.
+    late = 0
     for steps in chains(carried10, "unpaid_bill").values():
         kind = steps[0][2]["job_category"].split(".")[1]
         due = dt.date.fromisoformat(steps[0][0])
         for d, l, r in steps[1:]:
-            if r["record_type"] != "bill_payment":
+            m = re.search(r"Includes a \$(\d+) late fee", r["narrative"])
+            if not m:
                 continue
-            days = (dt.date.fromisoformat(d) - due).days
-            g = GRACE.get(kind)
-            past = g is not None and ((g == "5th" and dt.date.fromisoformat(d).day > 5) or (g != "5th" and days > g))
-            if past and kind in LATE_FEE and "late_fee" in r["fee_type"]:
-                lo, hi = LATE_FEE[kind]
-                assert lo <= float(r["fee_amount"]) <= hi + 35 * 3, (kind, r["fee_amount"])   # the late fee, plus any returned-payment fees
-                late += 1
-            if "late_fee" in r["fee_type"] and not past:
-                assert steps[0][1]["step"] in ("missed", "partial", "no_time"), (kind, d, steps[0][0])
-                early += 1
-    assert late > 20 and early < late / 4
+            lo, hi = LATE_FEE[kind]
+            assert lo <= int(m.group(1)) <= hi, (kind, m.group(1))
+            assert "late_fee" in r["fee_type"]
+            day = dt.date.fromisoformat(d)
+            g = GRACE[kind]
+            assert (day.day > 5 or day.month > due.month) if g == "5th" else (day - due).days > g, (kind, d, steps[0][0])
+            late += 1
+    assert late > 20
 
 
 def test_billers_represent_on_bank_days_twice_at_most(carried10):

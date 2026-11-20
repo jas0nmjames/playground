@@ -4,6 +4,7 @@ from .engine import ANY, DAY, EVE, OFFICE, SHOP, MORN, AFT
 from .day_a import push, subtract
 from .day_b import errand, online, bus_ride, inc
 from .config import SALES_TAX
+from .carry import can_notice, notice_sent
 
 SCHOOL_COST = [103.6, 97.9, 108.4]          # imputed cost per pupil per school day, by district (see assumptions)
 # unpaid care for someone in the same household, set from ATUS 2023-25 (v2; v1 drew .80 a day and 50-200 minutes)
@@ -1244,8 +1245,18 @@ def gen_misc(sim, H, q):
             org = util[1]
             what = util[0].replace("_bill", "")
             if r < SHUTOFF_NOTICE:
-                emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
-                     outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=rng.choice([5, 7, 10])))
+                if sim.carry is not None:
+                    # carried runs: the notice starts a timer (carry.py); disconnections come only from timers that run out
+                    if can_notice(sim.carry, H):
+                        days = rng.choice([5, 7, 10])
+                        i = emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
+                                 outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=days))
+                        notice_sent(sim.carry, sim, H, util, P, i, past, days)
+                else:
+                    emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
+                         outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=rng.choice([5, 7, 10])))
+            elif sim.carry is not None:
+                pass
             else:
                 fee = float(rng.choice([35, 45, 50, 75]))
                 t = sim.slot_soft(P, 15, ((480, 900, 1.0),))
