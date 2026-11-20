@@ -17,8 +17,8 @@ Viewers and data runs are numbered separately.
 | Viewer | Where | Status |
 |---|---|---|
 | Latest: Miniature and Map, with the systems lens over the city, photographic light and surface, turning and tilting, and sound | [`/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | Current. New work lands here. |
-| v3: Miniature and Map, as first shipped (Nov 17–18, 2026) | [`/v3/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v3/) | Archived as shipped. Tag `viewer-v3`. |
-| v1: the night map | [`/v1/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v1/) | Archived as shipped. Tag `viewer-v1`. |
+| v3: Miniature and Map, as first shipped (Nov 17–18, 2026) | [`/v3/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v3/) | Archived as shipped, from commit `0881c42`. |
+| v1: the night map | [`/v1/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v1/) | Archived as shipped, from commit `0881c42`. |
 
 No viewer v2 shipped: the second round was a set of visual-direction prototypes in the Claude app, and the chosen direction became v3. The archived pages change only in their relative paths and an "Archived version" link back to the latest.
 
