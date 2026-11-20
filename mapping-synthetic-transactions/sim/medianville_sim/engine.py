@@ -71,6 +71,7 @@ class Sim:
         self.trng = random.Random(cfg["RANDOM_SEED"] + 7)
         self.payroll, self.tanf_idx, self.delivery_orders, self.toll_draw = {}, {}, [], {}
         self.passholders, self.skimmed = set(), set()
+        self.carry = None             # carry.Carry in a carried run (several days); None in a one-day run
 
     # ------------------------------------------------------------------ helpers
     def bump(self, k, v=1):
