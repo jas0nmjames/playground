@@ -35,7 +35,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Decided:** The city was renamed from Halvern to Medianville, a nod to the Lynds' *Middletown* (1929) and the "typical town" studies that followed it.
 - **Why:** The name should say what the city is for. Unlike the Lynds' Muncie, Medianville's typicality comes from weighting, not from leaving groups out. The README carries a naming note.
 - **Considered:** Renaming right away, or after the v2 data was packaged. It was first held until after v2 so it would happen only once, across everything. Renaming between phase 3 and packaging still does it once, and before any v2 run or hand-written record exists, so none of them has to be renamed afterwards.
-- **Who:** Jason. **When:** decided 2026-11-19; moved up on 2026-11-20 to run right after phase 3, so the v2 run and its hand-written records are made under the new name; done in the `medianville-rename` pull request. **Source:** `medianville-data-update-plan.md`, phase 3b.
+- **Who:** Jason. **When:** decided 2026-11-19; moved up on 2026-11-20 to run right after phase 3, so the v2 run and its hand-written records are made under the new name; done in [pull request #77](https://github.com/jas0nmjames/playground/pull/77). **Source:** `medianville-data-update-plan.md`, phase 3b.
 - **Kept:** The frozen v1 run (`data/halvern_2027-03-03.zip` and `data/halvern/`) and the archived viewers (`v1/` and `v3/`) keep Halvern, as a record of what shipped. Past results in `sim/evidence/results/` keep it too. Decided 2026-11-20.
 
 ### 1.6 A renamed copy of v1 for the latest pages
