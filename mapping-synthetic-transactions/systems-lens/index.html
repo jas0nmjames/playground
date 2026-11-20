@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern Exploded Lens</title>
+<title>Medianville Exploded Lens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Same system as Halvern in Motion: slate page, white surfaces, Figtree with tabular figures, 12px radius, soft shadow. Layout: layers and loops on the left, the exploded stack in the middle, the detail sheet on the right. */
+/* Same system as Medianville in Motion: slate page, white surfaces, Figtree with tabular figures, 12px radius, soft shadow. Layout: layers and loops on the left, the exploded stack in the middle, the detail sheet on the right. */
 :root{
   --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797;
   --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
@@ -180,7 +180,7 @@ body.embed #plates{max-height:calc(100vh - 24px)}
 <div class="app">
   <header class="top">
     <div class="brand">
-      <h1>Halvern in Motion</h1>
+      <h1>Medianville in Motion</h1>
       <span class="chip">Simulated city · no real people</span>
       <span class="chip">Composite context · patterns from US history</span>
     </div>
@@ -319,7 +319,7 @@ const EMBED = QS.get("embed") === "1";
 if(EMBED) document.body.classList.add("embed");
 function loopFor(id){ const e = Object.entries(LOOPS).find(([, L]) => L.seen.includes(id)); return e ? e[0] : null; }
 if(QS.has("rec")){ const r = QS.get("rec"); state.sel = BY[r] && BY[r].kindOf === "record" ? r : null; state.loop = state.sel ? loopFor(state.sel) : null; }
-const toParent = msg => { if(EMBED && window.parent !== window) window.parent.postMessage(Object.assign({source:"halvern-lens"}, msg), location.origin); };
+const toParent = msg => { if(EMBED && window.parent !== window) window.parent.postMessage(Object.assign({source:"medianville-lens"}, msg), location.origin); };
 
 /* ================================================================ drawing helpers */
 const SKIN = ["#F1D3B8","#E2B48E","#C98E62","#A56B43","#7D4E2E","#5A3620","#EBC4A0","#B7825A"];
@@ -372,7 +372,7 @@ const PLATES = [
 PLATES.forEach((P, i) => { if(BLOCK.plateSubs && BLOCK.plateSubs[i]) P.sub = BLOCK.plateSubs[i]; });
 s("rect", {x:0, y:0, width:1158, height:930, fill:"#F3F5F8", class:"bg"}, svgP);
 svgP.setAttribute("aria-label", `Exploded view of ${BLOCK.name} as six aligned layers, with links from records to circumstances and a feedback loop`);
-document.title = `Halvern Systems Lens · ${BLOCK.name}`;
+document.title = `Medianville Systems Lens · ${BLOCK.name}`;
 (function(){
   const sel = document.getElementById("blocksel");
   DOC.blocks.forEach(b => { const o = h("option", {value:b.id, text:`${b.name} · ${b.district}`}, sel); if(b.id === BLOCK.id) o.selected = true; });
@@ -954,7 +954,7 @@ document.addEventListener("keydown", e => {
 });
 /* v3's overlay sends the opened record, this block's counts and its latest records; switching blocks reloads the frame */
 window.addEventListener("message", e => {
-  if(!EMBED || e.origin !== location.origin || !e.data || e.data.source !== "halvern-v3") return;
+  if(!EMBED || e.origin !== location.origin || !e.data || e.data.source !== "medianville-v3") return;
   if(e.data.type === "open"){
     LIVE = e.data.live || null;
     const p = e.data.pattern && BY[e.data.pattern] ? e.data.pattern : null;

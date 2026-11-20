@@ -51,17 +51,17 @@ def context_rows(sim):
     add(sim.by_kind["community_college"][0].name, "state", pc(640), "state appropriation, tuition, Pell grants", "not itemized; tuition payments appear when due")
     add("Police (city departments and county sheriff patrol)", "local", pc(455), "city and county general funds", "not itemized")
     add("Fire and rescue", "local", pc(205), "city and county general funds", "not itemized")
-    add("Halvern County EMS", "local", pc(66), "county EMS levy, patient billing", "calls are itemized (ambulance transports and no-transport responses)")
+    add("Medianville County EMS", "local", pc(66), "county EMS levy, patient billing", "calls are itemized (ambulance transports and no-transport responses)")
     add("911 dispatch", "local", pc(29), "county general fund, phone surcharge", "not itemized")
     add("County jail", "local", jail * 124.0, "county general fund", "%d people held; itemized per person-day" % jail)
     add("Courts, prosecution and public defense", "state", pc(165), "state and county funds, fines and fees", "court appearances and fine payments are itemized")
-    add("State prisons (Halvern's per-capita share)", "state", pc(270), "state general fund", "not itemized; residents in state prison are outside the city")
+    add("State prisons (Medianville's per-capita share)", "state", pc(270), "state general fund", "not itemized; residents in state prison are outside the city")
     add("Streets, signals and streetlights (city and county)", "local", pc(285), "local sales and property tax, state gas-tax share", "not itemized")
-    add("State highways (Halvern's per-capita share)", "state", pc(430), "state and federal fuel taxes", "not itemized")
+    add("State highways (Medianville's per-capita share)", "state", pc(430), "state and federal fuel taxes", "not itemized")
     add("Water and sewer utilities", "local", pc(540), "customer rates", "household bills are itemized on their due dates")
     add("Trash and recycling", "local", pc(98), "customer fees", "bills itemized on due dates")
     add("Stormwater and drainage", "local", pc(37), "stormwater fee", "not itemized")
-    add("Halvern Area Transit (bus and paratransit)", "local", rides * TRANSIT_COST * 1.12, "local sales tax, state aid, federal formula funds, fares",
+    add("Medianville Area Transit (bus and paratransit)", "local", rides * TRANSIT_COST * 1.12, "local sales tax, state aid, federal formula funds, fares",
         "%d boardings today x $%.2f, plus paratransit; itemized per ride" % (rides, TRANSIT_COST))
     add("Public libraries", "local", pc(50), "city and county property tax, state aid", "visits, computer sessions and story times are itemized")
     add("Parks and recreation", "local", pc(110), "city general fund, program fees", "organized programs are itemized; ordinary park use is not")
@@ -72,7 +72,7 @@ def context_rows(sim):
     add("Workforce career center and unemployment insurance administration", "state", pc(41), "federal WIOA and UI administrative grants", "career center visits are itemized")
     add("General government (administration, assessor, elections, clerks)", "local", pc(320), "property and sales tax", "permits and license fees are itemized")
     add("Code enforcement and animal control", "local", pc(19), "city general fund", "not itemized")
-    add("Halvern Housing Authority and rent subsidies", "federal", sub * 1010.0 * 12 / 365.0, "HUD housing assistance payments", "%d subsidized households; landlord subsidy payments post on the 1st" % sub)
+    add("Medianville Housing Authority and rent subsidies", "federal", sub * 1010.0 * 12 / 365.0, "HUD housing assistance payments", "%d subsidized households; landlord subsidy payments post on the 1st" % sub)
     add("Medicaid and CHIP (medical spending for residents)", "state", mcaid * 9400.0 / 365.0, "federal and state Medicaid funds", "%d enrollees; today's claims are itemized" % mcaid)
     add("Medicare (medical spending for residents)", "federal", mcare * 16900.0 / 365.0, "payroll tax, premiums, general revenue", "%d enrollees; today's claims are itemized" % mcare)
     add("Marketplace premium tax credits", "federal", mkt * 4300.0 / 365.0, "federal general revenue", "%d enrollees; paid to insurers monthly" % mkt)
@@ -89,7 +89,7 @@ def context_rows(sim):
     add("Child care subsidies (CCDF)", "state", pc(38), "federal block grant and state match", "parent copays itemized; provider payments appear as business records")
     add("Energy assistance (LIHEAP)", "federal", pc(14), "federal block grant", "pledges itemized when made")
     add("U.S. Postal Service (local operations)", "federal", pc(245), "postage", "self-funded; counter purchases itemized")
-    add("National defense (Halvern's per-capita share)", "federal", pc(2700), "federal general revenue and borrowing", "national spending shown for scale; not local operations")
+    add("National defense (Medianville's per-capita share)", "federal", pc(2700), "federal general revenue and borrowing", "national spending shown for scale; not local operations")
     add("Interest on federal debt (per-capita share)", "federal", pc(3000), "federal general revenue and borrowing", "national spending shown for scale")
     return R
 
@@ -118,10 +118,10 @@ def assumption_rows(sim, S=None):
     a("residents with jobs", "48% of residents", "about 48,000 jobs among about 100,000 residents", "anchor (prompt)")
     a("industry mix", "21 sectors at the shares in the prompt", "fitted by iterative proportional fitting over education, sex, age and district affinities", "anchor (prompt)")
     a("out-commuters", "5% of wage workers", "prompt asks to keep commuting across the city line small", "design choice")
-    a("in-commuters", "4.5% of positions at Halvern employers", "prompt asks to keep commuting across the city line small", "design choice")
+    a("in-commuters", "4.5% of positions at Medianville employers", "prompt asks to keep commuting across the city line small", "design choice")
     a("occupation wages", "full-time base wages by occupation x %.2f" % C.WAGE_SCALE,
       "base wages follow national occupational pay (OEWS May 2025 medians); the x %.2f boost, where wage growth to 2027 would justify about x 1.08, "
-      "pays each worker about 14%% more than a real worker in the same job, to make up for Halvern's smaller households (2.36 people, 1.14 earners). "
+      "pays each worker about 14%% more than a real worker in the same job, to make up for Medianville's smaller households (2.36 people, 1.14 earners). "
       "It puts median household income near $78,000 (SCF 2025 implies about $86,700). Compare household money, not one job's pay; "
       "v3 rebuilds households from ACS PUMS and drops the boost (see WAGE_SCALE in config.py)" % C.WAGE_SCALE, "estimate (kept on purpose in v2)")
     a("poverty guideline 2027", "$%d plus $%d per additional person" % (C.POVERTY_BASE, C.POVERTY_STEP), "2026 HHS guideline carried forward for inflation", "estimate")
@@ -178,7 +178,7 @@ def assumption_rows(sim, S=None):
     a("language and disability frictions", "18% of agency and clinic encounters for limited-English households; 6% of in-person trips for people with mobility or vision disabilities; 30% of phone calls for people with hearing disabilities",
       "applied by a fixed rule so results are reproducible", "estimate")
     a("benefit-limit trade-offs", "0.45% of variable-schedule workers in benefit households turn down hours on the day; 22% of working SNAP households see a cut at recertification", "represents benefit cliffs", "estimate")
-    a("value of time", "median hourly wage of Halvern workers" + (" ($%.2f)" % S["time_value"] if S else ""), "used only to rank frictions in summary.md", "derived")
+    a("value of time", "median hourly wage of Medianville workers" + (" ($%.2f)" % S["time_value"] if S else ""), "used only to rank frictions in summary.md", "derived")
     a("property tax", "escrow share 16% to 24% of a mortgage payment; direct payers 0.45% a day in March and September", "installments due April 1 and October 1 in the fictional counties", "design choice")
     a("housing costs", "base rent $1,790 (D1), $1,560 (D2), $2,080 (D3), $1,380 (D4), $1,010 (D5), $930 (D6), scaled by size and income; subsidized tenants pay 30% of income", "2027 dollars", "estimate")
     a("child care", "$290 / $255 / $215 a week for infants, toddlers, preschoolers; subsidized families pay 7% of income", "center rates; home-based care 20% less", "estimate")

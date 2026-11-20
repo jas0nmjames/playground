@@ -177,7 +177,7 @@ def business_day(sim):
         if weekday and cal["month"] in (2, 3, 4, 5) and rng.random() < .30:
             ws = ag_ws[0]
             amt = round(o.size ** .7 * rng.uniform(900, 4200), 2)
-            b2b(rng.randint(450, 960), "farm_inputs_purchase", o, ws, amt, user=0.0, method="none", outcome="partial", third=amt, payer="Farm operating line of credit (First Halvern Bank)",
+            b2b(rng.randint(450, 960), "farm_inputs_purchase", o, ws, amt, user=0.0, method="none", outcome="partial", third=amt, payer="Farm operating line of credit (First Medianville Bank)",
                 fund="private", lens=("rural",), ctx=dict(org=ws.name, farm=o.name, what=rng.choice(["seed", "fertilizer", "diesel and propane", "crop protection", "greenhouse flats and soil"])))
     if barn is not None and barn.open is not None:
         sellers = [(o, None) for o in farms if "cattle" in o.notes or "corn" in o.notes] + [(None, p) for p in farmers]
@@ -271,7 +271,7 @@ def business_day(sim):
         if np_ and rng.random() < min(1.0, 1.2 * sc):
             grantee = rng.choice(K.get("food_pantry", []) + K.get("shelter", []) + K.get("community_action", []))
             amt = float(rng.choice([5000, 7500, 12000, 20000, 35000]))
-            b2b(rng.randint(600, 900), "grant_disbursement", np_[0], grantee, amt, user=0.0, method="ach", third=amt, payer="United Fund of Greater Halvern annual campaign",
+            b2b(rng.randint(600, 900), "grant_disbursement", np_[0], grantee, amt, user=0.0, method="ach", third=amt, payer="United Fund of Greater Medianville annual campaign",
                 fund="philanthropic", ctx=dict(org=grantee.name))
         # office lunches
         buyers = K.get("law", []) + K.get("prof_firm", []) + K.get("mgmt_hq", []) + K.get("insurer_office", []) + K.get("software", []) + K.get("bank_hq", []) + K.get("hospital", [])

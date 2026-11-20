@@ -4,7 +4,7 @@ Every day of 2027 is put into exactly one class by `classify()`, using the simul
 (Social Security cohorts, SSI day, tax season, EITC refund wave) and OPM's observed federal holidays.
 Each class is represented by one or two simulated days; a representative's weight is the number of
 2027 days in its class divided by the number of representatives. Storm and heat days are carved out
-of the ordinary weekdays at the 2015-2025 average for Halvern's counties (sources/derived/weather_days.csv,
+of the ordinary weekdays at the 2015-2025 average for Medianville's counties (sources/derived/weather_days.csv,
 built by sources/tools/weather_days.py from NOAA Storm Events and Atlanta airport daily highs).
 """
 import csv
@@ -15,7 +15,7 @@ import sys
 SIM_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if SIM_DIR not in sys.path:
     sys.path.insert(0, SIM_DIR)
-from halvern_sim.config import MAJOR_HOLIDAYS, calendar, federal_holidays  # noqa: E402
+from medianville_sim.config import MAJOR_HOLIDAYS, calendar, federal_holidays  # noqa: E402
 
 YEAR = 2027
 HOLIDAYS_CSV = os.path.join(os.path.dirname(SIM_DIR), "sources", "derived", "federal_holidays_2027.csv")

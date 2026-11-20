@@ -28,7 +28,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCES = os.path.dirname(HERE)
 RAW = os.path.join(SOURCES, "raw")
 LOG = os.path.join(SOURCES, "download_log.jsonl")
-UA = "halvern-sources/0.1 (public data archiving)"
+UA = "medianville-sources/0.1 (public data archiving)"
 LIMIT = 1 << 30
 
 

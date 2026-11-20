@@ -1,4 +1,4 @@
-"""Households and persons for Halvern: whole households drawn from national-style distributions."""
+"""Households and persons for Medianville: whole households drawn from national-style distributions."""
 import math
 import numpy as np
 from .config import (DISTRICTS, DSHARE, DIST, SECTORS, SEC_AFF, SEC_DIST, SEC_YOUNG, SEC_OLD, UNION, CADENCE,
@@ -108,7 +108,7 @@ EMP_AGE = [(16, 17, .18), (18, 19, .42), (20, 24, .67), (25, 34, .81), (35, 44, 
 DIS_AGE = [(0, 4, .008), (5, 17, .058), (18, 34, .075), (35, 64, .125), (65, 74, .24), (75, 120, .46)]
 GQ_PLAN = [("nursing_home", "D2", 180, "Maple Glen Nursing & Rehabilitation"), ("nursing_home", "D4", 130, "Cedar Hollow Care Center"),
            ("nursing_home", "D5", 60, "Prairie View Manor"), ("assisted_living", "D3", 80, "Wexford Commons Senior Living"),
-           ("college_dorm", "D4", 1100, "Wexley College"), ("jail", "D4", 240, "Halvern County Detention Center"),
+           ("college_dorm", "D4", 1100, "Wexley College"), ("jail", "D4", 240, "Medianville County Detention Center"),
            ("group_home", "D1", 40, None), ("group_home", "D2", 40, None), ("group_home", "D4", 30, None),
            ("shelter", "D1", 100, "Harbor House Shelter"), ("residential_treatment", "D1", 50, None)]
 
@@ -1067,7 +1067,7 @@ def build_population(sim):
 
 # Unbanked share of households by income: FDIC National Survey of Unbanked and Underbanked Households 2023
 # (sources/raw/fdic_unbanked/hh2023_analys.csv; hunbnk weighted by hhsupwgt; 4.2% overall). Income bands are in 2023
-# dollars (Halvern's 2027 incomes / 1.13). v1's rule, keyed on ALICE status, gave 3.6% and ran low at the bottom
+# dollars (Medianville's 2027 incomes / 1.13). v1's rule, keyed on ALICE status, gave 3.6% and ran low at the bottom
 # (16.9% under $15,000) and a little high at the top. The 2023 file carries no underbanked measure, so that share is kept.
 FDIC_UNBANKED = ((15000, .218), (30000, .090), (50000, .045), (75000, .018), (float("inf"), .007))
 DOLLARS_2027_PER_2023 = 1.13
@@ -1112,7 +1112,7 @@ PSL_BY_WAGE_RANK = ((.10, .48), (.25, .73), (.50, .85), (.75, .91), (.90, .94), 
 
 
 def assign_sick_leave(sim, PP):
-    """Paid sick leave by the worker's wage rank among Halvern's employees; part-time a little lower, self-employed none.
+    """Paid sick leave by the worker's wage rank among Medianville's employees; part-time a little lower, self-employed none.
     Own random stream, so nothing else moves."""
     srng = C.side_rng(sim.cfg["RANDOM_SEED"], "sick_leave")
     emp = sorted((p for p in PP if p.emp in ("employed_full_time", "employed_part_time")), key=lambda p: (p.wage, p.pid))
@@ -1152,7 +1152,7 @@ def reshape_owner_costs(sim, HH):
 
 # H-2A guest workers on the job, per 1,000 US residents, by month: DOL's FY2025 disclosure file
 # (sources/derived/h2a_on_the_job.csv, sources/tools/h2a_season.py), certified positions counted from employment start
-# to end. National rates, as Halvern's people are national; Georgia peaks earlier (peaches) and higher.
+# to end. National rates, as Medianville's people are national; Georgia peaks earlier (peaches) and higher.
 H2A_PER_1000 = {1: .267, 2: .335, 3: .488, 4: .612, 5: .672, 6: .677, 7: .649, 8: .657, 9: .712, 10: .714, 11: .564, 12: .334}
 H2A_WAGE_2027 = 16.23 * 1.03 ** 2   # FY2025 median certified wage offer, carried to 2027 at 3% a year; not boosted by
                                      # WAGE_SCALE, which makes up for resident household size (see config.py)
@@ -1161,7 +1161,7 @@ H2A_WAGE_2027 = 16.23 * 1.03 ** 2   # FY2025 median certified wage offer, carrie
 def add_h2a_workers(sim, HH, PP):
     """H-2A workers in employer housing on the open-country farms, each a one-person group-quarters unit (the Census
     counts workers' dormitories as group quarters). The roster is drawn whole from its own stream and only the workers on
-    the job that month are added, at the end, so nobody else in Halvern changes."""
+    the job that month are added, at the end, so nobody else in Medianville changes."""
     farms = sorted((o for o in sim.by_kind.get("farm", []) if o.district in ("D6", "D5")), key=lambda o: (-o.size, o.oid))
     if not farms:
         return

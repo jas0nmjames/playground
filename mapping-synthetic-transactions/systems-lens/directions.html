@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern Systems Lens: three directions</title>
+<title>Medianville Systems Lens: three directions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=IM+Fell+English+SC&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
   --c-env:#5E8A3A;
   --c-soc:#B4505E;
   --c-cult:#76569A;
-  /* Halvern in Motion record language (map tokens) */
+  /* Medianville in Motion record language (map tokens) */
   --r-purchase:#A65300;
   --r-income:#145A33;
   --r-bill:#2F5E9E;
@@ -177,7 +177,7 @@ footer .note{margin-left:auto;color:var(--ink-2)}
 <div class="app">
   <header>
     <div class="title">
-      <h1>Halvern Systems Lens</h1>
+      <h1>Medianville Systems Lens</h1>
       <p>Larkin Avenue, D2 Inner suburbs · Wednesday, March 3, 2027 · three prototype directions</p>
     </div>
     <span class="chip">Composite context · invented city · patterns from US history</span>
@@ -188,7 +188,7 @@ footer .note{margin-left:auto;color:var(--ink-2)}
     </nav>
   </header>
   <div class="entry">
-    <div class="from"><span>Opened from Halvern in Motion:</span><span class="dot" aria-hidden="true"></span><span class="rec">11:15 · Paycheck cashed at QuikCash Larkin · $14.20 fee</span></div>
+    <div class="from"><span>Opened from Medianville in Motion:</span><span class="dot" aria-hidden="true"></span><span class="rec">11:15 · Paycheck cashed at QuikCash Larkin · $14.20 fee</span></div>
     <a class="back" href="./" style="cursor:pointer;text-decoration:none;color:var(--ink)">Chosen direction: Exploded view →</a>
     <div class="direction" id="direction"></div>
   </div>
@@ -241,8 +241,8 @@ const CONTEXT = [
    title:"Rated “hazardous” on the 1938 appraisal map", layer:"hist", x:520, w:236, under:[],
    cells:{plate:5, rep:[6,3]},
    body:"A federal appraisal map graded the Larkin Avenue blocks red, citing the race of residents and the age of the housing. For decades lenders treated red-rated blocks as too risky for mortgages and deposits, so home ownership, equity and bank branches stayed thin here."},
-  {id:"H3", types:["hist","econ"], year:"1983", lines:["Halvern Works closes:", "1,900 union jobs gone"],
-   title:"Halvern Works closes", layer:"hist", x:900, w:190, under:[],
+  {id:"H3", types:["hist","econ"], year:"1983", lines:["Medianville Works closes:", "1,900 union jobs gone"],
+   title:"Medianville Works closes", layer:"hist", x:900, w:190, under:[],
    cells:{plate:5, rep:[10,0]},
    body:"The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly."},
   {id:"H2", types:["hist","pol","env"], year:"1961", lines:["Interstate spur cut through;", "about 300 homes cleared"],
@@ -260,7 +260,7 @@ const CONTEXT = [
   {id:"P1", types:["econ"], year:"2009", lines:["Last two bank branches", "close after a merger"],
    title:"The last bank branches close", layer:"econ", x:690, w:190, under:["H1"],
    cells:{plate:1, rep:[6,3]},
-   body:"After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Halvern Savings building is a check casher."},
+   body:"After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Medianville Savings building is a check casher."},
   {id:"EC1", types:["econ"], year:"today", lines:["Hourly work, schedules", "posted under a week out"],
    title:"Hourly work, short-notice schedules", layer:"econ", x:930, w:190, under:["H3"],
    cells:{plate:1, rep:[9,1]},
@@ -297,7 +297,7 @@ const RECORDS = [
   {id:"R7", n:4, time:"09:20", kind:"purchase", title:"ER visit for a child’s asthma attack, $250 copay", links:["E2"], cell:[2,2],
    body:"The family lives 200 feet from the spur. The ER copay is the day’s largest health expense in the district."},
   {id:"R2", n:5, time:"11:15", kind:"income", title:"Paycheck cashed at QuikCash, $14.20 fee", links:["P1","P2"], cell:[6,3],
-   body:"A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Halvern Savings branch, for 2%."},
+   body:"A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Medianville Savings branch, for 2%."},
   {id:"R3", n:6, time:"13:05", kind:"bill", title:"Payday loan renewed, $75 fee", links:["P2","EC1"], cell:[7,3],
    body:"$300 borrowed after a short week in February. The fee is paid again; the $300 is still owed."},
   {id:"R4", n:7, time:"16:50", kind:"fail", title:"Debit card declined at Dollar Mart, $23.18", links:["EC1"], cell:[8,3],
@@ -528,7 +528,7 @@ function numCircle(g, x, y, n, color){
   s("path", {d:`M646 ${t} L701 ${t-22} L756 ${t} Z`, fill:"#EDE5D1"}, B);
   [662, 684, 706, 728].forEach(x => s("rect", {x, y:t + 26, width:8, height:G - t - 26, fill:"#FBF8F0"}, B));
   sign(658, t + 4, 86, "CHECKS CASHED", "#8E2C6E");
-  label(B, 701, t - 6, "HALVERN SAVINGS 1952", {anchor:"middle", size:7.5, cls:"disp", fill:"#5A5246"});
+  label(B, 701, t - 6, "MEDIANVILLE SAVINGS 1952", {anchor:"middle", size:6.2, cls:"disp", fill:"#5A5246"});
   s("rect", {x:740, y:G-30, width:8, height:30, fill:"url(#hatch)"}, B);
   figure(B, 718, G); figure(B, 744, G - 30, {scale:.9, color:"#444"});
 
@@ -599,7 +599,7 @@ function numCircle(g, x, y, n, color){
   const drill = s("g", {"pointer-events":"none"}, svg);
   svg.insertBefore(drill, tagLayer);
 
-  label(svg, 150, 805, "Not to scale. Every circumstance is a composite drawn from documented US patterns; Halvern and its households are invented.", {size:12, fill:"#5A5246"});
+  label(svg, 150, 805, "Not to scale. Every circumstance is a composite drawn from documented US patterns; Medianville and its households are invented.", {size:12, fill:"#5A5246"});
 
   function anchorTop(id){ const it = BY[id]; return it.kindOf === "record" ? [it._sec.x, G] : [it._sec.cx, it._sec.top]; }
   function anchorBot(id){ const it = BY[id]; return it.kindOf === "record" ? [it._sec.x, G] : [it._sec.cx, it._sec.bot]; }

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern Data Explorer</title>
+<title>Medianville Data Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400&display=swap" rel="stylesheet">
 <style>
-/* Halvern Data Explorer: browse the March 3, 2027 run as tables.
-   Same tokens as Halvern in Motion v3 so the two read as one project. */
+/* Medianville Data Explorer: browse the March 3, 2027 run as tables.
+   Same tokens as Medianville in Motion v3 so the two read as one project. */
 :root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --ink3:#7D8797; --line:#DDE2EA; --ctrl:#7D8797;
   --blue:#1F5AF0; --blue-soft:#E8EEFE; --green:#0A7A4B; --plum:#8E3B6D; --plum-soft:#F6EAF1; --r:12px;
   --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08);
@@ -252,7 +252,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
 <body>
 <header class="top" id="top">
   <div class="brand">
-    <h1>Halvern data explorer</h1>
+    <h1>Medianville data explorer</h1>
     <span class="chip" id="status" role="status">Loading the day…</span>
   </div>
   <nav class="tabs" aria-label="Tables">
@@ -319,7 +319,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   const PAGES = 'https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/';
   const inRepo = /\/explorer\/(index\.html)?$/.test(location.pathname);
   $('#anim-link').href = inRepo ? '../' : PAGES;
-  const RUNS = ['../data/halvern_2027-03-03.zip', 'data/halvern_2027-03-03.zip'];
+  const RUNS = ['../data/medianville_2027-03-03.zip', 'data/medianville_2027-03-03.zip'];
   const FFLATE = ['../fflate.js', 'fflate.js'];
   let framed = true; try { framed = window.self !== window.top; } catch (e) { framed = true; }
 
@@ -334,7 +334,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     t = t.replace(/\bsocial security\b/gi, 'Social Security');
     return t.charAt(0).toUpperCase() + t.slice(1);
   };
-  const DNAME = { D1: 'Downtown and core', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Halvern' };
+  const DNAME = { D1: 'Downtown and core', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Medianville' };
   const dname = (d) => (DNAME[d] ? DNAME[d] : human(d));
   const TYPE_L = { purchase: 'Purchase', public_service_encounter: 'Public service', bill_payment: 'Bill payment', non_monetary_job: 'Unpaid job', transfer: 'Transfer', income: 'Income',
     failed_attempt: 'Failed attempt', insurance_claim: 'Insurance claim', tax: 'Tax', benefit_issuance: 'Benefit issued', b2b: 'Business to business', benefit_redemption: 'Benefit spent' };
@@ -370,7 +370,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     let res = null;
     for (const u of RUNS) { try { const r = await fetch(u); if (r.ok) { res = r; break; } } catch (e) { /* try the next place */ } }
     if (!res) throw new Error('the run file could not be found');
-    const total = +res.headers.get('content-length') || 16019255, rd = res.body.getReader(), got = {};
+    const total = +res.headers.get('content-length') || 16182979, rd = res.body.getReader(), got = {};
     let fail = null, seen = 0;
     const unz = new fflate.Unzip(); unz.register(fflate.UnzipInflate);
     unz.onfile = (f) => {
@@ -966,7 +966,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     const text = lines.join('\n') + '\n';
     if (framed) { try { await navigator.clipboard.writeText(text); toast(`Copied ${fmt(v.idx.length)} rows as CSV`); } catch (e) { toast("Couldn't copy here"); } return; }
     const url = URL.createObjectURL(new Blob([text], { type: 'text/csv' })), a = document.createElement('a');
-    a.href = url; a.download = 'halvern_2027-03-03_records_filtered.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    a.href = url; a.download = 'medianville_2027-03-03_records_filtered.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
   }
 
   // ---------- summary ----------
@@ -1213,7 +1213,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     $$('nav.tabs a').forEach((a) => a.setAttribute('aria-current', a.dataset.v === name ? 'page' : 'false'));
     view.onclick = null;
     if (name === 'summary') renderSummary(); else renderView(name);
-    document.title = 'Halvern Data Explorer · ' + name.charAt(0).toUpperCase() + name.slice(1);
+    document.title = 'Medianville Data Explorer · ' + name.charAt(0).toUpperCase() + name.slice(1);
   }
   window.addEventListener('popstate', route);
   window.addEventListener('hashchange', route);

@@ -1,11 +1,13 @@
-# Halvern run record: Wednesday, March 3, 2027 (baseline day)
+# Medianville run record: Wednesday, March 3, 2027 (baseline day)
 
-Generated 2026-11-16 from `claude/halvern-transaction-generator-prompt.md` in GENERATOR mode.
+v1 shipped under the city's first name, Halvern. Its zip, `data/halvern/` and the archived viewers keep that name.
+
+Generated 2026-11-16 from the [transaction generator prompt](medianville-transaction-generator-prompt.md) in GENERATOR mode.
 Seed 20270303, weather ordinary, full city. Deterministic: the same options reproduce the files byte for byte.
 
 ## Deliverable
 
-`halvern_2027-03-03.zip` (16 MB; 107 MB unpacked), delivered in the chat that produced it:
+`halvern_2027-03-03.zip` (16 MB; 107 MB unpacked), delivered in the chat that produced it. Since 2026-11-20 the latest pages load a copy with only the name changed, `data/medianville_2027-03-03.zip` (decision 1.6 in the [decision log](design-decisions.md)). The original holds:
 
 - `out/records.csv`: 201,753 records, 31 columns, 367 job categories
 - `out/households.csv` (41,400 households + 2,050 group-quarters units), `out/persons.csv` (99,694), `out/organizations.csv` (1,672)

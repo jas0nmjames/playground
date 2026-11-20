@@ -1,11 +1,11 @@
-// ===== Halvern in Motion v3 · the real synthetic day =====
-// Loads data/halvern_2027-03-03.zip (201,753 records) and puts it on v3's city.
+// ===== Medianville in Motion v3 · the real synthetic day =====
+// Loads data/medianville_2027-03-03.zip (v1's 201,753 records under the city's new name) and puts it on v3's city.
 // v3 draws one small town, so the run's six districts and 1,672 organizations are
 // folded onto its homes and buildings (see FOLD and kindOf below). Records keep their
 // real ids, names, amounts, districts and text; only their position on the map is
 // approximate. Until the zip has loaded, v3's own placeholder day plays.
 (function () {
-  const RUN = 'data/halvern_2027-03-03.zip';
+  const RUN = 'data/medianville_2027-03-03.zip';
   const pad = (n, w) => String(n).padStart(w, '0');
 
   // ---------- CSV read straight from bytes (same reader as the night map) ----------
@@ -51,7 +51,7 @@
   async function download(prog) {
     if (!window.fflate) throw new Error('the unzip helper did not load');
     const res = await fetch(RUN); if (!res.ok) throw new Error('the server answered ' + res.status);
-    const total = +res.headers.get('content-length') || 16019255, rd = res.body.getReader(), got = {};
+    const total = +res.headers.get('content-length') || 16182979, rd = res.body.getReader(), got = {};
     let fail = null, seen = 0;
     const unz = new fflate.Unzip(); unz.register(fflate.UnzipInflate);
     unz.onfile = (f) => {
@@ -75,7 +75,7 @@
   // ---------- where the real city lands on v3's town ----------
   // Homes: v3 has rowhouses (Millbank), newer houses (Brookfield Commons) and one farm (Cutler Fields).
   const FOLD = { D1: 'older', D2: 'older', D3: 'subdivision', D4: 'subdivision', D5: 'subdivision', D6: 'rural' };
-  const DNAME = { D1: 'Downtown', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Halvern' };
+  const DNAME = { D1: 'Downtown', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Medianville' };
   // Organizations: each one is drawn at a v3 building of the closest kind.
   function kindOf(o) {
     const n = o.name, s = o.sector, t = o.org_type;
@@ -150,8 +150,8 @@
     byKind.bushub = byKind.bushub || [H.transit];
     const homes = {}; for (const hh of H.households) (homes[hh.district] = homes[hh.district] || []).push(hh);
     const edge = H.T(19, 13), EDGE = [10.25, 0.32, 3.5];
-    const outsideParty = (id, name) => ({ id, type: 'org', name, sector: 'Outside Halvern', district: 'commercial', where: 'Outside Halvern', tile: edge, anchor: EDGE, outside: true });
-    const unknown = outsideParty('X-UNKNOWN', 'Someone outside Halvern');
+    const outsideParty = (id, name) => ({ id, type: 'org', name, sector: 'Outside Medianville', district: 'commercial', where: 'Outside Medianville', tile: edge, anchor: EDGE, outside: true });
+    const unknown = outsideParty('X-UNKNOWN', 'Someone outside Medianville');
     const stands = new Map(); // v3 building → real places it stands for
 
     // organizations

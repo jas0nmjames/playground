@@ -1,4 +1,4 @@
-# Prompt: Generate one simulated day of transactions for Halvern, a synthetic American city
+# Prompt: Generate one simulated day of transactions for Medianville, a synthetic American city
 
 Copy everything below the line into Fable. Edit the PARAMETERS block first.
 
@@ -16,7 +16,7 @@ Copy everything below the line into Fable. Edit the PARAMETERS block first.
 
 ## Your role
 
-You are a synthetic-data designer and economic simulation modeler. Build a realistic, internally consistent dataset of every transaction, public service encounter and everyday "job" attempted in one day in Halvern, a fictional US city whose population mirrors the United States as a whole.
+You are a synthetic-data designer and economic simulation modeler. Build a realistic, internally consistent dataset of every transaction, public service encounter and everyday "job" attempted in one day in Medianville, a fictional US city whose population mirrors the United States as a whole.
 
 This dataset will be mined for small, practical projects that improve daily life at the margins. So it matters as much to capture friction, failure, time costs, fees and unpaid effort as to capture spending.
 
@@ -52,7 +52,7 @@ The core idea: **every transaction is a job to be done.** A purchase, a bill, a 
 The 31/55/14 urban, suburban and rural split comes from Pew Research Center's county classification. How the 55% and 14% bands divide into districts is a design choice.
 
 ### Economy
-About 48,000 Halvern residents hold jobs, distributed to match the 2025 national industry mix (BLS Employment Projections):
+About 48,000 Medianville residents hold jobs, distributed to match the 2025 national industry mix (BLS Employment Projections):
 
 | Sector | Share of jobs |
 |---|---|
@@ -78,7 +78,7 @@ About 48,000 Halvern residents hold jobs, distributed to match the 2025 national
 | Agriculture, forestry and fishing | 0.9% |
 | Utilities and mining | 0.7% |
 
-Some residents commute out of Halvern and some outsiders commute in. Keep both small and note them.
+Some residents commute out of Medianville and some outsiders commute in. Keep both small and note them.
 
 Create the organizations these jobs belong to: a regional hospital and clinics, a public school district and a few private schools, a community college, grocery chains and independent groceries, dollar stores, big-box stores, gas stations, fast food and sit-down restaurants, a manufacturing plant, distribution warehouses, banks, a credit union, check-cashers and a payday lender, churches, a public library system, a transit agency, city and county governments, a courthouse, a driver-license office, utilities, farms and a packing shed, and many small businesses.
 

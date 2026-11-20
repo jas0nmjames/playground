@@ -1,6 +1,6 @@
-# Halvern source downloads: instructions for Claude Code
+# Medianville source downloads: instructions for Claude Code
 
-Companion to `halvern-download-manifest.csv` (51 datasets) and `halvern-data-update-plan.md` (phase 2). Run in `playground/mapping-synthetic-transactions` on a feature branch; merge into `development`, never `main`.
+Companion to `halvern-download-manifest.csv` (51 datasets) and `medianville-data-update-plan.md` (phase 2). Run in `playground/mapping-synthetic-transactions` on a feature branch; merge into `development`, never `main`.
 
 ## Setup
 
@@ -19,5 +19,5 @@ Companion to `halvern-download-manifest.csv` (51 datasets) and `halvern-data-upd
 - **Size.** Rows marked `large` (CE microdata, MEPS, ACS PUMS, SIPP, CFPB complaints, PSID, HRS) can run to several GB. Ask before downloading anything over 1 GB.
 - **Registration.** PSID and HRS need a free account in Jason's name. Mark them `needs_jason`; don't create accounts.
 - **Compiled sources.** SNAP issuance schedules and 2027 holidays have no single file. Save the pages you used in `raw/`, and write the compiled table to `sources/derived/` with each row's source URL.
-- **Real and synthetic stay apart.** These files set rates and distributions. No real person's words or record (complaint narratives especially) goes into a Halvern record.
+- **Real and synthetic stay apart.** These files set rates and distributions. No real person's words or record (complaint narratives especially) goes into a Medianville record.
 - **Report back.** A table of rows by status, total size, anything newer or older than `target_vintage`, and every `needs_jason` row.

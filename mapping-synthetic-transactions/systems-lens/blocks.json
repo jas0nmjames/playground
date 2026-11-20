@@ -843,7 +843,7 @@
       "status": "Missed",
       "type": "Trip",
       "fail": true,
-      "with": "Halvern Transit, Route 3"
+      "with": "Medianville Transit, Route 3"
      }
     },
     {
@@ -1504,10 +1504,10 @@
      ],
      "under": [],
      "lines": [
-      "Halvern Works closes:",
+      "Medianville Works closes:",
       "1,900 union jobs gone"
      ],
-     "title": "Halvern Works closes",
+     "title": "Medianville Works closes",
      "body": "The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly.",
      "draw": {
       "5": [
@@ -1531,7 +1531,7 @@
         "t": "label",
         "c": 10.5,
         "r": 0.5,
-        "text": "Halvern Works, closed 1983",
+        "text": "Medianville Works, closed 1983",
         "dx": -16,
         "dy": -12,
         "anchor": "end"
@@ -1748,7 +1748,7 @@
       "close after a merger"
      ],
      "title": "The last bank branches close",
-     "body": "After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Halvern Savings building is a check casher.",
+     "body": "After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Medianville Savings building is a check casher.",
      "draw": {
       "1": [
        {
@@ -2234,7 +2234,7 @@
       "amt": "38 min lost",
       "status": "Missed",
       "type": "Trip",
-      "with": "Halvern Transit, Route 6",
+      "with": "Medianville Transit, Route 6",
       "fail": true
      }
     },
@@ -2289,7 +2289,7 @@
       "amt": "−$250.00",
       "status": "Completed",
       "type": "Health care",
-      "with": "Halvern Regional, emergency room"
+      "with": "Medianville Regional, emergency room"
      }
     },
     {
@@ -2313,7 +2313,7 @@
      "example": {
       "time": "11:15",
       "title": "Paycheck cashed at QuikCash, $14.20 fee",
-      "body": "A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Halvern Savings branch, for 2%.",
+      "body": "A $710 paper paycheck. The bank 2.6 miles away would hold most of it for two days, so it is cashed here, in the old Medianville Savings branch, for 2%.",
       "amt": "−$14.20",
       "status": "Completed",
       "type": "Check cashing fee",
@@ -4055,12 +4055,12 @@
      ],
      "year": "2015",
      "layer": "pol",
-     "title": "The bus to Halvern is cut",
+     "title": "The bus to Medianville is cut",
      "lines": [
-      "Route 14 to Halvern",
+      "Route 14 to Medianville",
       "discontinued in 2015"
      ],
-     "body": "The regional bus that ran to Halvern every hour was cut in 2015. A county van runs twice a day by reservation. People without a car pay neighbors or apps for rides, or search for one each morning.",
+     "body": "The regional bus that ran to Medianville every hour was cut in 2015. A county van runs twice a day by reservation. People without a car pay neighbors or apps for rides, or search for one each morning.",
      "under": [],
      "rep": [
       6,
@@ -4294,7 +4294,7 @@
       "Ashford hospital closes, 2017:",
       "urgent care only"
      ],
-     "body": "The 60-bed hospital closed in 2017 after it was bought by a regional system. An urgent care clinic stayed in part of the building. Anything serious means a 19-mile trip to Halvern.",
+     "body": "The 60-bed hospital closed in 2017 after it was bought by a regional system. An urgent care clinic stayed in part of the building. Anything serious means a 19-mile trip to Medianville.",
      "under": [],
      "rep": [
       9.5,
@@ -4340,7 +4340,7 @@
       "Families visit, call and",
       "send money in"
      ],
-     "body": "Most people held in the jail are from Halvern and the county, so their families come in by car or not at all. Calls and deposits are how most of them stay in touch.",
+     "body": "Most people held in the jail are from Medianville and the county, so their families come in by car or not at all. Calls and deposits are how most of them stay in touch.",
      "under": [
       "P1"
      ],
@@ -4473,7 +4473,7 @@
      ],
      "example": {
       "time": "06:40",
-      "title": "No ride found to the Halvern shift",
+      "title": "No ride found to the Medianville shift",
       "body": "The county van was full. An app ride would have cost $34.",
       "amt": "1.2 hr lost",
       "status": "Failed",
@@ -4557,7 +4557,7 @@
      "example": {
       "time": "16:20",
       "title": "Urgent care visit, $75 copay",
-      "body": "A child's ear infection. The nearest pediatrician is in Halvern.",
+      "body": "A child's ear infection. The nearest pediatrician is in Medianville.",
       "amt": "−$75.00",
       "status": "Completed",
       "type": "Health care",
@@ -4678,7 +4678,7 @@
      "drivers": [
       {
        "sign": "+",
-       "t": "With Route 14 gone there is no other way to Halvern.",
+       "t": "With Route 14 gone there is no other way to Medianville.",
        "to": "b",
        "from": "P3"
       }
@@ -5218,7 +5218,7 @@
      "title": "Medicaid home care rates",
      "lines": [
       "Low Medicaid home-care rates:",
-      "aides drive in from Halvern"
+      "aides drive in from Medianville"
      ],
      "body": "Medicaid pays home-care agencies about $19 an hour. Aides earn far less, with no pay for the 35-mile drive between clients, so visits are short and often cancelled.",
      "under": [],
@@ -5260,7 +5260,7 @@
       "Hospital and specialists",
       "35 miles away"
      ],
-     "body": "The nearest hospital and specialists are in Halvern, 35 miles on a two-lane highway. A routine appointment takes most of a day and someone to drive.",
+     "body": "The nearest hospital and specialists are in Medianville, 35 miles on a two-lane highway. A routine appointment takes most of a day and someone to drive.",
      "under": [],
      "rep": [
       8,
@@ -5282,7 +5282,7 @@
         "t": "label",
         "c": 8,
         "r": 0,
-        "text": "35 miles to Halvern Regional",
+        "text": "35 miles to Medianville Regional",
         "dx": 10,
         "dy": -8
        }
@@ -5302,7 +5302,7 @@
       "Grown children moved away;",
       "neighbors and kin give care"
      ],
-     "body": "Most young adults left for Halvern or farther. Older residents stay in their homes, and care comes from a spouse, a neighbor, a church member or a relative who drives in.",
+     "body": "Most young adults left for Medianville or farther. Older residents stay in their homes, and care comes from a spouse, a neighbor, a church member or a relative who drives in.",
      "under": [
       "H1"
      ],
@@ -6203,7 +6203,7 @@
       "No county transit; one",
       "reservation van a week"
      ],
-     "body": "The county has no bus. A volunteer van runs to Halvern once a week by reservation for medical trips. Anyone without a car pays a neighbor for rides to work.",
+     "body": "The county has no bus. A volunteer van runs to Medianville once a week by reservation for medical trips. Anyone without a car pays a neighbor for rides to work.",
      "under": [],
      "rep": [
       6,
@@ -6336,7 +6336,7 @@
      "title": "Eleven miles to town",
      "lines": [
       "Eleven miles to Dunmore,",
-      "twenty-five to Halvern"
+      "twenty-five to Medianville"
      ],
      "body": "The nearest town is 11 miles away and the nearest city 25. Every errand, shift and appointment starts with a drive.",
      "under": [],

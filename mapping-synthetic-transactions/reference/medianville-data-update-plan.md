@@ -1,6 +1,6 @@
-# Halvern data update plan: fold in the human evidence, then go past one day
+# Medianville data update plan: fold in the human evidence, then go past one day
 
-Written 2026-11-18. Reads with `claude/halvern-human-evidence-report.md` (the evidence), `claude/halvern-transaction-generator-prompt.md` (the spec), `claude/halvern-build-approach.md` (how v1 was built) and the City Design v0.1 and "Seeing the Margins" docs (the four clocks). The work happens in Claude Code, in `playground/mapping-synthetic-transactions`, on a feature branch merged into `development`.
+Written 2026-11-18. Reads with `claude/halvern-human-evidence-report.md` (the evidence), the [transaction generator prompt](medianville-transaction-generator-prompt.md) (the spec), [how v1 was built](medianville-build-approach.md) and the City Design v0.1 and "Seeing the Margins" docs (the four clocks). The work happens in Claude Code, in `playground/mapping-synthetic-transactions`, on a feature branch merged into `development`.
 
 ## 1. Where things stand
 
@@ -12,11 +12,11 @@ Written 2026-11-18. Reads with `claude/halvern-human-evidence-report.md` (the ev
 
 The evidence pass only had the 500-record sample, so it called several things "missing" that the full `records.csv` already contains. Checked today against all 201,753 records:
 
-| Item | Report said | Full run actually has | Evidence target (rough, scaled to Halvern) | What to do |
+| Item | Report said | Full run actually has | Evidence target (rough, scaled to Medianville) | What to do |
 |---|---|---|---|---|
 | Overdraft fees | none | **274 fees** in 223 households (poverty 122, ALICE 102, above 50) | about 150 a day, averaged over a year | Probably **too many**, not too few. Measure across a month before changing (a 3rd-of-the-month Wednesday is heavy for autopays). |
 | Payday loans | none | 8 new loans, 4 rollovers, 11 repayments | 25 to 80 loans a day (Pew 2013–16 figures; the industry has shrunk since) | Raise moderately once newer data is found. |
-| Auto title loans | none | 4 new loans, **no payments, no repossessions** | about 15 to 25 payments a day (2.5 million borrowers scaled to Halvern, about 750) | Add payments and the repossession and lost-car chain. |
+| Auto title loans | none | 4 new loans, **no payments, no repossessions** | about 15 to 25 payments a day (2.5 million borrowers scaled to Medianville, about 750) | Add payments and the repossession and lost-car chain. |
 | Pawn, check cashing, money orders | none | 21, 40 and 53 records | no good daily figure | Keep. |
 | Utility shutoffs | none | 26 notices, 8 disconnections, 8 reconnections | 11 to 12 disconnections a day | Small raise, and make it a multi-day chain. |
 | Medical debt | none | 137 payment-plan payments; no "care delayed by debt" | 41% of adults have some health care debt | Add the delay link; check the installment rate. |
@@ -36,7 +36,7 @@ Keep real and synthetic apart, as the research prompt requires: no real quote or
 1. **`evidence_targets.csv`**, a new table: one row per target, with `evidence_ids`, the generator parameter it moves, the target value or range, the tolerance, the unit (per day, per year, share of households) and the strength grade (A–D). Only A and B evidence sets a rate; C and D add job kinds and texture.
 2. **`assumptions.csv` gains an `evidence_ids` column**, so every rate can be traced back to a source row.
 3. **`summary.md` gains an "Evidence checks" section** that reports each target against the run, like the calibration anchors do now. Annual targets are checked against a weighted set of days (section 4), never against one Wednesday.
-4. **`evidence_links.csv`** joins evidence rows to Halvern by `job_category`, `friction_tags` and household type, so the viewers and reports can say "real accounts of this" beside a synthetic record without merging them.
+4. **`evidence_links.csv`** joins evidence rows to Medianville by `job_category`, `friction_tags` and household type, so the viewers and reports can say "real accounts of this" beside a synthetic record without merging them.
 
 ## 3. Data to download
 
@@ -75,7 +75,7 @@ A single day is too few for three reasons: annual shares (rent, insurance) can't
 | **A. A typed-day set** (recommended first) | 10–12 days that stand for a year, each with a weight: ordinary weekday early, mid and late month; Friday payday; Saturday; Sunday; the 1st; each Social Security Wednesday; a February refund day; a holiday; a storm day; a heat day | about 190 MB zipped | Almost nothing; runs today |
 | **B. One continuous month** (recommended second) | March 1–31, 2027, balances carried day to day | about 500 MB zipped, 3.3 GB unpacked | Real carry-over: unpaid bills retried and fined, notices that become shutoffs, overdraft chains, SNAP balances running down, payday rollovers, income swings |
 | **C. A year at 10% scale** | 4,140 households for 365 days, the roster aging and changing | about 600 MB zipped | Roster changes between days: aging, births, deaths, job changes, moves, new caregiving |
-| **D. Past and future snapshots** | Halvern at −20, −10, +10, +20 years | per snapshot, as a day | District age and direction; CBO projections |
+| **D. Past and future snapshots** | Medianville at −20, −10, +10, +20 years | per snapshot, as a day | District age and direction; CBO projections |
 
 Do A first because it costs nothing and makes every annual target checkable. Then B, because most of the evidence is about chains over days. C and D are later.
 
@@ -106,24 +106,26 @@ Do A first because it costs nothing and makes every annual target checkable. The
 ## 6. The hand-written records
 
 The 500 hand-written records are keyed to v1's record ids, and any population change redraws them. So:
-- **v1 stays frozen** as `halvern_2027-03-03.zip`; the viewers keep working.
+- **v1 stays frozen** as `halvern_2027-03-03.zip`; the viewers keep working. Since phase 3b the latest pages load a copy with only the name changed, `data/medianville_2027-03-03.zip`, and the archived viewers keep the original.
 - **v2 gets its own sample** after the simulator is frozen again: about 300 records, weighted toward the new jobs, written in Claude Code and read by a second reader that hasn't seen the code, as the build notes recommend.
+- **v2's hand-written records are written under the new name,** Medianville. The rename (phase 3b) ran before any of them existed, so none has to be renamed afterwards.
 
 ## 7. Where it lives in the repo
 
 ```
 mapping-synthetic-transactions/
   data/
-    halvern_2027-03-03.zip        v1, unchanged
+    halvern_2027-03-03.zip        v1, unchanged (the archived viewers)
+    medianville_2027-03-03.zip    v1 with only the name changed (the latest pages, until v2 ships; phase 3b)
     runs/manifest.json            every published run: id, version, date, label, records, path
-    runs/v2/<date>.zip            the typed-day set only (each about 16 MB)
+    runs/v2/medianville_<date>.zip  the typed-day set only (each about 16 MB)
   sim/                            simulator v2, tests, evidence_targets.csv
   evidence/                       report, sources, evidence, quotes, evidence_links.csv
   sources/manifest.csv            download log (raw files gitignored)
   reference/                      existing docs, plus this plan and the research prompt
 ```
 
-GitHub limits decide the rest: a file over 100 MB is refused, a Pages site should stay under about 1 GB, and Pages doesn't serve Git LFS files. The typed-day zips fit in the repo. The month and year bundles go to GitHub Releases or stay local; the simulator is deterministic, so anyone can rebuild them. Both viewers hard-code the v1 zip; the change is a run picker that reads `runs/manifest.json`.
+GitHub limits decide the rest: a file over 100 MB is refused, a Pages site should stay under about 1 GB, and Pages doesn't serve Git LFS files. The typed-day zips fit in the repo. The month and year bundles go to GitHub Releases or stay local; the simulator is deterministic, so anyone can rebuild them. The viewers hard-code a v1 zip (the latest pages the renamed copy, the archives the original); the change is a run picker that reads `runs/manifest.json`. v2 runs are packaged as `data/runs/v2/medianville_<date>.zip`.
 
 ## 8. Phases
 
@@ -133,8 +135,9 @@ GitHub limits decide the rest: a file over 100 MB is refused, a Pages site shoul
 | 1. Measure | Write `evidence_targets.csv`; add the evidence checks to the summary; run the typed-day set with the **unchanged** simulator | Every target has a measured value across the year's days |
 | 2. Download | Tier 1 and 2 sources, logged in the manifest | Caregiving, cash and calendars have real inputs |
 | 3. Change | Groups 1, 2 and 4; recalibrate across the typed-day set | Anchors and evidence checks in tolerance |
+| 3b. Rename | Rename the city to Medianville in the simulator, the latest pages and the docs, before any v2 run is packaged or any v2 record is hand-written; write a renamed copy of the v1 run for the latest pages. The frozen v1 run, the archived viewers and past results keep the first name | The typed-day year, mapped back, matches batch R byte for byte; the copy, mapped back, matches the v1 zip byte for byte |
 | 4. A month | Group 3; run March 2027 | Chains visible: notice to shutoff, overdraft to fee to late rent |
-| 5. Read and publish | Close reading of a fresh sample; hand-write v2's records; package; run picker in the viewers; update the README and project docs | PR into `development` |
+| 5. Read and publish | Close reading of a fresh sample; hand-write v2's records; package as `data/runs/v2/medianville_<date>.zip`; run picker in the viewers; update the README and project docs | PR into `development` |
 | 6. Later | ACS PUMS population (v3); year at 10%; snapshots | — |
 
 ## 9. Decisions for you
@@ -142,7 +145,7 @@ GitHub limits decide the rest: a file over 100 MB is refused, a Pages site shoul
 1. **Same people or new people?** Keeping v1's population keeps comparisons clean (same households, before and after). Rebuilding from ACS PUMS is more truthful but breaks comparability and the hand-written sample. Recommended: keep the population for v2, rebuild in v3. **Decided 2026-11-20: keep the population for v2, and with it v1's wage boost (see the wage note in section 10).**
 2. **How far past one day:** the typed-day set only, or the month too.
 3. **Where the big bundles live:** Releases, or local only.
-4. **Georgia evidence:** keep Halvern national, using Georgia-specific findings (title pawn rates, Pathways) for field visits and texture only. Recommended.
+4. **Georgia evidence:** keep Medianville national, using Georgia-specific findings (title pawn rates, Pathways) for field visits and texture only. Recommended.
 5. **Project docs:** revise the evidence report's section 2 and the generator prompt's friction section to match the table in section 1.
 
 ## 10. The v2 change list (added 2026-11-19, after the downloads)
@@ -154,6 +157,8 @@ Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `source
 **Already done:** home caregiving set from ATUS 2023-25 (about 8,550 hours a day in v1, about 3,490 in v2; visits unchanged at about 1,700). Commit `bcae8f6`.
 
 **Status (2026-11-20), on branch `halvern-v2-phase3`.** Batches C, I, J and P are done; each was rerun across the typed-day year (`sim/evidence/results/v2_*_typed_days_2027/`). Checked against the source and left as v1: CE everyday spending, SNAP amounts, eviction filings, moves, renters' housing costs, the rural share of residents (RUCC confirms 14%), and wages (see the wage note). Not done: I5 late payments (the NY Fed figures give rates on balances, not account counts), I12 energy bill sizes (RECS 2024 v1 has none yet), P5 births and deaths (NCHS summaries not downloaded), and the excess of groceries, bars, salons, laundromats and churches against CBP (removing outlets would redraw the population). Estimates with no counting source are labeled in the code: lender shutoffs, prescriptions abandoned over $250, care-visit purchases, the benefits-cliff raise, call-ins and kept availability, Direct Express calls. Batch R (rate tuning) is done too: every firm target is in range or present across the typed-day year (`v2_rates_typed_days_2027`). Several targets were reset from the downloads: T02 payday loans 10-25 a day (California and Texas 2025), T03 title payments 5-10 (Texas 2025), T11 rural cash 18.7% (DCPC 2025), T12 paid preparation about 54% of all returns (IRS 2026), and T16 disconnect notices 40-55 (RECS 2024). Overdraft concentration and notice-to-shutoff chains still need the month run (option B).
+
+**Status (2026-11-20), phase 3b, on branch `medianville-rename`.** The city is renamed to Medianville, after phase 3 and before any v2 run is packaged or any v2 record is hand-written. The simulator package is now `sim/medianville_sim/`. Rerun across the typed-day year and mapped back, every output (records, tables, summaries and evidence results, 181 files) matches batch R byte for byte, so the rename changed nothing but the name; `v2_rates_typed_days_2027` was regenerated and differs only in the name. The latest pages load `data/medianville_2027-03-03.zip`, a copy of v1 with only the name changed; the frozen v1 run, the archived viewers and the earlier results keep the first name. Next: phase 4 (the month) or phase 5 (packaging as `data/runs/v2/medianville_<date>.zip`).
 
 ### C. Calendar and weights
 
@@ -189,7 +194,7 @@ Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `source
 
 I2, I3, I4 and I7 change the population's money and incomes (not who the people are), which touches decision 1 in section 9.
 
-**Wage note (I7, decided 2026-11-20).** v1's occupation table already matches OEWS May 2025 medians (registered nurse $98,000 against $97,550), but every wage is multiplied by `WAGE_SCALE` = 1.23, where wage growth to 2027 would justify about 1.08. Each worker is therefore paid about 14% more than a real worker in the same job (a Halvern nurse about $120,000 against roughly $105,000). The boost makes up for Halvern's smaller households: 2.36 people against about 2.58 nationally, and 1.14 earners each, so fewer paychecks reach each home. With the boost, median household income is about $78,000, against about $86,700 implied by SCF 2025 in 2027 dollars; at 1.08 it would fall to roughly $70,000. Household money (balances, bills, overdrafts, who can cover $400) is closer to right with the boost, and pay for a single job is not, so read Halvern by household, not by occupation. v2 keeps 1.23. v3, which rebuilds households from ACS PUMS, should set the scale to wage growth alone and re-check household income against SCF. The same note is in `sim/halvern_sim/config.py`, every run's `assumptions.csv` and `summary.md`, the evidence-check report, and the project README.
+**Wage note (I7, decided 2026-11-20).** v1's occupation table already matches OEWS May 2025 medians (registered nurse $98,000 against $97,550), but every wage is multiplied by `WAGE_SCALE` = 1.23, where wage growth to 2027 would justify about 1.08. Each worker is therefore paid about 14% more than a real worker in the same job (a Medianville nurse about $120,000 against roughly $105,000). The boost makes up for Medianville's smaller households: 2.36 people against about 2.58 nationally, and 1.14 earners each, so fewer paychecks reach each home. With the boost, median household income is about $78,000, against about $86,700 implied by SCF 2025 in 2027 dollars; at 1.08 it would fall to roughly $70,000. Household money (balances, bills, overdrafts, who can cover $400) is closer to right with the boost, and pay for a single job is not, so read Medianville by household, not by occupation. v2 keeps 1.23. v3, which rebuilds households from ACS PUMS, should set the scale to wage growth alone and re-check household income against SCF. The same note is in `sim/medianville_sim/config.py`, every run's `assumptions.csv` and `summary.md`, the evidence-check report, and the project README.
 
 ### J. Jobs to add
 
