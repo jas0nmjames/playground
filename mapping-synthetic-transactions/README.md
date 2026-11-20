@@ -28,9 +28,9 @@ Both animated pages load the same file, `data/halvern_2027-03-03.zip`, and link 
 
 ### Miniature and Map (v3)
 
-![The miniature town at 12:15 p.m., with record paths arcing between homes and buildings and failure pins on the places where things went wrong](screenshots/v3-miniature.jpg)
+![The miniature town at 12:19 p.m. in midday sun, with street paint, parked cars and the land beyond the board, record paths arcing between homes and buildings, and failure pins on the places where things went wrong](screenshots/v3-miniature.jpg)
 
-The Miniature view at 12:15 p.m., playing at five minutes a second. Purple dashed arcs are public services, here children headed to school; pink pins count failures at a place.
+The Miniature view at 12:19 p.m., playing at five minutes a second. Purple dashed arcs are public services, here children headed to school; pink pins count failures at a place.
 
 ![The same moment on the Map view, drawn as a printed map sheet with numbered failure triangles](screenshots/v3-map.jpg)
 
@@ -58,7 +58,8 @@ Placeholder records move while the real day downloads (16 MB), and then the cloc
 
 v3's own placeholder day plays while the real one downloads. The chip in the header shows the progress, then "201,753 records · March 3, 2027". If the download fails, the chip says so and the placeholder keeps playing. The clock starts at 8:00 a.m.
 
-- **Views.** **Miniature** is a 3D tabletop town with a focus blur (Off, Subtle or Full). **Map** is the same town drawn as a printed map sheet. **M** switches between them. Drag to pan, and scroll or use **+** and **−** to zoom.
+- **Views.** **Miniature** is a 3D model of the town, lit by the sun and sky of the hour, with a focus blur (Off, Subtle or Full). **Map** is the same town drawn as a printed map sheet. **M** switches between them. Drag to pan, and scroll or use **+** and **−** to zoom.
+- **Turning the miniature.** The round buttons beside the zoom buttons turn the board 15° at a time, and the compass between them shows north and puts it back up. With a mouse, drag with the right button, or hold Shift, Alt or Ctrl while dragging: sideways turns, up and down tilts, from a low skyline view at 8° to a steep 72°. On a touch screen, two fingers turn, tilt and zoom. Keys: **Q** and **E** turn, **N** puts north up, **Page Up** and **Page Down** tilt. The Map always stays north up.
 - **Records in flight.** Each record arcs from one party to the other. Click a path to open it; where several overlap, a chooser lists them. With the keyboard, **[** and **]** step through the records in flight and **Enter** opens one.
 - **Places.** Click a home or building to see its recent records. Since the real day is folded onto v3's town, each home or building also says how many real households or places it stands for. A pin counts the failures at a place so far today; click it to list them.
 - **Activity.** Money moved, records, failures and unpaid hours so far; six filters, one per kind; and the latest records. Below 1,280 px wide, the Activity panel becomes a drawer.
@@ -115,6 +116,7 @@ Opening an `index.html` as a file can't fetch the data, so each page then plays 
 - [How the Halvern day was built](reference/halvern-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed.
 - [Halvern run record](reference/halvern-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
 - [Halvern Systems Lens: design record](reference/halvern-systems-lens.md): the directions tried for the systems lens, what was decided, and what waits for the next run.
+- [Halvern Miniature: realism design record](reference/halvern-miniature-realism.md): the tilt-shift references, the iterations tried in the realism lab, what was kept and how it works.
 
 Everything in the data is synthetic. People, businesses and local agencies are invented. Federal programs keep their real names because the specification requires them. Synthetic data suggests where to look; it isn't evidence.
 
@@ -167,11 +169,26 @@ People are drawn at their household's home. Record sheets still name the real di
 
 By midnight v3 shows $56.1 million moved, 6,896 failures and 15,650 unpaid hours. The summary's 16,736 hours count all 13,201 non-monetary jobs, while v3 counts the 13,042 that didn't fail.
 
+### How the miniature looks
+
+The miniature's look came out of a realism lab built against tilt-shift photographs (see [the design record](reference/halvern-miniature-realism.md)). It keeps the town, the record language and the focus blur, and adds:
+
+- **Sun and sky.** A solar path for March 3 near 39° N, with north up as on the Map: sunrise 6:48 a.m., sunset 6:12 p.m., the sun 44° high at noon. Sky colours follow the sun's height and light the town through an environment map, so shade takes the sky's colour and glass and paint reflect it. Exposure adjusts to the light.
+- **Filmic tone.** Highlights roll off instead of clipping, with the saturation, contrast, split toning and grain of a print.
+- **Contact shadows.** Darkening where things meet the ground and each other, so nothing floats.
+- **Night lights.** Windows glow in the same occupancy pattern as before, lamps throw pools of light, cars have headlights and tail lights, signals cycle, and bright light blooms.
+- **Street detail.** Lane lines, a double yellow line on the main roads, crosswalks and stop bars, signals and stop signs, cars parked along the curbs, hydrants, manholes, street trees downtown, lamps on the local streets, and units and water tanks on flat roofs.
+- **Materials.** Paint, glass and water reflect the sky; walls, roofs, pavement and grass carry grain; no two parts are exactly the same colour.
+- **Past the board.** The town sits in a wider region instead of on a table: suburbs, farms to the south-west and industry to the south-east, fading into haze.
+- **Windows on every side,** so the board can turn.
+
+The town itself is unchanged. Every addition draws from its own random stream, so each building, footprint, home, anchor and front-facing window is the same as before, in the same order; the plain centre dashes on the main roads gave way to the double yellow line. The Map and the run see the same city.
+
 ### Known limits
 
 - The miniature needs WebGL and loads three.js 0.160.0 from jsDelivr. If either is missing, v3 switches to the map after 12 seconds.
 - Positions are approximate, as described above, and a building's sheet lists the real places it stands for. v3's map labels and building names are its own inventions.
-- In this container's software rendering, the miniature ran at about one frame a second, as the unmodified artifact did. Frame rates on real hardware weren't measured.
+- In this container's software rendering, the miniature ran at about one frame a second, as the unmodified artifact did. Frame rates on real hardware weren't measured. The new look draws the scene twice plus its shadows, about six million triangles a frame with the land past the board, and renders at no more than 1.5 times the screen's pixel density to pay for it.
 
 ## Claude
 
