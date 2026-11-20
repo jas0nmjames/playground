@@ -117,13 +117,13 @@ def income_mix(H):
     return ";".join("%s:%.2f" % (k, v / tot) for k, v in sorted(parts.items(), key=lambda x: -x[1]) if v / tot >= .005)
 
 
-def write_tables(sim, out):
+def write_tables(sim, out, tagger=None):
     os.makedirs(out, exist_ok=True)
     w8 = "%.3f" % (1.0 / sim.scale)
     with open(os.path.join(out, "households.csv"), "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["household_id", "district", "weight", "household_type", "size", "annual_income", "income_source_mix", "alice_status", "banked_status",
-                    "housing_tenure", "monthly_housing_cost", "vehicles", "internet_at_home", "primary_language", "notes"])
+                    "housing_tenure", "monthly_housing_cost", "vehicles", "internet_at_home", "primary_language", "notes"] + (["block_id"] if tagger else []))
         for H in sim.households:
             notes = list(H.notes)
             if H.snap:
@@ -131,7 +131,7 @@ def write_tables(sim, out):
             if H.fragile:
                 pass
             w.writerow([H.hid, H.district, w8, H.htype, len(H.members), int(round(H.income)), income_mix(H), H.alice, H.banked, H.tenure, int(H.housing_cost),
-                        H.vehicles, H.internet, H.lang, ";".join(notes)])
+                        H.vehicles, H.internet, H.lang, ";".join(notes)] + ([tagger.household_block(H.hid)] if tagger else []))
     with open(os.path.join(out, "persons.csv"), "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["person_id", "household_id", "age", "birth_cohort", "sex", "race_ethnicity", "relationship_to_head", "education", "disability", "health_coverage",

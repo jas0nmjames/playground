@@ -15,8 +15,8 @@ their real names, because the records could not show a Part B premium or a SNAP 
 
 | File | What it holds |
 |---|---|
-| `out/records.csv` | 201,753 records, 31 columns, in time order. The main table. |
-| `out/households.csv` | 43,450 rows: 41,400 households plus 2,050 one-person group-quarters units |
+| `out/records.csv` | 201,753 records, 34 columns, in time order. The main table. The last three tag records with the systems lens's mapped blocks. |
+| `out/households.csv` | 43,450 rows: 41,400 households plus 2,050 one-person group-quarters units; `block_id` names the mapped block a household lives on |
 | `out/persons.csv` | 99,694 residents |
 | `out/organizations.csv` | 1,672 businesses, agencies, nonprofits and outside parties |
 | `out/public_services_context.csv` | One row per agency or service with its daily operating cost and funding |
@@ -26,7 +26,8 @@ their real names, because the records could not show a Part B premium or a SNAP 
 | `detailed_sample_500.csv` | The 500 hand-written records on their own, for quick reading |
 | `simulate.py`, `halvern_sim/` | The simulator |
 | `detailed_overrides.csv` | The hand-written text, keyed to record ids of the baseline day |
-| `tools/` | Scripts used to pick the 500 records and merge the hand-written text |
+| `blocks.json` | The systems lens's six mapped blocks, one per district (a copy of `systems-lens/blocks.json`) |
+| `tools/` | Scripts used to pick the 500 records, merge the hand-written text, and package a run as a zip (`make_zip.py`) |
 
 ## Run it
 
@@ -118,6 +119,11 @@ What carries forward and what does not:
   `households.csv` with `household_type` starting `group_quarters:`.
 - `birth_cohort` in `persons.csv` is the generation and birth year, for example `millennial_1987`.
 - `weight` in `households.csv` is 1 for the full city and larger when you run a sample.
+- `block_id`, `block_pattern` and `context_ids` come from `blocks.json`. Each block chooses about 400 households in its
+  district, and every record those households make carries the block's id. A record that follows one of the block's
+  patterns, such as a payday loan on Larkin Avenue, also carries the pattern and the circumstances it links to. The pass
+  runs after the day and draws no random numbers, so the other 31 columns are the same with or without it. Turn it off
+  with `--no-blocks`, or point at another file with `--blocks`.
 
 ## The 500 hand-written records
 

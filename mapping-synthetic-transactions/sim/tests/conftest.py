@@ -15,6 +15,7 @@ if SIM_DIR not in sys.path:
     sys.path.insert(0, SIM_DIR)
 
 TEST_HOUSEHOLDS = 4140
+BLOCKS = os.path.join(REPO_DIR, "systems-lens", "blocks.json")
 
 
 def pytest_addoption(parser):
@@ -48,7 +49,7 @@ def run10(tmp_path_factory):
     out = str(tmp_path_factory.mktemp("halvern10"))
     cfg = dict(PARAMS)
     cfg["N_HOUSEHOLDS"] = TEST_HOUSEHOLDS
-    sim, _ = simulate.run_day(cfg, out, overrides=None, log=lambda *a: None)
+    sim, _ = simulate.run_day(cfg, out, overrides=None, blocks_path=BLOCKS, log=lambda *a: None)
     return sim, out
 
 

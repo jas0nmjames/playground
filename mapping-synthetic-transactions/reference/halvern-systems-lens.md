@@ -36,8 +36,22 @@ One district: Larkin Avenue, D2 Inner suburbs. Twelve circumstances, each tagged
 - **Details.** The right column is a sheet in v3's transaction style. A record shows a big amount (plum when it failed), status and type pills, the narrative, time, counterparty, kind and layer, and the circumstances that shaped it. A circumstance shows its types, body, when, layer and pace, what it rests on and what it shapes. A loop shows a numbered "How it runs" list with its signs, what pushes it, and where it shows up today.
 - It opens on record 6 (1:05 p.m., payday loan renewed, $75 fee) with loop R2 drawn.
 
+## Over the city, on six blocks (November 19, 2026)
+
+The lens now opens over v3 instead of as its own page, and it reads the run.
+
+- **Over the city.** The details rail widens into the lens; the record stays at the right edge, playback pauses, and Back to the city or Esc returns to the same record. The header has Map | Miniature plus a separate Systems lens toggle (L). `v3/#lens=<block>[/<pattern>[/<record>]]` links straight to a block, a pattern or a record, and `#view=map` or `#view=mini` picks the view.
+- **One block per district.** `systems-lens/blocks.json` holds six composite blocks: Pelham Street (D1), Larkin Avenue (D2), Fox Hollow (D3), Mill Street in Ashford Mills (D4), Main Street in Dunmore (D5) and the Route 9 Crossroads (D6). Each has eight to twelve circumstances on the five lower layers, six to nine patterns pinned on the Today layer, two to four loops, and the drawing for its plates, in a small vocabulary of areas, lines, stops, labels, icons, badges and boxes. Larkin's text and drawing moved into the file unchanged.
+- **Records are tagged.** The simulator reads the same file. Each block chooses its households from its district by the block's character (for Larkin: low income, underbanked, renting, a language other than English) and by whether their records follow its patterns, so every pattern the day supports has records. Records from those households carry `block_id`, plus `block_pattern` and `context_ids` when they follow a pattern. The tagging draws no random numbers; the other 31 columns are unchanged. 2,580 households are on mapped blocks.
+- **The lens shows the real record.** Opened from a record, the details column shows that record (its job statement, narrative and parties) with the circumstances mapped to its pattern, and says that they are composites mapped to the pattern, not to this household's history. Opened with nothing picked, it lists the block's patterns with today's counts so far. Opened from a household's day, it lists that household's records on the block. A pattern's sheet shows its count, its latest records and the composite example written for it.
+- **What is still composite.** The circumstances, years, figures and loops are drafted from documented US patterns and have not been checked against sources one by one. The match rules approximate: Larkin's flood-insurance pin matches home and renters insurance bills, and Ashford's ride pin matches ride searches and paid rides. Larkin's savings circle has no records, because the simulator does not model informal savings circles; its pin is dashed. The tags describe where a record happened, not why: the simulator does not yet use the circumstances to decide what happens.
+
+### For review
+
+The five new blocks were drafted for review. The specific figures most worth checking against sources: Pelham's 40% rent rise since 2018, 10% late fees and 10-day filings, the 11:04 p.m. last bus, and the $40 plasma payment; Fox Hollow's $4.50 pay-by-plate fee, the 2006 concession and the 18% escrow rise; Ashford's 1998 mill closure, 21¢-a-minute jail calls with a county commission, the 2015 bus cut and the 2017 hospital closure; Dunmore's lot rent rising from $310 to $455, the 2016 branch closure, the 19 miles to a grocery and the $19-an-hour Medicaid home-care rate; and the Crossroads' 2009 school consolidation, 2018 pharmacy closure and one-van-a-week transit. All are written as composites of patterns documented elsewhere in the US, not as facts about a real place.
+
 ## Open questions
 
-- How circumstances enter the data: a `context.csv` that drives the simulator, and `caused_by` links on records. That is part one of the next round, the data and model changes.
+- How circumstances drive the data, not only label it: today `context_ids` says which circumstances a record's pattern is mapped to. The next step is a setting per circumstance that the simulator uses, so a what-if becomes a second run with one setting changed.
 - Whether loops should come from the data (chains found across many days) or stay written by hand and be tested against it.
-- Wiring the lens to the real run: opening it from a selected record in v3, and drawing the run's own households and places on the Today layer.
+- Drawing the run's own households and places on the Today layer, instead of a composite town with one pin per pattern.

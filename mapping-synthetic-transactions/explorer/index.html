@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halvern Data Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* Halvern Data Explorer: browse the March 3, 2027 run as tables.
+   Same tokens as Halvern in Motion v3 so the two read as one project. */
+:root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --ink3:#7D8797; --line:#DDE2EA; --ctrl:#7D8797;
+  --blue:#1F5AF0; --blue-soft:#E8EEFE; --green:#0A7A4B; --plum:#8E3B6D; --plum-soft:#F6EAF1; --r:12px;
+  --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08);
+  --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --voice: "Source Serif 4", Georgia, "Times New Roman", serif; --head: 58px; }
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; }
+body { font-family:var(--ui); color:var(--ink); background:var(--page); font-size:14.5px; font-variant-numeric:tabular-nums lining-nums;
+  display:grid; grid-template-rows:auto minmax(0,1fr); grid-template-columns:minmax(0,1fr); height:100vh; height:100dvh; overflow:hidden; }
+button, input, select { font-family:inherit; font-size:inherit; color:inherit; }
+button { cursor:pointer; }
+a { color:var(--blue); }
+:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+[hidden] { display:none !important; }
+.sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+/* header */
+header.top { position:relative; display:flex; align-items:center; gap:10px 18px; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; min-width:0; }
+h1 { font-size:18px; font-weight:700; margin:0; letter-spacing:-.01em; }
+.chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; }
+.chip.err { color:var(--plum); border-color:var(--plum); background:var(--plum-soft); }
+nav.tabs { display:flex; gap:2px; border:1px solid var(--ctrl); border-radius:999px; padding:3px; background:var(--surface); overflow-x:auto; max-width:100%; }
+nav.tabs a { text-decoration:none; color:var(--ink2); font-weight:600; font-size:14px; padding:6px 13px; border-radius:999px; white-space:nowrap; min-height:32px; display:flex; align-items:center; }
+nav.tabs a[aria-current="page"] { background:var(--ink); color:#fff; }
+.ext { font-weight:600; font-size:14px; text-decoration:none; white-space:nowrap; }
+.ext:hover { text-decoration:underline; }
+#progress { position:absolute; left:0; right:0; bottom:-1px; height:3px; background:transparent; }
+#progress i { display:block; height:100%; width:0; background:var(--blue); transition:width .2s; }
+
+/* main */
+main { position:relative; min-height:0; overflow:hidden; }
+.loading { height:100%; display:grid; place-items:center; padding:24px; text-align:center; color:var(--ink2); }
+.loading .box { max-width:440px; }
+.loading h2 { color:var(--ink); font-size:20px; margin:0 0 6px; }
+.loading .bar { height:6px; border-radius:3px; background:var(--line); overflow:hidden; margin:14px auto 8px; max-width:320px; }
+.loading .bar i { display:block; height:100%; width:0; background:var(--blue); border-radius:3px; }
+.view { height:100%; }
+.layout { display:grid; grid-template-columns:300px minmax(0,1fr); height:100%; }
+aside.rail { background:var(--surface); border-right:1px solid var(--line); overflow:auto; padding:14px 16px 40px; overscroll-behavior:contain; }
+.rail-h { display:flex; align-items:center; justify-content:space-between; margin:2px 0 10px; }
+.rail-h h2 { font-size:16px; margin:0; }
+.linkbtn { border:0; background:none; color:var(--blue); font-weight:600; padding:6px 0; text-align:left; white-space:nowrap; }
+.linkbtn:disabled { color:var(--ink3); cursor:default; }
+#rail-close { display:none; }
+.content { overflow:auto; padding:16px 22px 60px; min-width:0; overscroll-behavior:contain; }
+
+/* search and toolbar */
+.searchrow { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.search { flex:1 1 320px; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--ctrl); border-radius:999px; padding:0 14px; min-height:42px; }
+.search input { border:0; outline:0; background:none; flex:1; min-width:0; font-size:15px; padding:9px 0; }
+.search:focus-within { outline:2px solid var(--blue); outline-offset:1px; }
+.search svg { flex:none; color:var(--ink2); }
+.btn { border:1px solid var(--ctrl); background:var(--surface); border-radius:999px; padding:8px 14px; font-weight:600; font-size:14px; min-height:38px; white-space:nowrap; }
+.btn:hover { border-color:var(--ink); }
+.btn.primary { background:var(--ink); border-color:var(--ink); color:#fff; }
+.btn:disabled { opacity:.5; cursor:default; }
+#filters-btn { display:none; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0 0; }
+.fchip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--blue); background:var(--blue-soft); color:var(--ink); border-radius:999px; padding:4px 6px 4px 11px; font-size:13px; font-weight:600; min-height:30px; }
+.fchip small { color:var(--ink2); font-weight:500; }
+.fchip button { border:0; background:none; width:22px; height:22px; border-radius:50%; font-size:15px; line-height:1; color:var(--ink2); display:grid; place-items:center; }
+.fchip button:hover { background:#fff; color:var(--ink); }
+.tiles { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; margin:14px 0; }
+.tile { background:var(--surface); border-radius:var(--r); padding:11px 14px; box-shadow:var(--shadow); min-width:0; }
+.tile .lbl { font-size:12.5px; color:var(--ink2); font-weight:600; display:block; }
+.tile .val { display:block; font-size:21px; font-weight:700; letter-spacing:-.01em; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile .sub { font-size:12px; color:var(--ink2); }
+.tile.bad .val { color:var(--plum); }
+.toolbar { display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin:6px 0 10px; }
+.toolbar .count { font-weight:600; margin-right:auto; }
+.toolbar label.sel { display:flex; align-items:center; gap:6px; color:var(--ink2); font-weight:600; font-size:13.5px; }
+select { border:1px solid var(--ctrl); border-radius:10px; background:var(--surface); padding:7px 10px; min-height:36px; font-weight:600; color:var(--ink); max-width:100%; }
+fieldset.seg { display:inline-flex; border:1px solid var(--ctrl); border-radius:999px; padding:3px; margin:0; background:var(--surface); gap:2px; }
+fieldset.seg legend { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+.seg input { position:absolute; opacity:0; width:1px; height:1px; margin:0; }
+.seg label { min-height:30px; padding:4px 13px; border-radius:999px; font-weight:600; font-size:13.5px; cursor:pointer; color:var(--ink2); display:flex; align-items:center; }
+.seg input:checked + label { background:var(--ink); color:#fff; }
+.seg input:focus-visible + label { outline:2px solid var(--blue); outline-offset:2px; }
+
+/* facets */
+details.facet { border-top:1px solid var(--line); padding:4px 0; }
+details.facet > summary { list-style:none; display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; padding:9px 2px; font-weight:700; font-size:14px; min-height:40px; }
+details.facet > summary::-webkit-details-marker { display:none; }
+details.facet > summary::after { content:""; width:8px; height:8px; border-right:2px solid var(--ink2); border-bottom:2px solid var(--ink2); transform:rotate(45deg); margin:0 4px 4px 0; flex:none; }
+details.facet[open] > summary::after { transform:rotate(-135deg); margin-top:4px; margin-bottom:0; }
+details.facet > summary .n { margin-left:auto; background:var(--blue); color:#fff; border-radius:999px; font-size:12px; padding:1px 8px; }
+.fopts { display:flex; flex-direction:column; gap:1px; padding:0 0 8px; }
+.fopt { display:grid; grid-template-columns:20px minmax(0,1fr) auto; gap:8px; align-items:center; padding:5px 6px; border-radius:8px; cursor:pointer; font-size:13.5px; min-height:32px; }
+.fopt:hover { background:var(--page); }
+.fopt input { width:16px; height:16px; margin:0; accent-color:var(--blue); }
+.fopt .lab { min-width:0; overflow-wrap:anywhere; line-height:1.25; }
+.fopt .lab small { display:block; color:var(--ink2); font-size:12px; }
+.fopt .c { color:var(--ink2); font-size:12.5px; }
+.fopt.zero { color:var(--ink3); }
+.ffilter { width:100%; border:1px solid var(--line); border-radius:8px; padding:7px 10px; margin:0 0 6px; font-size:13.5px; }
+.timepick { display:flex; gap:8px; align-items:center; padding:0 0 10px; font-size:13.5px; color:var(--ink2); }
+.timepick select { flex:1; }
+
+/* result rows */
+.rows { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden; }
+.rhead, .rr { display:grid; gap:12px; align-items:center; padding:9px 14px; }
+.rhead { font-size:12px; font-weight:700; color:var(--ink2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--line); background:#FAFBFC; }
+.rr { width:100%; border:0; border-bottom:1px solid var(--line); background:none; text-align:left; font-size:14px; min-height:48px; }
+.rr:last-child { border-bottom:0; }
+.rr:hover { background:var(--page); }
+.rr.sel { background:var(--blue-soft); box-shadow:inset 3px 0 0 var(--blue); }
+.rr > span { min-width:0; }
+.rr .num, .rhead .num { text-align:right; }
+.rr b { font-weight:600; }
+.rr small { display:block; color:var(--ink2); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.rr .one { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+.muted { color:var(--ink2); }
+.bad { color:var(--plum); }
+.good { color:var(--green); }
+.hw { color:var(--blue); font-weight:700; }
+.dot { display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; vertical-align:baseline; flex:none; }
+.k-purchase { background:#1F5AF0; } .k-income { background:#0A7A4B; } .k-bill { background:#A86200; }
+.k-service { background:#6B4FD8; border-radius:50%; } .k-unpaid { background:#0E7C86; transform:rotate(45deg) scale(.85); } .k-fail { background:#8E3B6D; border-radius:50% 50% 2px 50%; }
+.g-rec { grid-template-columns:78px 132px minmax(0,1.6fr) minmax(0,1.3fr) 100px 92px; }
+.g-hh { grid-template-columns:82px minmax(0,1.1fr) minmax(0,1.2fr) 96px 100px 72px 72px 84px; }
+.g-per { grid-template-columns:86px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 100px 72px; }
+.g-org { grid-template-columns:minmax(0,1.8fr) minmax(0,1.2fr) 110px 84px 84px 110px; }
+.g-grp { grid-template-columns:minmax(0,1.6fr) repeat(6,minmax(64px,.6fr)); }
+.pager { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 0; flex-wrap:wrap; }
+.pager .muted { font-size:13.5px; }
+.empty { padding:32px 16px; text-align:center; color:var(--ink2); }
+.rhead button.sorth { border:0; background:none; font:inherit; color:inherit; text-transform:inherit; letter-spacing:inherit; padding:0; text-align:right; width:100%; }
+.rhead button.sorth[aria-pressed="true"] { color:var(--ink); }
+.rhead button.sorth[aria-pressed="true"]::after { content:" ↓"; }
+.gbar { display:block; height:6px; max-width:320px; border-radius:3px; background:var(--line); margin-top:6px; overflow:hidden; }
+.gbar i { display:block; height:100%; background:var(--blue); border-radius:3px; }
+.m-only, .rr small.m-only { display:none; }
+.note { color:var(--ink2); font-size:13px; line-height:1.45; margin:18px 2px 0; max-width:60em; }
+
+/* summary */
+.sum { max-width:1100px; margin:0 auto; }
+.sum h2 { font-size:22px; margin:6px 0 4px; }
+.sum > p.lede { color:var(--ink2); margin:0 0 6px; max-width:52em; line-height:1.45; }
+.cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:16px; }
+.card { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:16px 18px; min-width:0; }
+.card.wide { grid-column:1 / -1; }
+.card h3 { margin:0 0 2px; font-size:16px; }
+.card .cap { color:var(--ink2); font-size:13px; margin:0 0 12px; line-height:1.4; }
+.brow { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1.3fr) 9.5rem; gap:10px; align-items:center; width:100%; border:0; background:none; text-align:left; padding:7px 6px; border-radius:8px; font-size:13.5px; min-height:36px; }
+.brow:hover { background:var(--page); }
+.brow .bt { height:10px; background:var(--page); border-radius:4px; overflow:hidden; }
+.brow .bt i { display:block; height:100%; background:var(--blue); border-radius:0 4px 4px 0; }
+.brow .bt.pl i { background:var(--plum); }
+.brow .v { text-align:right; white-space:nowrap; font-weight:600; }
+.brow .v small { color:var(--ink2); font-weight:500; margin-left:4px; }
+table.mini { width:100%; border-collapse:collapse; font-size:13.5px; }
+table.mini th { text-align:right; color:var(--ink2); font-size:12px; text-transform:uppercase; letter-spacing:.05em; padding:6px 8px; border-bottom:1px solid var(--line); }
+table.mini th:first-child, table.mini td:first-child { text-align:left; }
+table.mini td { text-align:right; padding:8px; border-bottom:1px solid var(--line); }
+table.mini tr:last-child td { border-bottom:0; }
+.hours { display:grid; grid-template-columns:repeat(24,minmax(0,1fr)); gap:2px; align-items:end; height:150px; border-bottom:1px solid var(--line); padding-top:22px; position:relative; }
+.hours button { position:relative; height:100%; border:0; background:none; padding:0; display:flex; align-items:flex-end; border-radius:4px 4px 0 0; }
+.hours button i { display:block; width:100%; background:var(--blue); border-radius:4px 4px 0 0; min-height:1px; }
+.hours.pl button i { background:var(--plum); }
+.hours button:hover i, .hours button:focus-visible i { filter:brightness(.8); }
+.hours button .tip { display:none; position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; font-weight:600; white-space:nowrap; padding:5px 8px; border-radius:6px; z-index:3; pointer-events:none; }
+.hours button:hover .tip, .hours button:focus-visible .tip { display:block; }
+.haxis { display:grid; grid-template-columns:repeat(4,1fr) auto; font-size:12px; color:var(--ink2); margin-top:4px; }
+
+/* sheet */
+.sheet { position:fixed; top:var(--head); right:0; bottom:0; width:min(500px,100%); background:var(--surface); border-left:1px solid var(--line); box-shadow:-10px 0 30px rgba(14,27,46,.14); z-index:20; display:flex; flex-direction:column; }
+.sheet-bar { display:flex; align-items:center; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line); }
+.sheet-bar .crumb { margin-right:auto; font-size:13px; color:var(--ink2); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.iconbtn { width:38px; height:38px; border-radius:10px; border:1px solid var(--ctrl); background:#fff; font:600 18px var(--ui); color:var(--ink); display:grid; place-items:center; flex:none; }
+.sheet-body { overflow:auto; padding:16px 20px 40px; overscroll-behavior:contain; }
+.eyebrow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12.5px; font-weight:700; color:var(--ink2); text-transform:uppercase; letter-spacing:.06em; }
+.sheet h2 { font-size:22px; line-height:1.2; margin:8px 0 2px; text-wrap:balance; }
+.sheet .sub { color:var(--ink2); margin:0 0 6px; }
+.big { font-size:28px; font-weight:700; letter-spacing:-.01em; margin:8px 0 2px; }
+.badge { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:3px 10px; font-size:12.5px; font-weight:700; background:var(--page); border:1px solid var(--line); text-transform:none; letter-spacing:0; }
+.badge.bad { background:var(--plum-soft); border-color:var(--plum); color:var(--plum); }
+.badge.good { background:#E7F4EE; border-color:var(--green); color:var(--green); }
+.voice { font:italic 400 18px/1.4 var(--voice); margin:14px 0 8px; text-wrap:pretty; }
+.narr { line-height:1.5; margin:0 0 12px; }
+.flow { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:10px; align-items:center; border:1px solid var(--line); border-radius:var(--r); padding:10px; margin:12px 0; }
+.flow .ar { color:var(--ink2); font-size:18px; }
+.pbtn { display:block; width:100%; text-align:left; border:0; background:none; padding:6px; border-radius:8px; min-height:40px; }
+.pbtn:hover { background:var(--page); }
+.pbtn b { display:block; font-weight:600; line-height:1.25; color:var(--blue); }
+.pbtn span { display:block; font-size:12.5px; color:var(--ink2); margin-top:2px; overflow-wrap:anywhere; }
+.pbtn.plain b { color:var(--ink); }
+h3.sec { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); margin:20px 0 8px; border-top:1px solid var(--line); padding-top:14px; }
+dl.kv { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; margin:0; }
+dl.kv div { min-width:0; }
+dl.kv dt { font-size:12px; color:var(--ink2); font-weight:600; }
+dl.kv dd { margin:2px 0 0; overflow-wrap:anywhere; }
+.tags { display:flex; flex-wrap:wrap; gap:6px; }
+.tag { font-size:12.5px; font-weight:600; border:1px solid var(--line); border-radius:6px; padding:4px 8px; background:var(--page); }
+.tag.f { border-color:var(--plum); color:var(--plum); background:var(--plum-soft); }
+.minirows { border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+.mr { display:grid; grid-template-columns:70px minmax(0,1fr) auto; gap:10px; align-items:center; width:100%; border:0; border-bottom:1px solid var(--line); background:none; text-align:left; padding:8px 10px; font-size:13.5px; min-height:40px; }
+.mr:last-child { border-bottom:0; }
+.mr:hover { background:var(--page); }
+.mr small { display:block; color:var(--ink2); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.acts { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0; }
+details.raw summary { cursor:pointer; font-weight:600; color:var(--blue); padding:8px 0; }
+details.raw table { width:100%; border-collapse:collapse; font-size:12.5px; }
+details.raw td { padding:5px 6px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
+details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monospace, Menlo, Consolas, monospace; }
+.toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 16px; border-radius:999px; font-weight:600; z-index:40; box-shadow:var(--shadow); }
+.scrim { position:fixed; inset:0; background:rgba(14,27,46,.32); z-index:15; }
+
+@media (max-width: 1180px) {
+  .tiles { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .g-hh { grid-template-columns:76px minmax(0,1fr) minmax(0,1fr) 90px 70px 70px; }
+  .g-hh .c-tier, .g-hh .c-fee { display:none; }
+}
+@media (max-width: 900px) {
+  :root { --head: 0px; }
+  body { font-size:15px; }
+  header.top { padding:10px 14px; }
+  .layout { grid-template-columns:minmax(0,1fr); }
+  aside.rail { position:fixed; left:0; top:0; bottom:0; width:min(340px,92vw); z-index:30; box-shadow:10px 0 30px rgba(14,27,46,.2); display:none; }
+  body.rail-open aside.rail { display:block; }
+  #rail-close { display:grid; }
+  #filters-btn { display:inline-flex; }
+  .content { padding:12px 14px 60px; }
+  .cards { grid-template-columns:minmax(0,1fr); }
+  .rhead { display:none; }
+  .g-rec { grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"t k a" "w w w" "p p o"; row-gap:4px; }
+  .g-rec .c-t { grid-area:t; } .g-rec .c-k { grid-area:k; } .g-rec .c-a { grid-area:a; } .g-rec .c-w { grid-area:w; } .g-rec .c-p { grid-area:p; } .g-rec .c-o { grid-area:o; text-align:right; }
+  .g-hh, .g-per, .g-org { grid-template-columns:minmax(0,1fr) auto; row-gap:2px; }
+  .g-hh > span:nth-child(n+2), .g-per > span:nth-child(n+2), .g-org > span:nth-child(n+2) { display:none; }
+  .rr small.m-only { display:block; }
+  .g-hh > span.m-show, .g-per > span.m-show, .g-org > span.m-show { display:block; }
+  .g-grp { grid-template-columns:minmax(0,1fr) 72px 92px; }
+  .g-grp > :nth-child(n+4) { display:none; }
+  .sheet { top:0; width:100%; border-left:0; }
+  .tiles { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .brow { grid-template-columns:minmax(0,1fr) minmax(0,.8fr) 8.5rem; }
+}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <div class="brand">
+    <h1>Halvern data explorer</h1>
+    <span class="chip" id="status" role="status">Loading the day…</span>
+  </div>
+  <nav class="tabs" aria-label="Tables">
+    <a href="#records" data-v="records">Records</a>
+    <a href="#households" data-v="households">Households</a>
+    <a href="#people" data-v="people">People</a>
+    <a href="#organizations" data-v="organizations">Organizations</a>
+    <a href="#summary" data-v="summary">Summary</a>
+  </nav>
+  <a class="ext" id="anim-link" href="https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/">Open the animation ↗</a>
+  <div id="progress" aria-hidden="true"><i></i></div>
+</header>
+
+<main id="main">
+  <div class="loading" id="loading">
+    <div class="box">
+      <h2>Loading Wednesday, March 3, 2027</h2>
+      <p id="load-msg">Downloading the run (16 MB). It's unpacked in your browser.</p>
+      <div class="bar"><i id="load-bar"></i></div>
+      <p class="muted" id="load-sub"></p>
+      <p><button class="btn" id="retry" hidden>Try again</button></p>
+    </div>
+  </div>
+  <div class="view" id="view" hidden></div>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-label="Details">
+  <div class="sheet-bar">
+    <button class="iconbtn" id="sheet-back" aria-label="Back" hidden>‹</button>
+    <span class="crumb" id="sheet-crumb"></span>
+    <button class="iconbtn" id="sheet-close" aria-label="Close details">×</button>
+  </div>
+  <div class="sheet-body" id="sheet-body" tabindex="-1"></div>
+</aside>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+"use strict";
+(function () {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const tick = () => new Promise((r) => setTimeout(r, 0));
+  const NF = new Intl.NumberFormat('en-US');
+  const NF1 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+  const fmt = (n) => NF.format(Math.round(n));
+  const pct = (a, b) => (b ? NF1.format((100 * a) / b) + '%' : '—');
+  const usd = (v) => (Number.isFinite(v) ? (v < 0 ? '−$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—');
+  const usd0 = (v) => (Number.isFinite(v) ? (v < 0 ? '−$' : '$') + NF.format(Math.round(Math.abs(v))) : '—');
+  const usdC = (v) => {
+    const a = Math.abs(v);
+    if (a >= 1e6) return '$' + NF1.format(v / 1e6) + 'M';
+    if (a >= 1e4) return '$' + NF.format(Math.round(v / 1e3)) + 'K';
+    return usd0(v);
+  };
+  const hrs = (min) => { const h = min / 60; return (h < 100 ? NF1.format(h) : fmt(h)) + ' h'; };
+  const mins = (m) => (!Number.isFinite(m) || m <= 0 ? '—' : m < 60 ? fmt(m) + ' min' : NF1.format(m / 60) + ' h');
+  const clock = (m) => { const h = Math.floor(m / 60), mm = m % 60, h12 = h % 12 === 0 ? 12 : h % 12; return h12 + ':' + String(mm).padStart(2, '0') + (h < 12 ? ' a.m.' : ' p.m.'); };
+  const hourLabel = (h) => (h === 0 || h === 24 ? '12 a.m.' : h === 12 ? 'Noon' : (h % 12) + (h < 12 ? ' a.m.' : ' p.m.'));
+
+  // ---------- where things are ----------
+  const PAGES = 'https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/';
+  const inRepo = /\/explorer\/(index\.html)?$/.test(location.pathname);
+  $('#anim-link').href = inRepo ? '../' : PAGES;
+  const RUNS = ['../data/halvern_2027-03-03.zip', 'data/halvern_2027-03-03.zip'];
+  const FFLATE = ['../fflate.js', 'fflate.js'];
+  let framed = true; try { framed = window.self !== window.top; } catch (e) { framed = true; }
+
+  // ---------- labels ----------
+  const SPECIAL = { ach: 'ACH', ebt_snap: 'EBT (SNAP)', ebt_cash: 'EBT cash', wic: 'WIC', p2p_app: 'Person-to-person app', bnpl: 'Buy now, pay later', va: 'VA', tanf: 'TANF', ssi: 'SSI', snap: 'SNAP',
+    alice: 'ALICE', b2b: 'Business to business', in_person: 'In person', school_bus: 'School bus', ride_from_family_or_friend: 'Ride from family or friend', ui: 'UI', pos: 'POS', atm: 'ATM' };
+  const WORD = { snap: 'SNAP', wic: 'WIC', tanf: 'TANF', ssi: 'SSI', ebt: 'EBT', irs: 'IRS', va: 'VA', ach: 'ACH', atm: 'ATM', ev: 'EV', alice: 'ALICE', medicare: 'Medicare', medicaid: 'Medicaid',
+    p2p: 'P2P', bnpl: 'BNPL', hoa: 'HOA', fica: 'FICA', ssa: 'SSA', dmv: 'DMV', er: 'ER', cdl: 'CDL', ged: 'GED', hvac: 'HVAC', ui: 'UI', liheap: 'LIHEAP', chip: 'CHIP', '401k': '401(k)', ira: 'IRA', cms: 'CMS', usps: 'USPS', id: 'ID' };
+  const human = (s) => {
+    if (!s) return '—'; if (SPECIAL[s]) return SPECIAL[s];
+    let t = String(s).replace(/_/g, ' ').trim().split(' ').map((w) => WORD[w.toLowerCase()] || w).join(' ');
+    t = t.replace(/\bsocial security\b/gi, 'Social Security');
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  };
+  const DNAME = { D1: 'Downtown and core', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Halvern' };
+  const dname = (d) => (DNAME[d] ? DNAME[d] : human(d));
+  const TYPE_L = { purchase: 'Purchase', public_service_encounter: 'Public service', bill_payment: 'Bill payment', non_monetary_job: 'Unpaid job', transfer: 'Transfer', income: 'Income',
+    failed_attempt: 'Failed attempt', insurance_claim: 'Insurance claim', tax: 'Tax', benefit_issuance: 'Benefit issued', b2b: 'Business to business', benefit_redemption: 'Benefit spent' };
+  const OUT_L = { completed: 'Completed', declined: 'Declined', failed: 'Failed', partial: 'Partial', abandoned: 'Abandoned', rescheduled: 'Rescheduled' };
+  const DOM_L = { food: 'Food', discretionary: 'Discretionary', transportation: 'Transportation', children_education: 'Children and education', income: 'Income', health: 'Health', money_services: 'Money services',
+    care_and_household: 'Care and household', utilities: 'Utilities', housing: 'Housing', business: 'Business', giving_faith: 'Giving and faith', work: 'Work', civic_legal: 'Civic and legal', public_services: 'Public services' };
+  const TIERS = ['poverty', 'alice', 'above'];
+  const TIER_L = ['In poverty', 'ALICE', 'Above ALICE', 'No household'];
+  const jobLab = (cat) => human(String(cat).split('.').pop());
+  const domOf = (cat) => String(cat).split('.')[0];
+  const BAD = new Set(['declined', 'abandoned', 'failed', 'rescheduled']);
+  const vkind = (type, outcome) => BAD.has(outcome) || type === 'failed_attempt' ? 'fail'
+    : type === 'non_monetary_job' ? 'unpaid' : type === 'income' || type === 'benefit_issuance' ? 'income'
+    : type === 'bill_payment' || type === 'tax' || type === 'insurance_claim' ? 'bill' : type === 'public_service_encounter' ? 'service' : 'purchase';
+  const EMP_SHORT = { child: 'child', retired: 'retiree', student: 'student', not_in_labor_force: 'resident', unemployed: 'job seeker', employed_full_time: 'worker', employed_part_time: 'part-time worker', self_employed: 'self-employed worker' };
+  const HH_TYPE = { alone: 'Lives alone', married_nokids: 'Married, no kids at home', married_kids: 'Married with kids', adult_child: 'Parent with adult child', single_parent: 'Single parent', roommates: 'Roommates',
+    multigen: 'Multigenerational', cohab_kids: 'Unmarried couple with kids', other_family: 'Other family', 'group_quarters:college_dorm': 'College dorm', 'group_quarters:nursing_home': 'Nursing home', 'group_quarters:jail': 'Jail' };
+  const hhType = (t) => HH_TYPE[t] || human(t);
+
+  // ---------- loading the run ----------
+  function loadScript(srcs) {
+    return srcs.reduce((p, src) => p.then((ok) => ok || new Promise((res) => {
+      const s = document.createElement('script'); s.src = src; s.onload = () => res(!!window.fflate); s.onerror = () => { s.remove(); res(false); }; document.head.appendChild(s);
+    })), Promise.resolve(!!window.fflate)).then((ok) => { if (!ok) throw new Error('the unzip helper did not load'); });
+  }
+  class Grow {
+    constructor(n) { this.b = new Uint8Array(n > 0 ? n : 1 << 22); this.n = 0; }
+    push(c) { if (this.n + c.length > this.b.length) { const nb = new Uint8Array(Math.max(this.b.length * 2, this.n + c.length)); nb.set(this.b.subarray(0, this.n)); this.b = nb; } this.b.set(c, this.n); this.n += c.length; }
+    done() { return this.b.subarray(0, this.n); }
+  }
+  const WANT = { 'records.csv': 'rec', 'organizations.csv': 'org', 'households.csv': 'hh', 'persons.csv': 'per', 'household_ledger.csv': 'led' };
+  async function download(prog) {
+    let res = null;
+    for (const u of RUNS) { try { const r = await fetch(u); if (r.ok) { res = r; break; } } catch (e) { /* try the next place */ } }
+    if (!res) throw new Error('the run file could not be found');
+    const total = +res.headers.get('content-length') || 16019255, rd = res.body.getReader(), got = {};
+    let fail = null, seen = 0;
+    const unz = new fflate.Unzip(); unz.register(fflate.UnzipInflate);
+    unz.onfile = (f) => {
+      const key = WANT[f.name.split('/').pop().toLowerCase()]; if (!key || got[key] || /detailed/.test(f.name)) return;
+      const g = (got[key] = new Grow(f.originalSize || 0));
+      f.ondata = (err, chunk) => { if (err) { fail = err; return; } g.push(chunk); };
+      f.start();
+    };
+    for (;;) {
+      const { done, value } = await rd.read();
+      if (done) { unz.push(new Uint8Array(0), true); break; }
+      unz.push(value, false); if (fail) throw fail;
+      seen += value.length; prog(Math.min(1, seen / total));
+    }
+    const out = {}; for (const k in got) out[k] = got[k].done();
+    for (const k of ['rec', 'org', 'hh', 'per']) if (!out[k]) throw new Error('a table was missing from the zip');
+    return out;
+  }
+
+  // Columnar CSV: text columns are dictionary-coded, numeric columns are Float64Array.
+  async function parseCSV(bytes, num, prog) {
+    const N = bytes.length, cuts = [0]; let inQ = false, lines = 0, next = 1 << 21;
+    for (let p = 0; p < N; p++) { const b = bytes[p]; if (b === 34) inQ = !inQ; else if (b === 10 && !inQ) { lines++; if (p >= next) { cuts.push(p + 1); next = p + (1 << 21); } } }
+    if (cuts[cuts.length - 1] < N) cuts.push(N);
+    const dec = new TextDecoder('utf-8');
+    let s0 = dec.decode(bytes.subarray(cuts[0], cuts[1])); if (s0.charCodeAt(0) === 0xfeff) s0 = s0.slice(1);
+    const hEnd = s0.indexOf('\n'), names = s0.slice(0, hEnd).replace(/\r$/, '').split(',').map((x) => x.trim());
+    const cap = lines + 1, nc = names.length;
+    const cols = names.map((nm) => (num.includes(nm) ? { kind: 'num', v: new Float64Array(cap) } : { kind: 'cat', c: new Int32Array(cap), d: [], m: new Map() }));
+    let r = 0;
+    const put = (f, v) => {
+      const col = cols[f];
+      if (col.kind === 'num') col.v[r] = v === '' ? NaN : +v;
+      else { let k = col.m.get(v); if (k === undefined) { k = col.d.length; col.d.push(v); col.m.set(v, k); } col.c[r] = k; }
+    };
+    const parse = (s, start) => {
+      let i = start, f = 0, nl = -1; const n = s.length;
+      while (i < n) {
+        if (nl < i) { nl = s.indexOf('\n', i); if (nl < 0) nl = n; }
+        let v;
+        if (s.charCodeAt(i) === 34) {
+          let j = i + 1; v = '';
+          for (;;) {
+            const q = s.indexOf('"', j); if (q < 0) { v += s.slice(j); i = n; break; }
+            if (s.charCodeAt(q + 1) === 34) { v += s.slice(j, q + 1); j = q + 2; } else { v += s.slice(j, q); i = q + 1; break; }
+          }
+          if (i > nl) { nl = s.indexOf('\n', i); if (nl < 0) nl = n; }
+          if (s.charCodeAt(i) === 13) i++;
+        } else {
+          let c = s.indexOf(',', i); if (c < 0 || c > nl) c = nl;
+          v = s.slice(i, c); i = c;
+          if (i === nl && v.charCodeAt(v.length - 1) === 13) v = v.slice(0, -1);
+        }
+        if (i >= nl) {
+          if (!(f === 0 && v === '')) { if (f < nc) put(f, v); for (let k = f + 1; k < nc; k++) put(k, ''); r++; }
+          f = 0; i = nl + 1;
+        } else { if (f < nc) put(f, v); f++; i++; }
+      }
+    };
+    for (let k = 0; k < cuts.length - 1; k++) {
+      if (k === 0) parse(s0, hEnd + 1); else parse(dec.decode(bytes.subarray(cuts[k], cuts[k + 1])), 0);
+      if (prog) prog((k + 1) / (cuts.length - 1));
+      if (k % 2 === 1) await tick();
+    }
+    const T = { n: r, names, cols: {} };
+    names.forEach((nm, j) => { const c = cols[j]; if (c.kind === 'num') c.v = c.v.subarray(0, r); else c.c = c.c.subarray(0, r); T.cols[nm] = c; });
+    T.s = (col, i) => { const c = T.cols[col]; return c.kind === 'num' ? c.v[i] : c.d[c.c[i]]; };
+    T.v = (col, i) => T.cols[col].v[i];
+    T.row = (id) => { const c = T.cols[names[0]]; const k = c.m.get(id); if (k === undefined) return -1; /* ids are unique, so code = row */ return c.c[k] === k ? k : findRow(T, names[0], k); };
+    return T;
+  }
+  function findRow(T, col, code) { const c = T.cols[col].c; for (let i = 0; i < T.n; i++) if (c[i] === code) return i; return -1; }
+
+  // ---------- the data, once loaded ----------
+  let D = null; // {rec, hh, per, org, led, ...derived}
+  function derive(raw) {
+    const R = raw.rec, HH = raw.hh, P = raw.per, O = raw.org, L = raw.led, n = R.n;
+    const d = { rec: R, hh: HH, per: P, org: O, led: L };
+    // records: minute, household row, tier, domain, fail
+    const tsC = R.cols.timestamp_local, tsMin = tsC.d.map((s) => +s.slice(11, 13) * 60 + +s.slice(14, 16));
+    R.tmin = new Int16Array(n); R.hour = new Int32Array(n);
+    for (let i = 0; i < n; i++) { const m = tsMin[tsC.c[i]]; R.tmin[i] = m; R.hour[i] = Math.min(23, Math.floor(m / 60)); }
+    const hhAlice = HH.cols.alice_status, hhTier = new Uint8Array(HH.n);
+    for (let i = 0; i < HH.n; i++) { const t = TIERS.indexOf(hhAlice.d[hhAlice.c[i]]); hhTier[i] = t < 0 ? 3 : t; }
+    HH.tier = hhTier;
+    const hidC = R.cols.household_id, hidRow = Int32Array.from(hidC.d, (id) => (id ? HH.row(id) : -1));
+    R.hh = new Int32Array(n); R.tier = new Int32Array(n);
+    for (let i = 0; i < n; i++) { const h = hidRow[hidC.c[i]]; R.hh[i] = h; R.tier[i] = h < 0 ? 3 : hhTier[h]; }
+    const jc = R.cols.job_category, doms = [...new Set(jc.d.map(domOf))];
+    const jcDom = Int32Array.from(jc.d, (c) => doms.indexOf(domOf(c)));
+    R.doms = doms; R.dom = new Int32Array(n);
+    for (let i = 0; i < n; i++) R.dom[i] = jcDom[jc.c[i]];
+    const oc = R.cols.outcome, ocBad = Uint8Array.from(oc.d, (o) => (BAD.has(o) ? 1 : 0));
+    const rt = R.cols.record_type, isFA = rt.d.indexOf('failed_attempt');
+    R.fail = new Uint8Array(n); R.failF = new Int32Array(n);
+    for (let i = 0; i < n; i++) { R.fail[i] = ocBad[oc.c[i]] || rt.c[i] === isFA ? 1 : 0; R.failF[i] = R.fail[i] ? 0 : -1; }
+    const nar = R.cols.narrative, narHW = Uint8Array.from(nar.d, (s) => (s.startsWith('[detailed]') ? 1 : 0));
+    R.hw = new Int32Array(n); for (let i = 0; i < n; i++) R.hw[i] = narHW[nar.c[i]] ? 0 : -1;
+    // party labels per dictionary code
+    const personShort = (r) => { const a = P.v('age', r), occ = P.s('occupation', r), emp = P.s('employment_status', r);
+      return (a < 1 ? 'Baby' : Math.round(a) + '-year-old ' + (occ || EMP_SHORT[emp] || 'resident')); };
+    d.personShort = personShort;
+    d.partyLabel = (id) => {
+      if (!id) return '—';
+      if (id[0] === 'O') { const r = O.row(id); return r < 0 ? id : O.s('name', r); }
+      if (id[0] === 'P') { const r = P.row(id); return r < 0 ? id : personShort(r); }
+      if (id[0] === 'H') return 'Household ' + id;
+      return id;
+    };
+    R.fromLab = R.cols.from_party_id.d.map(d.partyLabel);
+    R.toLab = R.cols.to_party_id.d.map(d.partyLabel);
+    // multi-valued tag columns
+    d.split = (T, col, clean) => {
+      const c = T.cols[col], tags = [], idx = new Map(), of = c.d.map((s) => {
+        const out = []; for (let t of String(s).split(';')) { t = clean ? clean(t) : t.trim(); if (!t) continue; let k = idx.get(t); if (k === undefined) { k = tags.length; tags.push(t); idx.set(t, k); } if (!out.includes(k)) out.push(k); }
+        return out; });
+      return { tags, of, arr: c.c };
+    };
+    R.fric = d.split(R, 'friction_tags'); R.lens = d.split(R, 'lens_tags');
+    // per-household, per-person, per-org aggregates for today
+    const fee = R.cols.fee_amount.v, tm = R.cols.time_minutes.v, amt = R.cols.amount_gross.v, unpaidT = rt.d.indexOf('non_monetary_job');
+    HH.nrec = new Int32Array(HH.n); HH.nfail = new Int32Array(HH.n); HH.fees = new Float64Array(HH.n); HH.unpaid = new Float64Array(HH.n);
+    for (let i = 0; i < n; i++) { const h = R.hh[i]; if (h < 0) continue; HH.nrec[h]++; if (R.fail[i]) HH.nfail[h]++; if (fee[i] > 0) HH.fees[h] += fee[i]; if (rt.c[i] === unpaidT) HH.unpaid[h] += (tm[i] || 0) + (R.cols.wait_minutes.v[i] || 0); }
+    const pRowOf = (c) => Int32Array.from(c.d, (id) => (id && id[0] === 'P' ? P.row(id) : -1));
+    const oRowOf = (c) => Int32Array.from(c.d, (id) => (id && id[0] === 'O' ? O.row(id) : -1));
+    R.actP = pRowOf(R.cols.actor_person_id); R.benP = pRowOf(R.cols.beneficiary_person_id); R.fromP = pRowOf(R.cols.from_party_id); R.toP = pRowOf(R.cols.to_party_id);
+    R.fromO = oRowOf(R.cols.from_party_id); R.toO = oRowOf(R.cols.to_party_id);
+    P.nrec = new Int32Array(P.n); P.nfail = new Int32Array(P.n);
+    const ac = R.cols.actor_person_id.c, bc = R.cols.beneficiary_person_id.c, fc = R.cols.from_party_id.c, tc = R.cols.to_party_id.c;
+    for (let i = 0; i < n; i++) {
+      const a = R.actP[ac[i]], b = R.benP[bc[i]], f = R.fromP[fc[i]], t = R.toP[tc[i]];
+      const seen = [];
+      for (const p of [a, b, f, t]) if (p >= 0 && !seen.includes(p)) { seen.push(p); P.nrec[p]++; if (R.fail[i]) P.nfail[p]++; }
+    }
+    O.nin = new Int32Array(O.n); O.nout = new Int32Array(O.n); O.ain = new Float64Array(O.n); O.aout = new Float64Array(O.n); O.nfail = new Int32Array(O.n);
+    for (let i = 0; i < n; i++) {
+      const t = R.toO[tc[i]], f = R.fromO[fc[i]], a = amt[i] || 0;
+      if (t >= 0) { O.nin[t]++; O.ain[t] += a; if (R.fail[i]) O.nfail[t]++; }
+      if (f >= 0) { O.nout[f]++; O.aout[f] += a; }
+    }
+    // persons: district and tier through their household
+    const phc = P.cols.household_id; const phRow = Int32Array.from(phc.d, (id) => HH.row(id));
+    P.hh = new Int32Array(P.n); P.tier = new Int32Array(P.n); P.dist = new Int32Array(P.n);
+    const hdist = HH.cols.district;
+    for (let i = 0; i < P.n; i++) { const h = phRow[phc.c[i]]; P.hh[i] = h; P.tier[i] = h < 0 ? 3 : hhTier[h]; P.dist[i] = h < 0 ? -1 : hdist.c[h]; }
+    // ledger row per household
+    HH.led = new Int32Array(HH.n).fill(-1);
+    if (L) for (let i = 0; i < L.n; i++) { const h = HH.row(L.s('household_id', i)); if (h >= 0) HH.led[h] = i; }
+    // reverse links: which records point to each record
+    const rel = R.cols.related_record_id; R.relRow = Int32Array.from(rel.d, (id) => (id ? R.row(id) : -1));
+    return d;
+  }
+
+  // ---------- facets ----------
+  // A facet is a list of values with a code per row: arr[i] (single) or of[arr[i]] (multi).
+  function facet(o) {
+    const f = Object.assign({ multi: false, sel: new Set(), open: false, show: 8, q: '' }, o);
+    f.counts = new Int32Array(f.values.length);
+    return f;
+  }
+  function catFacet(T, col, id, label, opt = {}) {
+    const c = T.cols[col], lab = opt.lab || human;
+    return facet(Object.assign({ id, label, arr: c.c, raw: c.d, values: c.d.map((v) => ({ label: v === '' ? null : lab(v), sub: opt.sub ? opt.sub(v) : '' })) }, opt.extra || {}));
+  }
+  function tagFacet(sp, id, label, lab = human) { return facet({ id, label, multi: true, arr: sp.arr, of: sp.of, values: sp.tags.map((t) => ({ label: lab(t) })) }); }
+  function arrFacet(arr, labels, id, label, extra = {}) { return facet(Object.assign({ id, label, arr, values: labels.map((l) => ({ label: l })) }, extra)); }
+  function orderFacet(f, n) { // fixed order: by whole-day frequency unless told otherwise
+    const tot = new Float64Array(f.values.length);
+    for (let i = 0; i < n; i++) { const k = f.arr[i]; if (k < 0) continue; if (f.multi) for (const t of f.of[k]) tot[t]++; else tot[k]++; }
+    f.total = tot;
+    let idx = f.values.map((v, k) => k).filter((k) => f.values[k].label != null && tot[k] > 0);
+    if (f.byValue) idx.sort((a, b) => (f.raw[a] < f.raw[b] ? -1 : f.raw[a] > f.raw[b] ? 1 : 0));
+    else if (!f.fixed) idx.sort((a, b) => tot[b] - tot[a]);
+    f.order = idx;
+  }
+
+  // ---------- views ----------
+  const V = {};
+  let cur = 'records';
+  const PAGE = 50;
+
+  function buildViews() {
+    const R = D.rec, HH = D.hh, P = D.per, O = D.org, L = D.led;
+    // ===== records =====
+    const recF = [
+      catFacet(R, 'record_type', 'kind', 'Kind of record', { lab: (v) => TYPE_L[v] || human(v), extra: { open: true } }),
+      arrFacet(R.failF, ["Didn't work"], 'fail', "Didn't work", { open: true }),
+      catFacet(R, 'outcome', 'outcome', 'Outcome', { lab: (v) => OUT_L[v] || human(v) }),
+      arrFacet(R.dom, R.doms.map((x) => DOM_L[x] || human(x)), 'area', 'Area of life'),
+      catFacet(R, 'job_category', 'job', 'Job', { lab: jobLab, sub: (v) => DOM_L[domOf(v)] || human(domOf(v)), extra: { filterable: true } }),
+      arrFacet(R.tier, TIER_L, 'tier', 'Household income tier', { fixed: true, open: true }),
+      catFacet(R, 'district', 'district', 'District', { lab: dname, extra: { fixed: true, byValue: true } }),
+      tagFacet(R.fric, 'friction', 'Friction'),
+      catFacet(R, 'fee_type', 'fee', 'Fee charged', { extra: { filterable: true } }),
+      catFacet(R, 'channel', 'channel', 'Channel'),
+      catFacet(R, 'payment_method', 'method', 'Payment method'),
+      catFacet(R, 'travel_mode', 'travel', 'Travel mode'),
+      catFacet(R, 'third_party_payer', 'payer', 'Paid in part by', { extra: { filterable: true } }),
+      catFacet(R, 'funding_level', 'funding', 'Public funding level'),
+      tagFacet(R.lens, 'lens', 'Lens'),
+      arrFacet(R.hw, ['Hand-written narrative'], 'hw', 'Hand-written records'),
+    ];
+    // district in fixed D1..D6 order
+    const recSearch = searcher(R.n, [
+      { d: R.cols.narrative.d, c: R.cols.narrative.c }, { d: R.cols.job_statement.d, c: R.cols.job_statement.c },
+      { d: R.cols.job_category.d.map((x) => x + ' ' + jobLab(x)), c: R.cols.job_category.c },
+      { d: R.fromLab.map((l, k) => l + ' ' + R.cols.from_party_id.d[k]), c: R.cols.from_party_id.c },
+      { d: R.toLab.map((l, k) => l + ' ' + R.cols.to_party_id.d[k]), c: R.cols.to_party_id.c },
+      { d: R.cols.record_id.d, c: R.cols.record_id.c }, { d: R.cols.household_id.d, c: R.cols.household_id.c },
+    ]);
+    const amt = R.cols.amount_gross.v, fee = R.cols.fee_amount.v, tm = R.cols.time_minutes.v, wt = R.cols.wait_minutes.v, user = R.cols.amount_paid_by_user.v;
+    V.records = {
+      id: 'records', T: R, n: R.n, facets: recF, search: recSearch, q: '', page: 0, mode: 'rows', group: 'job', gsort: 'n',
+      sorts: [
+        { id: 'time', label: 'Time of day' }, { id: 'amt', label: 'Amount, largest first', key: amt },
+        { id: 'user', label: 'Paid by the person, largest first', key: user }, { id: 'fee', label: 'Fee, largest first', key: fee },
+        { id: 'tm', label: 'Time spent, longest first', key: tm }, { id: 'wt', label: 'Wait, longest first', key: wt },
+      ], sort: 'time', time: [0, 24], scope: null,
+      placeholder: 'Search narratives, jobs, people and places, or a record id',
+      grid: 'g-rec',
+      head: '<span>Time</span><span>Kind</span><span>Job and narrative</span><span>From → to</span><span class="num">Amount</span><span>Outcome</span>',
+      row: (i) => {
+        const type = R.s('record_type', i), outc = R.s('outcome', i), vk = vkind(type, outc), nar = R.s('narrative', i), hw = nar.startsWith('[detailed]');
+        const a = amt[i], showAmt = a > 0 ? usd(a) : type === 'non_monetary_job' ? mins(tm[i]) : '—';
+        return `<span class="c-t muted">${clock(R.tmin[i])}</span>
+          <span class="c-k one"><i class="dot k-${vk}" aria-hidden="true"></i>${esc(TYPE_L[type] || human(type))}</span>
+          <span class="c-w"><b class="one">${hw ? '<span class="hw" title="Hand-written">✎ </span>' : ''}${esc(jobLab(R.s('job_category', i)))}</b><small>${esc(hw ? nar.slice(11) : nar)}</small></span>
+          <span class="c-p one muted">${esc(R.fromLab[R.cols.from_party_id.c[i]])} → ${esc(R.toLab[R.cols.to_party_id.c[i]])}</span>
+          <span class="c-a num"><b>${showAmt}</b></span>
+          <span class="c-o ${R.fail[i] ? 'bad' : 'muted'}">${esc(OUT_L[outc] || human(outc))}</span>`;
+      },
+      open: (i) => openEntity('record', R.s('record_id', i)),
+      extra: (i, v) => {
+        if (v.time[0] > 0 || v.time[1] < 24) { const h = R.tmin[i] / 60; if (h < v.time[0] || h >= v.time[1]) return false; }
+        if (v.scope && !v.scope.test(i)) return false;
+        return true;
+      },
+      tiles: (idx) => {
+        let a = 0, f = 0, fe = 0, t = 0, w = 0; const fl = R.fail;
+        for (let k = 0; k < idx.length; k++) { const i = idx[k]; a += amt[i] || 0; f += fl[i]; fe += fee[i] || 0; t += tm[i] || 0; w += wt[i] || 0; }
+        return [['Records', fmt(idx.length), pct(idx.length, R.n) + ' of the day'], ['Money moved', usdC(a), ''], ["Didn't work", fmt(f), pct(f, idx.length) + ' of these', 'bad'],
+          ['Fees', usdC(fe), ''], ['Time spent', hrs(t), ''], ['Waiting', hrs(w), '']];
+      },
+      exportable: true,
+    };
+    // ===== households =====
+    const hc = HH.cols;
+    const incBands = [[0, 25e3, 'Under $25,000'], [25e3, 50e3, '$25,000 to $49,999'], [50e3, 75e3, '$50,000 to $74,999'], [75e3, 100e3, '$75,000 to $99,999'], [100e3, 150e3, '$100,000 to $149,999'], [150e3, Infinity, '$150,000 or more']];
+    const incArr = new Int32Array(HH.n); for (let i = 0; i < HH.n; i++) { const v = hc.annual_income.v[i]; incArr[i] = incBands.findIndex((b) => v >= b[0] && v < b[1]); }
+    const sizeArr = new Int32Array(HH.n); for (let i = 0; i < HH.n; i++) sizeArr[i] = Math.min(6, Math.max(1, hc.size.v[i])) - 1;
+    const todayTags = ["Something didn't work", 'Paid a fee', 'Did unpaid work', 'No records today'];
+    const todayOf = []; const todayArr = new Int32Array(HH.n); const todayKey = new Map();
+    for (let i = 0; i < HH.n; i++) {
+      const t = []; if (HH.nfail[i]) t.push(0); if (HH.fees[i] > 0) t.push(1); if (HH.unpaid[i] > 0) t.push(2); if (!HH.nrec[i]) t.push(3);
+      const key = t.join(','); let k = todayKey.get(key); if (k === undefined) { k = todayOf.length; todayOf.push(t); todayKey.set(key, k); } todayArr[i] = k;
+    }
+    const cover = new Int32Array(HH.n).fill(-1);
+    if (L) { const cc = L.cols.could_cover_400_emergency; for (let i = 0; i < HH.n; i++) { const l = HH.led[i]; if (l >= 0) cover[i] = L.s('could_cover_400_emergency', l) === 'yes' ? 0 : 1; } }
+    const noteClean = (t) => { t = t.trim(); if (!t || /=/.test(t)) return ''; if (t.startsWith('facility:')) return 'group_quarters_facility'; return t; };
+    const hhF = [
+      arrFacet(HH.tier, TIER_L.slice(0, 3), 'tier', 'Income tier', { fixed: true, open: true }),
+      arrFacet(todayArr, todayTags, 'today', 'Today', { multi: true, of: todayOf, fixed: true, open: true }),
+      catFacet(HH, 'district', 'district', 'District', { lab: dname, extra: { fixed: true, byValue: true } }),
+      catFacet(HH, 'household_type', 'type', 'Household type', { lab: hhType }),
+      arrFacet(sizeArr, ['1 person', '2 people', '3 people', '4 people', '5 people', '6 or more'], 'size', 'Size', { fixed: true }),
+      arrFacet(incArr, incBands.map((b) => b[2]), 'income', 'Annual income', { fixed: true }),
+      arrFacet(cover, ['Could cover $400', "Couldn't cover $400"], 'cover', 'A $400 emergency', { fixed: true }),
+      catFacet(HH, 'housing_tenure', 'tenure', 'Housing'),
+      catFacet(HH, 'banked_status', 'banked', 'Banking'),
+      catFacet(HH, 'internet_at_home', 'internet', 'Internet at home'),
+      catFacet(HH, 'primary_language', 'lang', 'Primary language'),
+      tagFacet(D.split(HH, 'notes', noteClean), 'notes', 'Circumstances', (t) => (t === 'could_not_cover_$400_from_cash_or_equivalent' ? "Couldn't cover $400 from cash" : human(t))),
+    ];
+    const ledOut = new Float64Array(HH.n); if (L) for (let i = 0; i < HH.n; i++) ledOut[i] = HH.led[i] >= 0 ? L.v('outflows', HH.led[i]) : NaN;
+    V.households = {
+      id: 'households', T: HH, n: HH.n, facets: hhF, q: '', page: 0, mode: 'rows',
+      search: searcher(HH.n, [{ d: hc.household_id.d, c: hc.household_id.c }, { d: hc.notes.d, c: hc.notes.c }, { d: hc.household_type.d.map(hhType), c: hc.household_type.c }]),
+      sorts: [{ id: 'id', label: 'Household id' }, { id: 'inc', label: 'Income, highest first', key: hc.annual_income.v }, { id: 'incl', label: 'Income, lowest first', key: hc.annual_income.v, asc: true },
+        { id: 'rec', label: 'Records today, most first', key: HH.nrec }, { id: 'fail', label: "Didn't work, most first", key: HH.nfail },
+        { id: 'fee', label: 'Fees today, most first', key: HH.fees }, { id: 'out', label: 'Money out today, most first', key: ledOut }, { id: 'unp', label: 'Unpaid work, most first', key: HH.unpaid }],
+      sort: 'id', placeholder: 'Search household ids, types and circumstances', grid: 'g-hh',
+      head: '<span>Household</span><span>District</span><span>Type</span><span class="num">Income</span><span class="c-tier">Tier</span><span class="num">Records</span><span class="num">Didn\'t work</span><span class="num c-fee">Fees</span>',
+      row: (i) => `<span><b>${esc(hc.household_id.d[hc.household_id.c[i]])}</b><small class="m-only">${esc(hhType(HH.s('household_type', i)))} · ${esc(dname(HH.s('district', i)))}</small></span>
+        <span class="one muted">${esc(dname(HH.s('district', i)))}</span>
+        <span class="one">${esc(hhType(HH.s('household_type', i)))} · ${fmt(hc.size.v[i])}</span>
+        <span class="num m-show">${usd0(hc.annual_income.v[i])}<small class="m-only">${esc(TIER_L[HH.tier[i]])}</small></span>
+        <span class="c-tier muted">${esc(TIER_L[HH.tier[i]])}</span>
+        <span class="num">${fmt(HH.nrec[i])}</span><span class="num ${HH.nfail[i] ? 'bad' : 'muted'}">${fmt(HH.nfail[i])}</span><span class="num c-fee">${HH.fees[i] > 0 ? usd(HH.fees[i]) : '—'}</span>`,
+      open: (i) => openEntity('household', HH.s('household_id', i)),
+      tiles: (idx) => {
+        let f = 0, fe = 0, inc = [], cov = 0, covN = 0;
+        for (const i of idx) { if (HH.nfail[i]) f++; fe += HH.fees[i]; inc.push(hc.annual_income.v[i]); if (cover[i] >= 0) { covN++; if (cover[i] === 1) cov++; } }
+        inc.sort((a, b) => a - b); const med = inc.length ? inc[Math.floor(inc.length / 2)] : NaN;
+        return [['Households', fmt(idx.length), ''], ['Median income', usd0(med), ''], ["Something didn't work", pct(f, idx.length), fmt(f) + ' households', 'bad'],
+          ["Couldn't cover $400", pct(cov, covN), ''], ['Fees today', usdC(fe), ''], ['Fees per household', usd(idx.length ? fe / idx.length : NaN), '']];
+      },
+    };
+    // ===== people =====
+    const pc = P.cols;
+    const ageBands = [[0, 5, 'Under 5'], [5, 18, '5 to 17'], [18, 25, '18 to 24'], [25, 35, '25 to 34'], [35, 45, '35 to 44'], [45, 55, '45 to 54'], [55, 65, '55 to 64'], [65, 75, '65 to 74'], [75, 200, '75 and older']];
+    const ageArr = new Int32Array(P.n); for (let i = 0; i < P.n; i++) { const a = pc.age.v[i]; ageArr[i] = ageBands.findIndex((b) => a >= b[0] && a < b[1]); }
+    const careArr = new Int32Array(P.n); for (let i = 0; i < P.n; i++) careArr[i] = P.s('caregiver_for', i) && P.s('caregiver_for', i) !== 'none' ? 0 : -1;
+    const benClean = (t) => { t = t.trim().replace(/\(.*\)$/, ''); return t === 'none' ? '' : t; };
+    const pDistLab = HH.cols.district.d.map(dname);
+    const pFailArr = new Int32Array(P.n); for (let i = 0; i < P.n; i++) pFailArr[i] = P.nfail[i] ? 0 : P.nrec[i] ? 1 : 2;
+    const perF = [
+      arrFacet(ageArr, ageBands.map((b) => b[2]), 'age', 'Age', { fixed: true, open: true }),
+      catFacet(P, 'employment_status', 'emp', 'Work', { extra: { open: true } }),
+      arrFacet(P.tier, TIER_L.slice(0, 3), 'tier', 'Household income tier', { fixed: true }),
+      arrFacet(P.dist, pDistLab, 'district', 'District', { fixed: true, byValue: true, raw: HH.cols.district.d }),
+      arrFacet(pFailArr, ["Something didn't work", 'Everything worked', 'No records today'], 'today', 'Today', { fixed: true }),
+      catFacet(P, 'health_coverage', 'cov', 'Health coverage'),
+      catFacet(P, 'disability', 'dis', 'Disability'),
+      tagFacet(D.split(P, 'benefits_received', benClean), 'ben', 'Benefits'),
+      arrFacet(careArr, ['Caregiver for someone'], 'care', 'Caregiving'),
+      catFacet(P, 'work_schedule', 'sched', 'Work schedule'),
+      catFacet(P, 'pay_cadence', 'pay', 'Pay cadence'),
+      catFacet(P, 'industry_sector', 'ind', 'Industry', { extra: { filterable: true } }),
+      catFacet(P, 'education', 'edu', 'Education'),
+      catFacet(P, 'sex', 'sex', 'Sex', { lab: (v) => (v === 'F' ? 'Female' : v === 'M' ? 'Male' : human(v)) }),
+      catFacet(P, 'race_ethnicity', 'race', 'Race and ethnicity', { lab: (v) => human(v.replace(/_non_hispanic$/, '')).replace(/^Hispanic$/, 'Hispanic or Latino') + (v.endsWith('_non_hispanic') ? ', not Hispanic' : '') }),
+      catFacet(P, 'union_member', 'union', 'Union member'),
+    ];
+    V.people = {
+      id: 'people', T: P, n: P.n, facets: perF, q: '', page: 0, mode: 'rows',
+      search: searcher(P.n, [{ d: pc.person_id.d, c: pc.person_id.c }, { d: pc.household_id.d, c: pc.household_id.c }, { d: pc.occupation.d, c: pc.occupation.c }]),
+      sorts: [{ id: 'id', label: 'Person id' }, { id: 'age', label: 'Age, oldest first', key: pc.age.v }, { id: 'agel', label: 'Age, youngest first', key: pc.age.v, asc: true },
+        { id: 'rec', label: 'Records today, most first', key: P.nrec }, { id: 'fail', label: "Didn't work, most first", key: P.nfail }],
+      sort: 'id', placeholder: 'Search person ids, household ids and occupations', grid: 'g-per',
+      head: '<span>Person</span><span>Who</span><span>Coverage</span><span>District</span><span class="num">Records</span><span class="num">Didn\'t work</span>',
+      row: (i) => `<span><b>${esc(P.s('person_id', i))}</b><small class="m-only">${esc(P.dist[i] >= 0 ? pDistLab[P.dist[i]] : '')} · ${fmt(P.nrec[i])} records</small></span>
+        <span class="one m-show">${esc(D.personShort(i))}<small>${esc(human(P.s('employment_status', i)))}</small></span>
+        <span class="one muted">${esc(human(P.s('health_coverage', i)))}</span>
+        <span class="one muted">${esc(P.dist[i] >= 0 ? pDistLab[P.dist[i]] : '—')}</span>
+        <span class="num">${fmt(P.nrec[i])}</span><span class="num ${P.nfail[i] ? 'bad' : 'muted'}">${fmt(P.nfail[i])}</span>`,
+      open: (i) => openEntity('person', P.s('person_id', i)),
+      tiles: (idx) => {
+        let f = 0, kids = 0, emp = 0, un = 0, r = 0; const ec = pc.employment_status, empC = ec.d.map((x) => x.startsWith('employed') || x === 'self_employed'), unC = pc.health_coverage.d.indexOf('uninsured');
+        for (const i of idx) { if (P.nfail[i]) f++; if (pc.age.v[i] < 18) kids++; if (empC[ec.c[i]]) emp++; if (pc.health_coverage.c[i] === unC) un++; r += P.nrec[i]; }
+        return [['People', fmt(idx.length), ''], ['Under 18', pct(kids, idx.length), ''], ['Working', pct(emp, idx.length), ''], ['Uninsured', pct(un, idx.length), ''],
+          ["Something didn't work", pct(f, idx.length), fmt(f) + ' people', 'bad'], ['Records per person', NF1.format(idx.length ? r / idx.length : 0), '']];
+      },
+    };
+    // ===== organizations =====
+    const ocl = O.cols;
+    const nameRank = new Float64Array(O.n); [...Array(O.n).keys()].sort((a, b) => O.s('name', a).localeCompare(O.s('name', b))).forEach((r, k) => (nameRank[r] = k));
+    const oFail = new Int32Array(O.n); for (let i = 0; i < O.n; i++) oFail[i] = O.nfail[i] ? 0 : -1;
+    const orgF = [
+      catFacet(O, 'org_type', 'type', 'Kind', { extra: { open: true } }),
+      catFacet(O, 'sector', 'sector', 'Sector', { extra: { open: true } }),
+      catFacet(O, 'district', 'district', 'District', { lab: dname, extra: { fixed: true, byValue: true } }),
+      tagFacet(D.split(O, 'accepts'), 'accepts', 'Accepts'),
+      arrFacet(oFail, ['Something didn\'t work here today'], 'today', 'Today'),
+    ];
+    V.organizations = {
+      id: 'organizations', T: O, n: O.n, facets: orgF, q: '', page: 0, mode: 'rows',
+      search: searcher(O.n, [{ d: ocl.name.d, c: ocl.name.c }, { d: ocl.org_id.d, c: ocl.org_id.c }, { d: ocl.notes.d, c: ocl.notes.c }, { d: ocl.sector.d, c: ocl.sector.c }]),
+      sorts: [{ id: 'in', label: 'Records received, most first', key: O.nin }, { id: 'ain', label: 'Money received, most first', key: O.ain }, { id: 'aout', label: 'Money paid out, most first', key: O.aout },
+        { id: 'emp', label: 'Employees, most first', key: ocl.size_employees.v }, { id: 'fail', label: "Didn't work there, most first", key: O.nfail }, { id: 'name', label: 'Name, A to Z', key: nameRank, asc: true }],
+      sort: 'in', placeholder: 'Search names, ids, sectors and notes', grid: 'g-org',
+      head: '<span>Name</span><span>Sector</span><span>District</span><span class="num">Employees</span><span class="num">Records in</span><span class="num">Money in</span>',
+      row: (i) => `<span class="one"><b>${esc(O.s('name', i))}</b><small>${esc(human(O.s('org_type', i)))} · ${esc(O.s('org_id', i))}</small></span>
+        <span class="one muted">${esc(O.s('sector', i))}</span><span class="one muted">${esc(dname(O.s('district', i)))}</span>
+        <span class="num">${Number.isFinite(ocl.size_employees.v[i]) ? fmt(ocl.size_employees.v[i]) : '—'}</span>
+        <span class="num m-show">${fmt(O.nin[i])}<small>records in</small></span><span class="num">${usdC(O.ain[i])}</span>`,
+      open: (i) => openEntity('org', O.s('org_id', i)),
+      tiles: (idx) => {
+        let e = 0, ni = 0, ai = 0, ao = 0, f = 0;
+        for (const i of idx) { e += ocl.size_employees.v[i] || 0; ni += O.nin[i]; ai += O.ain[i]; ao += O.aout[i]; f += O.nfail[i]; }
+        return [['Organizations', fmt(idx.length), ''], ['Employees', fmt(e), ''], ['Records received', fmt(ni), ''], ['Money received', usdC(ai), ''], ['Money paid out', usdC(ao), ''], ["Didn't work there", fmt(f), 'records', 'bad']];
+      },
+    };
+    for (const k of ['records', 'households', 'people', 'organizations']) { const v = V[k]; for (const f of v.facets) orderFacet(f, v.n); }
+    // records group-by dimensions: every facet plus hour and the two parties
+    V.records.dims = [
+      ...recF.filter((f) => f.id !== 'hw' && f.id !== 'fail').map((f) => ({ id: f.id, label: f.label, facet: f })),
+      { id: 'hour', label: 'Hour of the day', arr: R.hour, labels: [...Array(24).keys()].map((h) => hourLabel(h) + ' to ' + hourLabel(h + 1)), fixed: true },
+      { id: 'from', label: 'Who paid (from)', arr: R.cols.from_party_id.c, labels: R.fromLab, party: R.cols.from_party_id.d },
+      { id: 'to', label: 'Who was paid (to)', arr: R.cols.to_party_id.c, labels: R.toLab, party: R.cols.to_party_id.d },
+    ];
+  }
+
+  // search over dictionary-coded fields: every word must appear in one of the fields
+  function searcher(n, fields) {
+    const low = fields.map((f) => f.d.map((s) => String(s).toLowerCase()));
+    return (q) => {
+      const words = q.toLowerCase().split(/\s+/).filter(Boolean); if (!words.length) return null;
+      const hit = words.map((w) => fields.map((f, j) => { const L = low[j], m = new Uint8Array(L.length); for (let k = 0; k < L.length; k++) if (L[k].includes(w)) m[k] = 1; return m; }));
+      const mask = new Uint8Array(n);
+      for (let i = 0; i < n; i++) {
+        let ok = true;
+        for (let w = 0; w < words.length && ok; w++) { let any = false; for (let j = 0; j < fields.length; j++) if (hit[w][j][fields[j].c[i]]) { any = true; break; } ok = any; }
+        if (ok) mask[i] = 1;
+      }
+      return mask;
+    };
+  }
+
+  // ---------- running a view: filter, count, sort ----------
+  function run(v) {
+    const n = v.n, act = v.facets.filter((f) => f.sel.size);
+    for (const f of v.facets) { f.counts.fill(0); f.selMask = new Uint8Array(f.values.length); for (const k of f.sel) f.selMask[k] = 1; }
+    const mask = v.q ? (v._qmask && v._qq === v.q ? v._qmask : (v._qq = v.q, v._qmask = v.search(v.q))) : null;
+    const out = new Int32Array(n); let m = 0;
+    const F = v.facets, nF = F.length;
+    const pass = (f, i) => { const k = f.arr[i]; if (k < 0) return false; if (!f.multi) return f.selMask[k] === 1; for (const t of f.of[k]) if (f.selMask[t]) return true; return false; };
+    const add = (f, i) => { const k = f.arr[i]; if (k < 0) return; if (!f.multi) f.counts[k]++; else for (const t of f.of[k]) f.counts[t]++; };
+    for (let i = 0; i < n; i++) {
+      if (mask && !mask[i]) continue;
+      if (v.extra && !v.extra(i, v)) continue;
+      let miss = null, nm = 0;
+      for (let a = 0; a < act.length; a++) if (!pass(act[a], i)) { nm++; miss = act[a]; if (nm > 1) break; }
+      if (nm === 0) { out[m++] = i; for (let j = 0; j < nF; j++) add(F[j], i); }
+      else if (nm === 1) add(miss, i);
+    }
+    let idx = out.subarray(0, m);
+    const s = v.sorts.find((x) => x.id === v.sort);
+    if (s && s.key) {
+      const K = s.key, dir = s.asc ? 1 : -1, arr = Array.from(idx);
+      arr.sort((a, b) => { const x = K[a], y = K[b]; const xf = Number.isFinite(x), yf = Number.isFinite(y); if (!xf || !yf) return xf ? -1 : yf ? 1 : a - b; return x === y ? a - b : dir * (x - y); });
+      idx = Int32Array.from(arr);
+    }
+    v.idx = idx;
+    return idx;
+  }
+
+  // ---------- rendering table views ----------
+  const view = $('#view');
+  function renderView(name) {
+    const v = V[name]; cur = name;
+    view.innerHTML = `<div class="layout">
+      <aside class="rail" id="rail" aria-label="Filters">
+        <div class="rail-h"><h2>Filters</h2><span><button class="linkbtn" id="clear">Clear all</button> <button class="iconbtn" id="rail-close" aria-label="Close filters">×</button></span></div>
+        ${name === 'records' ? `<details class="facet" open><summary>Time of day</summary><div class="timepick">
+          <label class="sr-only" for="t0">From</label><select id="t0">${[...Array(24).keys()].map((h) => `<option value="${h}">${hourLabel(h)}</option>`).join('')}</select>
+          <span>to</span><label class="sr-only" for="t1">To</label><select id="t1">${[...Array(24).keys()].map((h) => `<option value="${h + 1}">${h === 23 ? 'End of day' : hourLabel(h + 1)}</option>`).join('')}</select></div></details>` : ''}
+        <div id="facets"></div>
+      </aside>
+      <section class="content" id="content" aria-label="${esc(name)}">
+        <div class="searchrow">
+          <button class="btn" id="filters-btn" aria-controls="rail">Filters</button>
+          <label class="search"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="sr-only">Search</span><input id="q" type="search" autocomplete="off" placeholder="${esc(v.placeholder)}" value="${esc(v.q)}"></label>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="tiles" id="tiles"></div>
+        <div class="toolbar" id="toolbar"></div>
+        <div id="results"></div>
+        <p class="note">Everything here is synthetic: one simulated day in an invented city of about 100,000 people. People, businesses and local agencies are invented; federal programs keep their real names. Synthetic data suggests where to look; it isn't evidence.</p>
+      </section></div>`;
+    if (name === 'records') { $('#t0').value = v.time[0]; $('#t1').value = v.time[1]; $('#t0').onchange = $('#t1').onchange = () => { let a = +$('#t0').value, b = +$('#t1').value; if (b <= a) b = Math.min(24, a + 1), $('#t1').value = b; v.time = [a, b]; v.page = 0; refresh(); }; }
+    let qt = 0;
+    $('#q').addEventListener('input', (e) => { clearTimeout(qt); qt = setTimeout(() => { v.q = e.target.value.trim(); v.page = 0; refresh(); }, 200); });
+    $('#clear').onclick = () => { for (const f of v.facets) f.sel.clear(); v.q = ''; $('#q').value = ''; if (v.time) { v.time = [0, 24]; $('#t0').value = 0; $('#t1').value = 24; } v.scope = null; v.page = 0; refresh(); };
+    $('#filters-btn').onclick = () => { document.body.classList.add('rail-open'); $('#scrim').hidden = false; $('#rail').focus?.(); };
+    $('#rail-close').onclick = closeRail;
+    $('#facets').addEventListener('change', (e) => {
+      const t = e.target; if (!t.dataset.f) return;
+      const f = v.facets.find((x) => x.id === t.dataset.f), k = +t.dataset.k;
+      if (t.checked) f.sel.add(k); else f.sel.delete(k);
+      v.page = 0; refresh(t.dataset.f + ':' + k);
+    });
+    $('#facets').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-more]'); if (!b) return;
+      const f = v.facets.find((x) => x.id === b.dataset.more); f.show = f.show > 8 ? 8 : 1e9; renderFacets(v);
+    });
+    $('#facets').addEventListener('input', (e) => {
+      const t = e.target; if (!t.dataset.ff) return; const f = v.facets.find((x) => x.id === t.dataset.ff); f.q = t.value; renderFacets(v, null, t.dataset.ff);
+    });
+    $('#facets').addEventListener('toggle', (e) => { const d = e.target; if (d.dataset && d.dataset.fid) { const f = v.facets.find((x) => x.id === d.dataset.fid); if (f) f.open = d.open; } }, true);
+    $('#chips').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-rm]'); if (!b) return; const [fid, k] = b.dataset.rm.split(':');
+      if (fid === '_q') { v.q = ''; $('#q').value = ''; } else if (fid === '_t') { v.time = [0, 24]; $('#t0').value = 0; $('#t1').value = 24; } else if (fid === '_s') v.scope = null;
+      else v.facets.find((x) => x.id === fid).sel.delete(+k);
+      v.page = 0; refresh();
+    });
+    $('#results').addEventListener('click', (e) => {
+      const r = e.target.closest('[data-i]'); if (r) { v.open(+r.dataset.i); return; }
+      const g = e.target.closest('[data-g]'); if (g) { groupClick(v, +g.dataset.g); return; }
+      const sh = e.target.closest('[data-gs]'); if (sh) { v.gsort = sh.dataset.gs; v.gsortUser = true; renderResults(v); return; }
+      const p = e.target.closest('[data-page]'); if (p) { v.page += +p.dataset.page; renderResults(v); $('#content').scrollTop = $('#toolbar').offsetTop - 70; return; }
+      const x = e.target.closest('[data-export]'); if (x) exportCSV(v);
+    });
+    $('#toolbar').addEventListener('change', (e) => {
+      const t = e.target;
+      if (t.id === 'sort') { v.sort = t.value; v.page = 0; refresh(); }
+      else if (t.name === 'mode') { v.mode = t.value; renderToolbar(v); renderResults(v); }
+      else if (t.id === 'gdim') { v.group = t.value; v.gsortUser = false; renderResults(v); }
+    });
+    refresh();
+  }
+  function closeRail() { document.body.classList.remove('rail-open'); if ($('#sheet').hidden) $('#scrim').hidden = true; }
+  function refresh(focusKey) {
+    const v = V[cur]; const t0 = performance.now();
+    run(v); v.ms = performance.now() - t0;
+    renderFacets(v, focusKey); renderChips(v); renderTiles(v); renderToolbar(v); renderResults(v);
+    $('#filters-btn').textContent = 'Filters' + (activeCount(v) ? ` (${activeCount(v)})` : '');
+  }
+  const activeCount = (v) => v.facets.reduce((s, f) => s + f.sel.size, 0) + (v.time && (v.time[0] > 0 || v.time[1] < 24) ? 1 : 0) + (v.scope ? 1 : 0);
+
+  function renderFacets(v, focusKey, filterFocus) {
+    const host = $('#facets'); if (!host) return;
+    host.innerHTML = v.facets.map((f) => {
+      let ord = f.order; const qq = f.q.trim().toLowerCase();
+      if (qq) ord = ord.filter((k) => (f.values[k].label + ' ' + (f.values[k].sub || '')).toLowerCase().includes(qq));
+      const selFirst = ord.filter((k) => f.sel.has(k)), rest = ord.filter((k) => !f.sel.has(k));
+      const lim = Math.max(f.show, selFirst.length), list = selFirst.concat(rest).slice(0, lim), more = ord.length - list.length;
+      const open = f.open || f.sel.size > 0;
+      return `<details class="facet" data-fid="${f.id}" ${open ? 'open' : ''}><summary>${esc(f.label)}${f.sel.size ? `<span class="n">${f.sel.size}</span>` : ''}</summary>
+        ${f.filterable || f.order.length > 14 ? `<input class="ffilter" data-ff="${f.id}" type="search" placeholder="Find a ${esc(f.label.toLowerCase())}" value="${esc(f.q)}" aria-label="Find in ${esc(f.label)}">` : ''}
+        <div class="fopts">${list.map((k) => { const c = f.counts[k], val = f.values[k];
+          return `<label class="fopt ${c ? '' : 'zero'}"><input type="checkbox" data-f="${f.id}" data-k="${k}" ${f.sel.has(k) ? 'checked' : ''}>
+            <span class="lab">${esc(val.label)}${val.sub ? `<small>${esc(val.sub)}</small>` : ''}</span><span class="c">${fmt(c)}</span></label>`; }).join('') || '<span class="muted" style="padding:4px 6px">No matches</span>'}
+        ${more > 0 || f.show > 8 ? `<button class="linkbtn" data-more="${f.id}" style="text-align:left;padding:6px">${f.show > 8 ? 'Show fewer' : `Show all ${fmt(ord.length)}`}</button>` : ''}</div></details>`;
+    }).join('');
+    if (focusKey) { const [fid, k] = focusKey.split(':'); const el = host.querySelector(`input[data-f="${fid}"][data-k="${k}"]`); if (el) el.focus({ preventScroll: true }); }
+    if (filterFocus) { const el = host.querySelector(`input[data-ff="${filterFocus}"]`); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }
+  }
+  function renderChips(v) {
+    const c = [];
+    if (v.scope) c.push(`<span class="fchip">${esc(v.scope.label)}<button data-rm="_s:0" aria-label="Remove ${esc(v.scope.label)}">×</button></span>`);
+    if (v.q) c.push(`<span class="fchip"><small>Search</small> “${esc(v.q)}”<button data-rm="_q:0" aria-label="Clear search">×</button></span>`);
+    if (v.time && (v.time[0] > 0 || v.time[1] < 24)) c.push(`<span class="fchip"><small>Time</small> ${hourLabel(v.time[0])} to ${hourLabel(v.time[1])}<button data-rm="_t:0" aria-label="Clear time of day">×</button></span>`);
+    for (const f of v.facets) for (const k of f.sel) c.push(`<span class="fchip">${f.values.length > 1 ? `<small>${esc(f.label)}</small> ` : ''}${esc(f.values[k].label)}<button data-rm="${f.id}:${k}" aria-label="Remove ${esc(f.values[k].label)}">×</button></span>`);
+    $('#chips').innerHTML = c.join('');
+    $('#chips').hidden = !c.length;
+  }
+  function renderTiles(v) {
+    $('#tiles').innerHTML = v.tiles(v.idx).map(([l, val, sub, cls]) => `<div class="tile ${cls || ''}"><span class="lbl">${esc(l)}</span><span class="val">${val}</span>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</div>`).join('');
+  }
+  function renderToolbar(v) {
+    const n = v.idx.length, noun = { records: 'record', households: 'household', people: 'person', organizations: 'organization' }[v.id], plural = { records: 'records', households: 'households', people: 'people', organizations: 'organizations' }[v.id];
+    const modes = v.dims ? `<fieldset class="seg"><legend>Show</legend>
+      <input type="radio" name="mode" id="m-rows" value="rows" ${v.mode === 'rows' ? 'checked' : ''}><label for="m-rows">Rows</label>
+      <input type="radio" name="mode" id="m-group" value="group" ${v.mode === 'group' ? 'checked' : ''}><label for="m-group">Group by</label></fieldset>` : '';
+    const right = v.mode === 'group' && v.dims
+      ? `<label class="sel"><span class="sr-only">Group by</span><select id="gdim">${v.dims.map((d) => `<option value="${d.id}" ${d.id === v.group ? 'selected' : ''}>${esc(d.label)}</option>`).join('')}</select></label>`
+      : `<label class="sel">Sort <select id="sort">${v.sorts.map((s) => `<option value="${s.id}" ${s.id === v.sort ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}</select></label>`;
+    $('#toolbar').innerHTML = `<span class="count" aria-live="polite">${fmt(n)} ${n === 1 ? noun : plural}</span>${modes}${right}`;
+  }
+  function renderResults(v) {
+    const host = $('#results');
+    if (v.mode === 'group' && v.dims) return renderGroups(v, host);
+    const n = v.idx.length, pages = Math.max(1, Math.ceil(n / PAGE)); v.page = Math.max(0, Math.min(v.page, pages - 1));
+    const a = v.page * PAGE, b = Math.min(n, a + PAGE);
+    if (!n) { host.innerHTML = `<div class="rows"><div class="empty">Nothing matches these filters. Remove one above to widen the search.</div></div>`; return; }
+    let rows = ''; for (let k = a; k < b; k++) { const i = v.idx[k]; rows += `<button class="rr ${v.grid}" data-i="${i}">${v.row(i)}</button>`; }
+    const exp = v.exportable ? (framed
+      ? `<button class="btn" data-export="1" ${n > 5000 ? 'disabled' : ''}>Copy as CSV</button>${n > 5000 ? '<span class="muted">Narrow to 5,000 rows or fewer to copy</span>' : ''}`
+      : `<button class="btn" data-export="1">Download ${fmt(n)} as CSV</button>`) : '';
+    host.innerHTML = `<div class="rows"><div class="rhead ${v.grid}" aria-hidden="true">${v.head}</div>${rows}</div>
+      <div class="pager"><span class="muted">${fmt(a + 1)}–${fmt(b)} of ${fmt(n)}</span><span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${exp}
+      <button class="btn" data-page="-1" ${v.page === 0 ? 'disabled' : ''}>‹ Previous</button><button class="btn" data-page="1" ${v.page >= pages - 1 ? 'disabled' : ''}>Next ›</button></span></div>`;
+  }
+  // group-by over the filtered records
+  function renderGroups(v, host) {
+    const R = D.rec, dim = v.dims.find((d) => d.id === v.group), f = dim.facet;
+    const arr = f ? f.arr : dim.arr, size = f ? f.values.length : dim.labels.length;
+    const G = { n: new Float64Array(size), amt: new Float64Array(size), fee: new Float64Array(size), min: new Float64Array(size), wait: new Float64Array(size), fail: new Float64Array(size) };
+    const amt = R.cols.amount_gross.v, fee = R.cols.fee_amount.v, tm = R.cols.time_minutes.v, wt = R.cols.wait_minutes.v;
+    const addTo = (k, i) => { G.n[k]++; G.amt[k] += amt[i] || 0; G.fee[k] += fee[i] || 0; G.min[k] += tm[i] || 0; G.wait[k] += wt[i] || 0; G.fail[k] += R.fail[i]; };
+    for (const i of v.idx) { const k = arr[i]; if (k < 0) continue; if (f && f.multi) for (const t of f.of[k]) addTo(t, i); else addTo(k, i); }
+    const label = (k) => (f ? f.values[k].label : dim.labels[k]);
+    let keys = []; for (let k = 0; k < size; k++) if (G.n[k] > 0 && label(k) != null) keys.push(k);
+    const M = { n: G.n, amt: G.amt, fee: G.fee, min: G.min, wait: G.wait, failr: G.n.map((x, k) => (x ? G.fail[k] / x : 0)) };
+    const fixedDim = dim.fixed || (f && f.fixed);
+    if (fixedDim && !v.gsortUser) keys.sort((a, b) => (f ? f.order.indexOf(a) - f.order.indexOf(b) : a - b));
+    else keys.sort((a, b) => M[v.gsort][b] - M[v.gsort][a] || G.n[b] - G.n[a]);
+    const total = keys.length, shown = keys.slice(0, 300), max = Math.max(...shown.map((k) => M[v.gsort][k]), 1e-9);
+    const cols = [['n', 'Records'], ['amt', 'Money'], ['fee', 'Fees'], ['min', 'Time spent'], ['wait', 'Waiting'], ['failr', "Didn't work"]];
+    const cell = (id, k) => id === 'n' ? fmt(G.n[k]) : id === 'amt' ? usdC(G.amt[k]) : id === 'fee' ? usdC(G.fee[k]) : id === 'min' ? hrs(G.min[k]) : id === 'wait' ? hrs(G.wait[k]) : pct(G.fail[k], G.n[k]);
+    if (!shown.length) { host.innerHTML = `<div class="rows"><div class="empty">Nothing matches these filters.</div></div>`; return; }
+    v._gkeys = shown; v._gdim = dim;
+    host.innerHTML = `<div class="rows"><div class="rhead g-grp"><span>${esc(dim.label)}</span>${cols.map(([id, l]) => `<button class="sorth" data-gs="${id}" aria-pressed="${(!fixedDim || v.gsortUser) && v.gsort === id}">${esc(l)}</button>`).join('')}</div>
+      ${shown.map((k) => `<button class="rr g-grp" data-g="${k}" aria-label="${esc(label(k))}: ${fmt(G.n[k])} records. Show them.">
+        <span><b class="one">${esc(label(k))}</b>${f && f.values[k].sub ? `<small>${esc(f.values[k].sub)}</small>` : dim.party ? `<small>${esc(dim.party[k])}</small>` : ''}<span class="gbar" aria-hidden="true"><i style="width:${(100 * M[v.gsort][k]) / max}%"></i></span></span>
+        ${cols.map(([id]) => `<span class="num ${id === 'failr' && G.fail[k] ? 'bad' : ''}">${cell(id, k)}</span>`).join('')}</button>`).join('')}</div>
+      <div class="pager"><span class="muted">${total > 300 ? `Top 300 of ${fmt(total)} groups. ` : `${fmt(total)} groups. `}Bars show the sorted column. Select a group to see its records${dim.party ? ' (or the party)' : ''}.${f && f.multi ? ' A record with several tags counts once in each.' : ''}</span></div>`;
+  }
+  function groupClick(v, k) {
+    const dim = v._gdim;
+    if (dim.party) { const id = dim.party[k]; openEntity(id[0] === 'O' ? 'org' : 'person', id); return; }
+    if (dim.id === 'hour') { v.time = [k, k + 1]; }
+    else { dim.facet.sel.add(k); }
+    v.mode = 'rows'; v.page = 0; renderView('records');
+  }
+  function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), 2600); }
+  async function exportCSV(v) {
+    const T = v.T, names = T.names, q = (s) => { s = String(s); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const numStr = (x) => (Number.isFinite(x) ? String(x) : '');
+    const lines = [names.join(',')];
+    for (const i of v.idx) lines.push(names.map((nm) => { const c = T.cols[nm]; return c.kind === 'num' ? numStr(c.v[i]) : q(c.d[c.c[i]]); }).join(','));
+    const text = lines.join('\n') + '\n';
+    if (framed) { try { await navigator.clipboard.writeText(text); toast(`Copied ${fmt(v.idx.length)} rows as CSV`); } catch (e) { toast("Couldn't copy here"); } return; }
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/csv' })), a = document.createElement('a');
+    a.href = url; a.download = 'halvern_2027-03-03_records_filtered.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  // ---------- summary ----------
+  function renderSummary() {
+    cur = 'summary';
+    const R = D.rec, HH = D.hh, n = R.n, amt = R.cols.amount_gross.v, fee = R.cols.fee_amount.v, tm = R.cols.time_minutes.v, wt = R.cols.wait_minutes.v, third = R.cols.amount_paid_by_third_party.v;
+    const rt = R.cols.record_type, unpaid = rt.d.indexOf('non_monetary_job');
+    let money = 0, fees = 0, unpaidMin = 0, failN = 0;
+    for (let i = 0; i < n; i++) { money += amt[i] || 0; fees += fee[i] || 0; if (rt.c[i] === unpaid) unpaidMin += (tm[i] || 0) + (wt[i] || 0); failN += R.fail[i]; }
+    // households by tier
+    const tierHH = [0, 0, 0], tierFail = [0, 0, 0], tierFee = [0, 0, 0], tierFeeType = [new Map(), new Map(), new Map()];
+    for (let h = 0; h < HH.n; h++) { const t = HH.tier[h]; if (t > 2 || HH.s('household_type', h).startsWith('group_quarters')) continue; tierHH[t]++; if (HH.nfail[h]) tierFail[t]++; tierFee[t] += HH.fees[h]; }
+    const ftc = R.cols.fee_type;
+    for (let i = 0; i < n; i++) { const t = R.tier[i]; if (t > 2 || !(fee[i] > 0)) continue; const k = ftc.d[ftc.c[i]]; tierFeeType[t].set(k, (tierFeeType[t].get(k) || 0) + fee[i]); }
+    const hhAll = tierHH.reduce((a, b) => a + b, 0), hhFail = tierFail.reduce((a, b) => a + b, 0);
+    // frictions
+    const fr = R.fric, frN = new Float64Array(fr.tags.length), frMin = new Float64Array(fr.tags.length), frFee = new Float64Array(fr.tags.length), frFail = new Float64Array(fr.tags.length);
+    for (let i = 0; i < n; i++) for (const t of fr.of[fr.arr[i]]) { frN[t]++; frMin[t] += (tm[i] || 0) + (wt[i] || 0); frFee[t] += fee[i] || 0; frFail[t] += R.fail[i]; }
+    const frKeys = fr.tags.map((_, k) => k).sort((a, b) => frN[b] - frN[a]);
+    // unpaid work by job
+    const jc = R.cols.job_category, unMin = new Float64Array(jc.d.length);
+    for (let i = 0; i < n; i++) if (rt.c[i] === unpaid) unMin[jc.c[i]] += (tm[i] || 0) + (wt[i] || 0);
+    const unKeys = [...unMin.keys()].filter((k) => unMin[k] > 0).sort((a, b) => unMin[b] - unMin[a]).slice(0, 10);
+    // by hour
+    const hN = new Float64Array(24), hF = new Float64Array(24);
+    for (let i = 0; i < n; i++) { hN[R.hour[i]]++; hF[R.hour[i]] += R.fail[i]; }
+    // third-party payers
+    const tp = R.cols.third_party_payer, tpAmt = new Float64Array(tp.d.length);
+    for (let i = 0; i < n; i++) if (third[i] > 0) tpAmt[tp.c[i]] += third[i];
+    const tpKeys = [...tpAmt.keys()].filter((k) => tp.d[k] && tpAmt[k] > 0).sort((a, b) => tpAmt[b] - tpAmt[a]).slice(0, 10);
+    const bars = (keys, val, lab, show, act, plum) => { const mx = Math.max(...keys.map(val), 1e-9);
+      return keys.map((k) => `<button class="brow" data-act="${act(k)}"><span class="one">${esc(lab(k))}</span><span class="bt ${plum ? 'pl' : ''}" aria-hidden="true"><i style="width:${(100 * val(k)) / mx}%"></i></span><span class="v">${show(k)}</span></button>`).join(''); };
+    const hourChart = (arr, plum, act, unit) => { const mx = Math.max(...arr);
+      return `<div class="hours ${plum ? 'pl' : ''}">${[...arr].map((x, h) => `<button data-act="${act}:${h}" aria-label="${hourLabel(h)} to ${hourLabel(h + 1)}: ${fmt(x)} ${unit}"><i style="height:${(100 * x) / mx}%"></i><span class="tip">${hourLabel(h)}: ${fmt(x)}</span></button>`).join('')}</div>
+        <div class="haxis" aria-hidden="true"><span>12 a.m.</span><span>6 a.m.</span><span>Noon</span><span>6 p.m.</span><span>12 a.m.</span></div>`; };
+    const domLab = (x) => DOM_L[x] || human(x);
+    view.innerHTML = `<div class="content" style="height:100%"><div class="sum">
+      <h2>The day at a glance</h2>
+      <p class="lede">Figures for the whole of Wednesday, March 3, 2027, across all 201,753 records. Select a bar or row to open the records or households behind it.</p>
+      <div class="tiles">
+        <div class="tile"><span class="lbl">Records</span><span class="val">${fmt(n)}</span><span class="sub">${fmt(R.cols.job_category.d.length)} kinds of job</span></div>
+        <div class="tile"><span class="lbl">Money moved</span><span class="val">${usdC(money)}</span></div>
+        <div class="tile bad"><span class="lbl">Didn't work</span><span class="val">${fmt(failN)}</span><span class="sub">${pct(failN, n)} of records</span></div>
+        <div class="tile bad"><span class="lbl">Households where something didn't work</span><span class="val">${pct(hhFail, hhAll)}</span><span class="sub">${fmt(hhFail)} of ${fmt(hhAll)}</span></div>
+        <div class="tile"><span class="lbl">Fees paid</span><span class="val">${usdC(fees)}</span></div>
+        <div class="tile"><span class="lbl">Unpaid work</span><span class="val">${hrs(unpaidMin)}</span></div>
+      </div>
+      <div class="cards">
+        <div class="card"><h3>Who had something not work</h3><p class="cap">Share of households in each income tier with at least one failed attempt today: a decline, an abandoned or failed try, or a rescheduling (group quarters left out).</p>
+          ${bars([0, 1, 2], (t) => tierFail[t] / tierHH[t], (t) => TIER_L[t], (t) => `${pct(tierFail[t], tierHH[t])}<small>${fmt(tierFail[t])}</small>`, (t) => 'hhfail:' + t, true)}</div>
+        <div class="card"><h3>Fees by income tier</h3><p class="cap">Fees charged on records of households in each tier, and the fee type that cost them most.</p>
+          <table class="mini"><thead><tr><th>Tier</th><th>Fees</th><th>Per household</th><th>Largest fee</th></tr></thead><tbody>
+          ${[0, 1, 2].map((t) => { const top = [...tierFeeType[t]].sort((a, b) => b[1] - a[1])[0] || ['', 0];
+            return `<tr><td><button class="linkbtn" data-act="fee:${t}">${TIER_L[t]}</button></td><td>${usdC(tierFee[t])}</td><td>${usd(tierFee[t] / tierHH[t])}</td><td style="text-align:left">${esc(human(top[0]))} <span class="muted">${usdC(top[1])}</span></td></tr>`; }).join('')}
+          </tbody></table></div>
+        <div class="card wide"><h3>Records per hour</h3><p class="cap">Every record by the hour it started. Select an hour to open its records.</p>${hourChart(hN, false, 'hour', 'records')}</div>
+        <div class="card wide"><h3>Didn't work, per hour</h3><p class="cap">Failed attempts, and records that ended declined, abandoned, failed or rescheduled, by the hour they started.</p>${hourChart(hF, true, 'hourfail', 'records that didn\'t work')}</div>
+        <div class="card"><h3>Frictions</h3><p class="cap">Records carrying each friction tag. Hours are time spent plus waiting on those records.</p>
+          ${bars(frKeys, (k) => frN[k], (k) => human(fr.tags[k]), (k) => `${fmt(frN[k])}<small>${hrs(frMin[k])}${frFee[k] > 0 ? ' · ' + usdC(frFee[k]) : ''}</small>`, (k) => 'fric:' + k)}</div>
+        <div class="card"><h3>Unpaid work</h3><p class="cap">Hours of unpaid jobs by kind, counting time spent and waiting.</p>
+          ${bars(unKeys, (k) => unMin[k], (k) => jobLab(jc.d[k]), (k) => hrs(unMin[k]), (k) => 'unpaid:' + k)}
+          <h3 style="margin-top:18px">Who else pays</h3><p class="cap">Money paid by third parties (schools, transit, insurers, public programs) on residents' records.</p>
+          ${bars(tpKeys, (k) => tpAmt[k], (k) => tp.d[k].replace(/\s*\(.*\)$/, ''), (k) => usdC(tpAmt[k]), (k) => 'payer:' + k)}</div>
+      </div>
+      <p class="note">Everything here is synthetic: one simulated day in an invented city of about 100,000 people. Synthetic data suggests where to look; it isn't evidence.</p>
+    </div></div>`;
+    view.onclick = (e) => {
+      const b = e.target.closest('[data-act]'); if (!b) return;
+      const [a, x] = b.dataset.act.split(':'), k = +x;
+      const RV = V.records, f = (id) => RV.facets.find((z) => z.id === id);
+      const resetR = () => { for (const z of RV.facets) z.sel.clear(); RV.q = ''; RV.time = [0, 24]; RV.scope = null; RV.page = 0; RV.mode = 'rows'; RV.sort = 'time'; };
+      if (a === 'hhfail') { const H = V.households; for (const z of H.facets) z.sel.clear(); H.q = ''; H.facets.find((z) => z.id === 'tier').sel.add(k); H.facets.find((z) => z.id === 'today').sel.add(0); H.page = 0; go('households'); return; }
+      resetR();
+      if (a === 'fee') { f('tier').sel.add(k); RV.sort = 'fee'; RV.mode = 'group'; RV.group = 'fee'; RV.gsort = 'fee'; }
+      else if (a === 'hour') RV.time = [k, k + 1];
+      else if (a === 'hourfail') { RV.time = [k, k + 1]; f('fail').sel.add(0); }
+      else if (a === 'fric') f('friction').sel.add(k);
+      else if (a === 'unpaid') { f('kind').sel.add(rt.d.indexOf('non_monetary_job')); f('job').sel.add(k); }
+      else if (a === 'payer') { f('payer').sel.add(k); RV.mode = 'group'; RV.group = 'job'; RV.gsort = 'amt'; }
+      go('records');
+    };
+  }
+
+  // ---------- details sheet ----------
+  const stack = [];
+  const sheet = $('#sheet'), body = $('#sheet-body');
+  function openEntity(type, id, fromHash) {
+    const top = stack[stack.length - 1];
+    if (top && top.type === type && top.id === id) { showSheet(); return; }
+    const prev = stack[stack.length - 2];
+    if (fromHash && prev && prev.type === type && prev.id === id) stack.pop(); else stack.push({ type, id });
+    showSheet();
+    const h = '#' + type + '-' + id;
+    if (location.hash !== h) { try { history.pushState(null, '', h); } catch (e) { /* ignore */ } }
+  }
+  function showSheet() {
+    const top = stack[stack.length - 1]; if (!top) return closeSheet();
+    const html = top.type === 'record' ? recordHTML(top.id) : top.type === 'household' ? householdHTML(top.id) : top.type === 'person' ? personHTML(top.id) : orgHTML(top.id);
+    body.innerHTML = html || `<p class="muted">Couldn't find ${esc(top.id)} in this run.</p>`;
+    $('#sheet-crumb').textContent = stack.map((s) => s.id).slice(-3).join(' › ');
+    $('#sheet-back').hidden = stack.length < 2;
+    sheet.hidden = false; $('#scrim').hidden = window.innerWidth > 900;
+    body.scrollTop = 0; const h2 = body.querySelector('h2'); if (h2) { h2.tabIndex = -1; h2.focus({ preventScroll: true }); }
+  }
+  function closeSheet() {
+    stack.length = 0; sheet.hidden = true; if (!document.body.classList.contains('rail-open')) $('#scrim').hidden = true;
+    if (/^#(record|household|person|org)-/.test(location.hash)) { try { history.pushState(null, '', '#' + cur); } catch (e) { /* ignore */ } }
+  }
+  $('#sheet-close').onclick = closeSheet;
+  $('#sheet-back').onclick = () => { stack.pop(); showSheet(); const t = stack[stack.length - 1]; if (t) try { history.replaceState(null, '', '#' + t.type + '-' + t.id); } catch (e) { /* ignore */ } };
+  $('#scrim').onclick = () => { closeRail(); closeSheet(); };
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (document.body.classList.contains('rail-open')) closeRail(); else if (!sheet.hidden) closeSheet(); } });
+  body.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-open]'); if (b) { const [t, ...rest] = b.dataset.open.split('-'); openEntity(t, rest.join('-')); return; }
+    const s = e.target.closest('[data-scope]'); if (s) { const [t, ...rest] = s.dataset.scope.split('-'); scopeRecords(t, rest.join('-')); }
+  });
+  const kv = (pairs) => `<dl class="kv">${pairs.filter((p) => p && p[1] !== '' && p[1] != null).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
+  const partyBtn = (id, lab, sub) => !id ? '<span class="pbtn plain"><b>—</b></span>' : `<button class="pbtn" data-open="${id[0] === 'O' ? 'org' : id[0] === 'H' ? 'household' : 'person'}-${esc(id)}"><b>${esc(lab)}</b><span>${esc(sub || id)}</span></button>`;
+  function recList(idxs, limit = 120) {
+    const R = D.rec, amt = R.cols.amount_gross.v, tm = R.cols.time_minutes.v;
+    if (!idxs.length) return '<p class="muted">No records.</p>';
+    return `<div class="minirows">${idxs.slice(0, limit).map((i) => { const type = R.s('record_type', i), a = amt[i];
+      return `<button class="mr" data-open="record-${R.s('record_id', i)}"><span class="muted">${clock(R.tmin[i])}</span>
+        <span style="min-width:0"><b class="one" style="display:block"><i class="dot k-${vkind(type, R.s('outcome', i))}" aria-hidden="true"></i>${esc(jobLab(R.s('job_category', i)))}</b><small>${esc(TYPE_L[type] || human(type))} · ${esc(R.fromLab[R.cols.from_party_id.c[i]])} → ${esc(R.toLab[R.cols.to_party_id.c[i]])}</small></span>
+        <span class="num ${R.fail[i] ? 'bad' : ''}">${a > 0 ? usd(a) : type === 'non_monetary_job' ? mins(tm[i]) : ''}${R.fail[i] ? `<small class="bad">${esc(OUT_L[R.s('outcome', i)] || '')}</small>` : ''}</span></button>`; }).join('')}</div>
+      ${idxs.length > limit ? `<p class="muted">Showing ${limit} of ${fmt(idxs.length)}.</p>` : ''}`;
+  }
+  function recordsWhere(test) { const R = D.rec, out = []; for (let i = 0; i < R.n; i++) if (test(i)) out.push(i); return out; }
+  function scopeTest(type, id) {
+    const R = D.rec;
+    if (type === 'household') { const h = D.hh.row(id); return (i) => R.hh[i] === h; }
+    if (type === 'org') { const c1 = R.cols.from_party_id.m.get(id), c2 = R.cols.to_party_id.m.get(id); return (i) => R.cols.from_party_id.c[i] === c1 || R.cols.to_party_id.c[i] === c2; }
+    if (type === 'person') {
+      const cs = ['actor_person_id', 'beneficiary_person_id', 'from_party_id', 'to_party_id'].map((c) => [R.cols[c].c, R.cols[c].m.get(id)]).filter((x) => x[1] !== undefined);
+      return (i) => cs.some(([arr, k]) => arr[i] === k);
+    }
+    return () => false;
+  }
+  function scopeRecords(type, id) {
+    const v = V.records, lab = type === 'household' ? 'Household ' + id : type === 'org' ? D.partyLabel(id) : 'Person ' + id;
+    for (const f of v.facets) f.sel.clear(); v.q = ''; v.time = [0, 24]; v.page = 0; v.mode = 'rows'; v.sort = 'time';
+    v.scope = { label: lab, test: scopeTest(type, id) };
+    closeSheet(); go('records');
+  }
+  function recordHTML(id) {
+    const R = D.rec, i = R.row(id); if (i < 0) return '';
+    const s = (c) => R.s(c, i), num = (c) => R.v(c, i);
+    const type = s('record_type'), outc = s('outcome'), vk = vkind(type, outc), nar = s('narrative'), hw = nar.startsWith('[detailed]');
+    const a = num('amount_gross'), from = s('from_party_id'), to = s('to_party_id');
+    const subFor = (pid) => (pid && pid[0] === 'P' ? pid + ' · Household ' + (D.per.row(pid) >= 0 ? D.per.s('household_id', D.per.row(pid)) : '—') : pid && pid[0] === 'O' ? human(D.org.s('org_type', D.org.row(pid))) + ' · ' + pid : pid);
+    const related = s('related_record_id'), relRow = related ? R.row(related) : -1;
+    const backRefs = recordsWhere((k) => R.relRow[R.cols.related_record_id.c[k]] === i);
+    const fr = s('friction_tags').split(';').filter(Boolean), ln = s('lens_tags').split(';').filter(Boolean);
+    const actor = s('actor_person_id'), ben = s('beneficiary_person_id'), hid = s('household_id');
+    const fee = num('fee_amount');
+    return `<div class="eyebrow"><span><i class="dot k-${vk}" aria-hidden="true"></i>${esc(TYPE_L[type] || human(type))}</span><span>· ${esc(id)}</span>${hw ? '<span class="hw">✎ Hand-written</span>' : ''}</div>
+      <h2>${esc(jobLab(s('job_category')))}</h2><p class="sub">${esc(DOM_L[domOf(s('job_category'))] || '')} · ${clock(R.tmin[i])} · ${esc(dname(s('district')))}</p>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="big">${a > 0 ? usd(a) : type === 'non_monetary_job' ? mins(num('time_minutes')) : '$0.00'}</span>
+        <span class="badge ${R.fail[i] ? 'bad' : 'good'}">${esc(OUT_L[outc] || human(outc))}</span></div>
+      <p class="voice">${esc(s('job_statement'))}</p>
+      <p class="narr">${esc(hw ? nar.slice(11) : nar)}</p>
+      <div class="flow">${partyBtn(from, R.fromLab[R.cols.from_party_id.c[i]], subFor(from))}<span class="ar" aria-label="to">→</span>${partyBtn(to, R.toLab[R.cols.to_party_id.c[i]], subFor(to))}</div>
+      <h3 class="sec">Money</h3>
+      ${kv([['Amount', usd(a)], ['Paid by the person', usd(num('amount_paid_by_user'))], ['Paid by a third party', usd(num('amount_paid_by_third_party'))],
+        ['Third-party payer', esc(s('third_party_payer'))], ['Cost to the public', usd(num('imputed_public_cost'))], ['Funding level', s('funding_level') ? esc(human(s('funding_level'))) : ''],
+        ['Sales tax', usd(num('sales_tax'))], ['Fee', fee > 0 ? `${usd(fee)} <span class="muted">${esc(human(s('fee_type')))}</span>` : '—'], ['Channel', esc(human(s('channel')))], ['Payment method', esc(human(s('payment_method')))]])}
+      <h3 class="sec">Time and travel</h3>
+      ${kv([['Started', clock(R.tmin[i])], ['Time spent', mins(num('time_minutes'))], ['Waiting', mins(num('wait_minutes'))], ['Travel', num('travel_miles') > 0 ? NF1.format(num('travel_miles')) + ' mi' + (s('travel_mode') ? ' · ' + esc(human(s('travel_mode'))) : '') : '—']])}
+      ${fr.length || ln.length ? `<h3 class="sec">Tags</h3><div class="tags">${fr.map((t) => `<span class="tag f">${esc(human(t))}</span>`).join('')}${ln.map((t) => `<span class="tag">${esc(human(t))}</span>`).join('')}</div>` : ''}
+      <h3 class="sec">People</h3>
+      ${actor ? partyBtn(actor, D.partyLabel(actor), 'Did the job · ' + actor) : ''}
+      ${ben && ben !== actor ? partyBtn(ben, D.partyLabel(ben), 'Benefited · ' + ben) : ''}
+      ${hid ? `<button class="pbtn" data-open="household-${esc(hid)}"><b>Household ${esc(hid)}</b><span>${esc(TIER_L[R.tier[i]])} · see the household's whole day</span></button>` : '<p class="muted">No household: a record between organizations.</p>'}
+      ${relRow >= 0 || backRefs.length ? `<h3 class="sec">Linked records</h3>${relRow >= 0 ? `<p class="muted" style="margin:0 0 6px">This record follows:</p>${recList([relRow])}` : ''}${backRefs.length ? `<p class="muted" style="margin:10px 0 6px">Records that follow this one:</p>${recList(backRefs)}` : ''}` : ''}
+      <details class="raw"><summary>All 31 fields</summary><table>${R.names.map((nm) => `<tr><td>${esc(nm)}</td><td>${esc(R.cols[nm].kind === 'num' ? (Number.isFinite(R.v(nm, i)) ? R.v(nm, i) : '') : R.s(nm, i))}</td></tr>`).join('')}</table></details>`;
+  }
+  function householdHTML(id) {
+    const HH = D.hh, h = HH.row(id); if (h < 0) return '';
+    const s = (c) => HH.s(c, h), num = (c) => HH.v(c, h), L = D.led, l = HH.led[h];
+    const members = []; const pc = D.per.cols.household_id, code = pc.m.get(id); if (code !== undefined) for (let p = 0; p < D.per.n; p++) if (pc.c[p] === code) members.push(p);
+    const recs = recordsWhere((i) => D.rec.hh[i] === h);
+    const lv = (c) => (l >= 0 ? L.v(c, l) : NaN);
+    const notes = s('notes').split(';').filter(Boolean);
+    return `<div class="eyebrow"><span>Household · ${esc(id)}</span><span class="badge">${esc(TIER_L[HH.tier[h]])}</span></div>
+      <h2>${esc(hhType(s('household_type')))}, ${fmt(num('size'))} ${num('size') === 1 ? 'person' : 'people'}</h2><p class="sub">${esc(dname(s('district')))}</p>
+      <div class="big">${usd0(num('annual_income'))}<span class="muted" style="font-size:15px;font-weight:600"> a year</span></div>
+      ${kv([['Income sources', esc(s('income_source_mix').split(';').map((x) => { const [k, w] = x.split(':'); return human(k) + (w ? ' ' + Math.round(+w * 100) + '%' : ''); }).join(', '))],
+        ['Housing', esc(human(s('housing_tenure')))], ['Housing cost', usd0(num('monthly_housing_cost')) + ' a month'], ['Banking', esc(human(s('banked_status')))],
+        ['Vehicles', fmt(num('vehicles'))], ['Internet at home', esc(human(s('internet_at_home')))], ['Primary language', esc(s('primary_language'))]])}
+      ${notes.length ? `<div class="tags" style="margin-top:10px">${notes.map((t) => `<span class="tag">${esc(t === 'could_not_cover_$400_from_cash_or_equivalent' ? "Couldn't cover $400 from cash" : human(t.replace('=', ': ')))}</span>`).join('')}</div>` : ''}
+      ${l >= 0 ? `<h3 class="sec">Money today</h3>${kv([['Opened the day with', usd(lv('open_net'))], ['Closed the day with', usd(lv('close_net'))], ['Money in', usd(lv('inflows'))], ['Money out', usd(lv('outflows'))],
+        ['Checking', usd(lv('open_checking')) + ' → ' + usd(lv('close_checking'))], ['Cash', usd(lv('open_cash')) + ' → ' + usd(lv('close_cash'))], ['Savings', usd(lv('close_savings'))], ['Card debt', usd(lv('close_card_debt'))],
+        ['SNAP balance', lv('snap_open') > 0 || lv('snap_close') > 0 ? usd(lv('snap_open')) + ' → ' + usd(lv('snap_close')) : ''], ['Could cover $400', esc(human(L.s('could_cover_400_emergency', l)))], ['Reconciles', esc(human(L.s('reconciles', l)))]])}` : ''}
+      <h3 class="sec">Who lives here</h3>${members.map((p) => partyBtn(D.per.s('person_id', p), D.personShort(p), human(D.per.s('relationship_to_head', p)) + ' · ' + D.per.s('person_id', p))).join('') || '<p class="muted">No members listed.</p>'}
+      <h3 class="sec">Today: ${fmt(recs.length)} records</h3>
+      ${kv([["Didn't work", fmt(HH.nfail[h])], ['Fees', usd(HH.fees[h])], ['Unpaid work', mins(HH.unpaid[h])]])}
+      <div class="acts" style="margin-bottom:10px"><button class="btn" data-scope="household-${esc(id)}">Show these in Records</button></div>
+      ${recList(recs)}`;
+  }
+  function personHTML(id) {
+    const P = D.per, p = P.row(id); if (p < 0) return '';
+    const s = (c) => P.s(c, p), hid = s('household_id'), emp = s('employer_org_id'), care = s('caregiver_for');
+    const test = scopeTest('person', id), recs = recordsWhere(test);
+    const ben = s('benefits_received').split(';').filter((x) => x && x !== 'none');
+    return `<div class="eyebrow"><span>Person · ${esc(id)}</span><span class="badge">${esc(P.tier[p] < 3 ? TIER_L[P.tier[p]] : '')}</span></div>
+      <h2>${esc(D.personShort(p))}</h2><p class="sub">${esc(human(s('relationship_to_head')))} · ${esc(P.dist[p] >= 0 ? dname(D.hh.cols.district.d[P.dist[p]]) : '')}</p>
+      ${kv([['Age', fmt(P.v('age', p))], ['Sex', s('sex') === 'F' ? 'Female' : s('sex') === 'M' ? 'Male' : esc(s('sex'))], ['Race and ethnicity', esc(human(s('race_ethnicity')))], ['Education', esc(human(s('education')))],
+        ['Work', esc(human(s('employment_status')))], ['Occupation', esc(s('occupation'))], ['Industry', esc(s('industry_sector'))], ['Schedule', s('work_schedule') !== 'none' ? esc(human(s('work_schedule'))) : ''],
+        ['Paid', s('pay_cadence') !== 'none' ? esc(human(s('pay_cadence'))) : ''], ['Union member', esc(human(s('union_member')))], ['Health coverage', esc(human(s('health_coverage')))], ['Disability', esc(human(s('disability')))]])}
+      ${ben.length ? `<h3 class="sec">Benefits</h3><div class="tags">${ben.map((b) => `<span class="tag">${esc(human(b.replace(/\((.*)\)/, ' ($1)').replace(/pay:|issue_day:/, '')))}</span>`).join('')}</div>` : ''}
+      <h3 class="sec">Connections</h3>
+      ${partyBtn('H' + hid.slice(1), 'Household ' + hid, hhType(D.hh.s('household_type', D.hh.row(hid))))}
+      ${emp ? partyBtn(emp, D.partyLabel(emp), 'Employer · ' + emp) : ''}
+      ${care && care !== 'none' ? care.split(';').map((c) => partyBtn(c, D.partyLabel(c), 'Cares for · ' + c)).join('') : ''}
+      <h3 class="sec">Today: ${fmt(recs.length)} records</h3>
+      <div class="acts" style="margin-bottom:10px"><button class="btn" data-scope="person-${esc(id)}">Show these in Records</button></div>
+      ${recList(recs)}`;
+  }
+  function orgHTML(id) {
+    const O = D.org, o = O.row(id); if (o < 0) return '';
+    const s = (c) => O.s(c, o), recs = recordsWhere(scopeTest('org', id));
+    const shown = recs.length > 400 ? recs.filter((_, k) => k < 400) : recs;
+    return `<div class="eyebrow"><span>${esc(human(s('org_type')))} · ${esc(id)}</span></div>
+      <h2>${esc(s('name'))}</h2><p class="sub">${esc(s('sector'))} · ${esc(dname(s('district')))}</p>
+      ${kv([['Employees', Number.isFinite(O.v('size_employees', o)) ? fmt(O.v('size_employees', o)) : '—'], ['Hours', esc(s('hours'))], ['Accepts', esc(s('accepts').split(';').filter(Boolean).map(human).join(', '))], ['Notes', esc(s('notes'))]])}
+      <h3 class="sec">Today: ${fmt(recs.length)} records</h3>
+      ${kv([['Records received', fmt(O.nin[o])], ['Money received', usd0(O.ain[o])], ['Records paid out', fmt(O.nout[o])], ['Money paid out', usd0(O.aout[o])], ["Didn't work here", fmt(O.nfail[o])]])}
+      <div class="acts" style="margin-bottom:10px"><button class="btn" data-scope="org-${esc(id)}">Show these in Records</button></div>
+      ${recList(shown)}`;
+  }
+
+  // ---------- routing ----------
+  function go(name) { if (location.hash !== '#' + name) { try { history.pushState(null, '', '#' + name); } catch (e) { /* ignore */ } } route(); }
+  function route() {
+    if (!D) return;
+    const h = location.hash.slice(1);
+    const m = /^(record|household|person|org)-([A-Za-z0-9]+)$/.exec(h);
+    if (m) { if (!view.innerHTML) show(cur); openEntity(m[1], m[2], true); return; }
+    if (!sheet.hidden) { stack.length = 0; sheet.hidden = true; $('#scrim').hidden = true; }
+    show(['records', 'households', 'people', 'organizations', 'summary'].includes(h) ? h : 'records');
+  }
+  function show(name) {
+    cur = name; closeRail();
+    $$('nav.tabs a').forEach((a) => a.setAttribute('aria-current', a.dataset.v === name ? 'page' : 'false'));
+    view.onclick = null;
+    if (name === 'summary') renderSummary(); else renderView(name);
+    document.title = 'Halvern Data Explorer · ' + name.charAt(0).toUpperCase() + name.slice(1);
+  }
+  window.addEventListener('popstate', route);
+  window.addEventListener('hashchange', route);
+
+  // ---------- start ----------
+  const setBar = (p) => { $('#load-bar').style.width = (p * 100).toFixed(1) + '%'; $('#progress i').style.width = (p * 100).toFixed(1) + '%'; };
+  async function start() {
+    $('#retry').hidden = true; $('#status').classList.remove('err');
+    try {
+      await loadScript(FFLATE);
+      $('#status').textContent = 'Downloading the day…';
+      const bytes = await download((p) => { setBar(p * 0.55); $('#load-sub').textContent = Math.round(p * 100) + '% downloaded'; });
+      $('#load-msg').textContent = 'Reading the tables.';
+      const raw = {};
+      const plan = [['org', 'organizations', ['size_employees']], ['hh', 'households', ['weight', 'size', 'annual_income', 'monthly_housing_cost', 'vehicles']], ['per', 'people', ['age']],
+        ['led', 'household money', ['wallets', 'open_checking', 'open_cash', 'open_prepaid', 'open_savings', 'open_card_debt', 'inflows', 'outflows', 'close_checking', 'close_cash', 'close_prepaid', 'close_savings', 'close_card_debt', 'open_net', 'close_net', 'snap_open', 'snap_close']],
+        ['rec', 'records', ['amount_gross', 'amount_paid_by_user', 'amount_paid_by_third_party', 'imputed_public_cost', 'sales_tax', 'fee_amount', 'time_minutes', 'wait_minutes', 'travel_miles']]];
+      const weight = { org: 0.01, hh: 0.06, per: 0.12, led: 0.05, rec: 0.76 }; let done = 0;
+      for (const [k, label, num] of plan) {
+        if (!bytes[k]) continue;
+        $('#load-sub').textContent = 'Reading ' + label + '…';
+        raw[k] = await parseCSV(bytes[k], num, (p) => setBar(0.55 + 0.4 * (done + weight[k] * p)));
+        done += weight[k]; bytes[k] = null; await tick();
+      }
+      $('#load-sub').textContent = 'Linking records to households, people and places…'; await tick();
+      D = derive(raw); buildViews(); setBar(1);
+      $('#status').textContent = fmt(D.rec.n) + ' records · March 3, 2027';
+      $('#loading').hidden = true; $('#view').hidden = false;
+      setTimeout(() => ($('#progress i').style.opacity = 0), 400);
+      if (!location.hash) { try { history.replaceState(null, '', '#records'); } catch (e) { /* ignore */ } }
+      route();
+    } catch (e) {
+      console.error(e);
+      $('#status').textContent = "Couldn't load the day"; $('#status').classList.add('err');
+      $('#load-msg').textContent = "The run couldn't be loaded: " + (e && e.message ? e.message : e) + '.';
+      $('#load-sub').textContent = 'Check your connection and try again.'; $('#retry').hidden = false;
+    }
+  }
+  $('#retry').onclick = start;
+  window.HX = { get D() { return D; }, V, run };
+  start();
+})();
+</script>
+</body>
+</html>
