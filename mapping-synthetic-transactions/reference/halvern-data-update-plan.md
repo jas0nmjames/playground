@@ -153,6 +153,8 @@ Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `source
 
 **Already done:** home caregiving set from ATUS 2023-25 (about 8,550 hours a day in v1, about 3,490 in v2; visits unchanged at about 1,700). Commit `bcae8f6`.
 
+**Status (2026-11-20), on branch `halvern-v2-phase3`.** Batches C, I, J and P are done; each was rerun across the typed-day year (`sim/evidence/results/v2_*_typed_days_2027/`). Checked against the source and left as v1: CE everyday spending, SNAP amounts, eviction filings, moves, renters' housing costs, the rural share of residents (RUCC confirms 14%), and wages (see the wage note). Not done: I5 late payments (the NY Fed figures give rates on balances, not account counts), I12 energy bill sizes (RECS 2024 v1 has none yet), P5 births and deaths (NCHS summaries not downloaded), and the excess of groceries, bars, salons, laundromats and churches against CBP (removing outlets would redraw the population). Estimates with no counting source are labeled in the code: lender shutoffs, prescriptions abandoned over $250, care-visit purchases, the benefits-cliff raise, call-ins and kept availability, Direct Express calls. Batch R (rate tuning) is next.
+
 ### C. Calendar and weights
 
 | # | Change | v1 now | Source |

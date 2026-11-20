@@ -555,3 +555,53 @@ def index_orgs(orgs):
         by_kind.setdefault(o.kind, []).append(o)
         by_kd.setdefault((o.kind, o.district), []).append(o)
     return by_kind, by_kd
+
+
+# Storefronts Halvern had far fewer of than the country, per 100,000 residents, from County Business Patterns 2023
+# (sources/derived/cbp_establishments_per_100k.csv, sources/tools/cbp_outlets.py; employer establishments only). Where
+# v1 had under 60% of the CBP rate, outlets are added after the city is built, copied from an existing outlet of the
+# kind, so v1's people, employers and accounts stay as they were; the new outlets have no Halvern staff on the roster.
+# Kinds v1 has too many of (groceries, bars, salons, laundromats, churches) are left as they are: removing them would
+# redraw the population. Nursing homes and assisted living are left too: their residents are part of the population.
+CBP_PER_100K = {("fastfood",): 80.65, ("coffee",): 25.42, ("bank", "credit_union"): 30.63, ("physician",): 61.10, ("home_health",): 12.17,
+                ("car_dealer",): 14.05 - 1.5, ("hotel",): 16.69, ("gym",): 12.41, ("auto_parts",): 11.52, ("clothing",): 24.87}
+
+
+def add_cbp_outlets(sim):
+    from .config import DSHARE, side_rng
+    srng = side_rng(sim.cfg["RANDOM_SEED"], "cbp_outlets")
+    names = {o.name for o in sim.orgs}
+    pop = len(sim.persons)
+    added = 0
+    for kinds, per in CBP_PER_100K.items():
+        have = [o for o in sim.orgs if o.kind in kinds and o.district != "EXT"]
+        if not have:
+            continue
+        for _ in range(max(0, int(round(per * pop / 1e5)) - len(have))):
+            t = srng.choice(have)
+            d = srng.choices(list(DSHARE), list(DSHARE.values()))[0]
+            base = t.name.split(" – ")[0].split(" (")[0]
+            name = "%s – %s" % (base, srng.choice(HOODS.get(d, ["Halvern"])))
+            k = 2
+            while name in names:
+                name, k = "%s – %s %d" % (base, srng.choice(HOODS.get(d, ["Halvern"])), k), k + 1
+            names.add(name)
+            o = Org("O%04d" % (len(sim.orgs) + 1), name, t.kind, t.otype, t.sector, d, t.size, ";".join(sorted(t.acc)), t.hours, t.notes)
+            o.open, o.close = parse_hours(o.hours, sim.cal["dow"])
+            if closed_for_holiday(o.kind, sim.cal):
+                o.open, o.close = None, None
+            sim.orgs.append(o)
+            added += 1
+    # A dialysis clinic in the rural town. CMS's facility list (sources/raw/cms_dialysis, October 2026) against the 2023
+    # rural-urban codes: 72% of nonmetro residents have a clinic in their own county (27.6% do not). v1 had both of
+    # Halvern's clinics in the city and suburbs, so every rural patient drove 15-21 miles each way three times a week.
+    t = next((o for o in sim.orgs if o.kind == "dialysis"), None)
+    if t is not None and not any(o.kind == "dialysis" and o.district == "D5" for o in sim.orgs):
+        o = Org("O%04d" % (len(sim.orgs) + 1), "%s – %s" % (t.name.split(" – ")[0], (HOODS.get("D5") or ["Halvern"])[0]), "dialysis", t.otype, t.sector,
+                "D5", 12, ";".join(sorted(t.acc)), t.hours, "in-center hemodialysis, 12 stations")
+        o.open, o.close = parse_hours(o.hours, sim.cal["dow"])
+        sim.orgs.append(o)
+        added += 1
+    sim.by_kind, sim.by_kd = index_orgs(sim.orgs)
+    sim.by_name = {o.name: o for o in sim.orgs}
+    return added

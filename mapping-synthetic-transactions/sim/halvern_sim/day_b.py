@@ -281,6 +281,17 @@ def gen_shopping(sim, H, q):
                    ctx=dict(), channel="app", dur=(14, 30), prefs=((420, 600, 1), (960, 1410, 2)))
 
 
+# Rural grocery trips. USDA's Food Access Research Atlas (2019; sources/raw/food_access_atlas): 7.1% of rural residents
+# live more than 10 miles from a supermarket and 0.7% more than 20. v1 sent about 30% of rural grocery trips more than 20
+# miles, because the rural districts have no supercenter or discount grocer and every household that drew one drove to
+# the suburbs and far stores outweighed the one local one. Now, when the kind drawn has no outlet in the household's
+# district, 70% shop at a local grocery instead and 30% still make the long stock-up run, and distance counts for more
+# (estimates: trips can bypass the nearest store, so they run longer than the atlas's nearest-store distances).
+RURAL_GROCERY_SCALE = {"D6": .9, "D5": .5}   # distance multipliers in pick() (v1: 2.2 and 1.3); with them about 5% of
+                                             # rural-town and 10% of open-country trips run over 20 miles one way
+RURAL_LOCAL_SUB = .7
+
+
 def gen_food(sim, H, q):
     rng, cal, X, wx = sim.rng, sim.cal, sim.X, sim.wx
     if H.gq:
@@ -316,7 +327,9 @@ def gen_food(sim, H, q):
 
     def store(scale=6.0):
         k = rng.choices([x[0] for x in kindw], [x[1] for x in kindw])[0]
-        sc = scale * (2.2 if H.district == "D6" else 1.3 if H.district == "D5" else 1.0)
+        if H.district in RURAL_GROCERY_SCALE and not sim.by_kd.get((k, H.district)) and rng.random() < RURAL_LOCAL_SUB:
+            k = next((kk for kk in ("grocery_full", "grocery_indep", "grocery_discount", "dollar") if sim.by_kd.get((kk, H.district))), k)
+        sc = scale * RURAL_GROCERY_SCALE.get(H.district, 1.0)
         return sim.pick((k,), H.district, sc) or sim.pick(("grocery_full", "supercenter", "grocery_indep", "dollar"), H.district, sc)
 
     eq = 1 + .6 * (len(H.adults) - 1) + .45 * len(H.kids)

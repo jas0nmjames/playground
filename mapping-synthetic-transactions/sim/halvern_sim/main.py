@@ -24,6 +24,8 @@ def build(cfg, log=print):
     log("  population: %d households, %d persons, %d orgs (%.1fs)" % (len(sim.households), len(sim.persons), len(sim.orgs), time.time() - t0))
     build_finance(sim)
     log("  finance: %d wallets, %d recurring obligations (%.1fs)" % (len(sim.wallets), sim.n_bills, time.time() - t0))
+    from .orgs import add_cbp_outlets
+    log("  added %d storefronts to reach County Business Patterns rates" % add_cbp_outlets(sim))
     # everything above is date-independent given the seed; the day itself gets its own stream
     sim.rng = random.Random("%s|%s|%s" % (cfg["RANDOM_SEED"], sim.cal["iso"], cfg["WEATHER"]))
     sim.trng = random.Random("text|%s|%s" % (cfg["RANDOM_SEED"], sim.cal["iso"]))
