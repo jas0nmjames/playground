@@ -1,0 +1,4 @@
+group,share_of_adults,went_without_any_care,went_without_prescription,went_without_doctor,went_without_mental_health,went_without_dental,went_without_follow_up
+all,1.0000,0.2572,0.0903,0.1469,0.0973,0.1760,0.0963
+covers_400,0.6314,0.1431,0.0335,0.0695,0.0463,0.0861,0.0379
+cannot_cover_400,0.3686,0.4525,0.1877,0.2793,0.1847,0.3300,0.1961

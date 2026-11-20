@@ -15,7 +15,7 @@ class Person:
                  "bday", "by", "vet", "ss", "ss_type", "ss_cohort", "ssi", "pension", "ui", "va", "inv", "income",
                  "student", "school", "grade", "meal", "wallet", "cashpref", "nrx", "esrd", "home_care", "mode", "wfh",
                  "works", "busy", "free", "wake", "bed", "gig", "smoker", "dental", "wd", "seasonal", "garnish",
-                 "sloan", "cared_by", "medigap", "inpatient", "bnpl", "absent", "k401", "prem", "lunch", "shift", "cm", "night")
+                 "sloan", "cared_by", "medigap", "inpatient", "bnpl", "absent", "k401", "prem", "lunch", "shift", "cm", "night", "psl")
 
     def __init__(self, pid, hh, age, sex, rel):
         self.pid, self.hh, self.age, self.sex, self.rel = pid, hh, age, sex, rel
@@ -28,6 +28,7 @@ class Person:
         self.wage, self.ft, self.tipped = 0.0, False, False
         self.bday, self.by = 1, 0
         self.vet = False
+        self.psl = False   # access to paid sick leave (v2; set by assign_sick_leave)
         self.ss, self.ss_type, self.ss_cohort = 0.0, None, None
         self.ssi = self.pension = self.ui = self.va = self.inv = self.income = 0.0
         self.student = self.school = self.grade = self.meal = None
@@ -1054,9 +1055,97 @@ def build_population(sim):
             H.notes.append("out_commuter")
         if H.gq and H.facility:
             H.notes.append("facility:" + H.facility)
+    adjust_banking(sim, HH)
+    assign_sick_leave(sim, PP)
+    reshape_owner_costs(sim, HH)
     sim.households, sim.persons = HH, PP
     sim.n_pov_raw = npov
     return HH, PP
+
+
+# Unbanked share of households by income: FDIC National Survey of Unbanked and Underbanked Households 2023
+# (sources/raw/fdic_unbanked/hh2023_analys.csv; hunbnk weighted by hhsupwgt; 4.2% overall). Income bands are in 2023
+# dollars (Halvern's 2027 incomes / 1.13). v1's rule, keyed on ALICE status, gave 3.6% and ran low at the bottom
+# (16.9% under $15,000) and a little high at the top. The 2023 file carries no underbanked measure, so that share is kept.
+FDIC_UNBANKED = ((15000, .218), (30000, .090), (50000, .045), (75000, .018), (float("inf"), .007))
+DOLLARS_2027_PER_2023 = 1.13
+
+
+def adjust_banking(sim, HH):
+    """Move households between banked and unbanked, within each income band, until the band matches FDIC 2023.
+    Uses its own random stream so the people and everything drawn before stay as in v1."""
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "banking")
+    bands = {}
+    for H in HH:
+        if H.gq:
+            continue
+        inc = H.income / DOLLARS_2027_PER_2023
+        k = next(i for i, (hi, _) in enumerate(FDIC_UNBANKED) if inc < hi)
+        bands.setdefault(k, []).append(H)
+    for k, hs in sorted(bands.items()):
+        want = int(round(FDIC_UNBANKED[k][1] * len(hs)))
+        unb = [H for H in hs if H.banked == "unbanked"]
+        if len(unb) < want:
+            pool = [H for H in hs if H.banked == "underbanked"]
+            srng.shuffle(pool)
+            rest = [H for H in hs if H.banked == "banked"]
+            srng.shuffle(rest)
+            for H in (pool + rest)[:want - len(unb)]:
+                H.banked = "unbanked"
+                for p in H.members:
+                    p.cashpref = .95
+        elif len(unb) > want:
+            srng.shuffle(unb)
+            for H in unb[:len(unb) - want]:
+                H.banked = "underbanked"   # newly banked households mostly still use check cashers and money orders
+                for p in H.members:
+                    p.cashpref = min(.92, max(.02, .45 + srng.gauss(0, .12)))
+
+
+# Access to paid sick leave by wage, NCS March 2026 (sources/raw/ncs_benefits, all-data sheet, provision 087, civilian
+# workers): lowest 10% of wages 48%, lowest 25% 63%, second 25% 85%, third 25% 91%, highest 25% 95%, highest 10% 97%;
+# full-time 90%, part-time 59%. Bands between published cuts are solved from them (10-25%: 73%; 75-90%: 94%). v1 gave
+# none to anyone on a variable schedule or earning under $42,000.
+PSL_BY_WAGE_RANK = ((.10, .48), (.25, .73), (.50, .85), (.75, .91), (.90, .94), (1.01, .97))
+
+
+def assign_sick_leave(sim, PP):
+    """Paid sick leave by the worker's wage rank among Halvern's employees; part-time a little lower, self-employed none.
+    Own random stream, so nothing else moves."""
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "sick_leave")
+    emp = sorted((p for p in PP if p.emp in ("employed_full_time", "employed_part_time")), key=lambda p: (p.wage, p.pid))
+    n = len(emp)
+    for i, p in enumerate(emp):
+        rank = (i + .5) / n
+        pr = next(v for hi, v in PSL_BY_WAGE_RANK if rank < hi)
+        if not p.ft:
+            pr *= .85
+        p.psl = srng.random() < pr
+
+
+# Owner housing costs (mortgage payment, or taxes, insurance and fees; utilities are separate bills), redrawn so cost
+# burdens match AHS 2023 (sources/raw/ahs, household.csv: TOTHCAMT less UTILAMT over HINCP, weighted): mortgaged owners
+# median 18% of income, 24% over 30%, 10% over half; owners without a mortgage median 8%, 14% over 30%, 8% over half.
+# v1 tied owners' costs to income (mortgages at least 14-29% of it), so the median was too high and heavy burdens too rare.
+# Applied after the population is built, on its own stream, so v1's people and draws stay as they were.
+OWNER_PITI = {"D1": 1700, "D2": 1500, "D3": 2180, "D4": 1380, "D5": 1020, "D6": 1080}
+OWNER_COST = dict(mort_mult=.9, mort_sigma=.5, mort_floor=(0.0, .10), free_share=.34, free_sigma=1.1, free_income=.01)
+# fit (15,000 households): mortgaged median 16%, 25% over 30%, 11% over half; no mortgage 8%, 14%, 7%
+
+
+def reshape_owner_costs(sim, HH):
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "owner_cost")
+    k = OWNER_COST
+    for H in HH:
+        if H.gq or H.tenure not in ("owner_with_mortgage", "owner_free_and_clear") or H.mobile_home:
+            continue
+        mi = H.income / 12.0
+        base = OWNER_PITI[H.district]
+        if H.tenure == "owner_with_mortgage":
+            piti = base * k["mort_mult"] * math.exp(srng.gauss(0, k["mort_sigma"]))
+            H.housing_cost = round(min(9800, max(piti, mi * srng.uniform(*k["mort_floor"]))), 0)
+        else:
+            H.housing_cost = round(max(150, min(2500, base * k["free_share"] * math.exp(srng.gauss(0, k["free_sigma"])) + mi * k["free_income"])), 0)
 
 
 OCC_KINDS = {

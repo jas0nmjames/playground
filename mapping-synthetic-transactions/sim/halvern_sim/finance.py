@@ -1,6 +1,61 @@
 """Household money: wallets (who pays from what) and recurring obligations."""
 import math
 
+# Weekly child care prices, 2027: the National Database of Childcare Prices 2022 county medians, population-weighted
+# (sources/derived/ndcp_weekly_prices.csv, sources/tools/ndcp_prices.py), carried to 2027 at 4% a year (x 1.22, an
+# estimate: child care prices have outrun general inflation). v1 used 290/255/215 for centers and 80% of that for family
+# child care; centers were close, family care for preschoolers was low.
+CC_WEEKLY = {("center", "infant"): 288.0, ("center", "toddler"): 247.0, ("center", "preschool"): 226.0,
+             ("family", "infant"): 222.0, ("family", "toddler"): 209.0, ("family", "preschool"): 207.0}
+
+
+# Household checking and liquid balances (checking, savings, cash, prepaid) by income group, SCF 2025 summary extract
+# (sources/raw/scf/scfp2025excel.zip; weighted medians by INCCAT: bottom 20%, 20-40, 40-60, 60-80, 80-90, top 10%),
+# carried to 2027 dollars (x 1.05). v1's draws ran thin at the bottom (checking $86 and $580 in the two lowest groups
+# against SCF's $260 and $1,400), which fed the day's overdrafts.
+SCF_GROUPS = (.2, .4, .6, .8, .9, 1.01)
+SCF_CHECKING = (273.0, 1470.0, 3675.0, 5880.0, 10500.0, 21315.0)
+SCF_LIQUID = (714.0, 3150.0, 7866.0, 16905.0, 40583.0, 110250.0)
+
+
+def _median(v):
+    v = sorted(v)
+    return v[len(v) // 2] if v else 0.0
+
+
+def match_scf_balances(households):
+    """Scale checking, then savings, within each income group so household medians match SCF 2025. No random draws."""
+    hs = sorted((H for H in households if not H.gq), key=lambda H: (H.income, H.hid))
+    n = len(hs)
+    groups = [[] for _ in SCF_GROUPS]
+    for i, H in enumerate(hs):
+        groups[next(k for k, hi in enumerate(SCF_GROUPS) if (i + .5) / n < hi)].append(H)
+    for k, grp in enumerate(groups):
+        banked = [H for H in grp if any(W.bank is not None for W in H.wallets)]
+        cur = _median(sum(W.bank or 0.0 for W in H.wallets) for H in banked)
+        if cur > 0:
+            f = SCF_CHECKING[k] / cur
+            for H in banked:
+                for W in H.wallets:
+                    if W.bank is not None:
+                        W.bank = round(W.bank * f, 2)
+
+        def liq(H, g):
+            return sum((W.bank or 0.0) + W.savings * g + W.cash + (W.prepaid or 0.0) for W in H.wallets)
+        lo, hi = 0.0, 50.0
+        if _median(liq(H, hi) for H in grp) < SCF_LIQUID[k]:
+            lo = hi
+        for _ in range(40):
+            mid = (lo + hi) / 2
+            if _median(liq(H, mid) for H in grp) < SCF_LIQUID[k]:
+                lo = mid
+            else:
+                hi = mid
+        g = (lo + hi) / 2
+        for H in grp:
+            for W in H.wallets:
+                W.savings = round(W.savings * g, 2)
+
 
 class Wallet:
     __slots__ = ("wid", "hh", "owners", "bank", "savings", "cash", "cc_limit", "cc_bal", "revolver", "prepaid", "od",
@@ -176,6 +231,7 @@ def build_finance(sim):
         if W.bank is not None:
             W.bank = round(W.net_m * W.f, 2)
             W.savings = round(W.net_m * W.g, 2)
+    match_scf_balances(sim.households)
     sim.wallets = wallets
     build_bills(sim)
     # People who put a bill on autopay mostly keep the money in the account for it; the exceptions become the day's overdrafts and bounces.
@@ -413,8 +469,9 @@ def build_bills(sim):
         if cc_kids:
             wk = 0.0
             for p in cc_kids:
-                base = 290 if p.age < 1 else 255 if p.age < 3 else 215
-                base *= (.8 if p.student == "family_child_care" else 1.0) * {"D3": 1.1, "D5": .8, "D6": .8}.get(d, 1.0)
+                age = "infant" if p.age < 1 else "toddler" if p.age < 3 else "preschool"
+                base = CC_WEEKLY[("family" if p.student == "family_child_care" else "center", age)]
+                base *= {"D3": 1.1, "D5": .8, "D6": .8}.get(d, 1.0)
                 wk += base
             if len(cc_kids) > 1:
                 wk *= .93

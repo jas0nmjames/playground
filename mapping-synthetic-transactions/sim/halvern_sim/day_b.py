@@ -1,10 +1,16 @@
 """Household day, part B: food, shopping, getting around, health care."""
 import math
-from .config import SALES_TAX, TRANSIT_SERVED, PART_B_DEDUCTIBLE
+from .config import SALES_TAX, TRANSIT_SERVED, PART_B_DEDUCTIBLE, PART_D_OOP_CAP
 from .engine import ANY, DAY, EVE, GAS, OFFICE, SHOP, LUNCH, MORN, MEAL, AFT, NIGHT
 from .day_a import push
 
-TRANSIT_COST = 9.80
+# Bus and paratransit, set from NTD 2025 (sources/raw/ntd, Master sheet of the September 2026 monthly ridership file):
+# agencies in urbanized areas of 50,000-400,000 people, trip-weighted. Bus: $8.74 operating cost and $0.79 in fares per
+# unlinked trip; demand response (paratransit): $50.42 and $4.13. Costs carried to 2027 at 3% a year. v1 had $9.80 a bus
+# ride, a $1.75 fare (riders paid $1.01 a ride on average) and $58 a paratransit ride.
+TRANSIT_COST = 9.27
+PARATRANSIT_COST = 53.50
+BUS_FARE, BUS_FARE_REDUCED = 1.50, 0.75   # half fare for seniors and riders with disabilities (federal rule)
 
 
 def bus_ride(sim, q, P, H, t, o_d, d_d, purpose="errand"):
@@ -13,7 +19,7 @@ def bus_ride(sim, q, P, H, t, o_d, d_d, purpose="errand"):
     tr = sim.one("transit")
     W = P.wallet
     reduced = P.age >= 65 or P.dis not in ("none", None)
-    fare = 0.85 if reduced else 1.75
+    fare = BUS_FARE_REDUCED if reduced else BUS_FARE
     if P.pid in sim.passholders or (P.age < 19 and rng.random() < .5):
         fare, how = 0.0, "prepaid"
     else:
@@ -661,7 +667,12 @@ def visit(sim, q, P, H, kinds, svc, kind, base, dur, wait, prefs=OFFICE, tele=Fa
             org = sim.pick(kinds, H.district, scale * (1.6 if H.district in ("D5", "D6") else 1.0))
     if org is None or org.open is None:
         return
-    allowed = round(base * PAYF.get(cov, 1.15) * rng.uniform(.85, 1.2), 2)
+    if svc in ("primary", "specialist"):
+        # MEPS 2024 office-based visits (sources/raw/meps/h254g): median $146, mean $308, so a long tail of visits with
+        # tests and procedures; lognormal with sigma 1.2 keeps v1's median and gives about twice it as the mean
+        allowed = round(base * PAYF.get(cov, 1.15) * min(25.0, max(.45, rng.lognormvariate(0.0, 1.2))), 2)
+    else:
+        allowed = round(base * PAYF.get(cov, 1.15) * rng.uniform(.85, 1.2), 2)
     now, third, payer, fund, later = cover(sim, P, allowed, svc)
     if org.kind == "fqhc" and cov == "uninsured":
         now = float(rng.choice([25, 30, 40, 45]))
@@ -731,8 +742,14 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
         return
     fills = []
     for _ in range(nfill):
-        brand = rng.random() < .12
-        cash = round(min(1600, max(9, rng.lognormvariate(math.log(520 if brand else 28), .7))), 2)
+        # MEPS 2024 prescribed medicines (h254a): median payment per fill $15, mean $233, so a few very costly fills.
+        # 2% specialty (median $5,000), 10% other brand, 88% generic; v1 had 12% brand capped at $1,600 and no specialty.
+        r = rng.random()
+        specialty, brand = r < .02, r < .12
+        if specialty:
+            cash = round(min(40000, max(900, rng.lognormvariate(math.log(5000), .9))), 2)
+        else:
+            cash = round(min(5000 if brand else 400, max(4, rng.lognormvariate(math.log(520 if brand else 20), .8))), 2)
         neg = cash * (.82 if brand else .45)
         if cov in ("medicaid",):
             cp = float(rng.choice([0, 0, 1, 3]))
@@ -744,10 +761,14 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             cp = round(.25 * neg, 2) if brand else float(rng.choice([0, 0, 2, 5, 8, 12]))
             if brand and rng.random() < .15:
                 cp = 35.0
+            if specialty:   # coinsurance runs into the Part D out-of-pocket cap within a fill or two
+                cp = round(min(cp, rng.uniform(150, PART_D_OOP_CAP)), 2)
             third, payer, fund = neg - cp, "Medicare Part D plan", "federal"
         elif cov in ("employer", "marketplace", "other_private", "military"):
             if P.plan == "hdhp" and rng.random() < .75:
-                cp = round(neg, 2)
+                cp = round(min(neg, rng.uniform(200, 3500)), 2)   # what is left of the deductible
+            elif specialty:
+                cp = round(min(.25 * neg, rng.uniform(150, 1000)), 2)   # specialty-tier coinsurance with a per-fill cap
             else:
                 cp = float(rng.choice([40, 50, 60, 90])) if brand else float(rng.choice([0, 5, 10, 10, 15]))
             cp = min(cp, neg)
@@ -937,7 +958,9 @@ def ed_visit(sim, q, P, H):
     hosp = sim.by_kind["hospital"]
     org = hosp[1] if (H.district in ("D1", "D2") and rng.random() < .7) or (H.district == "D3" and rng.random() < .5) else hosp[0]
     cov = P.cov
-    allowed = round(min(9000, max(520, rng.lognormvariate(math.log(1650), .55))) * (PAYF.get(cov, 1.15) if cov != "uninsured" else 1.0), 2)
+    # MEPS 2024 emergency room visits (h254e, facility plus doctor): median $674, mean $1,405; about $741 and $1,545 in 2027.
+    # v1 drew a median near $1,280 with a short tail.
+    allowed = round(min(40000, max(150, rng.lognormvariate(math.log(950), 1.2))) * (PAYF.get(cov, 1.15) if cov != "uninsured" else 1.0), 2)
     dur = rng.randint(150, 420)
     w = rng.randint(12, 190)
     t = sim.slot(P, 60, ((0, 1320, 1),))
@@ -1022,9 +1045,9 @@ def dialysis(sim, q, P, H):
                      mode="car", fr=("caregiving_conflict",) if helper.works else (), lens=("family_care",), related=i, ctx=dict(org=org.name, rel=P.rel, dialysis="1"))
         elif not car:
             for tt in (t - 40, t + 255):
-                sim.emit(tt, "public_service_encounter", "transportation", "paratransit_ride", P, H, sim.one("paratransit"), P, ben=P, method="none", gross=58.0,
-                         user=0.0, third=58.0, payer="Medicaid non-emergency medical transportation" if cov in ("medicaid", "medicare_medicaid_dual") else "HAT Access paratransit subsidy",
-                         fund="mixed", imputed=58.0, tmin=40, wait=rng.randint(5, 35), miles=miles / 2, mode="paratransit", lens=("disability", "land_use"),
+                sim.emit(tt, "public_service_encounter", "transportation", "paratransit_ride", P, H, sim.one("paratransit"), P, ben=P, method="none", gross=PARATRANSIT_COST,
+                         user=0.0, third=PARATRANSIT_COST, payer="Medicaid non-emergency medical transportation" if cov in ("medicaid", "medicare_medicaid_dual") else "HAT Access paratransit subsidy",
+                         fund="mixed", imputed=PARATRANSIT_COST, tmin=40, wait=rng.randint(5, 35), miles=miles / 2, mode="paratransit", lens=("disability", "land_use"),
                          related=i, ctx=dict(org=org.name))
     push(q, start, run)
 

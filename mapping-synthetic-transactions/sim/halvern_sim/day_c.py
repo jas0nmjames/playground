@@ -129,7 +129,7 @@ def pre_day(sim):
         if not ad or any((not a.works) or a.wfh for a in ad):
             continue
         a = min(ad, key=lambda x: (x.ft, x.wage))
-        unpaid = a.wsched != "fixed" or a.wage < 42000 or a.emp == "self_employed"
+        unpaid = not a.psl   # NCS March 2026 access by wage (population.assign_sick_leave); the self-employed have none
         hrs = min(10.0, sum(e - s for s, e in a.shift) / 60.0) if a.shift else 8.0
         lost = round(hrs * a.wage / 2080.0, 2) if (unpaid and rng.random() < .7) else 0.0
         sim.stayhome[a.pid] = (sick[0], hrs, lost)
