@@ -113,14 +113,13 @@
   const vkOf = (ty, oc) => isFail(ty, oc) ? 'fail' : ty === 10 ? 'unpaid' : ty === 2 || ty === 3 ? 'income' : ty === 1 || ty === 6 || ty === 9 ? 'bill' : ty === 8 ? 'service' : 'purchase';
   const FRICTION = { wait: 'long wait', distance: 'too far', no_transit: 'no transit', hours_mismatch: 'closed when they got there', missing_document: 'missing document', language: 'language barrier', disability_access: 'not accessible', digital_barrier: 'online barrier', fee: 'fee', insufficient_funds: 'not enough money', pending_hold: 'money on hold', benefits_cliff: 'benefits cliff', eligibility_confusion: 'eligibility confusion', out_of_stock: 'out of stock', outage: 'outage', caregiving_conflict: 'caregiving conflict', schedule_volatility: 'schedule changed', scam_attempt: 'scam attempt', price_spike: 'price spike', paperwork: 'paperwork', repeat_trip: 'repeat trip', other: 'other' };
   const NUM = new Set(['amount_gross', 'amount_paid_by_user', 'amount_paid_by_third_party', 'imputed_public_cost', 'sales_tax', 'fee_amount', 'time_minutes', 'wait_minutes', 'travel_miles']);
-  const COLS = ['record_id', 'timestamp_local', 'record_type', 'job_category', 'job_statement', 'actor_person_id', 'household_id', 'from_party_id', 'to_party_id', 'beneficiary_person_id', 'district', 'channel', 'payment_method', 'amount_gross', 'amount_paid_by_user', 'amount_paid_by_third_party', 'third_party_payer', 'funding_level', 'imputed_public_cost', 'sales_tax', 'fee_type', 'fee_amount', 'time_minutes', 'wait_minutes', 'travel_miles', 'travel_mode', 'outcome', 'friction_tags', 'lens_tags', 'related_record_id', 'narrative', 'block_id', 'block_pattern', 'context_ids'];
+  const COLS = ['record_id', 'timestamp_local', 'record_type', 'job_category', 'job_statement', 'actor_person_id', 'household_id', 'from_party_id', 'to_party_id', 'beneficiary_person_id', 'district', 'channel', 'payment_method', 'amount_gross', 'amount_paid_by_user', 'amount_paid_by_third_party', 'third_party_payer', 'funding_level', 'imputed_public_cost', 'sales_tax', 'fee_type', 'fee_amount', 'time_minutes', 'wait_minutes', 'travel_miles', 'travel_mode', 'outcome', 'friction_tags', 'lens_tags', 'related_record_id', 'narrative'];
 
   let D = null; // the loaded day's columns
   // One small object per record; the full row is read from the CSV bytes only when a sheet asks for it.
   function Rec(i) { this._i = i; }
   const P = Rec.prototype;
   P._real = true;
-  P._blk = ''; P._pat = ''; // the systems lens's mapped block and pattern, set at load for the few records that have them
   P._row = function () {
     if (this._o) return this._o;
     const R = new Reader(D.bytes); R.p = D.off[this._i]; const n = R.row(), o = {};
@@ -176,7 +175,7 @@
       const g = (k) => (Hd[k] != null ? R.str(Hd[k]) : '');
       const id = g('household_id'), dc = g('district'), fold = FOLD[dc] || 'older', list = homes[fold] || H.households, home = list[hash(id) % list.length];
       const p = { id, type: 'household', name: 'Household ' + id, district: home.district, where: DNAME[dc] || dc, tile: home.tile, anchor: home.anchor, dwell: home.dwell, home,
-        info: { type: g('household_type'), size: +g('size') || 0, income: +g('annual_income') || 0, alice: g('alice_status'), bank: g('banked_status'), tenure: g('housing_tenure') }, hi: hhList.length, block: g('block_id') };
+        info: { type: g('household_type'), size: +g('size') || 0, income: +g('annual_income') || 0, alice: g('alice_status'), bank: g('banked_status'), tenure: g('housing_tenure') }, hi: hhList.length };
       hhList.push(p); HHM.set(id, p); H.party.set(id, p); members.set(home, (members.get(home) || 0) + 1);
     });
     await tick();
@@ -191,10 +190,6 @@
     if (c('timestamp_local') < 0 || c('record_type') < 0) throw new Error('records.csv is missing its columns');
     const cT = c('timestamp_local'), cTy = c('record_type'), cCat = c('job_category'), cHH = c('household_id'), cFr = c('from_party_id'), cTo = c('to_party_id'), cG = c('amount_gross'), cU = c('amount_paid_by_user'), c3 = c('amount_paid_by_third_party'), cMin = c('time_minutes'), cOut = c('outcome'), cNar = c('narrative'), cId = c('record_id');
     D = { bytes, H: Hd, off: new Uint32Array(cap), sec: new Float64Array(cap), type: new Uint8Array(cap), out: new Uint8Array(cap), cat: new Uint16Array(cap), amt: new Float32Array(cap), paid: new Float32Array(cap), mins: new Float32Array(cap), hid: new Int32Array(cap), hand: new Uint8Array(cap), cats: [], hhList, ids: null };
-    const cBlk = c('block_id'), cPat = c('block_pattern');
-    // per-minute counts the sound uses for traffic, buses, people walking and people out in person
-    const cTm = c('travel_mode'), cCh = c('channel'), SD = { car: new Float32Array(1440), bus: new Float32Array(1440), walk: new Float32Array(1440), inp: new Float32Array(1440) };
-    const CAR = new Set(['car', 'ride_from_family_or_friend', 'carpool']), BUS = new Set(['transit', 'school_bus', 'paratransit']), WALK = new Set(['walk', 'bike']);
     const tyMap = new Map(TYPES.map((t, i) => [t, i])), ocMap = new Map(OUTS.map((t, i) => [t, i])), catMap = new Map();
     const tre = /(?:T|\s)(\d{1,2}):(\d{2})(?::(\d{2}))?/;
     const recs = []; let i = 0, last = performance.now(), anySec = false, firstId = '', lastId = '';
@@ -210,7 +205,6 @@
       const m = tre.exec(R.str(cT)); let s = 0;
       if (m) { s = +m[1] * 3600 + +m[2] * 60 + (m[3] ? +m[3] : 0); if (m[3] && m[3] !== '00') anySec = true; }
       D.sec[i] = Math.min(86399, s);
-      { const mi = Math.floor(D.sec[i] / 60); if (cTm >= 0) { const tm = R.str(cTm); if (CAR.has(tm)) SD.car[mi]++; else if (BUS.has(tm)) SD.bus[mi]++; else if (WALK.has(tm)) SD.walk[mi]++; } if (cCh >= 0 && R.str(cCh) === 'in_person') SD.inp[mi]++; }
       const ty = tyMap.get(R.str(cTy)) ?? 12, oc = cOut < 0 ? 0 : ocMap.get(R.str(cOut)) ?? 0;
       D.type[i] = ty; D.out[i] = oc;
       const cs = R.str(cCat); let ci = catMap.get(cs); if (ci === undefined) { ci = D.cats.length; D.cats.push(cs); catMap.set(cs, ci); } D.cat[i] = ci;
@@ -221,7 +215,6 @@
       const hhP = cHH < 0 ? null : HHM.get(R.str(cHH)) || null;
       D.hid[i] = hhP ? hhP.hi : -1;
       const r = new Rec(i);
-      if (cBlk >= 0) { const bk = R.str(cBlk); if (bk) { r._blk = bk; if (cPat >= 0) r._pat = R.str(cPat); } }
       const from = resolve(cFr < 0 ? '' : R.str(cFr)), to = resolve(cTo < 0 ? '' : R.str(cTo));
       r._from = from || hhP || to || unknown; r._to = to || hhP || r._from;
       r._hh = hhP || (r._from.type === 'household' ? r._from : r._to.type === 'household' ? r._to : r._from);
@@ -264,7 +257,7 @@
     for (const [v3, list] of stands) v3.stands = list;
     const mx = Math.max(...hourly) || 1;
     return {
-      records: recs, cum: { money: cm, fails: cf, unpaid: cu }, minuteIdx: minute, soundDensity: SD,
+      records: recs, cum: { money: cm, fails: cf, unpaid: cu }, minuteIdx: minute,
       recById: { get: (id) => { const ii = byId ? byId.get(id) : /^R\d+$/.test(id) ? parseInt(id.slice(1), 10) - 1 : -1; return ii >= 0 && ii < n ? recs[pos[ii]] : undefined; } },
       purchaseRate: (t) => { const h = (t / 60) % 24, a = Math.floor(h), f = h - a; return (4 * (hourly[a] * (1 - f) + hourly[(a + 1) % 24] * f)) / mx; },
     };
@@ -297,7 +290,7 @@
       const day = await build(bufs, (p) => status({ state: 'loading', p: 0.55 + p * 0.45 }));
       patchWords();
       H.realLoaded = true;
-      Object.assign(H, { records: day.records, cum: day.cum, minuteIdx: day.minuteIdx, recById: day.recById, soundDensity: day.soundDensity });
+      Object.assign(H, { records: day.records, cum: day.cum, minuteIdx: day.minuteIdx, recById: day.recById });
       H.RATE.purchase = day.purchaseRate;
       App.useDay();
       status({ state: 'real', n: day.records.length });

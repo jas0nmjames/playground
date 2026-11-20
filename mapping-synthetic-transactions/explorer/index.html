@@ -262,7 +262,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     <a href="#organizations" data-v="organizations">Organizations</a>
     <a href="#summary" data-v="summary">Summary</a>
   </nav>
-  <a class="ext" id="anim-link" href="https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v3/">Open the animation ↗</a>
+  <a class="ext" id="anim-link" href="https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/">Open the animation ↗</a>
   <div id="progress" aria-hidden="true"><i></i></div>
 </header>
 
@@ -317,7 +317,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   // ---------- where things are ----------
   const PAGES = 'https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/';
   const inRepo = /\/explorer\/(index\.html)?$/.test(location.pathname);
-  $('#anim-link').href = inRepo ? '../v3/' : PAGES + 'v3/';
+  $('#anim-link').href = inRepo ? '../' : PAGES;
   const RUNS = ['../data/halvern_2027-03-03.zip', 'data/halvern_2027-03-03.zip'];
   const FFLATE = ['../fflate.js', 'fflate.js'];
   let framed = true; try { framed = window.self !== window.top; } catch (e) { framed = true; }

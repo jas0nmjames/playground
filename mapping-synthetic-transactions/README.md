@@ -1,18 +1,37 @@
 ---
 published: 2026-11-17
-updated: 2026-11-19
+updated: 2026-11-20
 tags: generative
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
 
-Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation.
+Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. The latest viewer replays the same day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation.
+
+**Start here:** [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) always opens the latest viewer. Earlier versions stay online, unchanged, in `v1/` and `v3/`.
+
+## Versions
+
+Viewers and data runs are numbered separately.
+
+| Viewer | Where | Status |
+|---|---|---|
+| Latest: Miniature and Map, with the systems lens over the city, photographic light and surface, turning and tilting, and sound | [`/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | Current. New work lands here. |
+| v3: Miniature and Map, as first shipped (Nov 17–18, 2026) | [`/v3/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v3/) | Archived as shipped. Tag `viewer-v3`. |
+| v1: the night map | [`/v1/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v1/) | Archived as shipped. Tag `viewer-v1`. |
+
+No viewer v2 shipped: the second round was a set of visual-direction prototypes in the Claude app, and the chosen direction became v3. The archived pages change only in their relative paths and an "Archived version" link back to the latest.
+
+| Data run | File | Status |
+|---|---|---|
+| v1: Wednesday, March 3, 2027 | `data/halvern_2027-03-03.zip` | Current, and kept under this name for the archived viewers |
+| v2: the evidence update | `data/runs/` (planned) | In progress; see `reference/halvern-data-update-plan.md` |
 
 ## Views
 
-| | Night map | Miniature and Map (v3) |
+| | Night map (v1) | Miniature and Map (latest) |
 |---|---|---|
-| Live page | [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | [mapping-synthetic-transactions/v3/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v3/) |
+| Live page | [mapping-synthetic-transactions/v1/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v1/) | [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) |
 | Look | Dark, full-screen night sky; districts as glowing rings and clusters | Light; a tabletop 3D town, or the same town as a printed topographic sheet (press **M** to switch) |
 | City | The run's six districts, D1–D6, laid out as abstract shapes | v3's own small town; the run's districts and places are folded onto its homes and buildings |
 | Record kinds | 13 colors, one per record type | 6 kinds with their own color, line and head: purchase, income, bill, public service, unpaid work, failure |
@@ -26,7 +45,7 @@ Both animated pages load the same file, `data/halvern_2027-03-03.zip`, and link 
 
 8:02 a.m., playing at one minute a second.
 
-### Miniature and Map (v3)
+### Miniature and Map (latest)
 
 ![The miniature town at 12:19 p.m. in midday sun, with street paint, parked cars and the land beyond the board, record paths arcing between homes and buildings, and failure pins on the places where things went wrong](screenshots/v3-miniature.jpg)
 
@@ -40,7 +59,7 @@ The same moment in the Map view, zoomed out to show most of the sheet.
 
 ![The systems lens: six stacked layers of Larkin Avenue, with record 6 selected, lines dropping to the circumstances behind it, callouts on the right and the Rollover loop drawn through the top two layers](screenshots/systems-lens.jpg)
 
-The systems lens opens over v3 from a record's **What shaped this**, from a household's day, or from the **Systems lens** button in the header (**L**). It maps one composite block in each district, defined in `systems-lens/blocks.json`, and the run tags the records of those blocks' households, so the lens shows the record you opened. It also runs on its own at [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/), where a menu switches blocks and each pin shows a composite example. The [design record](reference/halvern-systems-lens.md) explains the choices, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
+The systems lens opens over the city in the latest viewer from a record's **What shaped this**, from a household's day, or from the **Systems lens** button in the header (**L**). It maps one composite block in each district, defined in `systems-lens/blocks.json`, and the run tags the records of those blocks' households, so the lens shows the record you opened. It also runs on its own at [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/), where a menu switches blocks and each pin shows a composite example. The [design record](reference/halvern-systems-lens.md) explains the choices, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
 
 The screenshots were taken from these pages in headless Chromium with software WebGL, at twice the pixel density.
 
@@ -60,9 +79,9 @@ Placeholder records move while the real day downloads (16 MB), and then the cloc
 - **Filter.** Narrow the map by kind of record, district, friction or failure, the 500 hand-written records (marked ✎), or a word in the job name.
 - **Load run.** Loads another run from your computer: a zip from the simulator, or `records.csv` with `organizations.csv`, `households.csv` and `persons.csv`.
 
-## Watching v3
+## Watching the latest viewer
 
-v3's own placeholder day plays while the real one downloads. The chip in the header shows the progress, then "201,753 records · March 3, 2027". If the download fails, the chip says so and the placeholder keeps playing. The clock starts at 8:00 a.m.
+The viewer's own placeholder day plays while the real one downloads. The chip in the header shows the progress, then "201,753 records · March 3, 2027". If the download fails, the chip says so and the placeholder keeps playing. The clock starts at 8:00 a.m.
 
 - **Views.** **Miniature** is a 3D model of the town, lit by the sun and sky of the hour, with a focus blur (Off, Subtle or Full). **Map** is the same town drawn as a printed map sheet. **M** switches between them. Drag to pan, and scroll or use **+** and **−** to zoom.
 - **Turning the miniature.** The round buttons beside the zoom buttons turn the board 15° at a time, and the compass between them shows north and puts it back up. With a mouse, drag with the right button, or hold Shift, Alt or Ctrl while dragging: sideways turns, up and down tilts, from a low skyline view at 8° to a steep 72°. On a touch screen, two fingers turn, tilt and zoom. Keys: **Q** and **E** turn, **N** puts north up, **Page Up** and **Page Down** tilt. The Map always stays north up.
@@ -70,10 +89,10 @@ v3's own placeholder day plays while the real one downloads. The chip in the hea
 - **Places.** Click a home or building to see its recent records. Since the real day is folded onto v3's town, each home or building also says how many real households or places it stands for. A pin counts the failures at a place so far today; click it to list them.
 - **Activity.** Money moved, records, failures and unpaid hours so far; six filters, one per kind; and the latest records. Below 1,280 px wide, the Activity panel becomes a drawer.
 - **A record.** Amount and status, from and to, method, time, category, record id (with hand-written records marked), the money breakdown, the job statement and the narrative. Under **Look closer**, **This household's day** lists the household's records so far and later, and keeps their paths drawn on the city. **What shaped this** opens the systems lens on the record, when its household lives on a mapped block and the record follows one of the block's patterns.
-- **Systems lens.** The details rail widens into the lens over the city, and playback pauses. **Back to the city** or **Esc** returns to the record. Links of the form `v3/#lens=larkin/R3/R0029594` open a block, a pattern or a record directly, and `#view=map` opens on the map.
+- **Systems lens.** The details rail widens into the lens over the city, and playback pauses. **Back to the city** or **Esc** returns to the record. Links of the form `#lens=larkin/R3/R0029594` open a block, a pattern or a record directly, and `#view=map` opens on the map.
 - **Timeline.** Bars show records per ten minutes. Plum marks flag ten-minute stretches where failures run well above the day's usual share: overnight, when autopays bounce, and in the evening. Speeds are Live (the real clock), 1, 5 and 20 minutes a second. Page Up and Page Down move an hour.
 - **Sound.** Off until you turn it on with the **Sound** button in the header or the **S** key. There are two layers, each with its own switch and volume, and the mix is remembered in your browser. **Background** (25% to start) is a quiet city that follows the hour: traffic and buses from the day's car and transit trips, voices from in-person records, birds at dawn, crossing chirps and wind. It follows the time of day in real seconds, so it doesn't speed up with playback. Zooming in brings the street closer; zooming out or tilting low toward the skyline leaves mostly wind and distant traffic. **Records** (60% to start) plays a soft pluck for each record shown, pitched by kind: income high, purchases and bills in the middle, public services and unpaid work low. A low thud marks a record that didn't work. Above 12 records a second the plucks thin into a sampled cloud, so faster playback sounds busier but not louder. The sound is all generated in the browser (`sound.js`), and it pauses when the tab is hidden. It was tuned in the Halvern Sound Lab.
-- With reduced motion requested, v3 starts paused and draws paths without animating them.
+- With reduced motion requested, the viewer starts paused and draws paths without animating them.
 
 ## Reading the systems lens
 
@@ -107,26 +126,28 @@ The explorer doesn't link into a moment of the animations, because they don't ac
 
 ## Running them locally
 
-No build step. Serve the folder, then open `/` for the night map, `/v3/` for v3, `/systems-lens/` for the systems lens and `/explorer/` for the data explorer:
+No build step. Serve the folder, then open `/` for the latest viewer, `/v1/` for the night map, `/v3/` for archived v3, `/systems-lens/` for the systems lens and `/explorer/` for the data explorer:
 
 ```bash
 python3 -m http.server 5181 --directory mapping-synthetic-transactions
 ```
 
-Opening an `index.html` as a file can't fetch the data, so each animated page then plays its placeholder day, and the explorer says it couldn't load the run. v3 also needs internet access for three.js and its fonts.
+Opening an `index.html` as a file can't fetch the data, so each animated page then plays its placeholder day, and the explorer says it couldn't load the run. The Miniature also needs internet access for three.js and its fonts.
 
 ## What's in this folder
 
 | Path | What it is |
 |---|---|
-| `index.html` | The night map: canvas map, timeline, ticker, record sheets and filters |
-| `v3/index.html` | Miniature and Map (v3): the city plan, both views, the activity panel and playback |
-| `v3/real-day.js` | Loads the run for v3 and folds it onto v3's town (see below) |
+| `index.html` | The latest viewer, Miniature and Map: the city plan, both views, the activity panel, playback and the systems lens overlay |
+| `real-day.js` | Loads the run for the latest viewer and folds it onto its town (see below) |
+| `sound.js` | The latest viewer's sound, generated in the browser with Web Audio |
+| `v1/index.html` | Archived: the night map (canvas map, timeline, ticker, record sheets and filters) |
+| `v3/index.html`, `v3/real-day.js` | Archived: Miniature and Map (v3) as first shipped |
 | `systems-lens/index.html` | The systems lens: the layers, callouts, loops and details sheet, with its prototype content built in |
 | `explorer/index.html` | The data explorer: loading, tables, filters, search, group-by, detail sheets and summary, in one page |
 | `systems-lens/directions.html` | The three directions tried first (Section, Exploded view, The Works), in their original hand-drawn style |
-| `fflate.js` | [fflate](https://github.com/101arrowz/fflate) (MIT), used by both pages to unzip the run in the browser |
-| `data/halvern_2027-03-03.zip` | The complete run, exactly as delivered: the data tables, the simulator, and the hand-written records. Both pages load this file. |
+| `fflate.js` | [fflate](https://github.com/101arrowz/fflate) (MIT), used by every page to unzip the run in the browser |
+| `data/halvern_2027-03-03.zip` | The complete run, exactly as delivered: the data tables, the simulator, and the hand-written records. Every viewer and the explorer load this file. |
 | `data/halvern/` | The same package unpacked so it can be read on GitHub, without the four large tables (`records.csv`, 77 MB; `persons.csv`; `households.csv`; `household_ledger.csv`), which are only in the zip |
 | `data/halvern/out/summary.md` | Counts, calibration against the anchors, fees, public dollars and the costliest frictions |
 | `data/halvern/detailed_sample_500.csv` | The 500 hand-written records |
@@ -158,11 +179,11 @@ Changes since the Claude artifact it came from:
 - "Didn't work" now counts what the run's summary counts as a failure: every failed attempt, plus anything declined, abandoned, failed or rescheduled. It used to count "partial" outcomes too, which made it 8,726 by midnight instead of 6,896. "Money moved" leaves out failed records.
 - Short names with characters such as the en dash in "Marlow's Market – Downtown" no longer come out garbled.
 - Job names drop their group prefix ("Coffee", not "Food.coffee"), as in v3.
-- A footer credits the page, links to v3, and gives the impact figure below.
+- A footer credits the page, links to the latest viewer and v3, and gives the impact figure below.
 
-## How v3 uses the real day
+## How the Miniature and Map use the real day (since v3)
 
-v3 was built as a Claude artifact around its own placeholder day: 4,130 records among 225 homes and 100 named buildings. `v3/real-day.js` swaps in the real run once it has downloaded. Records keep their real ids, names, amounts, districts, job statements and narratives. Only where they are drawn is approximate, because v3 draws one small town rather than the run's six districts.
+v3 was built as a Claude artifact around its own placeholder day: 4,130 records among 225 homes and 100 named buildings. `real-day.js` (once `v3/real-day.js`) swaps in the real run once it has downloaded. Records keep their real ids, names, amounts, districts, job statements and narratives. Only where they are drawn is approximate, because v3 draws one small town rather than the run's six districts.
 
 **Homes.** Each household is drawn at one of v3's homes in the area its district folds into, picked by a hash of its id:
 

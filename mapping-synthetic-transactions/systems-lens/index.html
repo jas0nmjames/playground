@@ -183,16 +183,16 @@ body.embed #plates{max-height:calc(100vh - 24px)}
       <span class="chip">Composite context · patterns from US history</span>
     </div>
     <nav class="seg" aria-label="View">
-      <a href="../v3/#view=mini">Miniature</a>
-      <a href="../v3/#view=map">Map</a>
+      <a href="../#view=mini">Miniature</a>
+      <a href="../#view=map">Map</a>
       <a aria-current="page">Systems lens</a>
     </nav>
   </header>
   <div class="ctxbar">
-    <a class="btn ghost" href="../v3/" id="tocity"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</a>
+    <a class="btn ghost" href="../" id="tocity"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the city</a>
     <label class="muted" for="blocksel">Block</label>
     <select id="blocksel" class="blocksel"></select>
-    <a class="btn ghost" id="overcity" href="../v3/">Open over the city</a>
+    <a class="btn ghost" id="overcity" href="../">Open over the city</a>
     <span class="muted small place" id="place"></span>
   </div>
   <main class="body">
@@ -377,7 +377,7 @@ document.title = `Halvern Systems Lens · ${BLOCK.name}`;
   document.getElementById("place").textContent = `${BLOCK.district} ${BLOCK.districtName} · Wed, Mar 3, 2027`;
   document.getElementById("blockname").textContent = BLOCK.name;
   document.getElementById("blocksum").textContent = BLOCK.summary;
-  document.getElementById("overcity").href = `../v3/#lens=${BLOCK.id}`;
+  document.getElementById("overcity").href = `../#lens=${BLOCK.id}`;
 })();
 const stack = s("g", null, svgP);
 const overlay = s("g", {"pointer-events":"none"}, svgP);
