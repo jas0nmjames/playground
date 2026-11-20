@@ -139,7 +139,7 @@ GitHub limits decide the rest: a file over 100 MB is refused, a Pages site shoul
 
 ## 9. Decisions for you
 
-1. **Same people or new people?** Keeping v1's population keeps comparisons clean (same households, before and after). Rebuilding from ACS PUMS is more truthful but breaks comparability and the hand-written sample. Recommended: keep the population for v2, rebuild in v3.
+1. **Same people or new people?** Keeping v1's population keeps comparisons clean (same households, before and after). Rebuilding from ACS PUMS is more truthful but breaks comparability and the hand-written sample. Recommended: keep the population for v2, rebuild in v3. **Decided 2026-11-20: keep the population for v2, and with it v1's wage boost (see the wage note in section 10).**
 2. **How far past one day:** the typed-day set only, or the month too.
 3. **Where the big bundles live:** Releases, or local only.
 4. **Georgia evidence:** keep Halvern national, using Georgia-specific findings (title pawn rates, Pathways) for field visits and texture only. Recommended.
@@ -175,7 +175,7 @@ Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `source
 | I4 | Banking status by income and age | 4.3% unbanked, 12.9% underbanked | FDIC 2023 |
 | I5 | Late payments by loan type | rule-built | NY Fed HHDC 2026 Q3 |
 | I6 | Health costs: patient share and payer share by visit type | ER mean $1,885 | MEPS 2024 |
-| I7 | Wages by occupation; fix odd employer-occupation pairs | hand table x 1.23 | OEWS May 2025 (national and by industry) |
+| I7 | Wages by occupation; fix odd employer-occupation pairs | hand table x 1.23 | OEWS May 2025 (national and by industry). **Kept as v1 for v2; see the wage note below.** |
 | I8 | Paid sick leave by wage level | 142 stayed home with a sick child, 81 missed shifts | NCS March 2026 |
 | I9 | Child care prices by age of child | median $319 a payment | NDCP 2022 |
 | I10 | Transit fare and subsidy per ride | $9.80 gross a ride | NTD 2025 |
@@ -186,6 +186,8 @@ Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `source
 | I15 | Moves in and out | 9 move-ins | IRS migration 2022-23 |
 
 I2, I3, I4 and I7 change the population's money and incomes (not who the people are), which touches decision 1 in section 9.
+
+**Wage note (I7, decided 2026-11-20).** v1's occupation table already matches OEWS May 2025 medians (registered nurse $98,000 against $97,550), but every wage is multiplied by `WAGE_SCALE` = 1.23, where wage growth to 2027 would justify about 1.08. Each worker is therefore paid about 14% more than a real worker in the same job (a Halvern nurse about $120,000 against roughly $105,000). The boost makes up for Halvern's smaller households: 2.36 people against about 2.58 nationally, and 1.14 earners each, so fewer paychecks reach each home. With the boost, median household income is about $78,000, against about $86,700 implied by SCF 2025 in 2027 dollars; at 1.08 it would fall to roughly $70,000. Household money (balances, bills, overdrafts, who can cover $400) is closer to right with the boost, and pay for a single job is not, so read Halvern by household, not by occupation. v2 keeps 1.23. v3, which rebuilds households from ACS PUMS, should set the scale to wage growth alone and re-check household income against SCF. The same note is in `sim/halvern_sim/config.py`, every run's `assumptions.csv` and `summary.md`, the evidence-check report, and the project README.
 
 ### J. Jobs to add
 

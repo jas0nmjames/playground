@@ -119,7 +119,11 @@ def assumption_rows(sim, S=None):
     a("industry mix", "21 sectors at the shares in the prompt", "fitted by iterative proportional fitting over education, sex, age and district affinities", "anchor (prompt)")
     a("out-commuters", "5% of wage workers", "prompt asks to keep commuting across the city line small", "design choice")
     a("in-commuters", "4.5% of positions at Halvern employers", "prompt asks to keep commuting across the city line small", "design choice")
-    a("occupation wages", "full-time base wages by occupation x %.2f" % C.WAGE_SCALE, "base wages follow national occupational pay; the scale sets median household income near $78,000 in 2027 dollars", "estimate")
+    a("occupation wages", "full-time base wages by occupation x %.2f" % C.WAGE_SCALE,
+      "base wages follow national occupational pay (OEWS May 2025 medians); the x %.2f boost, where wage growth to 2027 would justify about x 1.08, "
+      "pays each worker about 14%% more than a real worker in the same job, to make up for Halvern's smaller households (2.36 people, 1.14 earners). "
+      "It puts median household income near $78,000 (SCF 2025 implies about $86,700). Compare household money, not one job's pay; "
+      "v3 rebuilds households from ACS PUMS and drops the boost (see WAGE_SCALE in config.py)" % C.WAGE_SCALE, "estimate (kept on purpose in v2)")
     a("poverty guideline 2027", "$%d plus $%d per additional person" % (C.POVERTY_BASE, C.POVERTY_STEP), "2026 HHS guideline carried forward for inflation", "estimate")
     a("ALICE survival budget", "$36,000 one adult; +$15,500 per added adult; +$21,000 per child under 5; +$12,000 per older child; +$2,500 all-senior; district cost index 0.88 to 1.08; scaled by %.3f" % sim.alice_scale,
       "scale solved so 41.5% of households fall below the threshold", "anchor-driven (United For ALICE: roughly 4 in 10)")

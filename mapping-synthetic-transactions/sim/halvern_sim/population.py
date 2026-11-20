@@ -488,7 +488,7 @@ def build_population(sim):
         p.occ, p.sched, p.tipped = t, sk, bool(tip)
         af = .72 if p.age < 20 else .82 if p.age < 25 else .92 if p.age < 30 else 1.0 if p.age < 40 else 1.06 if p.age < 55 else 1.04 if p.age < 65 else .92
         sg = .42 if me >= 4 else .22
-        wage = wg * C.WAGE_SCALE * math.exp(rng.gauss(0, sg) + .13 * H.z) * af
+        wage = wg * C.WAGE_SCALE * math.exp(rng.gauss(0, sg) + .13 * H.z) * af   # WAGE_SCALE pays ~14% above real pay on purpose; see config.py
         if wg >= 130000 and rng.random() < .12:
             wage *= rng.uniform(1.3, 2.6)
         hrs = 1.0 if p.ft else rng.uniform(.35, .72)

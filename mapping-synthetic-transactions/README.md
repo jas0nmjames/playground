@@ -1,6 +1,6 @@
 ---
 published: 2026-11-17
-updated: 2026-11-18
+updated: 2026-11-20
 tags: generative
 ---
 
@@ -116,6 +116,8 @@ Opening an `index.html` as a file can't fetch the data, so each page then plays 
 - [Halvern Systems Lens: design record](reference/halvern-systems-lens.md): the directions tried for the systems lens, what was decided, and what waits for the next run.
 
 Everything in the data is synthetic. People, businesses and local agencies are invented. Federal programs keep their real names because the specification requires them. Synthetic data suggests where to look; it isn't evidence.
+
+**Wages are boosted on purpose.** Each worker is paid 1.23 times the national pay for their occupation, about 14% more than a real worker in the same job in 2027. Halvern's households are smaller than real ones, so fewer paychecks reach each home, and the boost makes up for it. Household incomes, balances and bills are closer to right this way, but one person's paycheck runs high, so compare households rather than occupations. The [data update plan](reference/halvern-data-update-plan.md) explains the numbers; the next version, which rebuilds households at their real size, drops the boost.
 
 ## How the night map works
 

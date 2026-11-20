@@ -235,7 +235,20 @@ OCC = {
              ("utility field technician", 61000, .16, 1, "early", 0), ("utility customer service rep", 46500, .15, 1, "day", 0),
              ("quarry equipment operator", 58500, .21, 0, "early", 0), ("utility engineer", 109000, .10, 4, "day", 0)],
 }
-WAGE_SCALE = 1.23   # global wage multiplier tuned in calibration
+# WAGE_SCALE: read this before using any one person's pay.
+# The OCC table above is close to the national median pay for each occupation (OEWS May 2025; registered nurse $98,000
+# against OEWS's $97,550). Every wage is then multiplied by WAGE_SCALE, so a typical full-time worker in Halvern earns
+# 1.23 times the table. Wage growth from May 2025 to 2027 would justify only about 1.08, so each worker is paid about 14%
+# more than a real worker in the same job (a Halvern nurse about $120,000 against roughly $105,000).
+# Why: Halvern's households are smaller than real ones (2.36 people against about 2.58 nationally, 1.14 earners each), so
+# fewer paychecks reach each home. v1 set the boost to make up for that (and to put 41.5% of households under the ALICE
+# budget). Even with it, median household income is about $78,000, against about $86,700 implied by SCF 2025 in 2027
+# dollars; at 1.08 it would fall to roughly $70,000 and Halvern would look poorer than the country.
+# So household money (balances, bills, overdrafts, who can cover $400) is closer to right with the boost, and pay for a
+# single job is not. Compare households, not occupations.
+# Decided 2026-11-20: keep 1.23 for v2 (same people as v1). v3 rebuilds households at their real size from ACS PUMS;
+# it should then set this to wage growth alone (about 1.08) and re-check household income against SCF.
+WAGE_SCALE = 1.23
 
 # ---- federal program parameters for 2027 (see assumptions.csv for sources)
 SS_AVG_RETIRED = 2170.0        # SSA: average retired-worker benefit, Jan 2027 after 3.6% COLA

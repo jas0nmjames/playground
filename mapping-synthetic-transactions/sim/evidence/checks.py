@@ -203,7 +203,10 @@ def write_report(out, days, baseline=None, label="v2 in progress (`sim/`)"):
           "- Most classes are represented by October days. Heating-season (Nov-Mar) and cooling-season (Jun-Sep) effects are "
           "only in the days that fall in those months.",
           "- Storm (%.2f) and heat (%.2f) weekdays a year are 2015-2025 averages for Halvern's counties (`sources/derived/weather_days.csv`); "
-          "afternoon thunderstorms are not modeled." % (typed_days.STORM_DAYS, typed_days.HEAT_DAYS)]
+          "afternoon thunderstorms are not modeled." % (typed_days.STORM_DAYS, typed_days.HEAT_DAYS),
+          "- Wages are boosted on purpose: every worker is paid 1.23 times the national pay for their occupation (about 14% above "
+          "real 2027 pay) to make up for Halvern's smaller households. Household money is closer to right this way; pay for a single "
+          "job is not. Kept for v2, dropped in v3 (see WAGE_SCALE in `sim/halvern_sim/config.py`)."]
     with open(os.path.join(out, "evidence_checks.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(L) + "\n")
 
