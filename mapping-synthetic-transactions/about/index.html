@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Medianville</title>
+<meta name="description" content="What Medianville is, where it came from, how the day was made, what's real and what isn't, and who made it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Repo links point at blob/development. Switch them to blob/main when development is promoted to main. -->
+<style>
+/* About Medianville: a plain reading page in the viewer's design system. No JavaScript. */
+:root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797; --blue:#1F5AF0; --r:12px;
+  --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08); --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+* { box-sizing:border-box; }
+html { scroll-padding-top:16px; }
+body { margin:0; font-family:var(--ui); color:var(--ink); background:var(--page); font-variant-numeric:tabular-nums lining-nums; -webkit-font-smoothing:antialiased; line-height:1.6; }
+:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+a { color:var(--blue); text-underline-offset:2px; }
+.skip { position:absolute; left:-999px; top:8px; background:var(--surface); padding:8px 12px; border-radius:8px; z-index:5; }
+.skip:focus { left:8px; }
+header.top { display:flex; align-items:center; gap:10px 18px; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; }
+.brand b { font-size:18px; font-weight:700; letter-spacing:-.01em; }
+.chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; line-height:1.3; }
+nav.site { display:inline-flex; border:1px solid var(--ctrl); border-radius:999px; padding:3px; background:var(--surface); gap:2px; }
+nav.site a { min-height:32px; padding:5px 14px; border-radius:999px; font-weight:600; font-size:14px; color:var(--ink2); display:flex; align-items:center; text-decoration:none; line-height:1.3; }
+nav.site a:hover { background:var(--page); color:var(--ink); }
+nav.site a[aria-current="page"] { background:var(--ink); color:#fff; }
+main { padding:32px 16px 56px; }
+article { max-width:46rem; margin:0 auto; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:36px 44px 40px; }
+article > * { max-width:68ch; }
+h1 { font-size:36px; line-height:1.1; letter-spacing:-.02em; margin:14px 0 14px; }
+.lede { font-size:18px; color:var(--ink); }
+h2 { font-size:22px; line-height:1.25; letter-spacing:-.01em; margin:40px 0 10px; padding-top:24px; border-top:1px solid var(--line); }
+h3 { font-size:16px; margin:22px 0 6px; }
+p, li { font-size:16px; }
+p { margin:0 0 14px; }
+ul, ol { padding-left:22px; margin:0 0 14px; }
+li { margin:0 0 6px; }
+li::marker { color:var(--ink2); }
+.toc { background:var(--page); border-radius:10px; padding:14px 18px 10px; margin:22px 0 0; }
+.toc h2 { font-size:13px; font-weight:700; color:var(--ink2); text-transform:none; margin:0 0 6px; padding:0; border:0; letter-spacing:0; }
+.toc ol { columns:2; column-gap:28px; margin:0; }
+.toc li { margin:0 0 6px; font-size:15px; break-inside:avoid; }
+.note { font-size:14.5px; color:var(--ink2); }
+dl.who { margin:0 0 14px; }
+dl.who dt { font-weight:700; margin-top:14px; }
+dl.who dd { margin:4px 0 0; }
+.links li { font-size:15.5px; }
+.links .dim, .dim { color:var(--ink2); }
+footer { max-width:46rem; margin:18px auto 0; padding:0 4px; font-size:13px; color:var(--ink2); }
+footer a { color:var(--ink2); }
+@media (max-width:640px) {
+  header.top { padding:10px 16px; }
+  main { padding:16px 0 40px; }
+  article { border-radius:0; box-shadow:none; padding:24px 16px 28px; }
+  h1 { font-size:30px; }
+  .lede { font-size:17px; }
+  .toc ol { columns:1; }
+  footer { padding:0 16px; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the text</a>
+<header class="top">
+  <div class="brand">
+    <b>Medianville</b>
+    <span class="chip">Simulated city · no real people</span>
+  </div>
+  <nav class="site" aria-label="Site">
+    <a href="../">The city</a>
+    <a href="../explorer/">Data</a>
+    <a href="./" aria-current="page">About</a>
+  </nav>
+</header>
+
+<main id="content">
+<article>
+  <span class="chip">About the project</span>
+  <h1>One day in Medianville</h1>
+  <p class="lede">Medianville is a model of an ordinary day in an ordinary American city, made so that the jobs people do, and the systems around them, can be seen together.</p>
+
+  <nav class="toc" aria-labelledby="toc-h">
+    <h2 id="toc-h">On this page</h2>
+    <ol>
+      <li><a href="#what">What this is</a></li>
+      <li><a href="#origin">Where it came from</a></li>
+      <li><a href="#method">How it was made</a></li>
+      <li><a href="#sources">Data sources</a></li>
+      <li><a href="#real">What’s real and what isn’t</a></li>
+      <li><a href="#limits">Limits</a></li>
+      <li><a href="#credits">Who made it</a></li>
+      <li><a href="#links">Links</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="what">What this is</h2>
+  <p>Medianville is a simulated American city of about 100,000 people, built to match the country as a whole. The site shows one day there, Wednesday, March 3, 2027: 201,753 transactions. Paychecks, bus fares, autopays, declined cards, hours of unpaid caregiving.</p>
+  <p>Each one is a <em>job to be done</em>: something a person was trying to get done. A record can be a purchase or a bill, but it can also be a form, a wait, a wasted trip or an hour spent caring for a parent. Each says what the job was, who paid, who else paid, what it cost in time and effort, and whether it worked.</p>
+  <p>Seen together, the jobs show how they collide (a bill that drafts at 2 a.m. declines a card at 5 p.m.) and the systems underneath that decide who they work for. The goal is to find small, practical fixes for daily life at the margins.</p>
+  <p>There are two ways in. <a href="../">The city</a> plays the day back on a miniature town or a printed map, with a systems lens that opens over it. The <a href="../explorer/">data explorer</a> lays out the same records as tables to filter, search and group.</p>
+
+  <h2 id="origin">Where it came from</h2>
+  <p>It began with a question Jason asked: which American city or town best matches the country’s mix of wealth, race, class, industry and gender? The published rankings each pick a different winner, and the places that score well tend to leave out rural and small-town life, where many of the hardest daily jobs are.</p>
+  <p>So the city is synthetic, weighted to the whole country. It’s paired with visits to real places around Atlanta for examples and stories.</p>
+  <p>The framing is Jason’s: every transaction is a job to be done, including the unpaid ones and the ones that fail.</p>
+  <p>The systems lens comes from Donald Martin Jr.’s idea of societal context: the social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems. Jason heard him speak at the Reimagining AI conference in 2025.</p>
+  <p>The name nods to Robert and Helen Lynd’s <cite>Middletown</cite> (1929), the study of Muncie, Indiana that started a long line of “typical town” research. Unlike their Muncie, Medianville’s typicality comes from weighting, not from leaving groups out.</p>
+  <p class="note">The city’s working name was Halvern. Documents written before the rename, the frozen versions and parts of the code still use it.</p>
+
+  <h2 id="method">How it was made</h2>
+  <p><strong>Simulate, don’t write.</strong> No one, human or model, can write 200,000 consistent records by hand: money wouldn’t reconcile, and people would be in two places at once. So code does it.</p>
+  <ul>
+    <li>People, households, employers and bills are generated from a seed. The same seed and options reproduce the files byte for byte.</li>
+    <li>The day is settled minute by minute against each household’s money. Every action goes into one queue in time order, so a bill at 2 a.m. can decline a card at 5 p.m.</li>
+    <li>The run was calibrated to published anchors and checked: money reconciles for every household, nobody exceeds 24 hours in a day, and every paycheck has its withholding.</li>
+    <li>Then 500 records were read and written by hand as a believability test. Reading them caught what the numeric checks passed, such as union dues paid to a charity and a 91-year-old schoolteacher.</li>
+  </ul>
+  <p><strong>What’s next.</strong> A second version of the simulator is under way. It keeps the same people and runs 18 typical days that stand for the whole of 2027, with rates set from downloaded evidence: overdraft fees, payday and title loans, utility shutoffs, caregiving hours, scam losses and more. Only strong evidence is allowed to move a rate. It hasn’t been published as a run yet, so the city on this site still plays the first day.</p>
+  <p>The longer account is in <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/halvern-build-approach.md">how the day was built</a> and the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/halvern-2027-03-03-run-record.md">run record</a>.</p>
+
+  <h2 id="sources">Data sources</h2>
+  <h3>Calibration anchors</h3>
+  <p>The first run was calibrated to these:</p>
+  <ul>
+    <li><a href="https://www.census.gov/programs-surveys/acs">American Community Survey</a> (Census Bureau): national shares of household types, income, tenure, language and more</li>
+    <li><a href="https://www.bls.gov/ces/">Current Employment Statistics</a> (BLS): the industry mix of jobs</li>
+    <li><a href="https://www.atlantafed.org/research-and-data/surveys/survey-and-diary-of-consumer-payment-choice">Diary of Consumer Payment Choice</a> (Federal Reserve): about 43 payments per adult a month, 14% of them in cash</li>
+    <li><a href="https://www.federalreserve.gov/consumerscommunities/shed.htm">Survey of Household Economics and Decisionmaking</a> (Federal Reserve): 63% of adults could cover a $400 emergency</li>
+    <li><a href="https://www.unitedforalice.org/">United For ALICE</a>: about 4 in 10 households below the ALICE threshold</li>
+    <li><a href="https://www.bls.gov/cex/">Consumer Expenditure Survey</a> (BLS): the order of spending, housing first, then transportation, then food</li>
+    <li>2027 program figures from <a href="https://www.ssa.gov/cola/">Social Security</a>, <a href="https://www.fns.usda.gov/snap">SNAP</a> and <a href="https://www.medicare.gov/basics/costs/medicare-costs">Medicare</a></li>
+  </ul>
+  <h3>Evidence being added in v2</h3>
+  <p>The second version adds dozens of downloaded datasets, from time-use surveys to state payday-lending reports. Each is logged in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sources/manifest.csv">sources manifest</a> with its publisher, vintage and terms, and the simulator is measured against them in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sim/evidence/results/v2_rates_typed_days_2027/evidence_checks.md">latest evidence checks</a>.</p>
+  <p class="note">The first run’s households are built by rule to match national shares. They aren’t drawn from Census microdata. Drawing real household structures from ACS microdata is planned for a later version.</p>
+
+  <h2 id="real">What’s real and what isn’t</h2>
+  <ul>
+    <li><strong>Real:</strong> national rates and program rules, and the names of federal programs and agencies, such as the IRS, Medicare, SNAP and the Postal Service. The jobs make no sense without them.</li>
+    <li><strong>Invented:</strong> every person, household, business, local agency, church and street.</li>
+    <li>The blocks in the systems lens are composites of documented US patterns, such as redlining, branch closures and cut bus routes. They’re labelled as composites on screen.</li>
+    <li>No real quote or real person ever appears in a record. Real evidence enters only as numbers.</li>
+  </ul>
+
+  <h2 id="limits">Limits</h2>
+  <ul>
+    <li>One day can’t balance a year’s spending. Rent bunches early in the month and few people are paid on a Wednesday the 3rd, so some shares, such as insurance and pensions, run low.</li>
+    <li>Payment calendars are uneven on that date. SSI and VA benefits pay on the 1st, so they don’t appear, and most Social Security pays on later Wednesdays.</li>
+    <li>Trip distances come from a table of district-to-district distances, so some errands are implausibly long.</li>
+    <li>A few employer and job pairs are odd, and no one marries or divorces on the day.</li>
+    <li>Some 2027 figures, such as the Medicare Part B premium, are projections.</li>
+    <li>In the animated city, positions are approximate: the run’s six districts are drawn on a smaller model town.</li>
+  </ul>
+  <p>The second version addresses several of these, starting with the single day.</p>
+
+  <h2 id="credits">Who made it</h2>
+  <dl class="who">
+    <dt>Jason James</dt>
+    <dd>The idea and where it came from, the jobs-to-be-done framing, the systems lens, and every design decision: the visual direction, the views, the sound and the structure.</dd>
+    <dt>Claude (Anthropic’s AI model)</dt>
+    <dd>Researched the anchors, wrote the simulator and generated the day (Claude Fable 5.2 for the first run), hand-wrote the 500 detailed records, and built the viewers, the systems lens and the explorer, working in Claude and Claude Code under Jason’s direction.</dd>
+  </dl>
+  <p>Every design decision, and why, is in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/design-decisions.md">decision log</a>.</p>
+
+  <h2 id="links">Links</h2>
+  <ul class="links">
+    <li><a href="https://github.com/jas0nmjames/playground/tree/development/mapping-synthetic-transactions">The repository</a> <span class="dim">· code, data and documents</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/README.md">README</a> <span class="dim">· the views, how they work, and what Claude did</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/design-decisions.md">Decision log</a></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/halvern-2027-03-03-run-record.md">Run record</a> <span class="dim">· the first day’s calibration and checks</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/halvern-build-approach.md">How the day was built</a></li>
+    <li>Frozen versions: <a href="../v1/">the night map (v1)</a> and <a href="../v3/">Miniature and Map as first shipped (v3)</a></li>
+  </ul>
+</article>
+<footer>
+  <p>Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="../">The city</a> · <a href="../explorer/">Data</a></p>
+</footer>
+</main>
+</body>
+</html>

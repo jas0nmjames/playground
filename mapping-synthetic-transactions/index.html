@@ -183,6 +183,40 @@ body.rm .lens-panel, body.rm .lens-dim, body.rm .lens-city { transition:none !im
 .go.off:hover { background:none; }
 .go.off .gi { background:var(--page); color:var(--ink2); }
 .go.off b { color:var(--ink2); }
+a.go { text-decoration:none; }
+/* Data and About in the header: other pages and the intro, kept apart from the view switch */
+.hdlinks { display:flex; gap:8px; }
+.hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; }
+.hdlink:hover { background:var(--page); }
+@media (max-width:1639px) { .kbdhint { display:none; } } /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
+/* first-visit intro: a dialog over the city, which keeps running behind it */
+.intro { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:24px 16px; }
+.intro[hidden] { display:none; }
+.intro-dim { position:absolute; inset:0; background:rgba(14,27,46,.6); }
+.intro-card { position:relative; width:min(560px, 100%); max-height:calc(100vh - 48px); overflow-y:auto; overscroll-behavior:contain; background:var(--surface); color:var(--ink); border-radius:var(--r); box-shadow:0 2px 6px rgba(14,27,46,.12), 0 24px 60px rgba(14,27,46,.28); padding:24px 28px 22px; animation:intro-in .25s ease-out; }
+@keyframes intro-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.intro-card h2 { font-size:28px; line-height:1.15; letter-spacing:-.015em; margin:14px 0 12px; }
+.intro-card h2:focus, .intro-card h2:focus-visible { outline:none; } /* focused on open so it's read first; not in the tab order */
+.intro-card p { font-size:15.5px; line-height:1.55; margin:0 0 12px; }
+.intro-card p.intro-cred { font-size:14px; color:var(--ink2); }
+.intro-x { position:absolute; top:14px; right:14px; }
+.intro-acts { display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px; margin-top:18px; }
+.intro-acts .btn { min-height:44px; padding:10px 18px; font-size:15px; text-decoration:none; display:inline-flex; align-items:center; }
+#intro-go { position:relative; overflow:hidden; min-width:172px; justify-content:center; }
+#intro-go.loading { background:var(--ink); border-color:var(--ink); }
+#intro-go .bar { position:absolute; left:0; bottom:0; height:3px; width:0; background:#8FB0FF; transition:width .3s; }
+#intro-go:not(.loading) .bar { display:none; }
+.intro-more { font-weight:600; font-size:15px; color:var(--blue); text-decoration:none; padding:10px 4px; }
+.intro-more:hover { text-decoration:underline; }
+@media (max-width:600px) {
+  .intro { place-items:end stretch; padding:0; }
+  .intro-card { width:100%; max-height:88vh; border-radius:var(--r) var(--r) 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); animation-name:intro-up; }
+  .intro-card h2 { font-size:24px; margin-right:40px; }
+  .intro-card p { font-size:15px; }
+  .intro-acts .btn { flex:1 1 auto; justify-content:center; }
+}
+@keyframes intro-up { from { transform:translateY(24px); opacity:0; } to { transform:none; opacity:1; } }
+@media (prefers-reduced-motion: reduce) { .intro-card { animation:none; } #intro-go .bar { transition:none; } }
 /* drawer below 1280 px */
 @media (max-width:1279px) {
   main.body { grid-template-columns:minmax(0,1fr); }
@@ -252,15 +286,15 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <span class="chip">Simulated city · no real people</span>
     <span class="chip" id="datachip" role="status">Placeholder day · loading the real one</span>
   </div>
-  <fieldset class="seg" id="viewseg">
+  <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
     <input type="radio" name="view" id="v-mini" value="mini" checked><label for="v-mini">Miniature</label>
     <input type="radio" name="view" id="v-map" value="map"><label for="v-map">Map</label>
   </fieldset>
-  <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
-  <span class="dim small" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens · <b>S</b> sound</span>
+  <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L" title="Systems lens (L)"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
+  <span class="dim small kbdhint" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens · <b>S</b> sound</span>
   <div class="sndwrap">
-    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Sound</button>
+    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Sound</button>
     <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
       <h2>Sound</h2>
       <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
@@ -270,6 +304,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       <div class="sndrow"><label for="snd-r">Records</label><input id="snd-r" type="range" min="0" max="1" step="0.01" data-snd-r="rec"><button type="button" class="sndtog" data-snd-t="rec" aria-label="Record sounds">On</button></div>
       <button type="button" class="sndreset" id="snd-reset">Reset to the default mix</button>
     </div>
+  </div>
+  <div class="hdlinks">
+    <a class="hdlink" href="explorer/" id="data-link"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7h13M2.5 11h13M7 7v8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Data</a>
+    <button type="button" class="hdlink" id="about-btn" aria-haspopup="dialog" aria-controls="intro"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5.4" r="1.05" fill="currentColor"/></svg>About</button>
   </div>
   <button class="btn" id="drawer-btn" aria-controls="rail" aria-expanded="false">Activity</button>
 </header>
@@ -312,7 +350,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       <div class="filters" role="group" aria-label="Show record types" id="filters"></div>
       <h3 class="feed-h" id="feed-h">Latest records</h3>
       <ul id="feed" class="feed" aria-labelledby="feed-h"></ul>
-      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="v1/">Night map (v1)</a> · <a href="systems-lens/" data-lens-open>Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
+      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="about/">About</a> · <a href="explorer/">Data</a> · <a href="v1/">Night map (v1)</a> · <a href="systems-lens/" data-lens-open>Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
     </div>
     <section id="sheet" class="sheet" hidden aria-labelledby="sheet-title">
       <div class="sheet-top"><button class="btn ghost" id="sheet-back"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button></div>
@@ -351,6 +389,24 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   </div>
 </footer>
 <div id="live" class="sr-only" aria-live="polite"></div>
+<div class="intro" id="intro" hidden>
+  <div class="intro-dim" data-intro-close></div>
+  <section class="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-h" aria-describedby="intro-d">
+    <button type="button" class="iconbtn intro-x" data-intro-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <span class="chip">Simulated city · no real people</span>
+    <h2 id="intro-h" tabindex="-1">One day in Medianville</h2>
+    <p id="intro-d">Medianville is a simulated American city of about 100,000 people, built to match the country as a whole. This is one day there, <span id="intro-date">Wednesday, March 3, 2027</span>: <span id="intro-n">about 200,000</span> transactions. Paychecks, bus fares, autopays, declined cards, hours of unpaid caregiving.</p>
+    <p>Each one is a <em>job to be done</em>: something a person was trying to get done. Seen together, they show how jobs collide (a bill that drafts at 2 a.m. declines a card at 5 p.m.) and the systems underneath that decide who they work for. The goal is to find small, practical fixes for daily life at the margins.</p>
+    <p>Households, wages, prices and payment habits are calibrated to federal data from the Census, BLS, the Federal Reserve and SNAP. A simulator settles every dollar and every minute. Federal programs keep their real names. Every person, business and street is invented.</p>
+    <p class="intro-cred">It started with Jason James asking which American town is most like America. No real one is, so he set out to build one. Jason came up with the idea and directs the project. Claude, Anthropic’s AI model, wrote the simulator, generated the day, hand-wrote 500 of the records and built this viewer with him.</p>
+    <div class="intro-acts">
+      <button type="button" class="btn primary loading" id="intro-go" data-intro-close><span id="intro-go-l">Loading the day…</span><span class="bar" aria-hidden="true"></span></button>
+      <a class="btn" href="explorer/">Explore the data</a>
+      <a class="intro-more" href="about/">About the project →</a>
+    </div>
+    <p class="sr-only" id="intro-live" aria-live="polite"></p>
+  </section>
+</div>
 <script>// ===== Halvern in Motion v3 · shared city plan, parties, placeholder day, record language =====
 // Everything here is deterministic, so the Miniature and the Map draw the same city.
 (function () {
@@ -1765,6 +1821,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       ${closerHTML(r)}`;
   }
   const CLOCK_ICON = '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 5.5V10l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  const TABLE_ICON = '<svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7h13M2.5 11h13M7 7v8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+  // the explorer's own addresses: #record-<id> and #household-<id>
+  const explorerGo = (kind, id, sub) => `<a class="go" href="explorer/#${kind}-${encodeURIComponent(id)}"><span class="gi">${TABLE_ICON}</span><span><b>Open in data explorer</b><small>${sub}</small></span><span class="chev" aria-hidden="true">›</span></a>`;
   const LAYERS_ICON = '<svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
   function closerHTML(r) {
     const k = Lens.match(r), day = r.household_id
@@ -1773,7 +1832,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     if (k) lens = `<button class="go" data-lens="${k.block}/${k.pattern}" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>${esc(Lens.sub(k))}</small></span><span class="chev" aria-hidden="true">›</span></button>`;
     else if (r._blk) { const b = Lens.block(r._blk); lens = `<button class="go" data-lens="${r._blk}/" data-hh="${esc(r.household_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes this household’s block</b><small>${esc(b ? b.name : 'A mapped block')} · this record isn’t one of its patterns</small></span><span class="chev" aria-hidden="true">›</span></button>`; }
     else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>Not mapped yet. One block in each district is mapped so far.</small></span></div>`;
-    return `<h3>Look closer</h3><div class="closer">${day}${lens}</div>`;
+    const data = r._real ? explorerGo('record', r.record_id, `${esc(r.record_id)} with every field, as a table`) : '';
+    return `<h3>Look closer</h3><div class="closer">${day}${lens}${data}</div>`;
   }
   function recentFor(pred, n = 25) { const out = []; for (let i = S.idx - 1; i >= 0 && out.length < n; i--) if (pred(H.records[i])) out.push(H.records[i]); return out; }
   function partyHTML(p) {
@@ -1803,6 +1863,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       <div class="mini-tiles"><div><span class="lbl">Money in</span><span class="v in">${H.fmtMoney(inn, true)}</span></div><div><span class="lbl">Money out</span><span class="v">${H.fmtMoney(-out, true)}</span></div><div><span class="lbl">Unpaid</span><span class="v">${H.fmtHours(un)}</span></div><div><span class="lbl">Failures</span><span class="v">${fails}</span></div></div>
       <p class="dim small">Its paths stay drawn on the city while this is open.</p>
       ${p.block ? hhLensHTML(p, so) : ''}
+      ${p.info ? `<div class="closer" style="${p.block ? 'border-top:0' : 'margin-top:12px'}">${explorerGo('household', id, `${esc(id)}: its people, money and every record`)}</div>` : ''}
       <h3>So far today</h3>${so.length ? `<ul class="feed inline">${so.slice().reverse().map((r) => rowHTML(r)).join('')}</ul>` : '<p class="dim">Nothing yet today.</p>'}
       ${later.length ? `<h3>Later today</h3><ul class="feed inline later">${later.map((r) => rowHTML(r)).join('')}</ul>` : ''}`;
   }
@@ -2207,8 +2268,13 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const c = $('#datachip'); if (!c) return;
     c.classList.toggle('warn', st.state === 'failed');
     c.textContent = st.state === 'loading' ? `Placeholder day · loading the real one ${Math.round(st.p * 100)}%`
-      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · March 3, 2027` : 'Placeholder day · the real one didn’t load';
+      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Placeholder day · the real one didn’t load';
     if (st.state !== 'loading') say(c.textContent);
+  };
+  // '2027-03-03' → 'Wednesday, March 3, 2027' (or 'March 3, 2027' without the weekday)
+  App.runDate = (iso, weekday = true) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if (!m) return '';
+    return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric', ...(weekday ? { weekday: 'long' } : {}) });
   };
   App.useDay = () => {
     if (Sheet.stack.length) Sheet.close(true);
@@ -2230,6 +2296,81 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   const NAMES = { purchase: 'Purchases', income: 'Income', bill: 'Bills', service: 'Public services', unpaid: 'Unpaid work', fail: 'Failures' };
   document.getElementById('filters').innerHTML = order.map((k) => `<button type="button" data-k="${k}" aria-pressed="true">${svg(k, 24)}${NAMES[k]}</button>`).join('');
   document.getElementById('legendstrip').innerHTML = order.map((k) => `<span>${line(k)}${H.REC[k].label}</span>`).join('');
+})();
+</script>
+<script>
+// ===== First-visit intro: what the city is, how it was made, who made it. It doubles as the loading moment. =====
+// Shown once (remembered in localStorage), reopened from About in the header, and skipped by deep links and ?intro=0.
+// ?intro=1 shows it even after it was dismissed. Numbers come from the loaded run; when the run picker lands,
+// data/runs/manifest.json can supply them before the zip is in.
+(function () {
+  const KEY = 'medianville-intro-v1';
+  const root = document.getElementById('intro'), card = root.querySelector('.intro-card'), head = document.getElementById('intro-h');
+  const go = document.getElementById('intro-go'), goL = document.getElementById('intro-go-l'), bar = go.querySelector('.bar');
+  const aboutBtn = document.getElementById('about-btn');
+  const outside = () => [document.querySelector('header.top'), document.querySelector('main.body'), document.querySelector('footer.bar')];
+  let opener = null, ready = false;
+
+  const seen = () => { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } };
+  const remember = () => { try { localStorage.setItem(KEY, '1'); } catch (e) { /* storage blocked: shown once per page load */ } };
+  const qs = new URLSearchParams(location.search), h = location.hash.replace(/^#/, '');
+  const deepLink = /(^|&)(lens|view|rec|record|hh|household|t|time)=/.test(h) || /^(record|household)-/.test(h);
+
+  function focusables() { return [...card.querySelectorAll('button, a[href]')].filter((el) => !el.disabled && el.offsetParent !== null); }
+  function open(from) {
+    if (!root.hidden) return;
+    opener = from || null;
+    root.hidden = false;
+    for (const el of outside()) if (el) el.inert = true;
+    aboutBtn.setAttribute('aria-expanded', 'true');
+    head.focus({ preventScroll: true });
+  }
+  function close() {
+    if (root.hidden) return;
+    root.hidden = true; remember();
+    for (const el of outside()) if (el) el.inert = false;
+    aboutBtn.setAttribute('aria-expanded', 'false');
+    const back = opener && document.contains(opener) ? opener : document.getElementById('scene');
+    opener = null;
+    back && back.focus({ preventScroll: true });
+  }
+  root.addEventListener('click', (e) => { if (e.target.closest('[data-intro-close]')) close(); });
+  aboutBtn.addEventListener('click', () => open(aboutBtn));
+  // While it's open, the viewer's shortcuts (M, L, S, Q/E, N, Space, arrows…) are inert: keys stop here, before the page's handlers.
+  window.addEventListener('keydown', (e) => {
+    if (root.hidden) return;
+    e.stopImmediatePropagation();
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key === 'Tab') {
+      const f = focusables(); if (!f.length) return;
+      const first = f[0], last = f[f.length - 1], at = document.activeElement;
+      if (e.shiftKey && (at === first || at === head || !card.contains(at))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (at === last || !card.contains(at))) { e.preventDefault(); first.focus(); }
+    }
+  }, true);
+  window.addEventListener('keyup', (e) => { if (!root.hidden) e.stopImmediatePropagation(); }, true);
+
+  // the primary button follows the real day's download
+  const prev = App.status;
+  App.status = (st) => {
+    prev(st);
+    if (st.state === 'loading') { bar.style.width = Math.round(st.p * 100) + '%'; goL.textContent = 'Loading the day…'; return; }
+    if (ready) return; ready = true;
+    go.classList.remove('loading'); goL.textContent = 'Enter the city';
+    if (st.state === 'real') {
+      if (st.n) document.getElementById('intro-n').textContent = st.n.toLocaleString('en-US');
+      const d = App.runDate(st.date); if (d) document.getElementById('intro-date').textContent = d;
+    }
+    if (!root.hidden) document.getElementById('intro-live').textContent = 'The day has loaded.';
+  };
+
+  const force = qs.get('intro') === '1', skip = qs.get('intro') === '0' || deepLink;
+  if (force || (!skip && !seen())) {
+    // after the page shell has rendered
+    const show = () => requestAnimationFrame(() => requestAnimationFrame(() => open(null)));
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
+  }
+  App.intro = { open, close, isOpen: () => !root.hidden };
 })();
 </script>
 <script src="fflate.js"></script>
