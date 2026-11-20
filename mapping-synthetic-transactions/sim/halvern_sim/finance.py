@@ -5,6 +5,7 @@ import math
 # (sources/derived/ndcp_weekly_prices.csv, sources/tools/ndcp_prices.py), carried to 2027 at 4% a year (x 1.22, an
 # estimate: child care prices have outrun general inflation). v1 used 290/255/215 for centers and 80% of that for family
 # child care; centers were close, family care for preschoolers was low.
+OD_OPT_IN, OD_OPT_IN_ABOVE = .099, .038
 CC_WEEKLY = {("center", "infant"): 288.0, ("center", "toddler"): 247.0, ("center", "preschool"): 226.0,
              ("family", "infant"): 222.0, ("family", "toddler"): 209.0, ("family", "preschool"): 207.0}
 
@@ -215,7 +216,8 @@ def build_finance(sim):
                     k = rng.choices(["first", "corbel", "cu", "online"], [.32, .30, .18, .20 if a < 45 else .08])[0]
                 W.bank_org = banks[k]
                 W.od_fee = {"first": 28, "corbel": 34, "cu": 25, "online": 0}[k]
-                W.od = k != "online" and rng.random() < (.13 if st != "above" else .05)
+                # opted in to debit-card overdraft coverage; v2 x .76 (v1 .13 and .05) toward T01's 120-180 fees a day
+                W.od = k != "online" and rng.random() < (OD_OPT_IN if st != "above" else OD_OPT_IN_ABOVE)
             else:
                 W.bank_org, W.od_fee, W.od = None, 0, False
             if H.gq in ("nursing_home", "assisted_living") and banked and grp[0].cov != "medicare_medicaid_dual":

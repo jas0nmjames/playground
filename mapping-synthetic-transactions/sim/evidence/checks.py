@@ -81,6 +81,7 @@ def measure_rows(records, households, S=None):
     m["benefits_cliff_tagged"] = sum(1 for r in records if "benefits_cliff" in r["friction_tags"])
     m["paid_tax_prep"] = k["paid_tax_preparation"]
     m["free_tax_prep"] = k["free_tax_preparation"]
+    m["self_tax_filing"] = k["tax_software_filing"] + k["tax_return_filed_free"]
     m["pawn"] = k["pawn_loan"] + k["pawn_redemption"] + k["sold_item_to_pawn_shop"]
     m["check_cashing"] = k["check_cashing"]
     m["money_orders"] = k["money_order_purchase"]
@@ -114,7 +115,7 @@ def year_value(metric, days):
         return num / den if den else None
     if metric == "paid_prep_share":
         num = sum(d["weight"] * d["m"]["paid_tax_prep"] for d in days)
-        den = num + sum(d["weight"] * d["m"]["free_tax_prep"] for d in days)
+        den = num + sum(d["weight"] * (d["m"]["free_tax_prep"] + d["m"].get("self_tax_filing", 0)) for d in days)
         return num / den if den else None
     if metric == "aide_visit_miss_share":
         num = sum(d["weight"] * d["m"]["aide_visits_missed"] for d in days)

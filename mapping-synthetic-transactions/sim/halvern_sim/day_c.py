@@ -495,6 +495,21 @@ def hold(sim, P, H, org, kind, wr, cat="care_and_household", matter="", drop=.24
 
 
 # ------------------------------------------------------------------------------------------ money services
+# Median fraud loss by age, FTC Consumer Sentinel 2024 (ages 19 and under, 20-29, ..., 80 and over)
+SCAM_MEDIAN_BY_AGE = ((19, 189.0), (29, 417.0), (39, 450.0), (49, 500.0), (59, 520.0), (69, 691.0), (79, 1000.0), (200, 1650.0))
+
+
+# Payday loans. California 2025 (DFPI CDDTL report, sources/raw/payday_ca_dfpi): 5,772,939 loans to 878,317 people, 146
+# per 1,000 residents a year, 70% of them repeat loans. Texas 2025 (OCCC, sources/raw/payday_title_tx_occc): about 1.84
+# million payday loans and refinances, 59 per 1,000. About 55% of Americans live where storefront payday lending is
+# legal (estimate; Georgia, where Halvern's places are, bans it), so a national city sees about 15 new loans a day.
+# The loans due each day (repaid, rolled over or bounced) are set equal to new ones, as in a steady state.
+SHUTOFF_NOTICE, SHUTOFF_DISCONNECT = .0030, .00073
+TAX_PAID = .0089
+PAYDAY_NEW = .0024
+PAYDAY_DUE = .0024
+
+
 def gen_money(sim, H, q):
     rng, cal, X = sim.rng, sim.cal, sim.X
     if H.gq in ("jail", "nursing_home"):
@@ -603,7 +618,8 @@ def gen_money(sim, H, q):
         # ---- small-dollar credit
         if low and earner and W.bank is not None:
             r = rng.random()
-            if r < .00085:
+            # v2: new small-dollar loans x 2.8 (v1 .00085), toward the T02 target set from California and Texas 2025
+            if r < PAYDAY_NEW:
                 amt = float(rng.choice([200, 255, 300, 300, 350, 400, 500]))
                 fee = round(amt * rng.choice([.15, .15, .175]), 2)
                 if rng.random() < .58 and sim.by_kind.get("payday"):
@@ -619,7 +635,7 @@ def gen_money(sim, H, q):
                     push(q, t, lambda t=t, P=P, W=W, amt=amt, fee=fee: (W.give("bank", amt), emit(t, "transfer", "money_services", "online_installment_loan_disbursed", P, H, X["x_cc2"], P,
                                                                                                        channel="online", method="ach", gross=amt, fee_type="finance_charge_due_at_payback",
                                                                                                        fee=round(fee * 1.6, 2), tmin=14, ctx=dict(amt="%.0f" % amt, fee="%.2f" % (fee * 1.6)))))
-            elif r < .0017:
+            elif r < PAYDAY_NEW + PAYDAY_DUE:
                 due = float(rng.choice([230, 293.25, 345, 402.5, 460, 575]))
                 feeonly = round(due - due / 1.15, 2)
                 org = sim.pick(("payday",), d, 8.0)
@@ -643,7 +659,7 @@ def gen_money(sim, H, q):
                                  fee_type="returned_payment_fee", fee=nsf, outcome="failed", fr=("insufficient_funds",),
                                  ctx=dict(org=org.name, amt="%.2f" % due, reason="the lender's debit bounced"))
                     push(q, t, run)
-            elif r < .0057 and any(p.wsched != "fixed" or p.wage < 45000 for p in own):
+            elif r < PAYDAY_NEW + PAYDAY_DUE + .004 and any(p.wsched != "fixed" or p.wage < 45000 for p in own):
                 amt = float(rng.choice([40, 50, 60, 75, 100, 150]))
                 fee = rng.choice([2.99, 3.49, 4.99, 5.99])
                 t = sim.slot_soft(P, 4, ANY)
@@ -727,7 +743,9 @@ def gen_money(sim, H, q):
     if cal["tax_season"] and not H.gq and any(p.wage > 0 or p.pension or p.inv for p in H.adults):
         r = rng.random()
         P = rng.choice([p for p in H.adults if not p.inpatient] or [head])
-        if r < .0042 and sim.by_kind.get("tax_prep"):
+        # v2: paid preparation x 2.1 (v1 .0042). IRS 2026: 56% of e-filed returns came from tax professionals (about 54%
+        # paid), and three quarters of Halvern's ~48,000 returns filed in the 85-day season is ~420 a day.
+        if r < TAX_PAID and sim.by_kind.get("tax_prep"):
             org = sim.pick(("tax_prep", "accounting"), d, 8.0)
             fee = round(rng.uniform(170, 430) if org.kind == "tax_prep" else rng.uniform(320, 780), 2)
             if H.alice != "above" and rng.random() < .45:
@@ -738,7 +756,7 @@ def gen_money(sim, H, q):
                 go(sim, q, P, H, org, 70, ANY, run, wait=(5, 70))
             else:
                 errand(sim, q, P, H, org, "money_services", "paid_tax_preparation", fee, rng.randint(55, 90), ANY, taxable=False, wait=(5, 60), ctx=dict(), W=W0, quiet_fail=0.0)
-        elif r < .0084 and H.internet != "no":
+        elif r < TAX_PAID + .0042 and H.internet != "no":
             fed = float(rng.choice([0, 0, 0, 39, 59, 69, 89, 119]))
             st = float(rng.choice([0, 39, 49, 59, 64]))
             if fed + st > 0:
@@ -980,14 +998,31 @@ def gen_care(sim, H, q):
             how = rng.choice(["a text about an unpaid toll", "a call claiming to be the bank's fraud desk", "a call about a grandchild in jail", "a text about a package held for a fee",
                               "a call saying Social Security was suspending the number", "an email invoice for antivirus software", "a job offer that asked for a deposit"])
             if lost and p.wallet is not None and p.wallet.liquid() > 300:
-                amt = float(rng.choice([200, 300, 500, 500, 1000, 1500]))
+                # FTC Consumer Sentinel 2024 (sources/raw/ftc_sentinel): median loss $497 but mean $12,696, with 12.6% of
+                # losses over $10,000; a lognormal with sigma 2.55 around the median for the victim's age reproduces both
+                # (v1 drew $200-1,500). Large losses come out of savings by wire or crypto kiosk.
+                med = next(v for a, v in SCAM_MEDIAN_BY_AGE if p.age <= a)
+                amt = round(min(999999.0, max(20.0, math.exp(math.log(med) + 2.55 * rng.gauss(0, 1)))), 0)
                 W = p.wallet
 
                 def run(t=t, p=p, W=W, amt=amt, how=how):
-                    m = "debit" if (W.bank is not None and W.bank >= amt) else ("cash" if W.cash >= amt else None)
-                    if m is None:
+                    have = (W.bank or 0) + W.savings + W.cash
+                    amt = min(amt, round(have * .95, 0))
+                    if amt < 20:
                         emit(t, "non_monetary_job", "money_services", "scam_attempt_handled", p, H, p, X["x_scam"], channel="phone", tmin=rng.randint(8, 40), fr=("scam_attempt",), ctx=dict(how=how))
                         return
+                    if W.bank is not None and W.bank >= amt:
+                        m = "debit" if amt < 3000 else "ach"
+                    elif W.bank is not None and W.bank + W.savings >= amt:
+                        W.savings -= amt - W.bank
+                        W.bank = amt
+                        m = "ach"
+                    elif W.cash >= amt:
+                        m = "cash"
+                    else:
+                        m = "cash"
+                        W.cash = amt
+                        W.savings = max(0.0, W.savings - amt)
                     W.take(m, amt)
                     emit(t, "transfer", "money_services", "scam_loss", p, H, p, X["x_scam"], channel="phone", method=m, gross=amt, user=amt, tmin=rng.randint(40, 120),
                          outcome="completed", fr=("scam_attempt",), ctx=dict(how=how, amt="%.0f" % amt, via=rng.choice(["gift cards read over the phone", "a wire from the bank branch", "a payment-app transfer", "a deposit into a crypto kiosk"])))
@@ -1202,11 +1237,13 @@ def gen_misc(sim, H, q):
     if H.alice != "above" and not H.util_incl:
         r = rng.random()
         util = next((b for b in H.bills if b[0] in ("electric_bill", "gas_bill", "water_bill")), None)
-        if util is not None and r < .0020:
+        # v2: notices x 2 (RECS 2024: 12.2% of households got one in the year, about 47 a day for Halvern; T16) and
+        # disconnections x 1.45 (T05, 11-12 a day). v1: .0015 and .0005.
+        if util is not None and r < SHUTOFF_NOTICE + SHUTOFF_DISCONNECT:
             past = round(util[2] * rng.uniform(1.6, 3.2), 2)
             org = util[1]
             what = util[0].replace("_bill", "")
-            if r < .0015:
+            if r < SHUTOFF_NOTICE:
                 emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
                      outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=rng.choice([5, 7, 10])))
             else:

@@ -37,6 +37,12 @@ OFFICE = ((525, 960, 1.0),)
 NIGHT = ((1140, 1410, 1.0),)
 
 
+# Extra cash use in the rural districts (v2). DCPC 2025 (sources/raw/dcpc): cash is 13.5% of payments overall and 18.7% for
+# respondents in urban_cat 1, the 14% group taken to be rural (the codebook does not label the field). Fitted on the typed-day
+# year so D5 and D6 land near 18.7%.
+RURAL_CASH = {"D5": 1.12, "D6": 1.12}
+
+
 def base_cash(a):
     return .38 if a < 5 else .30 if a < 10 else .20 if a < 25 else .13 if a < 50 else .08 if a < 100 else .04
 
@@ -335,7 +341,7 @@ class Sim:
         else:
             out = []
             cash_ok = "cash" in acc and W.cash >= amt
-            pcash = base_cash(amt) * (.35 + 2.6 * P.cashpref) * self.cash_mult
+            pcash = base_cash(amt) * (.35 + 2.6 * P.cashpref) * self.cash_mult * RURAL_CASH.get(P.hh.district, 1.0)
             if W.bank is None:
                 pcash = .62 if has_p else .9
             if cash_ok and rng.random() < min(.95, pcash):
