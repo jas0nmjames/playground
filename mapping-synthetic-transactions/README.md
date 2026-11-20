@@ -1,12 +1,12 @@
 ---
 published: 2026-11-17
-updated: 2026-11-18
+updated: 2026-11-19
 tags: generative
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
 
-Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet. A systems lens opens one district into stacked layers of the circumstances behind its records, with the feedback loops that keep them going.
+Two animated views of Halvern, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. Version 3 replays the same day on a 3D miniature town and on a printed map sheet. A systems lens opens one district into stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation.
 
 ## Views
 
@@ -18,7 +18,7 @@ Two animated views of Halvern, an invented American city of about 100,000 people
 | Record kinds | 13 colors, one per record type | 6 kinds with their own color, line and head: purchase, income, bill, public service, unpaid work, failure |
 | Needs | Any modern browser | WebGL, plus three.js from a CDN (falls back to the map without it) |
 
-Both animated pages load the same file, `data/halvern_2027-03-03.zip`, and link to each other and to the systems lens in their footers.
+Both animated pages load the same file, `data/halvern_2027-03-03.zip`, and link to each other and to the systems lens in their footers. The data explorer loads that file too.
 
 ### Night map
 
@@ -43,6 +43,12 @@ The same moment in the Map view, zoomed out to show most of the sheet.
 [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/) is a prototype third view, in v3's style. It opens on record 6, a $75 payday loan renewal, with the Rollover loop drawn. Unlike the other two pages, it doesn't load the run: its district, circumstances and nine records are written for the prototype. The [design record](reference/halvern-systems-lens.md) explains why, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
 
 The screenshots were taken from these pages in headless Chromium with software WebGL, at twice the pixel density.
+
+### Data explorer
+
+![The data explorer: records that didn't work for households in poverty, grouped by job, with filters on the left and totals above](screenshots/explorer.jpg)
+
+[explorer/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/explorer/) is the run as tables: every record, household, person and organization, with filters, search and drill-downs. Here, the 1,732 records that didn't work for households in poverty, grouped by job.
 
 ## Watching the night map
 
@@ -78,15 +84,33 @@ The lens takes two ideas into the project: system dynamics (stocks, flows and fe
 
 Everything in the lens is a composite of documented US patterns on invented blocks, and every loop is a hypothesis for the next run to test. **Back to the city**, Miniature and Map all open v3; carrying a selected record between the views isn't built yet.
 
+## Using the data explorer
+
+The page downloads the run (16 MB) and unpacks it in the browser, which takes a few seconds; nothing is uploaded anywhere.
+
+- **Tabs.** Records, Households, People and Organizations are tables; Summary is the day at a glance.
+- **Filters.** The left column lists each field with a count beside every value, and the counts follow the other filters. Records filter by kind, whether it didn't work, outcome, area of life, job, household income tier, district, friction, fee, channel, payment method, travel mode, third-party payer, funding level, lens, hand-written text and time of day. Households, people and organizations have their own, such as tier, circumstances, a $400 emergency, coverage, benefits, sector or what an organization accepts. On a phone, the filters open from a button.
+- **Search.** Every word must match. Records search narratives, job statements, job names, party names and ids.
+- **Totals.** The tiles above each table add up whatever is filtered: money moved, what didn't work, fees, time spent and waiting for records; median income, $400 emergencies and fees for households.
+- **Group by.** Records can be grouped by any filter field, the hour, or who paid and who was paid, with records, money, fees, time, waiting and the share that didn't work for each group. Select a column to sort by it and a group to see its records.
+- **Details.** Select a row to open it. A record shows its job statement, narrative, parties, money, time, tags and linked retries. A household shows its members, its money from the start of the day to the end, and its day's records. People and organizations show theirs. **Show these in Records** opens them as a filtered table.
+- **Links.** Each tab and each open record, household, person or organization has its own address, such as `#records` or `#household-H05202`, so a view can be bookmarked or sent.
+- **Download.** The filtered records download as CSV with all 31 columns.
+- **Summary.** Who had something not work, by income tier; fees by tier; records and failures by hour; frictions; unpaid work; and who else pays. Select a bar or row to open the records behind it.
+
+"Didn't work" follows the run's own definition: a failed attempt, or a record that ended declined, abandoned, failed or rescheduled. Partial records count as worked. With it, the Summary matches the run's `summary.md`: 6,896 records, and 13.4% of households (28.5% in poverty, 16.1% ALICE, 9.5% above ALICE). Unpaid hours count time spent plus waiting (16,736 hours), as the summary does.
+
+The explorer doesn't link into a moment of the animations, because they don't accept a record or time in their address yet.
+
 ## Running them locally
 
-No build step. Serve the folder, then open `/` for the night map, `/v3/` for v3 and `/systems-lens/` for the systems lens:
+No build step. Serve the folder, then open `/` for the night map, `/v3/` for v3, `/systems-lens/` for the systems lens and `/explorer/` for the data explorer:
 
 ```bash
 python3 -m http.server 5181 --directory mapping-synthetic-transactions
 ```
 
-Opening an `index.html` as a file can't fetch the data, so each page then plays its placeholder day. v3 also needs internet access for three.js and its fonts.
+Opening an `index.html` as a file can't fetch the data, so each animated page then plays its placeholder day, and the explorer says it couldn't load the run. v3 also needs internet access for three.js and its fonts.
 
 ## What's in this folder
 
@@ -96,6 +120,7 @@ Opening an `index.html` as a file can't fetch the data, so each page then plays 
 | `v3/index.html` | Miniature and Map (v3): the city plan, both views, the activity panel and playback |
 | `v3/real-day.js` | Loads the run for v3 and folds it onto v3's town (see below) |
 | `systems-lens/index.html` | The systems lens: the layers, callouts, loops and details sheet, with its prototype content built in |
+| `explorer/index.html` | The data explorer: loading, tables, filters, search, group-by, detail sheets and summary, in one page |
 | `systems-lens/directions.html` | The three directions tried first (Section, Exploded view, The Works), in their original hand-drawn style |
 | `fflate.js` | [fflate](https://github.com/101arrowz/fflate) (MIT), used by both pages to unzip the run in the browser |
 | `data/halvern_2027-03-03.zip` | The complete run, exactly as delivered: the data tables, the simulator, and the hand-written records. Both pages load this file. |
@@ -103,7 +128,7 @@ Opening an `index.html` as a file can't fetch the data, so each page then plays 
 | `data/halvern/out/summary.md` | Counts, calibration against the anchors, fees, public dollars and the costliest frictions |
 | `data/halvern/detailed_sample_500.csv` | The 500 hand-written records |
 | `data/halvern/simulate.py`, `halvern_sim/` | The simulator (Python 3.10+ and numpy). The package's own [README](data/halvern/README.md) explains how to re-run it for another date, a storm, or several days in a row. |
-| `screenshots/` | The four screenshots above |
+| `screenshots/` | The five screenshots above |
 | `reference/` | The documents behind the project, listed below |
 
 ### Reference documents
@@ -184,6 +209,8 @@ The work in this repository was one Claude Code session (claude-opus-5-5) on Nov
 
 The systems lens was one Claude app session (claude-opus-5-5) on November 18, 2026, with the repository attached at the end. It explored three directions in the Biesty style, settled on the exploded view, added loops and callouts, restyled it to match v3, and then added the pages, the design record and the screenshot here, and opened the pull request into `development`. Its row is an estimate of about 90 model requests, counted from the session's tool calls rather than measured.
 
+The data explorer was one Claude app session (claude-opus-5-5) on November 19, 2026. It read the run and v3's loader, wrote `explorer/index.html`, checked its counts against the run's summary, tested it in headless Chrome at desktop and phone sizes, took the screenshot, and wrote these README sections. That session couldn't push, so the change came to this repository as a patch. Its row is an estimate of about 70 model requests, counted from the session's tool calls rather than measured.
+
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | November 16, 2026 | Claude app | claude-fable-5-2 | not measurable from here | — | — |
@@ -192,6 +219,7 @@ The systems lens was one Claude app session (claude-opus-5-5) on November 18, 20
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 0.108 kWh | 0.042 kg CO₂ | 0.054 L |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 1.008 kWh | 0.389 kg CO₂ | 0.504 L |
 | November 18, 2026 | Claude app (systems lens) | claude-opus-5-5 | 1.620 kWh | 0.625 kg CO₂ | 0.810 L |
-| **Total (countable)** | | | **3.438 kWh** | **1.327 kg CO₂** | **1.719 L** |
+| November 19, 2026 | Claude app (data explorer) | claude-opus-5-5 | 1.260 kWh | 0.486 kg CO₂ | 0.630 L |
+| **Total (countable)** | | | **4.698 kWh** | **1.813 kg CO₂** | **2.349 L** |
 
 [^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads.
