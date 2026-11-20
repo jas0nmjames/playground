@@ -192,6 +192,9 @@
     const cT = c('timestamp_local'), cTy = c('record_type'), cCat = c('job_category'), cHH = c('household_id'), cFr = c('from_party_id'), cTo = c('to_party_id'), cG = c('amount_gross'), cU = c('amount_paid_by_user'), c3 = c('amount_paid_by_third_party'), cMin = c('time_minutes'), cOut = c('outcome'), cNar = c('narrative'), cId = c('record_id');
     D = { bytes, H: Hd, off: new Uint32Array(cap), sec: new Float64Array(cap), type: new Uint8Array(cap), out: new Uint8Array(cap), cat: new Uint16Array(cap), amt: new Float32Array(cap), paid: new Float32Array(cap), mins: new Float32Array(cap), hid: new Int32Array(cap), hand: new Uint8Array(cap), cats: [], hhList, ids: null };
     const cBlk = c('block_id'), cPat = c('block_pattern');
+    // per-minute counts the sound uses for traffic, buses, people walking and people out in person
+    const cTm = c('travel_mode'), cCh = c('channel'), SD = { car: new Float32Array(1440), bus: new Float32Array(1440), walk: new Float32Array(1440), inp: new Float32Array(1440) };
+    const CAR = new Set(['car', 'ride_from_family_or_friend', 'carpool']), BUS = new Set(['transit', 'school_bus', 'paratransit']), WALK = new Set(['walk', 'bike']);
     const tyMap = new Map(TYPES.map((t, i) => [t, i])), ocMap = new Map(OUTS.map((t, i) => [t, i])), catMap = new Map();
     const tre = /(?:T|\s)(\d{1,2}):(\d{2})(?::(\d{2}))?/;
     const recs = []; let i = 0, last = performance.now(), anySec = false, firstId = '', lastId = '';
@@ -207,6 +210,7 @@
       const m = tre.exec(R.str(cT)); let s = 0;
       if (m) { s = +m[1] * 3600 + +m[2] * 60 + (m[3] ? +m[3] : 0); if (m[3] && m[3] !== '00') anySec = true; }
       D.sec[i] = Math.min(86399, s);
+      { const mi = Math.floor(D.sec[i] / 60); if (cTm >= 0) { const tm = R.str(cTm); if (CAR.has(tm)) SD.car[mi]++; else if (BUS.has(tm)) SD.bus[mi]++; else if (WALK.has(tm)) SD.walk[mi]++; } if (cCh >= 0 && R.str(cCh) === 'in_person') SD.inp[mi]++; }
       const ty = tyMap.get(R.str(cTy)) ?? 12, oc = cOut < 0 ? 0 : ocMap.get(R.str(cOut)) ?? 0;
       D.type[i] = ty; D.out[i] = oc;
       const cs = R.str(cCat); let ci = catMap.get(cs); if (ci === undefined) { ci = D.cats.length; D.cats.push(cs); catMap.set(cs, ci); } D.cat[i] = ci;
@@ -260,7 +264,7 @@
     for (const [v3, list] of stands) v3.stands = list;
     const mx = Math.max(...hourly) || 1;
     return {
-      records: recs, cum: { money: cm, fails: cf, unpaid: cu }, minuteIdx: minute,
+      records: recs, cum: { money: cm, fails: cf, unpaid: cu }, minuteIdx: minute, soundDensity: SD,
       recById: { get: (id) => { const ii = byId ? byId.get(id) : /^R\d+$/.test(id) ? parseInt(id.slice(1), 10) - 1 : -1; return ii >= 0 && ii < n ? recs[pos[ii]] : undefined; } },
       purchaseRate: (t) => { const h = (t / 60) % 24, a = Math.floor(h), f = h - a; return (4 * (hourly[a] * (1 - f) + hourly[(a + 1) % 24] * f)) / mx; },
     };
@@ -293,7 +297,7 @@
       const day = await build(bufs, (p) => status({ state: 'loading', p: 0.55 + p * 0.45 }));
       patchWords();
       H.realLoaded = true;
-      Object.assign(H, { records: day.records, cum: day.cum, minuteIdx: day.minuteIdx, recById: day.recById });
+      Object.assign(H, { records: day.records, cum: day.cum, minuteIdx: day.minuteIdx, recById: day.recById, soundDensity: day.soundDensity });
       H.RATE.purchase = day.purchaseRate;
       App.useDay();
       status({ state: 'real', n: day.records.length });
