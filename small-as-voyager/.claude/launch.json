@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "small-as-voyager",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "5176", "--bind", "127.0.0.1"],
+      "port": 5176
+    }
+  ]
+}
