@@ -127,6 +127,14 @@ footer .credit a{color:var(--ink2)}
 .hit:focus-visible{outline:none}
 .hit:focus-visible .focusring{stroke:#1F5AF0;stroke-width:3}
 
+/* embed mode (?embed=1): the lens drawn inside v3's overlay, which supplies the header, the way back and the clock */
+body.embed header.top, body.embed .ctxbar, body.embed footer.bar{display:none}
+body.embed .app{height:100%;min-height:0}
+body.embed main.body{height:100%}
+body.embed #plates{max-height:calc(100vh - 24px)}
+.embednote{margin:12px 0 0;padding:10px 12px;background:#E8EEFE;border-radius:10px;font-size:13px;color:var(--ink)}
+.pick{margin:6px 0 0}
+
 @media (max-width:1240px){
   main.body{grid-template-columns:1fr}
   .tools{border-right:none;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap}
@@ -375,6 +383,12 @@ function loopPlates(k){
 
 /* state */
 const state = {sel:"R3", loop:"R2", hover:null, solo:null};
+/* ?embed=1 runs inside v3's lens overlay; ?rec=<record id> opens on that record and the first loop it appears in; ?rec= with no id opens with nothing picked */
+const QS = new URLSearchParams(location.search), EMBED = QS.get("embed") === "1";
+if(EMBED) document.body.classList.add("embed");
+function loopFor(id){ const e = Object.entries(LOOPS).find(([, L]) => L.seen.includes(id)); return e ? e[0] : null; }
+if(QS.has("rec")){ const r = QS.get("rec"); state.sel = BY[r] && BY[r].kindOf === "record" ? r : null; state.loop = state.sel ? loopFor(state.sel) : null; }
+const toParent = msg => { if(EMBED && window.parent !== window) window.parent.postMessage(Object.assign({source:"halvern-lens"}, msg), location.origin); };
 
 /* ================================================================ drawing helpers */
 const SKIN = ["#F1D3B8","#E2B48E","#C98E62","#A56B43","#7D4E2E","#5A3620","#EBC4A0","#B7825A"];
@@ -861,7 +875,14 @@ function kv(parent, pairs){
 function renderDetail(){
   detailEl.innerHTML = "";
   const id = state.sel;
-  if(!id){ h("p", {class:"none", text:"Select a record or a circumstance in the layers to see its details."}, detailEl); return; }
+  if(!id){
+    if(!EMBED){ h("p", {class:"none", text:"Select a record or a circumstance in the layers to see its details."}, detailEl); return; }
+    const sh0 = h("div", {class:"sheet"}, detailEl);
+    h("h3", {class:"title", text:"Pick a record to trace"}, sh0);
+    h("p", {class:"why", style:"margin-top:8px", text:`${RECORDS.length} records on Larkin Avenue have their circumstances mapped. Pick one to see what shaped it.`}, sh0);
+    const box = h("div", {class:"pick"}, sh0); rowList(box, RECORDS.map(r => r.id));
+    return;
+  }
   const it = BY[id];
   const sh = h("div", {class:"sheet"}, detailEl);
   const eb = h("div", {class:"eyebrow"}, sh);
@@ -877,6 +898,7 @@ function renderDetail(){
     if(f.note) h("span", {class:"muted small", text:f.note}, st);
     h("p", {class:"why", text:it.body}, sh);
     kv(sh, [["Time", it.time], ["With", f.with], ["Kind", KIND_NAME[it.kind]], ["Layer", "Today"]]);
+    if(EMBED && QS.get("from")) h("p", {class:"embednote", text:"A composite record on Larkin Avenue with the same pattern as the one you opened. Its circumstances are mapped; the opened record’s are not yet."}, sh);
     h("h3", {text:"Shaped by"}, sh);
     rowList(sh, parents(id));
   } else {
@@ -967,7 +989,18 @@ function syncTools(){
 }
 document.addEventListener("keydown", e => {
   if(e.key !== "Escape") return;
+  if(EMBED){ if(state.solo != null) setSolo(null); else toParent({type:"close"}); return; }
   if(state.solo != null) setSolo(null); else if(state.loop) setLoop(null); else if(state.sel) select(null);
+});
+/* the overlay can switch records without reloading the lens */
+window.addEventListener("message", e => {
+  if(!EMBED || e.origin !== location.origin || !e.data || e.data.source !== "halvern-v3") return;
+  if(e.data.type === "open"){
+    const r = e.data.rec && BY[e.data.rec] ? e.data.rec : null;
+    state.solo = null; state.sel = r; state.loop = r ? loopFor(r) : null;
+    if(e.data.from) QS.set("from", e.data.from); else QS.delete("from");
+    syncTools(); renderDetail(); renderLoopCard(); relayout();
+  }
 });
 
 /* legend */
