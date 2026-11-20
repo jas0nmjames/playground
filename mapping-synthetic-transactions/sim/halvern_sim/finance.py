@@ -295,6 +295,39 @@ def build_finance(sim):
             H.wic_bal = round(H.wic * rng.uniform(.2, 1.0), 2)
         H.wallets[0].snap_start = H.snap_bal
     sim.wallets = wallets
+    open_title_loans(sim)
+
+
+# Auto title loans open on the day, scaled from Texas 2025 (sources/derived/title_loans_tx_2025.csv, built by
+# sources/tools/tx_title_loans.py from the OCCC credit access business reports). Single-payment loans run 30 days and are
+# paid off or refinanced each month: (150,086 new + 228,399 refinances) / 12 = about 31,500 open at a time, 1.01 per 1,000
+# Texans. Installment loans (103,990 new) are taken to run about five months: about 43,300 open, 1.38 per 1,000. So
+# about 2.4 per 1,000 residents, or 239 in Halvern, with one payment due a month each (about 7.8 payments a day).
+# Halvern's places are in Georgia, where title pawns are legal, so Texas rates stand in. Loans average about $1,500.
+TITLE_OPEN_PER_1000 = {"single": 1.008, "installment": 1.384}
+
+
+def open_title_loans(sim):
+    srng = __import__("halvern_sim.config", fromlist=["side_rng"]).side_rng(sim.cfg["RANDOM_SEED"], "title_loans")
+    lenders = sim.by_kind.get("title_loan") or []
+    if not lenders:
+        return
+    cands = [H for H in sim.households if not H.gq and H.vehicles and H.wallets and H.head.age >= 18]
+    wt = [{"poverty": 3.0, "alice": 4.0, "above": .4}[H.wallets[0].status] for H in cands]
+    npeople = sum(len(H.members) for H in sim.households)
+    for kind, per in TITLE_OPEN_PER_1000.items():
+        n = int(round(per * npeople / 1000.0))
+        for _ in range(n):
+            if not cands:
+                return
+            i = srng.choices(range(len(cands)), wt)[0]
+            H = cands.pop(i)
+            wt.pop(i)
+            principal = round(min(8000, max(300, math.exp(srng.gauss(math.log(1300), .6)))) / 25) * 25
+            term = srng.randint(2, 6) if kind == "installment" else 1
+            org = min(lenders, key=lambda o: (o.district != H.district, srng.random()))
+            H.tloan = dict(kind=kind, org=org, principal=float(principal), dom=srng.randint(1, 28), left=term,
+                           months=srng.choice([0, 1, 1, 2, 3, 4, 6, 9]) if kind == "single" else 0)
 
 
 def build_bills(sim):

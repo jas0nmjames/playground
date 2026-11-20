@@ -284,6 +284,13 @@ def gen_shopping(sim, H, q):
 def gen_food(sim, H, q):
     rng, cal, X, wx = sim.rng, sim.cal, sim.X, sim.wx
     if H.gq:
+        if H.gq == "h2a_worker_housing" and cal["dow"] == 5:
+            # the grower's van runs crews to a supercenter on Saturday afternoon (H-2A employers must provide transport)
+            P = H.head
+            org = sim.pick(("supercenter", "grocery_discount", "grocery_indep"), "D5", 4.0)
+            errand(sim, q, P, H, org, "food", "grocery_main_trip", round(rng.uniform(45, 115), 2), rng.randint(30, 50), ((840, 1080, 1.0),), taxable=False,
+                   ctx=dict(n=1, org=org.name if org else ""), fr=("no_transit",), quiet_fail=.2)
+            return
         if H.gq == "college_dorm" and rng.random() < .10:
             P = H.head
             org = sim.pick(("grocery_full", "supercenter", "dollar"), H.district, 4.0)
@@ -765,10 +772,12 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
                 cp = round(min(cp, rng.uniform(150, PART_D_OOP_CAP)), 2)
             third, payer, fund = neg - cp, "Medicare Part D plan", "federal"
         elif cov in ("employer", "marketplace", "other_private", "military"):
-            if P.plan == "hdhp" and rng.random() < .75:
-                cp = round(min(neg, rng.uniform(200, 3500)), 2)   # what is left of the deductible
-            elif specialty:
-                cp = round(min(.25 * neg, rng.uniform(150, 1000)), 2)   # specialty-tier coinsurance with a per-fill cap
+            # High-deductible plans: the full price until the deductible is met (capped at what is left of it). v1 charged full
+            # price on 75% of fills; 45% brings fills with over $250 to pay near MEPS 2024 (0.84% of purchased fills).
+            if P.plan == "hdhp" and rng.random() < .45:
+                cp = round(min(neg, rng.uniform(100, 2500)), 2)
+            elif specialty:   # specialty-tier coinsurance with a per-fill cap; most commercial patients use a manufacturer copay card
+                cp = float(rng.choice([0, 5, 10])) if rng.random() < .55 else round(min(.25 * neg, rng.uniform(150, 1000)), 2)
             else:
                 cp = float(rng.choice([40, 50, 60, 90])) if brand else float(rng.choice([0, 5, 10, 10, 15]))
             cp = min(cp, neg)
@@ -777,8 +786,8 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             cp = float(rng.choice([0, 5, 8, 11]))
             third, payer, fund = neg - cp, "VA pharmacy", "federal"
         else:
-            disc = rng.random() < .55 and not brand
-            cp = round(cash * (.38 if disc else 1.0), 2)
+            disc = rng.random() < (.4 if brand else .55)   # v1 gave brand drugs no discount; manufacturer and discount-card programs
+            cp = round(cash * ((.5 if brand else .38) if disc else 1.0), 2)
             third, payer, fund = 0.0, ("pharmacy discount card (no payer)" if disc else ""), ""
         fills.append((brand, cash, round(max(cp, 0), 2), round(max(third, 0), 2), payer, fund))
     W = actor.wallet
@@ -822,6 +831,14 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             if r < .078:
                 prev = sim.emit(t, "failed_attempt", "health", "prescription_pickup", actor, H, actor, org, ben=P, gross=cash, tmin=8, wait=w, miles=miles if k == 0 else 0,
                                 mode=mode, outcome="failed", fr=F + ["out_of_stock", "repeat_trip"], lens=("health_cost",), ctx=dict(c, reason="the drug was on back order"))
+                continue
+            if cp > 250 and rng.random() < (.6 if H.fragile else .35):
+                # Fills costing over $250 at the counter: pharmacy-industry reports put abandonment near half (estimate;
+                # not in the downloaded sources), more often where the household could not cover a $400 emergency (SHED).
+                prev = sim.emit(t, "failed_attempt", "health", "prescription_abandoned_over_cost", actor, H, actor, org, ben=P, gross=cp, tmin=7, wait=w,
+                                miles=miles if k == 0 else 0, mode=mode, outcome="abandoned", fr=F + ["insufficient_funds"], lens=("health_cost",),
+                                ctx=dict(c, reason="the share to pay at the counter was $%.2f" % cp))
+                sim.bump("rx_abandoned")
                 continue
             if cp > 55 and rng.random() < (.42 if not third else .2):
                 prev = sim.emit(t, "failed_attempt", "health", "prescription_pickup", actor, H, actor, org, ben=P, gross=cash, tmin=7, wait=w, miles=miles if k == 0 else 0,
@@ -1073,8 +1090,21 @@ def home_visit(sim, q, P, H):
 
     def run(t=t):
         if noshow:
-            sim.emit(t, "failed_attempt", "health", kind, P, H, org, P, ben=P, gross=allowed, tmin=hrs * 60, wait=rng.randint(40, 120), outcome="failed",
-                     fr=("wait", "caregiving_conflict"), lens=("family_care", "labor"), ctx=dict(org=org.name, reason="the aide's shift went unfilled"))
+            i = sim.emit(t, "failed_attempt", "health", kind, P, H, org, P, ben=P, gross=allowed, tmin=hrs * 60, wait=rng.randint(40, 120), outcome="failed",
+                         fr=("wait", "caregiving_conflict"), lens=("family_care", "labor"), ctx=dict(org=org.name, reason="the aide's shift went unfilled"))
+            # who covers (v2): the family caregiver, or another adult at home. A working caregiver leaves work or goes without.
+            cover = next((c for c in (P.cared_by or []) if c.age >= 18 and not c.inpatient), None) or next((a for a in H.adults if a is not P and not a.inpatient), None)
+            if cover is None:
+                return
+            at_work = cover.works and any(s <= t <= e for s, e in (cover.shift or []))
+            if at_work and rng.random() < .6:
+                lost = round(hrs * cover.wage / 2080.0, 2)
+                sim.emit(t + rng.randint(20, 60), "failed_attempt", "work", "left_work_aide_no_show", cover, cover.hh, cover, cover.org or "", ben=P, gross=lost,
+                         tmin=hrs * 60, outcome="partial", fr=("caregiving_conflict", "schedule_volatility"), lens=("family_care", "labor"), related=i,
+                         ctx=dict(org=org.name, lost="%.2f" % lost, hrs=hrs, rel=P.rel, age=P.age))
+            elif not at_work:
+                sim.emit(t + rng.randint(10, 40), "non_monetary_job", "care_and_household", "covered_missed_aide_shift", cover, cover.hh, cover, P, ben=P,
+                         tmin=hrs * 60, fr=("caregiving_conflict",), lens=("family_care",), related=i, ctx=dict(org=org.name, hrs=hrs, rel=P.rel, age=P.age))
             return
         if now:
             W = P.wallet
@@ -1085,3 +1115,34 @@ def home_visit(sim, q, P, H):
             sim.emit(t, "insurance_claim", "health", kind, P, H, org, P, ben=P, method="insurance", gross=allowed, third=third, payer=payer, fund=fund,
                      tmin=hrs * 60, lens=("family_care",), ctx=dict(org=org.name, hrs=hrs))
     push(q, t, run)
+
+
+# Care put off because of cost. SHED 2025 (sources/derived/shed_care_by_fragility.csv): in the past year 27.9% of adults
+# who could not cover a $400 emergency went without a doctor because of the cost, against 7.0% of those who could; for
+# dental care 33.0% and 8.6%. Taken as one such decision a year per adult who reports it, spread over the days.
+SKIP_CARE = {"doctor": (.279, .070), "dental": (.330, .086)}
+
+
+def gen_skipped_care(sim, H, q):
+    if H.gq:
+        return
+    rng = sim.rng
+    debt = next((b for b in H.bills if b[0] == "medical_payment_plan"), None)
+    for P in H.adults:
+        if P.inpatient:
+            continue
+        for what, (frag, ok) in SKIP_CARE.items():
+            if rng.random() >= (frag if H.fragile else ok) / 365.0:
+                continue
+            t = sim.slot_soft(P, 10, EVE)
+            if what == "dental":
+                kind, cost = "dental_care_put_off_over_cost", float(rng.choice([180, 240, 320, 650, 1100]))
+                why = "a filling or crown would cost about $%.0f" % cost
+            elif debt is not None:
+                kind, cost = "care_delayed_by_medical_debt", 160.0
+                why = "the last medical bill is still being paid off at $%.0f a month" % debt[2]
+            else:
+                kind, cost = "care_delayed_by_cost", 160.0
+                why = "a visit would cost more than there was to spare"
+            sim.emit(t, "failed_attempt", "health", kind, P, H, P, "", ben=P, gross=cost, tmin=5, outcome="abandoned",
+                     fr=("insufficient_funds",), lens=("health_cost",), ctx=dict(reason=why, debt="%.0f" % (debt[2] if debt else 0)))

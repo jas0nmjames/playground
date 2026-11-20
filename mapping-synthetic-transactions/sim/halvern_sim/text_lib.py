@@ -459,6 +459,40 @@ T["online_installment_loan_disbursed"] = k("take out an online loan", "When I am
 T["payday_loan_repayment"] = k("repay the payday loan", "When payday comes, I want the loan cleared, so I can stop paying fees.", "Loan paid off to {org}.")
 T["payday_loan_rollover"] = k("repay the payday loan", "When I cannot repay the loan and eat, I want two more weeks, so I can keep the full amount from coming out.",
                               "Paid only the ${fee} fee to {org}; the loan rolls over.")
+T["caregiving_purchase_for_family_member"] = k("buy what my {rel} needs", "When I am looking after my {rel}, I want to pick up what they need on the way, so I can keep them stocked without another trip.",
+                                              ["Bought ${amt} of groceries and supplies at {org} for my {age}-year-old {rel}.", "Paid ${amt} at {org} for my {rel}'s things."])
+T["snap_interview_call"] = k("keep my SNAP", "When the SNAP office calls for my interview, I want to be able to answer, so I can keep food benefits without starting over.",
+                             ["SNAP interview by phone with {org}.", "Answered the SNAP recertification call from {org}."])
+T["raise_declined_benefits_cliff"] = k("take the raise", "When my boss offers a raise, I want to take it without losing more than I gain, so I can actually get ahead.",
+                                       "Turned down a ${raise_hr}-an-hour raise at {org}; it would have cost {loss}.")
+T["called_in_on_day_off"] = k("rest on my day off", "When the manager calls me in on my day off, I want to say yes without wrecking the day, so I can keep the hours and my plans.",
+                              ["Called in to {org} on a day off for {hrs} hours.", "Got the call to come in to {org} today."])
+T["kept_availability_open"] = k("keep my hours", "When my schedule is never set, I want to stay reachable on my days off, so I can get the hours when they come.",
+                                "Kept the day open in case {org} called; made no other plans.")
+T["direct_express_call"] = k("get to my benefits", "When something is wrong with my benefits card, I want someone to fix it on the phone, so I can pay for what I need this week.",
+                             "Called the Direct Express line about the benefits card.")
+T["left_work_aide_no_show"] = k("go to work", "When my family member's aide does not show, I want someone to be there with them, so I can stay at work.",
+                                "Left work early when the aide from {org} did not come; lost ${lost} for {hrs} hours.")
+T["covered_missed_aide_shift"] = k("look after my family member", "When the aide does not come, I want to step in, so I can be sure my {rel} is not left alone.",
+                                   "Covered the {hrs} hours the aide from {org} missed.")
+T["care_delayed_by_medical_debt"] = k("see a doctor", "When I am sick and still paying off the last medical bill, I want to see a doctor without adding to it, so I can get better without more debt.",
+                                     ["Put off seeing a doctor: {reason}.", "Did not make the appointment; still paying ${debt} a month on an old medical bill."])
+T["care_delayed_by_cost"] = k("see a doctor", "When something is wrong, I want to see a doctor I can afford, so I can get it treated before it gets worse.",
+                             "Put off seeing a doctor: {reason}.")
+T["dental_care_put_off_over_cost"] = k("see a dentist", "When a tooth hurts, I want to see a dentist I can pay for, so I can fix it before it gets worse.",
+                                      "Put off the dentist again: {reason}.")
+T["prescription_abandoned_over_cost"] = k("pick up a prescription", "When the pharmacy rings up my prescription, I want a price I can pay, so I can keep taking it.",
+                                         "Left {who} prescription at {org}: {reason}.")
+T["title_loan_payment"] = k("pay the title loan", ["When the title loan payment comes due, I want to make it on time, so I can keep my car.",
+                                                   "When I am deciding what gets paid this month, I want the title loan covered first, so I can keep the car I drive to work."],
+                           ["Paid ${amt} to {org} on the car title loan{note}.", "Title loan payment of ${amt} at {org}{note}."])
+T["title_loan_rollover"] = k("keep the title loan going", "When I cannot pay off the title loan, I want to pay just the fee, so I can keep the car another month.",
+                            ["Paid ${amt} in fees at {org} to roll the title loan over another 30 days; the ${owed} is still owed.",
+                             "Another ${amt} rollover fee at {org}; the ${owed} borrowed against the car is untouched."])
+T["car_repossessed"] = k("keep my car", "When I fall behind on the title loan, I want to keep the car, so I can still get to work.",
+                        "The car was towed overnight by {org} over ${amt} still owed on the title loan.")
+T["car_disabled_by_lender"] = k("start the car", "When I head out in the morning, I want the car to start, so I can get to work and school on time.",
+                               "The car would not start: {reason}.")
 T["title_loan_disbursed"] = k("borrow against my car", "When I need more than a payday loan gives, I want cash against my title, so I can cover an emergency.", "Borrowed ${amt} at {org} against the car title.")
 T["pawn_loan"] = k("pawn something for cash", "When I need cash for a few weeks, I want a loan on something I own, so I can get it back later.", "Pawned {item} at {org} for ${amt}.")
 T["pawn_redemption"] = k("get my item out of pawn", "When I have the money again, I want my item back, so I can stop paying storage on it.", "Redeemed {item} at {org}.")

@@ -395,6 +395,17 @@ def gen_income(sim, H, q):
                 else:
                     sim.credit(W, net, "bank")
             push(q, t, run)
+        # Federal benefits on the Direct Express prepaid card (v2; estimate): about one call to its call center a year and a
+        # half per cardholder, and about four calls in ten end without help (long holds, dropped calls, a locked card).
+        if (p.ss > 0 or p.ssi > 0) and W is not None and W.bank is None and rng.random() < 1 / 550.0:
+            def rund(p=p):
+                bad = rng.random() < .4
+                why = rng.choice(["the hold ran past an hour and the call dropped", "the card was locked after a fraud flag and the line could not unlock it",
+                                  "the automated line did not recognize the card number"])
+                sim.emit(rng.randint(540, 1020), "failed_attempt" if bad else "non_monetary_job", "money_services", "direct_express_call", p, H, p, X["x_treasury"],
+                         channel="phone", tmin=rng.randint(45, 110) if bad else rng.randint(15, 40), outcome="failed" if bad else "completed",
+                         fr=(("wait", "outage") if bad else ("wait",)), lens=("aging", "public_finance"), ctx=dict(reason=why if bad else ""))
+            push(q, 200, rund)
         if p.ssi > 0 and cal["ssi_today"]:
             def run(p=p, W=W):
                 sim.credit(W, p.ssi, "bank")

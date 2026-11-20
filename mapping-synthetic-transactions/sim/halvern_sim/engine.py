@@ -182,6 +182,8 @@ class Sim:
                 mode = "ride_from_family_or_friend"
             if mode != "transit" and ts < .5 and base > .9:
                 fr.append("no_transit")
+            if H.flags and "car_lost_today" in H.flags and P.age >= 16:
+                fr.append("vehicle_lost")
         mins = {"car": base * 2.1 + 4, "transit": base * 4.6 + 14, "walk": base * 19, "bike": base * 6 + 3}.get(mode, base * 2.1 + 12)
         return round(miles, 1), mode, int(min(mins, 75)), fr
 

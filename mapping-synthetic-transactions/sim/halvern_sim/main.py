@@ -38,9 +38,10 @@ def simulate(sim, log=print):
     for H in sim.households:
         day_a.skeleton(sim, H)
     day_c.pre_day(sim)
+    day_c.overnight_lenders(sim)
     # fixed commitments claim time first (appointments, school runs, care), then errands fit around them
-    gens = [day_a.gen_income, day_a.gen_bills, day_b.gen_health, day_c.gen_school, day_c.gen_care, day_b.gen_food, day_b.gen_shopping, day_b.gen_transport,
-            day_c.gen_public, day_c.gen_money, day_c.gen_misc]
+    gens = [day_a.gen_income, day_a.gen_bills, day_b.gen_health, day_b.gen_skipped_care, day_c.gen_school, day_c.gen_care, day_b.gen_food, day_b.gen_shopping, day_b.gen_transport,
+            day_c.gen_public, day_c.gen_money, day_c.gen_title_loans, day_c.gen_misc]
     for H in sim.households:
         for g in gens:
             g(sim, H, q)

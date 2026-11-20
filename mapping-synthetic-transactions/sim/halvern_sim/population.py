@@ -49,7 +49,7 @@ class Household:
                  "internet", "lang", "notes", "lep", "immigrant", "recent", "race", "z", "wallets", "bills", "snap",
                  "snap_day", "wic", "wic_day", "tanf", "tanf_day", "subsidized", "mortgage", "escrow", "hoa", "ev", "gq",
                  "fragile", "landlord", "rent_day", "head", "adults", "kids", "pov_ratio", "cs", "util_incl", "gasheat",
-                 "washer", "mobile_home", "ccdf", "liheap", "pets", "snap_bal", "wic_bal", "flags", "late_rent", "facility")
+                 "washer", "mobile_home", "ccdf", "liheap", "pets", "snap_bal", "wic_bal", "flags", "late_rent", "facility", "tloan")
 
     def __init__(self, hid, district, htype):
         self.hid, self.district, self.htype = hid, district, htype
@@ -64,6 +64,7 @@ class Household:
         self.subsidized = self.mortgage = self.escrow = False
         self.hoa, self.ev, self.gq = 0.0, 0, None
         self.fragile, self.landlord, self.rent_day = False, None, None
+        self.tloan = None   # an open auto title loan (v2; finance.open_title_loans)
         self.head, self.adults, self.kids = None, [], []
         self.pov_ratio = 1.0
         self.util_incl = self.gasheat = self.washer = self.mobile_home = self.ccdf = self.liheap = False
@@ -1058,6 +1059,7 @@ def build_population(sim):
     adjust_banking(sim, HH)
     assign_sick_leave(sim, PP)
     reshape_owner_costs(sim, HH)
+    add_h2a_workers(sim, HH, PP)
     sim.households, sim.persons = HH, PP
     sim.n_pov_raw = npov
     return HH, PP
@@ -1146,6 +1148,53 @@ def reshape_owner_costs(sim, HH):
             H.housing_cost = round(min(9800, max(piti, mi * srng.uniform(*k["mort_floor"]))), 0)
         else:
             H.housing_cost = round(max(150, min(2500, base * k["free_share"] * math.exp(srng.gauss(0, k["free_sigma"])) + mi * k["free_income"])), 0)
+
+
+# H-2A guest workers on the job, per 1,000 US residents, by month: DOL's FY2025 disclosure file
+# (sources/derived/h2a_on_the_job.csv, sources/tools/h2a_season.py), certified positions counted from employment start
+# to end. National rates, as Halvern's people are national; Georgia peaks earlier (peaches) and higher.
+H2A_PER_1000 = {1: .267, 2: .335, 3: .488, 4: .612, 5: .672, 6: .677, 7: .649, 8: .657, 9: .712, 10: .714, 11: .564, 12: .334}
+H2A_WAGE_2027 = 16.23 * 1.03 ** 2   # FY2025 median certified wage offer, carried to 2027 at 3% a year; not boosted by
+                                     # WAGE_SCALE, which makes up for resident household size (see config.py)
+
+
+def add_h2a_workers(sim, HH, PP):
+    """H-2A workers in employer housing on the open-country farms, each a one-person group-quarters unit (the Census
+    counts workers' dormitories as group quarters). The roster is drawn whole from its own stream and only the workers on
+    the job that month are added, at the end, so nobody else in Halvern changes."""
+    farms = sorted((o for o in sim.by_kind.get("farm", []) if o.district in ("D6", "D5")), key=lambda o: (-o.size, o.oid))
+    if not farms:
+        return
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "h2a")
+    n = int(round(H2A_PER_1000[sim.cal["month"]] * len(PP) / 1000.0))
+    year = sim.cal["date"].year
+    hosts = farms[:max(1, min(3, len(farms)))]
+    roster = []
+    for k in range(int(round(max(H2A_PER_1000.values()) * len(PP) / 1000.0))):
+        roster.append((hosts[k % len(hosts)], int(min(55, max(21, srng.gauss(32, 7)))), "M" if srng.random() < .95 else "F",
+                       srng.random() < .4, srng.randint(0, 1), math.exp(srng.gauss(0, .05))))
+    for org, age, sex, unbanked, edu, wf in roster[:n]:
+        H = Household("H%05d" % (len(HH) + 1), org.district, "group_quarters:h2a_worker_housing")
+        H.gq, H.facility = "h2a_worker_housing", "%s worker housing" % org.name
+        H.tenure, H.housing_cost, H.vehicles, H.internet = "group_quarters", 0.0, 0, "mobile_only"
+        H.lang, H.lep, H.immigrant, H.recent, H.race, H.z = "Spanish", True, True, True, "hispanic", -.6
+        H.banked = "unbanked" if unbanked else "underbanked"
+        H.notes += ["h2a_guest_worker", "employer_provided_housing", "facility:" + H.facility]
+        p = Person("P%06d" % (len(PP) + 1), H, age, sex, "resident")
+        p.bday, p.by = 1 + (age * 7) % 28, year - age
+        p.race, p.edu, p.dis, p.cov = "hispanic", edu, "none", "uninsured"
+        p.emp, p.occ, p.org, p.sector, p.wd = "employed_full_time", "crop farmworker", org, "ag", org.district
+        p.sched, p.wsched, p.cadence, p.payday, p.ft, p.seasonal = "farm", "variable", "weekly", (4,), True, True
+        p.wage = round(H2A_WAGE_2027 * 2080 * wf, 2)
+        p.income, p.cashpref, p.mode = p.wage, .6, "walk"   # housing is on the farm; employers must provide transport, free
+        org.emp += 1
+        H.members.append(p)
+        H.head, H.adults, H.kids = p, [p], []
+        H.income = p.income
+        H.alice = "alice"
+        H.pov_ratio = H.income / C.POVERTY_BASE
+        HH.append(H)
+        PP.append(p)
 
 
 OCC_KINDS = {
