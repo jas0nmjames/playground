@@ -15,7 +15,7 @@ class Person:
                  "bday", "by", "vet", "ss", "ss_type", "ss_cohort", "ssi", "pension", "ui", "va", "inv", "income",
                  "student", "school", "grade", "meal", "wallet", "cashpref", "nrx", "esrd", "home_care", "mode", "wfh",
                  "works", "busy", "free", "wake", "bed", "gig", "smoker", "dental", "wd", "seasonal", "garnish",
-                 "sloan", "cared_by", "medigap", "inpatient", "bnpl", "absent", "k401", "prem", "lunch", "shift", "cm", "night")
+                 "sloan", "cared_by", "medigap", "inpatient", "bnpl", "absent", "k401", "prem", "lunch", "shift", "cm", "night", "psl")
 
     def __init__(self, pid, hh, age, sex, rel):
         self.pid, self.hh, self.age, self.sex, self.rel = pid, hh, age, sex, rel
@@ -28,6 +28,7 @@ class Person:
         self.wage, self.ft, self.tipped = 0.0, False, False
         self.bday, self.by = 1, 0
         self.vet = False
+        self.psl = False   # access to paid sick leave (v2; set by assign_sick_leave)
         self.ss, self.ss_type, self.ss_cohort = 0.0, None, None
         self.ssi = self.pension = self.ui = self.va = self.inv = self.income = 0.0
         self.student = self.school = self.grade = self.meal = None
@@ -48,7 +49,7 @@ class Household:
                  "internet", "lang", "notes", "lep", "immigrant", "recent", "race", "z", "wallets", "bills", "snap",
                  "snap_day", "wic", "wic_day", "tanf", "tanf_day", "subsidized", "mortgage", "escrow", "hoa", "ev", "gq",
                  "fragile", "landlord", "rent_day", "head", "adults", "kids", "pov_ratio", "cs", "util_incl", "gasheat",
-                 "washer", "mobile_home", "ccdf", "liheap", "pets", "snap_bal", "wic_bal", "flags", "late_rent", "facility")
+                 "washer", "mobile_home", "ccdf", "liheap", "pets", "snap_bal", "wic_bal", "flags", "late_rent", "facility", "tloan")
 
     def __init__(self, hid, district, htype):
         self.hid, self.district, self.htype = hid, district, htype
@@ -63,6 +64,7 @@ class Household:
         self.subsidized = self.mortgage = self.escrow = False
         self.hoa, self.ev, self.gq = 0.0, 0, None
         self.fragile, self.landlord, self.rent_day = False, None, None
+        self.tloan = None   # an open auto title loan (v2; finance.open_title_loans)
         self.head, self.adults, self.kids = None, [], []
         self.pov_ratio = 1.0
         self.util_incl = self.gasheat = self.washer = self.mobile_home = self.ccdf = self.liheap = False
@@ -487,7 +489,7 @@ def build_population(sim):
         p.occ, p.sched, p.tipped = t, sk, bool(tip)
         af = .72 if p.age < 20 else .82 if p.age < 25 else .92 if p.age < 30 else 1.0 if p.age < 40 else 1.06 if p.age < 55 else 1.04 if p.age < 65 else .92
         sg = .42 if me >= 4 else .22
-        wage = wg * C.WAGE_SCALE * math.exp(rng.gauss(0, sg) + .13 * H.z) * af
+        wage = wg * C.WAGE_SCALE * math.exp(rng.gauss(0, sg) + .13 * H.z) * af   # WAGE_SCALE pays ~14% above real pay on purpose; see config.py
         if wg >= 130000 and rng.random() < .12:
             wage *= rng.uniform(1.3, 2.6)
         hrs = 1.0 if p.ft else rng.uniform(.35, .72)
@@ -880,7 +882,8 @@ def build_population(sim):
                     ben = 25
                 if ben >= 20:
                     H.snap = round(ben)
-                    H.snap_day = rng.randint(1, 10)
+                    rng.randint(1, 10)   # v1's load-day draw, kept so the main stream (and the people) stay the same
+                    H.snap_day = C.draw_table(C.side_rng(sim.cfg["RANDOM_SEED"], "snap_day", H.hid).random(), C.SNAP_LOAD_DAYS)
         wic_ok = [p for p in H.members if p.age < 5]
         if wic_ok and (mi <= 1.85 * pov_m or H.snap) and rng.random() < .74:
             H.wic = 62.0 * len(wic_ok) + (58 if any(p.age < 1 for p in wic_ok) else 0)
@@ -1053,9 +1056,145 @@ def build_population(sim):
             H.notes.append("out_commuter")
         if H.gq and H.facility:
             H.notes.append("facility:" + H.facility)
+    adjust_banking(sim, HH)
+    assign_sick_leave(sim, PP)
+    reshape_owner_costs(sim, HH)
+    add_h2a_workers(sim, HH, PP)
     sim.households, sim.persons = HH, PP
     sim.n_pov_raw = npov
     return HH, PP
+
+
+# Unbanked share of households by income: FDIC National Survey of Unbanked and Underbanked Households 2023
+# (sources/raw/fdic_unbanked/hh2023_analys.csv; hunbnk weighted by hhsupwgt; 4.2% overall). Income bands are in 2023
+# dollars (Halvern's 2027 incomes / 1.13). v1's rule, keyed on ALICE status, gave 3.6% and ran low at the bottom
+# (16.9% under $15,000) and a little high at the top. The 2023 file carries no underbanked measure, so that share is kept.
+FDIC_UNBANKED = ((15000, .218), (30000, .090), (50000, .045), (75000, .018), (float("inf"), .007))
+DOLLARS_2027_PER_2023 = 1.13
+
+
+def adjust_banking(sim, HH):
+    """Move households between banked and unbanked, within each income band, until the band matches FDIC 2023.
+    Uses its own random stream so the people and everything drawn before stay as in v1."""
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "banking")
+    bands = {}
+    for H in HH:
+        if H.gq:
+            continue
+        inc = H.income / DOLLARS_2027_PER_2023
+        k = next(i for i, (hi, _) in enumerate(FDIC_UNBANKED) if inc < hi)
+        bands.setdefault(k, []).append(H)
+    for k, hs in sorted(bands.items()):
+        want = int(round(FDIC_UNBANKED[k][1] * len(hs)))
+        unb = [H for H in hs if H.banked == "unbanked"]
+        if len(unb) < want:
+            pool = [H for H in hs if H.banked == "underbanked"]
+            srng.shuffle(pool)
+            rest = [H for H in hs if H.banked == "banked"]
+            srng.shuffle(rest)
+            for H in (pool + rest)[:want - len(unb)]:
+                H.banked = "unbanked"
+                for p in H.members:
+                    p.cashpref = .95
+        elif len(unb) > want:
+            srng.shuffle(unb)
+            for H in unb[:len(unb) - want]:
+                H.banked = "underbanked"   # newly banked households mostly still use check cashers and money orders
+                for p in H.members:
+                    p.cashpref = min(.92, max(.02, .45 + srng.gauss(0, .12)))
+
+
+# Access to paid sick leave by wage, NCS March 2026 (sources/raw/ncs_benefits, all-data sheet, provision 087, civilian
+# workers): lowest 10% of wages 48%, lowest 25% 63%, second 25% 85%, third 25% 91%, highest 25% 95%, highest 10% 97%;
+# full-time 90%, part-time 59%. Bands between published cuts are solved from them (10-25%: 73%; 75-90%: 94%). v1 gave
+# none to anyone on a variable schedule or earning under $42,000.
+PSL_BY_WAGE_RANK = ((.10, .48), (.25, .73), (.50, .85), (.75, .91), (.90, .94), (1.01, .97))
+
+
+def assign_sick_leave(sim, PP):
+    """Paid sick leave by the worker's wage rank among Halvern's employees; part-time a little lower, self-employed none.
+    Own random stream, so nothing else moves."""
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "sick_leave")
+    emp = sorted((p for p in PP if p.emp in ("employed_full_time", "employed_part_time")), key=lambda p: (p.wage, p.pid))
+    n = len(emp)
+    for i, p in enumerate(emp):
+        rank = (i + .5) / n
+        pr = next(v for hi, v in PSL_BY_WAGE_RANK if rank < hi)
+        if not p.ft:
+            pr *= .85
+        p.psl = srng.random() < pr
+
+
+# Owner housing costs (mortgage payment, or taxes, insurance and fees; utilities are separate bills), redrawn so cost
+# burdens match AHS 2023 (sources/raw/ahs, household.csv: TOTHCAMT less UTILAMT over HINCP, weighted): mortgaged owners
+# median 18% of income, 24% over 30%, 10% over half; owners without a mortgage median 8%, 14% over 30%, 8% over half.
+# v1 tied owners' costs to income (mortgages at least 14-29% of it), so the median was too high and heavy burdens too rare.
+# Applied after the population is built, on its own stream, so v1's people and draws stay as they were.
+OWNER_PITI = {"D1": 1700, "D2": 1500, "D3": 2180, "D4": 1380, "D5": 1020, "D6": 1080}
+OWNER_COST = dict(mort_mult=.9, mort_sigma=.5, mort_floor=(0.0, .10), free_share=.34, free_sigma=1.1, free_income=.01)
+# fit (15,000 households): mortgaged median 16%, 25% over 30%, 11% over half; no mortgage 8%, 14%, 7%
+
+
+def reshape_owner_costs(sim, HH):
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "owner_cost")
+    k = OWNER_COST
+    for H in HH:
+        if H.gq or H.tenure not in ("owner_with_mortgage", "owner_free_and_clear") or H.mobile_home:
+            continue
+        mi = H.income / 12.0
+        base = OWNER_PITI[H.district]
+        if H.tenure == "owner_with_mortgage":
+            piti = base * k["mort_mult"] * math.exp(srng.gauss(0, k["mort_sigma"]))
+            H.housing_cost = round(min(9800, max(piti, mi * srng.uniform(*k["mort_floor"]))), 0)
+        else:
+            H.housing_cost = round(max(150, min(2500, base * k["free_share"] * math.exp(srng.gauss(0, k["free_sigma"])) + mi * k["free_income"])), 0)
+
+
+# H-2A guest workers on the job, per 1,000 US residents, by month: DOL's FY2025 disclosure file
+# (sources/derived/h2a_on_the_job.csv, sources/tools/h2a_season.py), certified positions counted from employment start
+# to end. National rates, as Halvern's people are national; Georgia peaks earlier (peaches) and higher.
+H2A_PER_1000 = {1: .267, 2: .335, 3: .488, 4: .612, 5: .672, 6: .677, 7: .649, 8: .657, 9: .712, 10: .714, 11: .564, 12: .334}
+H2A_WAGE_2027 = 16.23 * 1.03 ** 2   # FY2025 median certified wage offer, carried to 2027 at 3% a year; not boosted by
+                                     # WAGE_SCALE, which makes up for resident household size (see config.py)
+
+
+def add_h2a_workers(sim, HH, PP):
+    """H-2A workers in employer housing on the open-country farms, each a one-person group-quarters unit (the Census
+    counts workers' dormitories as group quarters). The roster is drawn whole from its own stream and only the workers on
+    the job that month are added, at the end, so nobody else in Halvern changes."""
+    farms = sorted((o for o in sim.by_kind.get("farm", []) if o.district in ("D6", "D5")), key=lambda o: (-o.size, o.oid))
+    if not farms:
+        return
+    srng = C.side_rng(sim.cfg["RANDOM_SEED"], "h2a")
+    n = int(round(H2A_PER_1000[sim.cal["month"]] * len(PP) / 1000.0))
+    year = sim.cal["date"].year
+    hosts = farms[:max(1, min(3, len(farms)))]
+    roster = []
+    for k in range(int(round(max(H2A_PER_1000.values()) * len(PP) / 1000.0))):
+        roster.append((hosts[k % len(hosts)], int(min(55, max(21, srng.gauss(32, 7)))), "M" if srng.random() < .95 else "F",
+                       srng.random() < .4, srng.randint(0, 1), math.exp(srng.gauss(0, .05))))
+    for org, age, sex, unbanked, edu, wf in roster[:n]:
+        H = Household("H%05d" % (len(HH) + 1), org.district, "group_quarters:h2a_worker_housing")
+        H.gq, H.facility = "h2a_worker_housing", "%s worker housing" % org.name
+        H.tenure, H.housing_cost, H.vehicles, H.internet = "group_quarters", 0.0, 0, "mobile_only"
+        H.lang, H.lep, H.immigrant, H.recent, H.race, H.z = "Spanish", True, True, True, "hispanic", -.6
+        H.banked = "unbanked" if unbanked else "underbanked"
+        H.notes += ["h2a_guest_worker", "employer_provided_housing", "facility:" + H.facility]
+        p = Person("P%06d" % (len(PP) + 1), H, age, sex, "resident")
+        p.bday, p.by = 1 + (age * 7) % 28, year - age
+        p.race, p.edu, p.dis, p.cov = "hispanic", edu, "none", "uninsured"
+        p.emp, p.occ, p.org, p.sector, p.wd = "employed_full_time", "crop farmworker", org, "ag", org.district
+        p.sched, p.wsched, p.cadence, p.payday, p.ft, p.seasonal = "farm", "variable", "weekly", (4,), True, True
+        p.wage = round(H2A_WAGE_2027 * 2080 * wf, 2)
+        p.income, p.cashpref, p.mode = p.wage, .6, "walk"   # housing is on the farm; employers must provide transport, free
+        org.emp += 1
+        H.members.append(p)
+        H.head, H.adults, H.kids = p, [p], []
+        H.income = p.income
+        H.alice = "alice"
+        H.pov_ratio = H.income / C.POVERTY_BASE
+        HH.append(H)
+        PP.append(p)
 
 
 OCC_KINDS = {

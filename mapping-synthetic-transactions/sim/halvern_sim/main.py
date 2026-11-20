@@ -24,6 +24,8 @@ def build(cfg, log=print):
     log("  population: %d households, %d persons, %d orgs (%.1fs)" % (len(sim.households), len(sim.persons), len(sim.orgs), time.time() - t0))
     build_finance(sim)
     log("  finance: %d wallets, %d recurring obligations (%.1fs)" % (len(sim.wallets), sim.n_bills, time.time() - t0))
+    from .orgs import add_cbp_outlets
+    log("  added %d storefronts to reach County Business Patterns rates" % add_cbp_outlets(sim))
     # everything above is date-independent given the seed; the day itself gets its own stream
     sim.rng = random.Random("%s|%s|%s" % (cfg["RANDOM_SEED"], sim.cal["iso"], cfg["WEATHER"]))
     sim.trng = random.Random("text|%s|%s" % (cfg["RANDOM_SEED"], sim.cal["iso"]))
@@ -38,9 +40,10 @@ def simulate(sim, log=print):
     for H in sim.households:
         day_a.skeleton(sim, H)
     day_c.pre_day(sim)
+    day_c.overnight_lenders(sim)
     # fixed commitments claim time first (appointments, school runs, care), then errands fit around them
-    gens = [day_a.gen_income, day_a.gen_bills, day_b.gen_health, day_c.gen_school, day_c.gen_care, day_b.gen_food, day_b.gen_shopping, day_b.gen_transport,
-            day_c.gen_public, day_c.gen_money, day_c.gen_misc]
+    gens = [day_a.gen_income, day_a.gen_bills, day_b.gen_health, day_b.gen_skipped_care, day_c.gen_school, day_c.gen_care, day_b.gen_food, day_b.gen_shopping, day_b.gen_transport,
+            day_c.gen_public, day_c.gen_money, day_c.gen_title_loans, day_c.gen_misc]
     for H in sim.households:
         for g in gens:
             g(sim, H, q)

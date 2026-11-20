@@ -1,0 +1,25 @@
+activity_codes,activity,age_of_carer,years,respondents,minutes_per_day_per_person,share_doing_any,minutes_per_day_among_doers,population_share,source_file,weight
+0304,caring for household adults,all,2023-2025,22363,1.815,0.0216,84.0,1.0000,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304,caring for household adults,15-44,2023-2025,,0.519,0.0102,50.7,0.3537,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304,caring for household adults,45-64,2023-2025,,1.305,0.0206,63.4,0.2976,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304,caring for household adults,65+,2023-2025,,3.565,0.0340,104.9,0.3487,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0305,helping household adults,all,2023-2025,22363,0.767,0.0276,27.8,1.0000,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0305,helping household adults,15-44,2023-2025,,0.706,0.0281,25.1,0.3537,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0305,helping household adults,45-64,2023-2025,,0.925,0.0309,29.9,0.2976,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0305,helping household adults,65+,2023-2025,,0.695,0.0242,28.7,0.3487,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404,caring for non-household adults,all,2023-2025,22363,0.918,0.0083,110.4,1.0000,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404,caring for non-household adults,15-44,2023-2025,,0.368,0.0030,121.3,0.3537,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404,caring for non-household adults,45-64,2023-2025,,1.344,0.0128,105.2,0.2976,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404,caring for non-household adults,65+,2023-2025,,1.113,0.0099,112.7,0.3487,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0405,helping non-household adults,all,2023-2025,22363,3.774,0.0583,64.8,1.0000,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0405,helping non-household adults,15-44,2023-2025,,2.453,0.0459,53.5,0.3537,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0405,helping non-household adults,45-64,2023-2025,,4.634,0.0664,69.8,0.2976,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0405,helping non-household adults,65+,2023-2025,,4.380,0.0639,68.6,0.3487,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304+0305,caring for household adults + helping household adults,all,2023-2025,22363,2.582,0.0461,56.1,1.0000,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304+0305,caring for household adults + helping household adults,15-44,2023-2025,,1.225,0.0369,33.2,0.3537,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304+0305,caring for household adults + helping household adults,45-64,2023-2025,,2.230,0.0481,46.4,0.2976,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0304+0305,caring for household adults + helping household adults,65+,2023-2025,,4.260,0.0536,79.5,0.3487,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404+0405,caring for non-household adults + helping non-household adults,all,2023-2025,22363,4.693,0.0630,74.5,1.0000,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404+0405,caring for non-household adults + helping non-household adults,15-44,2023-2025,,2.821,0.0475,59.3,0.3537,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404+0405,caring for non-household adults + helping non-household adults,45-64,2023-2025,,5.978,0.0738,81.0,0.2976,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT
+0404+0405,caring for non-household adults + helping non-household adults,65+,2023-2025,,5.493,0.0694,79.2,0.3487,atussum-0325.zip (BLS ATUS 2003-2025 multi-year activity summary),TU20FWGT

@@ -6,6 +6,11 @@ from .day_b import errand, online, bus_ride, inc
 from .config import SALES_TAX
 
 SCHOOL_COST = [103.6, 97.9, 108.4]          # imputed cost per pupil per school day, by district (see assumptions)
+# unpaid care for someone in the same household, set from ATUS 2023-25 (v2; v1 drew .80 a day and 50-200 minutes)
+CARE_AT_HOME_DAILY = .76                     # chance a household care link produces care on a given day
+CARE_AT_HOME_CARING_SHARE = .44              # of those, physical care and looking after (ATUS 0304) rather than help (0305)
+CARING_TASKS = ["meals and medications", "bathing and dressing", "keeping company and supervising"]
+HELPING_TASKS = ["a ride and an errand", "sorting pills and paying bills", "housework and laundry"]
 LUNCH_COST, BFAST_COST = 4.95, 2.85
 PAY_K12 = "%s general fund (state aid, local property tax, federal Title I and IDEA)"
 
@@ -124,7 +129,7 @@ def pre_day(sim):
         if not ad or any((not a.works) or a.wfh for a in ad):
             continue
         a = min(ad, key=lambda x: (x.ft, x.wage))
-        unpaid = a.wsched != "fixed" or a.wage < 42000 or a.emp == "self_employed"
+        unpaid = not a.psl   # NCS March 2026 access by wage (population.assign_sick_leave); the self-employed have none
         hrs = min(10.0, sum(e - s for s, e in a.shift) / 60.0) if a.shift else 8.0
         lost = round(hrs * a.wage / 2080.0, 2) if (unpaid and rng.random() < .7) else 0.0
         sim.stayhome[a.pid] = (sick[0], hrs, lost)
@@ -490,6 +495,21 @@ def hold(sim, P, H, org, kind, wr, cat="care_and_household", matter="", drop=.24
 
 
 # ------------------------------------------------------------------------------------------ money services
+# Median fraud loss by age, FTC Consumer Sentinel 2024 (ages 19 and under, 20-29, ..., 80 and over)
+SCAM_MEDIAN_BY_AGE = ((19, 189.0), (29, 417.0), (39, 450.0), (49, 500.0), (59, 520.0), (69, 691.0), (79, 1000.0), (200, 1650.0))
+
+
+# Payday loans. California 2025 (DFPI CDDTL report, sources/raw/payday_ca_dfpi): 5,772,939 loans to 878,317 people, 146
+# per 1,000 residents a year, 70% of them repeat loans. Texas 2025 (OCCC, sources/raw/payday_title_tx_occc): about 1.84
+# million payday loans and refinances, 59 per 1,000. About 55% of Americans live where storefront payday lending is
+# legal (estimate; Georgia, where Halvern's places are, bans it), so a national city sees about 15 new loans a day.
+# The loans due each day (repaid, rolled over or bounced) are set equal to new ones, as in a steady state.
+SHUTOFF_NOTICE, SHUTOFF_DISCONNECT = .0030, .00073
+TAX_PAID = .0089
+PAYDAY_NEW = .0024
+PAYDAY_DUE = .0024
+
+
 def gen_money(sim, H, q):
     rng, cal, X = sim.rng, sim.cal, sim.X
     if H.gq in ("jail", "nursing_home"):
@@ -598,7 +618,8 @@ def gen_money(sim, H, q):
         # ---- small-dollar credit
         if low and earner and W.bank is not None:
             r = rng.random()
-            if r < .00085:
+            # v2: new small-dollar loans x 2.8 (v1 .00085), toward the T02 target set from California and Texas 2025
+            if r < PAYDAY_NEW:
                 amt = float(rng.choice([200, 255, 300, 300, 350, 400, 500]))
                 fee = round(amt * rng.choice([.15, .15, .175]), 2)
                 if rng.random() < .58 and sim.by_kind.get("payday"):
@@ -614,7 +635,7 @@ def gen_money(sim, H, q):
                     push(q, t, lambda t=t, P=P, W=W, amt=amt, fee=fee: (W.give("bank", amt), emit(t, "transfer", "money_services", "online_installment_loan_disbursed", P, H, X["x_cc2"], P,
                                                                                                        channel="online", method="ach", gross=amt, fee_type="finance_charge_due_at_payback",
                                                                                                        fee=round(fee * 1.6, 2), tmin=14, ctx=dict(amt="%.0f" % amt, fee="%.2f" % (fee * 1.6)))))
-            elif r < .0017:
+            elif r < PAYDAY_NEW + PAYDAY_DUE:
                 due = float(rng.choice([230, 293.25, 345, 402.5, 460, 575]))
                 feeonly = round(due - due / 1.15, 2)
                 org = sim.pick(("payday",), d, 8.0)
@@ -638,14 +659,14 @@ def gen_money(sim, H, q):
                                  fee_type="returned_payment_fee", fee=nsf, outcome="failed", fr=("insufficient_funds",),
                                  ctx=dict(org=org.name, amt="%.2f" % due, reason="the lender's debit bounced"))
                     push(q, t, run)
-            elif r < .0057 and any(p.wsched != "fixed" or p.wage < 45000 for p in own):
+            elif r < PAYDAY_NEW + PAYDAY_DUE + .004 and any(p.wsched != "fixed" or p.wage < 45000 for p in own):
                 amt = float(rng.choice([40, 50, 60, 75, 100, 150]))
                 fee = rng.choice([2.99, 3.49, 4.99, 5.99])
                 t = sim.slot_soft(P, 4, ANY)
                 push(q, t, lambda t=t, P=P, W=W, amt=amt, fee=fee: (W.give("bank", amt - fee), emit(t, "transfer", "money_services", "earned_wage_advance", P, H, X["x_ewa"], P, channel="app",
                                                                                                         method="ach", gross=amt, user=fee, fee_type="instant_transfer_fee", fee=fee,
                                                                                                         tmin=4, lens=("labor",), ctx=dict(amt="%.0f" % amt, fee="%.2f" % fee))))
-        if low and H.vehicles and rng.random() < .00013 and sim.by_kind.get("title_loan"):
+        if low and H.vehicles and rng.random() < .000092 and sim.by_kind.get("title_loan"):   # Texas 2025: 8.1 new title loans per 1,000 a year (v1 .00013)
             org = sim.pick(("title_loan",), d, 12.0)
             amt = float(rng.choice([400, 600, 800, 1000, 1500]))
             go(sim, q, P, H, org, 40, SHOP,
@@ -722,7 +743,9 @@ def gen_money(sim, H, q):
     if cal["tax_season"] and not H.gq and any(p.wage > 0 or p.pension or p.inv for p in H.adults):
         r = rng.random()
         P = rng.choice([p for p in H.adults if not p.inpatient] or [head])
-        if r < .0042 and sim.by_kind.get("tax_prep"):
+        # v2: paid preparation x 2.1 (v1 .0042). IRS 2026: 56% of e-filed returns came from tax professionals (about 54%
+        # paid), and three quarters of Halvern's ~48,000 returns filed in the 85-day season is ~420 a day.
+        if r < TAX_PAID and sim.by_kind.get("tax_prep"):
             org = sim.pick(("tax_prep", "accounting"), d, 8.0)
             fee = round(rng.uniform(170, 430) if org.kind == "tax_prep" else rng.uniform(320, 780), 2)
             if H.alice != "above" and rng.random() < .45:
@@ -733,7 +756,7 @@ def gen_money(sim, H, q):
                 go(sim, q, P, H, org, 70, ANY, run, wait=(5, 70))
             else:
                 errand(sim, q, P, H, org, "money_services", "paid_tax_preparation", fee, rng.randint(55, 90), ANY, taxable=False, wait=(5, 60), ctx=dict(), W=W0, quiet_fail=0.0)
-        elif r < .0084 and H.internet != "no":
+        elif r < TAX_PAID + .0042 and H.internet != "no":
             fed = float(rng.choice([0, 0, 0, 39, 59, 69, 89, 119]))
             st = float(rng.choice([0, 39, 49, 59, 64]))
             if fed + st > 0:
@@ -785,15 +808,22 @@ def gen_care(sim, H, q):
             if c.inpatient:
                 continue
             same = c.hh is H
-            if rng.random() > (.80 if same else .34):
+            if rng.random() > (CARE_AT_HOME_DAILY if same else .34):
                 continue
-            dur = rng.randint(50, 200) if same else rng.randint(40, 140)
-            tasks = rng.choice(["meals and medications", "bathing and dressing", "a ride and an errand", "sorting pills and paying bills", "housework and laundry", "keeping company and supervising"])
+            if same:
+                # ATUS 2023-25 (sources/derived/atus_caregiving.csv): caring for household adults (0304) runs about 84 minutes
+                # among those who do it, helping them (0305) about 28; together about 56 minutes, 2.6 minutes a day per person 15+
+                caring = rng.random() < CARE_AT_HOME_CARING_SHARE
+                tasks = rng.choice(CARING_TASKS if caring else HELPING_TASKS)
+                dur = rng.randint(40, 130) if caring else rng.randint(10, 45)
+            else:
+                tasks = rng.choice(CARING_TASKS + HELPING_TASKS)
+                dur = rng.randint(40, 140)
             if same:
                 t = sim.slot(p, dur, ((390, 560, 1.0), (1020, 1290, 1.5), (600, 1000, .6)))
                 squeezed = t is None
                 if t is None:
-                    dur = rng.randint(25, 45)
+                    dur = min(dur, rng.randint(25, 45))
                     t = sim.slot(p, dur, ((300, 1430, 1.0),))
                     if t is None:
                         continue
@@ -809,8 +839,20 @@ def gen_care(sim, H, q):
                          ctx=dict(tasks=tasks, rel=c.rel, age=c.age, reason="work ran long and there was no time left to get there"))
                 else:
                     fac = c.hh.gq in ("nursing_home", "assisted_living", "group_home")
-                    emit(t + min(mins, 50) // 2, "non_monetary_job", "care_and_household", "caregiving_visit", p, H, p, c, ben=c, tmin=dur, miles=miles, mode=mode,
-                         fr=tfr, lens=("family_care",), ctx=dict(tasks=("a visit and a talk with the staff" if fac else tasks), rel=c.rel, age=c.age, fac="1" if fac else ""))
+                    iv = emit(t + min(mins, 50) // 2, "non_monetary_job", "care_and_household", "caregiving_visit", p, H, p, c, ben=c, tmin=dur, miles=miles, mode=mode,
+                              fr=tfr, lens=("family_care",), ctx=dict(tasks=("a visit and a talk with the staff" if fac else tasks), rel=c.rel, age=c.age, fac="1" if fac else ""))
+                    # Out-of-pocket spending on the person cared for: groceries, medicines and supplies bought on the visit.
+                    # Estimate: no downloaded source measures it per caregiver (CE's gift items show only small care lines,
+                    # such as nursing home care and utility bills paid for someone else).
+                    shop = any(w in tasks for w in ("errand", "meals", "medication", "pills"))
+                    if not fac and p.wallet is not None and rng.random() < (.5 if shop else .12):
+                        amt = round(min(250, max(4, rng.lognormvariate(math.log(30 if shop else 14), .6))), 2)
+                        org = sim.pick(("pharmacy", "grocery_full", "supercenter", "dollar") if shop else ("dollar", "pharmacy"), cd, 6.0)
+                        if org is not None and org.open is not None:
+                            tt = min(1430, t + min(mins, 50) // 2 + dur)
+                            push(q, tt, lambda tt=tt, p=p, c=c, org=org, amt=amt, iv=iv: sim.pay(
+                                tt, p, H, p.wallet, org, "care_and_household", "caregiving_purchase_for_family_member", amt, taxable=True, tmin=15,
+                                ctx=dict(rel=c.rel, age=c.age, org=org.name), ben=c, lens=("family_care",), related=iv, quiet_fail=.5))
         if a < 18:
             continue
         # ---- shift volatility
@@ -820,6 +862,19 @@ def gen_care(sim, H, q):
                 lost = round(hrs * p.wage / 2080.0, 2)
                 emit(max(0, p.shift[-1][1] - int(hrs * 60)), "failed_attempt", "work", "sent_home_early", p, H, p, p.org, gross=lost, tmin=int(hrs * 60), outcome="partial",
                      fr=("schedule_volatility",), lens=("labor",), ctx=dict(org=p.org.name, hrs=hrs, lost="%.2f" % lost))
+            elif not p.works and rng.random() < .015:
+                # called in on a day off (v2; estimate): goes in if nothing else holds the day, at the cost of plans made
+                go_in = not H.kids or any(a is not p and not a.works for a in H.adults)
+                hrs = rng.choice([4, 5, 6, 8])
+                gain = round(hrs * p.wage / 2080.0, 2)
+                emit(rng.randint(360, 660), "non_monetary_job" if go_in else "failed_attempt", "work", "called_in_on_day_off", p, H, p, p.org, channel="phone",
+                     gross=gain, tmin=hrs * 60 if go_in else 3, outcome="completed" if go_in else "declined",
+                     fr=("schedule_volatility",) + (() if go_in else ("caregiving_conflict",)), lens=("labor",),
+                     ctx=dict(org=p.org.name, hrs=hrs, gain="%.2f" % gain, reason="" if go_in else "there was nobody to watch the kids on that notice"))
+            elif not p.works and rng.random() < .02:
+                # keeping the day open in case the manager calls (v2; estimate)
+                emit(rng.randint(420, 600), "non_monetary_job", "work", "kept_availability_open", p, H, p, p.org, channel="phone", tmin=0, outcome="partial",
+                     fr=("schedule_volatility",), lens=("labor",), ctx=dict(org=p.org.name))
             elif not p.works and cal["weekday"] and rng.random() < .022:
                 hrs = rng.choice([4, 5, 6, 8])
                 lost = round(hrs * p.wage / 2080.0, 2)
@@ -832,8 +887,21 @@ def gen_care(sim, H, q):
             prog = "food benefits" if H.snap else "the child care subsidy" if H.ccdf else "the rent subsidy" if H.subsidized else "Medicaid"
             emit(sim.slot_soft(p, 3, DAY), "non_monetary_job", "work", "turned_down_extra_hours", p, H, p, p.org, gross=extra, tmin=3, outcome="abandoned", fr=("benefits_cliff",),
                  lens=("labor", "public_finance"), ctx=dict(org=p.org.name, hrs=hrs, extra="%.2f" % extra, prog=prog))
+        # ---- a raise turned down because a benefit would end (v2). No national count exists; estimate about one decision a
+        # year in fifteen for a worker whose household gets SNAP, a child care subsidy, a rent subsidy or Medicaid.
+        if p.emp.startswith("employed") and p.org is not None and (H.snap or H.ccdf or H.subsidized or p.cov == "medicaid") and rng.random() < 1 / (15 * 365.0):
+            raise_hr = float(rng.choice([.75, 1.0, 1.25, 1.5, 2.0]))
+            prog = "the child care subsidy" if H.ccdf else "food benefits" if H.snap else "the rent subsidy" if H.subsidized else "Medicaid"
+            loss = {"the child care subsidy": "about $%d a month in child care help" % rng.choice([450, 600, 800]),
+                    "food benefits": "about $%d a month in SNAP" % rng.choice([90, 140, 210]),
+                    "the rent subsidy": "about $%d a month in rent help" % rng.choice([120, 180, 260]),
+                    "Medicaid": "Medicaid for the household"}[prog]
+            emit(sim.slot_soft(p, 10, DAY), "non_monetary_job", "work", "raise_declined_benefits_cliff", p, H, p, p.org, gross=round(raise_hr * 2080 * (1 if p.ft else .55), 2),
+                 tmin=10, outcome="abandoned", fr=("benefits_cliff",), lens=("labor", "public_finance"),
+                 ctx=dict(org=p.org.name, raise_hr="%.2f" % raise_hr, prog=prog, loss=loss))
         # ---- a paid ride to the fields
-        if p.works and p.occ in ("crop farmworker", "packing shed worker") and p.shift and (H.vehicles == 0 or rng.random() < .35) and p.wallet is not None:
+        if p.works and p.occ in ("crop farmworker", "packing shed worker") and p.shift and (H.vehicles == 0 or rng.random() < .35) and p.wallet is not None \
+                and H.gq != "h2a_worker_housing":   # H-2A employers must provide transport at no cost
             fare = float(rng.choice([8, 8, 10, 10, 12]))
             t0 = max(240, p.shift[0][0] - 35)
             push(q, t0, lambda t0=t0, p=p, fare=fare: hand_pay(sim, t0, p, H, p.wallet, X["x_customers"], "transportation", "ride_to_work_fee", fare, ("cash",), tmin=0,
@@ -930,14 +998,31 @@ def gen_care(sim, H, q):
             how = rng.choice(["a text about an unpaid toll", "a call claiming to be the bank's fraud desk", "a call about a grandchild in jail", "a text about a package held for a fee",
                               "a call saying Social Security was suspending the number", "an email invoice for antivirus software", "a job offer that asked for a deposit"])
             if lost and p.wallet is not None and p.wallet.liquid() > 300:
-                amt = float(rng.choice([200, 300, 500, 500, 1000, 1500]))
+                # FTC Consumer Sentinel 2024 (sources/raw/ftc_sentinel): median loss $497 but mean $12,696, with 12.6% of
+                # losses over $10,000; a lognormal with sigma 2.55 around the median for the victim's age reproduces both
+                # (v1 drew $200-1,500). Large losses come out of savings by wire or crypto kiosk.
+                med = next(v for a, v in SCAM_MEDIAN_BY_AGE if p.age <= a)
+                amt = round(min(999999.0, max(20.0, math.exp(math.log(med) + 2.55 * rng.gauss(0, 1)))), 0)
                 W = p.wallet
 
                 def run(t=t, p=p, W=W, amt=amt, how=how):
-                    m = "debit" if (W.bank is not None and W.bank >= amt) else ("cash" if W.cash >= amt else None)
-                    if m is None:
+                    have = (W.bank or 0) + W.savings + W.cash
+                    amt = min(amt, round(have * .95, 0))
+                    if amt < 20:
                         emit(t, "non_monetary_job", "money_services", "scam_attempt_handled", p, H, p, X["x_scam"], channel="phone", tmin=rng.randint(8, 40), fr=("scam_attempt",), ctx=dict(how=how))
                         return
+                    if W.bank is not None and W.bank >= amt:
+                        m = "debit" if amt < 3000 else "ach"
+                    elif W.bank is not None and W.bank + W.savings >= amt:
+                        W.savings -= amt - W.bank
+                        W.bank = amt
+                        m = "ach"
+                    elif W.cash >= amt:
+                        m = "cash"
+                    else:
+                        m = "cash"
+                        W.cash = amt
+                        W.savings = max(0.0, W.savings - amt)
                     W.take(m, amt)
                     emit(t, "transfer", "money_services", "scam_loss", p, H, p, X["x_scam"], channel="phone", method=m, gross=amt, user=amt, tmin=rng.randint(40, 120),
                          outcome="completed", fr=("scam_attempt",), ctx=dict(how=how, amt="%.0f" % amt, via=rng.choice(["gift cards read over the phone", "a wire from the bank branch", "a payment-app transfer", "a deposit into a crypto kiosk"])))
@@ -969,8 +1054,14 @@ def gen_care(sim, H, q):
         return
     P = ad[0] if len(ad) == 1 else rng.choice(ad)
     medicaid = any(p.cov in ("medicaid", "medicare_medicaid_dual") for p in H.members)
-    if (H.snap or medicaid) and rng.random() < .0048:
-        renewal(sim, P, H, q, "snap_recertification" if (H.snap and rng.random() < .5) else "medicaid_renewal")
+    # SNAP QC FY2024: certification periods average 17.4 months (6, 12, 24 and 36 months), so a SNAP household recertifies
+    # about once every 530 days; each recertification has an interview, usually a phone call the agency schedules.
+    # Medicaid: once a year. (v1 drew one or the other at .0048 a day.)
+    if H.snap and rng.random() < 1 / (17.4 * 30.4):
+        renewal(sim, P, H, q, "snap_recertification")
+        snap_interview(sim, P, H)
+    elif medicaid and rng.random() < 1 / 365.0:
+        renewal(sim, P, H, q, "medicaid_renewal")
     if (H.snap or medicaid) and rng.random() < .0011:
         org = sim.one("benefits_office")
         t = rng.randint(600, 1020)
@@ -982,11 +1073,22 @@ def gen_care(sim, H, q):
             t = sim.slot_soft(p, 15, EVE)
             down = out[0] <= t <= out[1]
             r = rng.random()
-            bad = down or r < .10
+            # CMS renewal outcomes, final October 2024 release (sources/raw/medicaid_renewals): 20.8% of the 153.6 million
+            # renewals due in the unwinding ended in a procedural termination. That stands in for paperwork failures on a
+            # work report (v1: 10%). Variable schedules add months short of 80 hours (estimate: three in ten for part-time
+            # variable-schedule workers).
+            short = p.wsched == "variable" and not p.ft and rng.random() < .3
+            bad = down or short or r < .208
+            reason = ("the state portal was down" if down else "this month's hours came to fewer than 80 after shifts were cut" if short else
+                      rng.choice(["the pay stub upload was rejected as unreadable", "gig hours had no employer to verify them", "the form would not accept two part-time jobs",
+                                  "the employer's letter was not on letterhead"]))
             i = emit(t, "failed_attempt" if bad else "non_monetary_job", "civic_legal", "medicaid_work_hours_report", p, H, p, X["x_medicaid"],
-                     channel="online" if H.internet != "no" else "phone", tmin=rng.randint(10, 30), outcome=("failed" if down else "rescheduled") if bad else "completed",
-                     fr=(("outage",) if down else ("paperwork", "eligibility_confusion")) if bad else (("digital_barrier",) if H.internet != "yes" else ()),
-                     lens=("public_finance", "labor"), ctx=dict(reason=("the state portal was down" if down else rng.choice(["the pay stub upload was rejected as unreadable", "gig hours had no employer to verify them", "the form would not accept two part-time jobs"])) if bad else ""))
+                     channel="online" if H.internet != "no" else "phone", tmin=rng.randint(10, 30), outcome=("failed" if (down or short) else "rescheduled") if bad else "completed",
+                     fr=(("outage",) if down else ("schedule_volatility", "hours_mismatch") if short else ("paperwork", "eligibility_confusion")) if bad
+                     else (("digital_barrier",) if H.internet != "yes" else ()),
+                     lens=("public_finance", "labor"), ctx=dict(reason=reason if bad else ""))
+            if short:
+                continue   # nothing to retry: the hours are short
             if bad and rng.random() < .6:
                 emit(min(1410, t + rng.randint(120, 420)), "non_monetary_job", "civic_legal", "medicaid_work_hours_report", p, H, p, X["x_medicaid"], channel="online",
                      tmin=rng.randint(10, 25), related=i, lens=("public_finance", "labor"), ctx=dict(retry="second try"))
@@ -1135,11 +1237,13 @@ def gen_misc(sim, H, q):
     if H.alice != "above" and not H.util_incl:
         r = rng.random()
         util = next((b for b in H.bills if b[0] in ("electric_bill", "gas_bill", "water_bill")), None)
-        if util is not None and r < .0020:
+        # v2: notices x 2 (RECS 2024: 12.2% of households got one in the year, about 47 a day for Halvern; T16) and
+        # disconnections x 1.45 (T05, 11-12 a day). v1: .0015 and .0005.
+        if util is not None and r < SHUTOFF_NOTICE + SHUTOFF_DISCONNECT:
             past = round(util[2] * rng.uniform(1.6, 3.2), 2)
             org = util[1]
             what = util[0].replace("_bill", "")
-            if r < .0015:
+            if r < SHUTOFF_NOTICE:
                 emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
                      outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=rng.choice([5, 7, 10])))
             else:
@@ -1232,3 +1336,112 @@ def car_purchase(sim, P, H, q):
 
 
 HOUSEHOLD_GENS = [gen_school, gen_public, gen_money, gen_care, gen_misc]
+
+
+# ------------------------------------------------------------------------------------------ title loans and lender shutoffs (v2)
+# Texas 2025 (sources/derived/title_loans_tx_2025.csv): 45,191 vehicles surrendered or repossessed under title loans, 1.44
+# per 1,000 residents a year, against about 75,000 loans open at a time, so about .00165 per open loan a day.
+TITLE_REPO_PER_LOAN_DAY = .00165
+TITLE_SINGLE_FEE = .25        # Texas single-payment CAB fees ran about 26% of the amount lent and refinanced
+TITLE_INSTALL_FEE = .10       # installment loans: about 10% of the principal a month in fees
+TITLE_PAYOFF_SHARE = .11      # single-payment loans paid off (not refinanced) in a month: Texas 27,463 payoffs a year
+                              # against about 230,000 refinances
+
+
+def overnight_lenders(sim):
+    """Before anyone leaves home: title-loan repossessions and buy-here-pay-here cars stopped by the lender's starter
+    interrupt device. Either way the household has one car fewer for the whole day."""
+    rng, emit = sim.rng, sim.emit
+
+    def behind(H):
+        L = H.tloan
+        return H.wallets[0].liquid() < L["principal"] * (TITLE_SINGLE_FEE if L["kind"] == "single" else .3)
+    loans = [H for H in sim.households if H.tloan is not None and H.vehicles and not H.gq]
+    nb = sum(1 for H in loans if behind(H))
+    # borrowers who are behind are 6.5 times as likely to lose the car; normalized so the average stays at the Texas rate
+    norm = len(loans) / max(1e-9, nb * 2.6 + (len(loans) - nb) * .4) if loans else 1.0
+    for H in sim.households:
+        if H.gq or not H.vehicles:
+            continue
+        L = H.tloan
+        P = H.head
+        if L is not None:
+            if rng.random() < TITLE_REPO_PER_LOAN_DAY * (2.6 if behind(H) else .4) * norm:
+                emit(rng.randint(90, 330), "failed_attempt", "transportation", "car_repossessed", P, H, L["org"], P, method="none", gross=L["principal"],
+                     outcome="failed", fr=("insufficient_funds",), lens=("consumer_finance",),
+                     ctx=dict(org=L["org"].name, amt="%.0f" % L["principal"], reason="the title loan was behind and the lender sent a tow truck"))
+                H.vehicles -= 1
+                H.tloan = None
+                H.flags.add("car_lost_today")
+                H.notes.append("car_repossessed_overnight")
+                continue
+        # Starter-interrupt devices on buy-here-pay-here loans. No national count is published; estimate: about .6% of
+        # these households a day are late enough to be shut off, and about one shutoff in eight is in error.
+        bh = [b for b in H.bills if b[0] == "bhph_car_payment"]
+        if bh:
+            b = bh[0]
+            W = b[5]
+            late = W.liquid() < b[2]
+            if rng.random() < (.006 if late else .0008):
+                err = not late
+                reason = ("the payment had posted, but the dealer's device had not been reset" if err else
+                          "the weekly payment was late, so the dealer's device kept the car from starting")
+                emit(rng.randint(360, 470), "failed_attempt", "transportation", "car_disabled_by_lender", P, H, P, b[1], method="none", gross=b[2],
+                     outcome="failed", fr=(("outage",) if err else ("insufficient_funds",)), lens=("consumer_finance",),
+                     ctx=dict(org=b[1].name, amt="%.0f" % b[2], reason=reason, error="1" if err else ""))
+                H.vehicles -= 1
+                H.flags.add("car_lost_today")
+
+
+def gen_title_loans(sim, H, q):
+    """The monthly title-loan payment on its due day: a payoff, a fee-only rollover, or an installment."""
+    L = H.tloan
+    if L is None or H.gq or sim.cal["dom"] != L["dom"]:
+        return
+    rng = sim.rng
+    W = H.wallets[0]
+    P = next((a for a in W.owners if a.age >= 18), H.head)
+    org = L["org"]
+    p = L["principal"]
+    if L["kind"] == "single":
+        fee = round(p * TITLE_SINGLE_FEE, 2)
+        if W.liquid() >= p + fee and rng.random() < TITLE_PAYOFF_SHARE * 2:
+            errand(sim, q, P, H, org, "money_services", "title_loan_payment", p, rng.randint(12, 25), SHOP, taxable=False, W=W, rtype="bill_payment",
+                   fee=("title_loan_finance_charge", fee), ctx=dict(note=", which pays it off and gets the title back"), lens=("consumer_finance",),
+                   quiet_fail=0.0)
+        else:
+            errand(sim, q, P, H, org, "money_services", "title_loan_rollover", fee, rng.randint(10, 20), SHOP, taxable=False, W=W, rtype="bill_payment",
+                   ctx=dict(owed="%.0f" % p, n=L["months"] + 1), lens=("consumer_finance",), quiet_fail=0.0)
+    else:
+        part = round(p / max(1, L["left"]), 2)
+        fee = round(p * TITLE_INSTALL_FEE, 2)
+        note = "; that was the last payment" if L["left"] <= 1 else "; %d payments left" % (L["left"] - 1)
+        if W.bank is not None and rng.random() < .3:
+            online(sim, q, P, H, org, "money_services", "title_loan_payment", part, taxable=False, fee=("title_loan_finance_charge", fee), W=W,
+                   rtype="bill_payment", ctx=dict(note=note), lens=("consumer_finance",))
+        else:
+            errand(sim, q, P, H, org, "money_services", "title_loan_payment", part, rng.randint(10, 20), SHOP, taxable=False, W=W, rtype="bill_payment",
+                   fee=("title_loan_finance_charge", fee), ctx=dict(note=note), lens=("consumer_finance",), quiet_fail=0.0)
+
+
+def snap_interview(sim, P, H):
+    """The SNAP recertification interview: the agency calls in a window it chose. A call that lands in a work shift is
+    often missed, and a missed interview usually closes the case until it is reopened. The $80 agency cost of that churn
+    is the evidence report's figure (plan section 5, item 7)."""
+    rng = sim.rng
+    org = sim.pick(("benefits_office",), H.district, 14.0) or sim.by_kind["benefits_office"][0]
+    if not sim.cal["weekday"] or sim.cal["holiday"]:
+        return
+    start = rng.choice([480, 540, 600, 780, 840])
+    end = start + 180
+    t = rng.randint(start, end - 20)
+    at_work = P.works and any(s <= t <= e for s, e in (P.shift or []))
+    if rng.random() < (.65 if at_work else .12):
+        why = ("the call came during a shift, when phones stay in the locker" if at_work else
+               rng.choice(["the call came from an unknown number and went to voicemail", "the phone was out of minutes", "the call dropped and the worker could not call back in"]))
+        sim.emit(t, "failed_attempt", "public_services", "snap_interview_call", P, H, org, P, channel="phone", tmin=1, outcome="failed",
+                 fr=(("schedule_volatility", "hours_mismatch") if at_work else ("other",)), imputed=80.0, lens=("public_finance", "labor"),
+                 ctx=dict(org=org.name, reason=why, window="%d:%02d-%d:%02d" % (start // 60, start % 60, end // 60, end % 60)))
+    else:
+        sim.emit(t, "non_monetary_job", "public_services", "snap_interview_call", P, H, org, P, channel="phone", tmin=rng.randint(20, 45),
+                 fr=(("caregiving_conflict",) if P.works else ()), lens=("public_finance",), ctx=dict(org=org.name, window=""))

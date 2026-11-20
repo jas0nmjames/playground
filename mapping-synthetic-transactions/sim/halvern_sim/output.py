@@ -457,13 +457,15 @@ def write_summary(sim, S, path, n_detailed=0):
     A("| Adults who would cover a $400 emergency with cash or equivalent | 63%% | %.1f%% | threshold solved at %s in liquid funds, or $400 free on a card paid in full |" % (100 * S["can400"], fmt_money(sim.liq_mult)))
     below = S["alice"].get("poverty", 0) + S["alice"].get("alice", 0)
     A("| Households below the ALICE survival budget | roughly 4 in 10 | %.1f%% | %.1f%% in poverty plus %.1f%% ALICE |" % (100 * below, 100 * S["alice"].get("poverty", 0), 100 * S["alice"].get("alice", 0)))
-    A("| Median household income | not anchored | %s | 2027 dollars; estimate |" % fmt_money(S["median_income"]))
+    A("| Median household income | not anchored | %s | 2027 dollars; estimate. SCF 2025 implies about $86,700. Reached by paying every worker x %.2f "
+      "their occupation's national pay (about 14%% above real pay) to make up for small households; compare households, not one job's pay |"
+      % (fmt_money(S["median_income"]), C.WAGE_SCALE))
     lf = S["life"]
     A("| Births | 2.9 a day | %d | 10.7 per 1,000 residents a year |" % lf.get("births", 0))
     A("| Deaths | 2.5 a day | %d | 9.2 per 1,000 a year |" % lf.get("deaths", 0))
     kc = S["kc"]
-    A("| Marriage licenses | 1.2 a weekday | %d | about 6 per 1,000 a year, light on Wednesdays |" % kc.get("marriage_license", 0))
-    A("| Divorce filings | 0.7 a weekday | %d | 2.4 per 1,000 a year |" % kc.get("divorce_filing_fee", 0))
+    A("| Marriage licenses | 2.4 a court day | %d | 6.3 per 1,000 a year (NCHS 2024) |" % kc.get("marriage_license", 0))
+    A("| Divorce filings | 0.9 a court day | %d | 2.3 per 1,000 a year (NCHS 2024) |" % kc.get("divorce_filing_fee", 0))
     A("| Household moves | about 9 a day | %d | 8%% of residents move in a year; move-ins recorded |" % kc.get("move_in_deposit_and_first_rent", 0))
     A("| Hospital admissions | about 24 a day | %d | plus %d people already inpatients |" % (lf.get("admits", 0), lf.get("census", 0)))
     A("")
