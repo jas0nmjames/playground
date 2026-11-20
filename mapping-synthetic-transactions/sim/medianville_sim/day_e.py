@@ -226,7 +226,7 @@ def life_events(sim, q):
         push(q, t2, run)
     # ---- marriages and divorces
     # NCHS 2024 (sources/raw/nchs_vital): 6.3 marriages and 2.3 divorces per 1,000 people a year, so about 628 and 229
-    # for Halvern; licenses and filings happen on the ~249 days the courthouse is open (v1: 1.25 and .66 a weekday).
+    # for Medianville; licenses and filings happen on the ~249 days the courthouse is open (v1: 1.25 and .66 a weekday).
     court = sim.cal["weekday"] and not sim.cal["holiday"]
     reg = [H for H in sim.households if not H.gq]
     cohab = [H for H in reg if any(m.rel == "unmarried_partner" for m in H.members)]

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern in Motion: Miniature and Map</title>
+<title>Medianville in Motion: Miniature and Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
@@ -282,7 +282,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 <body>
 <header class="top">
   <div class="brand">
-    <h1>Halvern in Motion</h1>
+    <h1>Medianville in Motion</h1>
     <span class="chip">Simulated city · no real people</span>
     <span class="chip" id="datachip" role="status">Placeholder day · loading the real one</span>
   </div>
@@ -407,7 +407,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <p class="sr-only" id="intro-live" aria-live="polite"></p>
   </section>
 </div>
-<script>// ===== Halvern in Motion v3 · shared city plan, parties, placeholder day, record language =====
+<script>// ===== Medianville in Motion v3 · shared city plan, parties, placeholder day, record language =====
 // Everything here is deterministic, so the Miniature and the Map draw the same city.
 (function () {
   const H = (window.H = {});
@@ -914,16 +914,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   });
   const NAMES = {
     cornershop: ['Millbank Corner Market', 'Weaver Street Grocery', 'Spring Street Mart', 'Lucky Seven Market', 'Hilltop Corner Store', 'Two Sisters Deli', 'Brickrow Bodega', 'Sunrise Mini Mart'],
-    grocery: ['Halvern Fresh Market', 'Route 9 Grocery Outlet'],
-    bigbox: ['Bargain Depot', 'Route 9 Home & Garden', 'Thrift Hall', 'Prairie Pharmacy & Goods', 'Cutler Supply Co.', 'Midway Furniture', 'Allday Dollar Store', 'Valley Farm & Fleet', 'Halvern Tire & Auto', 'Kidstuff Outlet', 'Plainsview Appliance', 'Second Chance Thrift', 'Route 9 Pet Supply', 'Halvern Hardware', 'Sunflower Craft & Fabric', 'Mid-America Mattress', 'Corner Cellular Repair', 'Prairie Sporting Goods', 'County Line Liquor', 'Halvern Rent-to-Own', 'Big Sky Paint', 'Cutler Feed Store', 'Sunrise Furniture Outlet', 'Halvern Office Supply', 'Prairie Thrift & Toys'],
+    grocery: ['Medianville Fresh Market', 'Route 9 Grocery Outlet'],
+    bigbox: ['Bargain Depot', 'Route 9 Home & Garden', 'Thrift Hall', 'Prairie Pharmacy & Goods', 'Cutler Supply Co.', 'Midway Furniture', 'Allday Dollar Store', 'Valley Farm & Fleet', 'Medianville Tire & Auto', 'Kidstuff Outlet', 'Plainsview Appliance', 'Second Chance Thrift', 'Route 9 Pet Supply', 'Medianville Hardware', 'Sunflower Craft & Fabric', 'Mid-America Mattress', 'Corner Cellular Repair', 'Prairie Sporting Goods', 'County Line Liquor', 'Medianville Rent-to-Own', 'Big Sky Paint', 'Cutler Feed Store', 'Sunrise Furniture Outlet', 'Medianville Office Supply', 'Prairie Thrift & Toys'],
     diner: ['Courthouse Diner', 'Blue Plate Diner', 'Route 9 Grill', 'Station Coffee', 'Mill Street Café', 'Lucky Wok', 'Prairie Taqueria'],
     gas: ['Route 9 Gas & Go', 'Millbank Fuel'],
     farmstand: ['Cutler Farm Stand'],
-    tower: ['Halvern Mutual Insurance', 'Prairie Health Billing', 'First Halvern Title', 'Courthouse Legal Center', 'Mid-America Call Center', 'Halvern Regional Bank Operations', 'Granary Tower Offices', 'Plainsview Logistics HQ', 'Halvern Daily Ledger', 'Northfield Software', 'County Courthouse Annex', 'Heartland Payroll Services', 'Prairie Wireless', 'Halvern Hospital Admin', 'Union Hall Tower', 'Halvern Health Partners', 'Riverbend Insurance Agency', 'Courthouse Square Apartments Office'],
-    office: ['Halvern Tax & Accounting', 'County Workforce Office', 'Courthouse Square Dental', 'Halvern Public Library', 'County Records Office', 'Main Street Realty', 'Halvern Chamber of Commerce', 'Legal Aid of Halvern', 'Halvern Community College Annex', 'Square Physical Therapy', 'Halvern Credit Union'],
-    shed: ['Railside Distribution', 'Halvern Box & Freight', 'Prairie Cold Storage', 'Midland Parts Supply', 'Railside Metal Works', 'Halvern Bottling', 'Plainsview Packaging', 'County Road Department', 'Railside Lumber', 'Halvern Printing', 'Mid-America Recycling', 'Halvern Bakery Plant', 'Plainsview Movers', 'Railside Auto Salvage', 'Halvern Ice Co.', 'Cutler Seed Warehouse', 'County Salt Barn', 'Midland Cabinets', 'Railside Tool & Die'],
-    tank: ['Railside Fuel Terminal', 'Halvern Feed & Grain Tanks', 'Prairie Propane', 'Mid-America Asphalt', 'Halvern Water Treatment', 'Prairie Ethanol', 'Railside Chemical Supply'],
-    utility: ['Halvern Power & Water'], bank: ['Halvern Savings Bank'], cityhall: ['Halvern City Hall'], clinic: ['Courthouse Square Clinic'], school: ['Millbank Elementary School'], church: ['Millbank Community Church'], bushub: ['Halvern Transit Center'], silo: ['Cutler Grain Co-op'],
+    tower: ['Medianville Mutual Insurance', 'Prairie Health Billing', 'First Medianville Title', 'Courthouse Legal Center', 'Mid-America Call Center', 'Medianville Regional Bank Operations', 'Granary Tower Offices', 'Plainsview Logistics HQ', 'Medianville Daily Ledger', 'Northfield Software', 'County Courthouse Annex', 'Heartland Payroll Services', 'Prairie Wireless', 'Medianville Hospital Admin', 'Union Hall Tower', 'Medianville Health Partners', 'Riverbend Insurance Agency', 'Courthouse Square Apartments Office'],
+    office: ['Medianville Tax & Accounting', 'County Workforce Office', 'Courthouse Square Dental', 'Medianville Public Library', 'County Records Office', 'Main Street Realty', 'Medianville Chamber of Commerce', 'Legal Aid of Medianville', 'Medianville Community College Annex', 'Square Physical Therapy', 'Medianville Credit Union'],
+    shed: ['Railside Distribution', 'Medianville Box & Freight', 'Prairie Cold Storage', 'Midland Parts Supply', 'Railside Metal Works', 'Medianville Bottling', 'Plainsview Packaging', 'County Road Department', 'Railside Lumber', 'Medianville Printing', 'Mid-America Recycling', 'Medianville Bakery Plant', 'Plainsview Movers', 'Railside Auto Salvage', 'Medianville Ice Co.', 'Cutler Seed Warehouse', 'County Salt Barn', 'Midland Cabinets', 'Railside Tool & Die'],
+    tank: ['Railside Fuel Terminal', 'Medianville Feed & Grain Tanks', 'Prairie Propane', 'Mid-America Asphalt', 'Medianville Water Treatment', 'Prairie Ethanol', 'Railside Chemical Supply'],
+    utility: ['Medianville Power & Water'], bank: ['Medianville Savings Bank'], cityhall: ['Medianville City Hall'], clinic: ['Courthouse Square Clinic'], school: ['Millbank Elementary School'], church: ['Millbank Community Church'], bushub: ['Medianville Transit Center'], silo: ['Cutler Grain Co-op'],
   };
   const SECTOR = { cornershop: 'Retail', grocery: 'Grocery', bigbox: 'Retail', diner: 'Food service', gas: 'Fuel', farmstand: 'Farm', tower: 'Offices', office: 'Offices', shed: 'Warehouse and industry', tank: 'Fuel storage', utility: 'Utility', bank: 'Bank', cityhall: 'Local government', clinic: 'Health care', school: 'Public school', church: 'Congregation', bushub: 'Public transit', silo: 'Agriculture' };
   H.SECTOR = SECTOR;
@@ -937,7 +937,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const p = { id: 'ORG-' + pad(oi++, 4), type: 'org', name, kind: t.kind, sector: SECTOR[t.kind], district: t.d, tile: t, anchor: a && a.length ? a[0] : [cx, 0.3, cz] };
     t.org = p; H.orgs.push(p); H.party.set(p.id, p);
   }
-  const transit = { id: 'ORG-T001', type: 'org', name: 'Halvern Transit', kind: 'transit', sector: 'Public transit', district: 'downtown', tile: H.T(12, 11), anchor: null };
+  const transit = { id: 'ORG-T001', type: 'org', name: 'Medianville Transit', kind: 'transit', sector: 'Public transit', district: 'downtown', tile: H.T(12, 11), anchor: null };
   H.orgs.push(transit); H.party.set(transit.id, transit); H.transit = transit;
   H.partyAtTile = (t) => t.org || null;
   H.hhAtTile = (t) => H.households.filter((h) => h.tile === t);
@@ -1117,7 +1117,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   H.placeName = (p) => (p.tile && p.tile.kind === 'road' && H.stops.includes(p.tile) ? `${H.STOP_NAME(p.tile)} bus stop` : p.name);
 })();
 </script>
-<script>// ===== Halvern in Motion v3 · Map view: a printed quadrangle sheet (SVG base + canvas records) =====
+<script>// ===== Medianville in Motion v3 · Map view: a printed quadrangle sheet (SVG base + canvas records) =====
 (function () {
   const SVGNS = 'http://www.w3.org/2000/svg';
   const PAPER = '#F4EFE3', INK = '#141414', BROWN = '#A87A50', BLUE = '#2F6DB0', RED = '#C9402C', ROSE = '#EFD3CB', WOOD = '#CFE2BC', FIELD = '#DFEACB';
@@ -1278,7 +1278,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       watertower: (x, y) => `<circle cx="${x}" cy="${y}" r="0.1" class="ring"/><circle cx="${x}" cy="${y}" r="0.03"/>`,
     };
     function star(x, y, r) { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + f2(x + Math.cos(a) * rr) + ' ' + f2(y + Math.sin(a) * rr); } return `<path d="${d}Z"/>`; }
-    const LBL = { school: 'Millbank Elem. School', church: 'Church', clinic: 'Clinic', cityhall: 'City Hall', bank: 'Halvern Savings', bus: 'Transit Center', watertower: 'Water Tank' };
+    const LBL = { school: 'Millbank Elem. School', church: 'Church', clinic: 'Clinic', cityhall: 'City Hall', bank: 'Medianville Savings', bus: 'Transit Center', watertower: 'Water Tank' };
     let syms = '', lab = '';
     for (const s of P.syms) {
       const x = f2(mx(s.x)), y = f2(my(s.z));
@@ -1321,8 +1321,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     }
     let ticks2 = '';
     for (let i = 1; i < 20; i++) ticks2 += `M${i} -0.6L${i} -0.75M${i} 20.6L${i} 20.75M-0.6 ${i}L-0.75 ${i}M20.6 ${i}L20.75 ${i}`;
-    const top = `<text class="hd" x="-0.6" y="-1.65">HALVERN, MID-AMERICA</text><text class="hd r" x="20.6" y="-1.65">SIMULATED CITY SHEET · 2027</text>`;
-    const title = `<g class="ttl"><text class="t1" x="20.6" y="24.55">HALVERN QUADRANGLE</text><text class="t2" x="20.6" y="25.15">2027 · SIMULATED</text>
+    const top = `<text class="hd" x="-0.6" y="-1.65">MEDIANVILLE, MID-AMERICA</text><text class="hd r" x="20.6" y="-1.65">SIMULATED CITY SHEET · 2027</text>`;
+    const title = `<g class="ttl"><text class="t1" x="20.6" y="24.55">MEDIANVILLE QUADRANGLE</text><text class="t2" x="20.6" y="25.15">2027 · SIMULATED</text>
       <text class="t3" x="20.6" y="25.75">An invented city drawn for study. No real places or people.</text><text class="t3" x="20.6" y="26.15">Grid squares are one block, about 660 feet. Contour interval 10 feet.</text></g>`;
     // bar scale: 1 mile = 8 blocks
     let sb = '<g class="scale">';
@@ -1528,7 +1528,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   };
 })();
 </script>
-<script>// ===== Halvern in Motion v3 · app shell: playback, records, interaction, UI, accessibility =====
+<script>// ===== Medianville in Motion v3 · app shell: playback, records, interaction, UI, accessibility =====
 (function () {
   H.buildDay();
   const $ = (s, r = document) => r.querySelector(s);
@@ -1587,7 +1587,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const mv = views.mini, sampled = Math.random() < Math.min(1, 3 / S.speed);
       if (mv && (S.view === 'mini' || fading)) mv.onRecord(r, sampled);
     }
-    if (window.HalvernSound && S.filters.has(r._vk)) HalvernSound.rec(r._vk);
+    if (window.MedianvilleSound && S.filters.has(r._vk)) MedianvilleSound.rec(r._vk);
     Feed.push(r);
   }
   function seek(t) {
@@ -1620,7 +1620,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const out = r.amount_paid_by_user > 0 ? r.amount_paid_by_user : r.amount_gross;
     return { txt: H.fmtMoney(-out, true), cls: '', sr: `minus ${H.fmtMoney(out)}` };
   }
-  const cpName = (r) => (r._stop ? `Halvern Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
+  const cpName = (r) => (r._stop ? `Medianville Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
   function subLine(r) {
     if (r._vk === 'fail') return `${H.reason(r)} · ${H.fmt(r._t)}`;
     return [H.catLabel(r), H.methodLabel(r), H.fmt(r._t)].filter(Boolean).join(' · ');
@@ -1682,7 +1682,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       this.ready = false; this.frameBlock = block;
       this.frame().src = `systems-lens/?embed=1&block=${encodeURIComponent(block)}&rec=`;
     },
-    post(msg) { if (!this.ready) { this.pending = msg; return; } this.frame().contentWindow.postMessage(Object.assign({ source: 'halvern-v3' }, msg), location.origin); },
+    post(msg) { if (!this.ready) { this.pending = msg; return; } this.frame().contentWindow.postMessage(Object.assign({ source: 'medianville-v3' }, msg), location.origin); },
     payload(r) {
       const a = amountOf(r);
       return { id: r.record_id, title: H.catLabel(r), amt: a.txt, fail: r._vk === 'fail', income: r._vk === 'income',
@@ -1806,7 +1806,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function recordHTML(r) {
     const a = amountOf(r), fail = r._vk === 'fail', vk = r._vk;
     const status = fail ? `<span class="pill fail">${H.outcomeWord(r)}</span>` : `<span class="pill ok">${vk === 'unpaid' ? 'Done · unpaid' : 'Completed'}</span>`;
-    const to = r._stop ? `Halvern Transit <span class="dim">· ${esc(H.STOP_NAME(r._stop))} stop</span>` : partyLine(r._to);
+    const to = r._stop ? `Medianville Transit <span class="dim">· ${esc(H.STOP_NAME(r._stop))} stop</span>` : partyLine(r._to);
     const money = (v) => H.fmtMoney(v);
     const bd = vk === 'unpaid' ? kv([['Time spent', `${r.time_minutes} min`], ['Getting there', r.travel_mode ? `${r.travel_mode[0].toUpperCase() + r.travel_mode.slice(1)}${r.travel_miles ? `, ${r.travel_miles} mi` : ''}` : '']])
       : r.record_type === 'failed_attempt' && !r.amount_gross ? kv([['Time waiting', `${r.wait_minutes} min`], ['Time lost in all', `${r.time_minutes} min`]])
@@ -2105,7 +2105,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     $('#lens-city').addEventListener('click', () => Lens.close());
     $('#lens-block').addEventListener('change', (e) => Lens.open(e.target.value, null, null));
     window.addEventListener('message', (e) => {
-      if (e.origin !== location.origin || !e.data || e.data.source !== 'halvern-lens') return;
+      if (e.origin !== location.origin || !e.data || e.data.source !== 'medianville-lens') return;
       if (e.data.type === 'close') Lens.close();
       if (e.data.type === 'ready' && e.data.block === Lens.frameBlock) { Lens.ready = true; if (Lens.pending) { Lens.post(Lens.pending); Lens.pending = null; } }
     });
@@ -2135,7 +2135,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       if (e.key === ' ' && !onControl) { e.preventDefault(); setPlaying(!S.playing); return; }
       if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { Lens.close(); setView(S.view === 'mini' ? 'map' : 'mini'); return; }
       if ((e.key === 'D') && e.shiftKey && !typing) { toggleDebug(); return; }
-      if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing && window.HalvernSound) { HalvernSound.toggle(); return; }
+      if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing && window.MedianvilleSound) { MedianvilleSound.toggle(); return; }
       if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { Lens.toggle(); return; }
       if (['q', 'Q', 'e', 'E', 'n', 'N'].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey && !typing && !Lens.on && mini()) {
         e.preventDefault(); if (e.key === 'n' || e.key === 'N') northUp(); else turnBy(e.key === 'q' || e.key === 'Q' ? -15 : 15); return;
@@ -2182,7 +2182,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function updateSceneLabel(force) {
     const m = Math.floor(S.t); if (m === lastLabelMin && !force) return; lastLabelMin = m;
     const inflight = S.flights.filter((F) => !F.steady && progress(F) <= F.stop).length;
-    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Halvern at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
+    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Medianville at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
   }
 
   // ---------- overlay: keyboard focus ring ----------
@@ -2241,7 +2241,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     }
     if (S.flights.some((F) => F.dead)) S.flights = S.flights.filter((F) => !F.dead);
     S.dark = H.dark(S.t);
-    if (window.HalvernSound) HalvernSound.frame(dt);
+    if (window.MedianvilleSound) MedianvilleSound.frame(dt);
     hoverTest();
     const dtA = S.playing ? dt : 0;
     if (S.view === 'map' || fading) views.map.frame(S);
@@ -2377,7 +2377,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 <script src="real-day.js"></script>
 <script src="sound.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
-<script type="module">// ===== Halvern in Motion v3 · Miniature view: photographic light and surface, the city past the board, turns and tilts =====
+<script type="module">// ===== Medianville in Motion v3 · Miniature view: photographic light and surface, the city past the board, turns and tilts =====
 // From the realism lab (Nov 19, 2026): sun and sky through the day, filmic tone, contact shadows, night lights,
 // street detail, materials with grain, haze, and land beyond the board. Focus blur is still the v3 band.
 import * as THREE from 'three';

@@ -40,7 +40,7 @@ Two patterns hold across studies. First, Kolko found that the most representativ
 
 Even test-market cities are a compromise. Ohio State marketing faculty have questioned whether Columbus still mirrors US demographics as well as it once did ([Ohio State](https://fst.osu.edu/news/some-things-columbus-still-best-test-market)).
 
-**Implication.** Any single real city misses rural life, which is where service gaps are widest, and none of these rankings measured industry mix. A synthetic city sampled from national microdata avoids both problems, and the rankings become a check: Halvern should score at least as well as the best real metro on each study's measures.
+**Implication.** Any single real city misses rural life, which is where service gaps are widest, and none of these rankings measured industry mix. A synthetic city sampled from national microdata avoids both problems, and the rankings become a check: Medianville should score at least as well as the best real metro on each study's measures.
 
 ## The shape of the country
 
@@ -108,14 +108,14 @@ Rural consumers also made fewer payments overall: 42 a month, against 53 in urba
 
 Government shapes a typical day in four roles, but card and bank data capture only two of them: money in and taxes out. A view of everyday needs that leaves out free and subsidized services, or the insurers and programs paying behind the counter, will misjudge where people struggle.
 
-| Role | Examples | Visible in card or bank data? | How Halvern records it |
+| Role | Examples | Visible in card or bank data? | How Medianville records it |
 | --- | --- | --- | --- |
 | Transfers in | Social Security, SSI, SNAP, tax refunds, unemployment, VA benefits | Yes, as deposits or EBT loads | Benefit records from a government party to a household, on real payment schedules |
 | Services delivered | Public school days, library visits, transit rides, public clinics, parks, senior meals | Rarely; the price to the user is often zero | Service-encounter records with the user's cost, the payer and an estimated public cost |
 | Payers behind a purchase | Medicare, Medicaid, private insurers, school districts, employers | Only the user's copay | Split amounts: what the user paid and what a third party paid |
 | Taxes out | Sales tax, payroll withholding, property tax | Partly | Fields on each purchase and payroll record |
 
-The Congressional Budget Office measures these flows across the income distribution. Its September 2026 report covers 2023, the latest year with full tax data, and traces income before and after means-tested transfers and federal taxes since 1979 ([CBO, The Distribution of Household Income, 2023](https://www.cbo.gov/system/files/2026-09/62761-Household-Income-2023.pdf)). Those results are the natural check on whether Halvern's transfers and taxes are the right size for each income group.
+The Congressional Budget Office measures these flows across the income distribution. Its September 2026 report covers 2023, the latest year with full tax data, and traces income before and after means-tested transfers and federal taxes since 1979 ([CBO, The Distribution of Household Income, 2023](https://www.cbo.gov/system/files/2026-09/62761-Household-Income-2023.pdf)). Those results are the natural check on whether Medianville's transfers and taxes are the right size for each income group.
 
 Infrastructure used by everyone, such as roads, water and police, does not need a record per person. It belongs in a context file of daily public costs and funding sources, so analysts can see the full public budget behind the day.
 
@@ -209,7 +209,7 @@ These are starting hypotheses drawn from the research so far, to be tested again
 
 - **Rankings are dated.** The Kolko and WalletHub representativeness studies use data from 2014 to 2016 and should be recomputed on current ACS data.
 - **Some figures are secondary.** The 2015 to 2024 values in the SHED chart come from a compilation of Fed data; the 2021 and 2025 values were confirmed in the Fed's report. Some sources here were read through news summaries rather than the original study, as linked.
-- **Georgia is not the nation.** ALICE figures cited are for Georgia; national ALICE rates should be pulled before calibrating Halvern.
+- **Georgia is not the nation.** ALICE figures cited are for Georgia; national ALICE rates should be pulled before calibrating Medianville.
 - **Political labels are approximate.** Many think tanks describe themselves as nonpartisan.
 - **Synthetic data reflects its assumptions.** It can suggest where to look, but only observation and the people affected can confirm a problem.
 

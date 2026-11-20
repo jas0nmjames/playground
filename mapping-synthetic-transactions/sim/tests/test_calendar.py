@@ -5,8 +5,8 @@ import os
 from types import SimpleNamespace
 
 from conftest import SIM_DIR
-from halvern_sim.config import calendar, federal_holidays
-from halvern_sim.day_a import due_today, paid_today
+from medianville_sim.config import calendar, federal_holidays
+from medianville_sim.day_a import due_today, paid_today
 
 OPM_CSV = os.path.join(os.path.dirname(SIM_DIR), "sources", "derived", "federal_holidays_2027.csv")
 

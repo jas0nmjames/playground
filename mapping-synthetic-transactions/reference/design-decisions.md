@@ -2,7 +2,7 @@
 
 Started 2026-11-20. One place for the decisions behind the project, gathered from the dated docs in this project, so the reasoning can be read, criticized or reversed without digging through ten files. It goes into the repo as `reference/design-decisions.md`, and the site's About page links to it.
 
-**Each entry:** what was decided, why, what else was considered, and what it costs. **Who** says whose call it was: *Jason* (his direction or choice), *Build* (a method choice Claude made while building, recorded in the build notes), or *Jason, on a proposal* (Claude proposed it and Jason chose it). **Source** is the project doc that records it. Docs written before the rename carry the old name, Halvern.
+**Each entry:** what was decided, why, what else was considered, and what it costs. **Who** says whose call it was: *Jason* (his direction or choice), *Build* (a method choice Claude made while building, recorded in the build notes), or *Jason, on a proposal* (Claude proposed it and Jason chose it). **Source** is the project doc that records it. Project docs written before the rename keep the old name, Halvern, in their file names; the ones copied into `reference/` were renamed with the city on 2026-11-20.
 
 New decisions go at the end of their section with a date. A reversed decision stays in the log, marked *Superseded* with a pointer to the new entry.
 
@@ -13,7 +13,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 1.1 Every transaction is a job to be done
 - **Decided:** A record is anything someone did to get something done, not only money changing hands: a purchase, a bill, a benefit deposit, a form, a wait, a declined card, a wasted trip, an hour of unpaid care. Each record says what the job was, who paid, who else paid, what it cost in time and effort, and whether it worked.
 - **Why:** The project exists to find small, practical projects that improve daily life at the margins. At the margins, the frustration is often in the non-monetary jobs and the failures, which a spending dataset would leave out.
-- **Who:** Jason (the project's premise and title). **When:** before 2026-11-16. **Source:** `halvern-transaction-generator-prompt.md`.
+- **Who:** Jason (the project's premise and title). **When:** before 2026-11-16. **Source:** `medianville-transaction-generator-prompt.md`.
 
 ### 1.2 A synthetic city, not a real one
 - **Decided:** Build a fictional city weighted to the whole country, and visit real places in the Atlanta area for examples and anecdotes.
@@ -34,9 +34,16 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 1.5 The name: Medianville
 - **Decided:** The city was renamed from Halvern to Medianville, a nod to the Lynds' *Middletown* (1929) and the "typical town" studies that followed it.
 - **Why:** The name should say what the city is for. Unlike the Lynds' Muncie, Medianville's typicality comes from weighting, not from leaving groups out. The README carries a naming note.
-- **Considered:** Renaming right away. It was held until after the v2 data so it would happen only once, across everything.
-- **Who:** Jason. **When:** decided 2026-11-19; done in the repo by 2026-11-20. **Source:** `halvern-data-update-plan.md`, section 10.
-- **Open:** Whether the frozen v1 run and the archived viewers keep the Halvern name as a record of what shipped (recommended).
+- **Considered:** Renaming right away, or after the v2 data was packaged. It was first held until after v2 so it would happen only once, across everything. Renaming between phase 3 and packaging still does it once, and before any v2 run or hand-written record exists, so none of them has to be renamed afterwards.
+- **Who:** Jason. **When:** decided 2026-11-19; moved up on 2026-11-20 to run right after phase 3, so the v2 run and its hand-written records are made under the new name; done in the `medianville-rename` pull request. **Source:** `medianville-data-update-plan.md`, phase 3b.
+- **Kept:** The frozen v1 run (`data/halvern_2027-03-03.zip` and `data/halvern/`) and the archived viewers (`v1/` and `v3/`) keep Halvern, as a record of what shipped. Past results in `sim/evidence/results/` keep it too. Decided 2026-11-20.
+
+### 1.6 A renamed copy of v1 for the latest pages
+- **Decided:** `tools/rename_run.py` writes `data/medianville_2027-03-03.zip` from the frozen v1 zip with only the name changed: the case map is applied to every file's contents and paths, and every other byte, timestamp and permission is kept. The latest viewer, the explorer and the systems lens load the copy; the archived viewers keep loading the original.
+- **Why:** Until v2 is packaged, the latest pages show v1's records, and those name the city's own places (its transit agency, its savings bank, its hospital) under the old name. Without the copy, every record sheet in the renamed pages would say the old name.
+- **Considered:** Renaming the names in each page as the records load, which every page would have to repeat; waiting for v2, which leaves the old name on screen until then.
+- **Cost:** A second 16 MB zip in the repo, and a copy that has to be kept honest. `sim/tests/test_rename_run.py` checks that mapping the copy back gives every file of the v1 zip byte for byte, in the same order, with the same timestamps and permissions. When v2 ships, the latest pages move to `data/runs/v2/` and the copy can go.
+- **Who:** Jason. **When:** 2026-11-20. **Source:** `medianville-data-update-plan.md`, phase 3b.
 
 ---
 
@@ -45,7 +52,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 2.1 Simulate, don't write
 - **Decided:** Code generates the population, the finances and the day. The model writes only the job statements, the text templates and 500 records by hand.
 - **Why:** No model can write 200,000 consistent records by hand. Money wouldn't reconcile, and people would be in two places at once.
-- **Who:** Build. **When:** 2026-11-16. **Source:** `halvern-build-approach.md`.
+- **Who:** Build. **When:** 2026-11-16. **Source:** `medianville-build-approach.md`.
 
 ### 2.2 Settle the day in time order against real wallets
 - **Decided:** Every action goes into one queue ordered by minute and is settled against the household's balance.

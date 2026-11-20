@@ -1,4 +1,4 @@
-# Halvern Miniature: realism design record
+# Medianville Miniature: realism design record
 
 November 19, 2026. How v3's miniature went from a model on a screen toward a photographed miniature.
 

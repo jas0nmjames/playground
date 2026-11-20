@@ -72,9 +72,9 @@ def make(rng, kind, ctx, outcome, F, wait, fee, fee_type):
     c["label"] = kind.replace("_", " ")
     c["Label"] = _cap(c["label"])
     if c.get("org") == "Out-of-area employers":
-        c["org"] = "an employer outside Halvern"
+        c["org"] = "an employer outside Medianville"
     elif c.get("org") == "Out-of-area suppliers":
-        c["org"] = "a supplier outside Halvern"
+        c["org"] = "a supplier outside Medianville"
     if ctx.get("purpose") in PURPOSE:
         c["purpose"] = PURPOSE[ctx["purpose"]]
     if "grade" in ctx:

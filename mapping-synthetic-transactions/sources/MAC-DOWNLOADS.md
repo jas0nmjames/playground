@@ -140,7 +140,7 @@ Merge into `development`, not `main`.
 
 ## Prompt for Claude Code on the Mac
 
-> I'm finishing phase 2 of the Halvern v2 data update in `mapping-synthetic-transactions/`. Read
+> I'm finishing phase 2 of the Medianville v2 data update in `mapping-synthetic-transactions/`. Read
 > `sources/MAC-DOWNLOADS.md` and `sources/README.md` first, then do steps 1–5 of MAC-DOWNLOADS.md on a
 > feature branch off `development`. Re-download the 22 logged rows with `refetch` and `ffiec_bulk.py`, then
 > the 19 blocked rows, from the publishers' own sites only. Ask me before any file over 1 GB. Don't create

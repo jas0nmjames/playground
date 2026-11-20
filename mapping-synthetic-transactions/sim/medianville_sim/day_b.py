@@ -52,7 +52,7 @@ def bus_ride(sim, q, P, H, t, o_d, d_d, purpose="errand"):
         elif fare:
             paid = 0.0
         sim.emit(tt, "public_service_encounter", "transportation", "transit_ride", P, H, tr, P, ben=P, method=(how if paid else "none"),
-                 gross=TRANSIT_COST, user=paid, third=TRANSIT_COST - paid, payer="Halvern Area Transit operating subsidy (local sales tax, state aid, federal formula funds)",
+                 gross=TRANSIT_COST, user=paid, third=TRANSIT_COST - paid, payer="Medianville Area Transit operating subsidy (local sales tax, state aid, federal formula funds)",
                  fund="mixed", imputed=TRANSIT_COST, tmin=ride, wait=rng.randint(2, 14), miles=round(sim.dist(o_d, d_d), 1), mode="transit",
                  lens=("land_use",), related=rel, ctx=dict(purpose=purpose, fare="%.2f" % paid, reduced="1" if reduced and paid else "", free="1" if not fare else ""))
     push(q, t, run)

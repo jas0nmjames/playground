@@ -1,4 +1,4 @@
-"""Halvern simulator: parameters, calendar logic and reference tables.
+"""Medianville simulator: parameters, calendar logic and reference tables.
 
 Everything a user is likely to edit lives in PARAMS. Tables below it encode the
 calibration anchors from the prompt plus labeled estimates (see assumptions.csv).
@@ -237,13 +237,13 @@ OCC = {
 }
 # WAGE_SCALE: read this before using any one person's pay.
 # The OCC table above is close to the national median pay for each occupation (OEWS May 2025; registered nurse $98,000
-# against OEWS's $97,550). Every wage is then multiplied by WAGE_SCALE, so a typical full-time worker in Halvern earns
+# against OEWS's $97,550). Every wage is then multiplied by WAGE_SCALE, so a typical full-time worker in Medianville earns
 # 1.23 times the table. Wage growth from May 2025 to 2027 would justify only about 1.08, so each worker is paid about 14%
-# more than a real worker in the same job (a Halvern nurse about $120,000 against roughly $105,000).
-# Why: Halvern's households are smaller than real ones (2.36 people against about 2.58 nationally, 1.14 earners each), so
+# more than a real worker in the same job (a Medianville nurse about $120,000 against roughly $105,000).
+# Why: Medianville's households are smaller than real ones (2.36 people against about 2.58 nationally, 1.14 earners each), so
 # fewer paychecks reach each home. v1 set the boost to make up for that (and to put 41.5% of households under the ALICE
 # budget). Even with it, median household income is about $78,000, against about $86,700 implied by SCF 2025 in 2027
-# dollars; at 1.08 it would fall to roughly $70,000 and Halvern would look poorer than the country.
+# dollars; at 1.08 it would fall to roughly $70,000 and Medianville would look poorer than the country.
 # So household money (balances, bills, overdrafts, who can cover $400) is closer to right with the boost, and pay for a
 # single job is not. Compare households, not occupations.
 # Decided 2026-11-20: keep 1.23 for v2 (same people as v1). v3 rebuilds households at their real size from ACS PUMS;

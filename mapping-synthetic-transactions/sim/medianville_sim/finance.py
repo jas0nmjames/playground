@@ -155,7 +155,7 @@ def build_finance(sim):
     rng, by_kind, cal = sim.rng, sim.by_kind, sim.cal
     banks = {"first": by_kind["bank"][0], "corbel": [o for o in by_kind["bank"] if "Corbel" in o.name][0],
              "cu": by_kind["credit_union"][0], "online": by_kind["x_onlinebank"][0]}
-    first_branches = [o for o in by_kind["bank"] if "First Halvern" in o.name]
+    first_branches = [o for o in by_kind["bank"] if "First Medianville" in o.name]
     corbel_branches = [o for o in by_kind["bank"] if "Corbel" in o.name]
     sim.branches = {"first": first_branches, "corbel": corbel_branches, "cu": by_kind["credit_union"]}
     wallets = []
@@ -304,13 +304,13 @@ def build_finance(sim):
 # sources/tools/tx_title_loans.py from the OCCC credit access business reports). Single-payment loans run 30 days and are
 # paid off or refinanced each month: (150,086 new + 228,399 refinances) / 12 = about 31,500 open at a time, 1.01 per 1,000
 # Texans. Installment loans (103,990 new) are taken to run about five months: about 43,300 open, 1.38 per 1,000. So
-# about 2.4 per 1,000 residents, or 239 in Halvern, with one payment due a month each (about 7.8 payments a day).
-# Halvern's places are in Georgia, where title pawns are legal, so Texas rates stand in. Loans average about $1,500.
+# about 2.4 per 1,000 residents, or 239 in Medianville, with one payment due a month each (about 7.8 payments a day).
+# Medianville's places are in Georgia, where title pawns are legal, so Texas rates stand in. Loans average about $1,500.
 TITLE_OPEN_PER_1000 = {"single": 1.008, "installment": 1.384}
 
 
 def open_title_loans(sim):
-    srng = __import__("halvern_sim.config", fromlist=["side_rng"]).side_rng(sim.cfg["RANDOM_SEED"], "title_loans")
+    srng = __import__("medianville_sim.config", fromlist=["side_rng"]).side_rng(sim.cfg["RANDOM_SEED"], "title_loans")
     lenders = sim.by_kind.get("title_loan") or []
     if not lenders:
         return

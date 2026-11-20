@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate one simulated day (or several) of transactions for Halvern, a synthetic American city.
+"""Generate one simulated day (or several) of transactions for Medianville, a synthetic American city.
 
     python simulate.py                                  # Wednesday, March 3, 2027, full city, seed 20270303
     python simulate.py --date 2027-03-05 --out out_fri  # another day, same residents
@@ -14,8 +14,8 @@ import json
 import os
 import time
 
-from halvern_sim import blocks, context, main, output
-from halvern_sim.config import PARAMS
+from medianville_sim import blocks, context, main, output
+from medianville_sim.config import PARAMS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -55,7 +55,7 @@ def load_state(sim, path):
 
 def run_day(cfg, out, state_in=None, state_out=None, overrides=None, blocks_path=None, log=print):
     t0 = time.time()
-    log("Halvern %s (seed %s, %s households, weather %s)" % (cfg["SIM_DATE"], cfg["RANDOM_SEED"], cfg["N_HOUSEHOLDS"], cfg["WEATHER"]))
+    log("Medianville %s (seed %s, %s households, weather %s)" % (cfg["SIM_DATE"], cfg["RANDOM_SEED"], cfg["N_HOUSEHOLDS"], cfg["WEATHER"]))
     sim = main.build(cfg, log=log)
     if state_in:
         log("  carried balances forward from %s" % load_state(sim, state_in))
@@ -94,7 +94,7 @@ def cli():
     ap.add_argument("--gas-price", type=float, default=PARAMS["GAS_PRICE"])
     ap.add_argument("--grocery-price-mult", type=float, default=PARAMS["GROCERY_PRICE_MULT"])
     ap.add_argument("--portal-outage", default="640-805", help="state benefits portal outage as START-END minutes after midnight, or 'none'")
-    ap.add_argument("--blocks", default=blocks.find_blocks(HERE + "/halvern_sim/x"), help="the systems lens's mapped blocks (blocks.json); tags records with block_id, block_pattern and context_ids")
+    ap.add_argument("--blocks", default=blocks.find_blocks(HERE + "/medianville_sim/x"), help="the systems lens's mapped blocks (blocks.json); tags records with block_id, block_pattern and context_ids")
     ap.add_argument("--no-blocks", action="store_true", help="leave the block columns out")
     ap.add_argument("--overrides", default=os.path.join(HERE, "detailed_overrides.csv"), help="hand-written text for sampled records")
     a = ap.parse_args()

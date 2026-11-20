@@ -44,9 +44,9 @@ def read_csv(path):
 def run10(tmp_path_factory):
     """Simulate the baseline date for a 10% city. Returns (sim, output folder)."""
     import simulate
-    from halvern_sim.config import PARAMS
+    from medianville_sim.config import PARAMS
 
-    out = str(tmp_path_factory.mktemp("halvern10"))
+    out = str(tmp_path_factory.mktemp("medianville10"))
     cfg = dict(PARAMS)
     cfg["N_HOUSEHOLDS"] = TEST_HOUSEHOLDS
     sim, _ = simulate.run_day(cfg, out, overrides=None, blocks_path=BLOCKS, log=lambda *a: None)

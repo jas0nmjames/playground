@@ -6,7 +6,7 @@
 Reads sources/raw/payday_title_tx_occc/: the CY2025 annual state report (new title loans by size, refinances, consumers)
 and the four 2025 quarterly state reports (vehicles surrendered or repossessed). Columns are single-payment and
 installment title loans. Writes sources/derived/title_loans_tx_2025.csv with each figure, Texas's population, and the
-rate per 1,000 residents a year, which the simulator scales to Halvern.
+rate per 1,000 residents a year, which the simulator scales to Medianville.
 """
 import csv
 import os

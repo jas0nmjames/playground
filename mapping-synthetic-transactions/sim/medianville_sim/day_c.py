@@ -373,7 +373,7 @@ def gen_public(sim, H, q):
         elif 6 <= a <= 14 and H.alice != "above" and d == "D1" and rng.random() < .03:
             org = sim.by_kind["after_school"][0]
             emit(rng.randint(905, 930), "public_service_encounter", "children_education", "after_school_club_day", p, H, org, p, ben=p, gross=23.0, third=23.0,
-                 payer="United Fund of Greater Halvern and private donors", fund="philanthropic", imputed=23.0, tmin=180, mode="walk", lens=("family_care",), ctx=dict(org=org.name))
+                 payer="United Fund of Greater Medianville and private donors", fund="philanthropic", imputed=23.0, tmin=180, mode="walk", lens=("family_care",), ctx=dict(org=org.name))
         # ---- public health clinic
         if rng.random() < (.0009 if a < 6 else .0005 if a < 40 else .0003) * (2.2 if p.cov in ("uninsured", "medicaid") else .5):
             org = sim.one("health_dept")
@@ -502,7 +502,7 @@ SCAM_MEDIAN_BY_AGE = ((19, 189.0), (29, 417.0), (39, 450.0), (49, 500.0), (59, 5
 # Payday loans. California 2025 (DFPI CDDTL report, sources/raw/payday_ca_dfpi): 5,772,939 loans to 878,317 people, 146
 # per 1,000 residents a year, 70% of them repeat loans. Texas 2025 (OCCC, sources/raw/payday_title_tx_occc): about 1.84
 # million payday loans and refinances, 59 per 1,000. About 55% of Americans live where storefront payday lending is
-# legal (estimate; Georgia, where Halvern's places are, bans it), so a national city sees about 15 new loans a day.
+# legal (estimate; Georgia, where Medianville's places are, bans it), so a national city sees about 15 new loans a day.
 # The loans due each day (repaid, rolled over or bounced) are set equal to new ones, as in a steady state.
 SHUTOFF_NOTICE, SHUTOFF_DISCONNECT = .0030, .00073
 TAX_PAID = .0089
@@ -744,7 +744,7 @@ def gen_money(sim, H, q):
         r = rng.random()
         P = rng.choice([p for p in H.adults if not p.inpatient] or [head])
         # v2: paid preparation x 2.1 (v1 .0042). IRS 2026: 56% of e-filed returns came from tax professionals (about 54%
-        # paid), and three quarters of Halvern's ~48,000 returns filed in the 85-day season is ~420 a day.
+        # paid), and three quarters of Medianville's ~48,000 returns filed in the 85-day season is ~420 a day.
         if r < TAX_PAID and sim.by_kind.get("tax_prep"):
             org = sim.pick(("tax_prep", "accounting"), d, 8.0)
             fee = round(rng.uniform(170, 430) if org.kind == "tax_prep" else rng.uniform(320, 780), 2)
@@ -1237,7 +1237,7 @@ def gen_misc(sim, H, q):
     if H.alice != "above" and not H.util_incl:
         r = rng.random()
         util = next((b for b in H.bills if b[0] in ("electric_bill", "gas_bill", "water_bill")), None)
-        # v2: notices x 2 (RECS 2024: 12.2% of households got one in the year, about 47 a day for Halvern; T16) and
+        # v2: notices x 2 (RECS 2024: 12.2% of households got one in the year, about 47 a day for Medianville; T16) and
         # disconnections x 1.45 (T05, 11-12 a day). v1: .0015 and .0005.
         if util is not None and r < SHUTOFF_NOTICE + SHUTOFF_DISCONNECT:
             past = round(util[2] * rng.uniform(1.6, 3.2), 2)

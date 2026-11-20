@@ -147,7 +147,7 @@ def write_tables(sim, out, tagger=None):
         for o in sim.orgs:
             note = o.notes
             if o.district != "EXT" and o.emp:
-                note = (note + "; " if note else "") + "halvern_residents_on_staff=%d" % o.emp
+                note = (note + "; " if note else "") + "medianville_residents_on_staff=%d" % o.emp
             w.writerow([o.oid, o.name, o.otype, o.sector, "outside" if o.district == "EXT" else o.district, o.size if o.district != "EXT" else "", o.accepts, o.hours, note])
     # ledger: one row per household, the day's money reconciled
     bad = 0
@@ -409,7 +409,7 @@ def write_summary(sim, S, path, n_detailed=0):
     cal = sim.cal
     L = []
     A = L.append
-    A("# Halvern, %s %s: one simulated day" % (cal["dayname"], cal["date"].strftime("%B %-d, %Y")))
+    A("# Medianville, %s %s: one simulated day" % (cal["dayname"], cal["date"].strftime("%B %-d, %Y")))
     A("")
     A("Seed %s, weather %s, scale %.2f. Everything here is synthetic. Figures marked *anchor* come from the prompt; the rest are labeled estimates (see assumptions.csv)."
       % (sim.cfg["RANDOM_SEED"], sim.cfg["WEATHER"], sim.scale))
@@ -446,7 +446,7 @@ def write_summary(sim, S, path, n_detailed=0):
     A("| Residents | about 100,000 | {:,} | includes {:,} people in group quarters |".format(S["n_p"], S["n_gq"]))
     A("| Households | about 40,000 | {:,} | excludes group quarters |".format(S["n_hh"]))
     A("| District shares (D1 to D6) | 31 / 20 / 22 / 13 / 8 / 6 % | " + " / ".join("%.1f" % (100 * S["district_share"][d]) for d in ds) + " % | share of residents |")
-    A("| Residents with jobs | about 48,000 | {:,} | {:,} commute out; about {:,} positions at Halvern employers are filled by in-commuters |".format(S["jobs"], S["out_commuters"], S["in_commuters"]))
+    A("| Residents with jobs | about 48,000 | {:,} | {:,} commute out; about {:,} positions at Medianville employers are filled by in-commuters |".format(S["jobs"], S["out_commuters"], S["in_commuters"]))
     dev = max(abs(a - s) for _, a, s in S["sector"])
     A("| Industry mix | BLS shares in the prompt | largest gap %.1f points | full table below |" % dev)
     A("| Payments per adult per month | about 43 | %.1f | %s payments by adults today x 30.4 days; definition below |" % (S["pay_per_adult_month"], "{:,}".format(S["payments"])))
@@ -550,7 +550,7 @@ def write_summary(sim, S, path, n_detailed=0):
     A("")
     A("## The ten costliest frictions")
     A("")
-    A("Time is valued at $%.2f an hour, the median hourly wage of Halvern workers. Money is fees plus wages lost. A record with several tags splits its cost among them." % S["time_value"])
+    A("Time is valued at $%.2f an hour, the median hourly wage of Medianville workers. Money is fees plus wages lost. A record with several tags splits its cost among them." % S["time_value"])
     A("")
     A("| Friction | Records | Hours | Fees and lost wages | Combined cost | Household types hit hardest (per household) | Income group hit hardest |")
     A("|---|---|---|---|---|---|---|")
