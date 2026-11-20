@@ -7,6 +7,8 @@ import numpy as np
 from .config import DIST, INTRA, TRANSIT_SERVED, SALES_TAX, FULL_CITY_HOUSEHOLDS, calendar, weather_mult
 from . import text as TX
 
+from .blocks import COLS as BLOCK_COLS
+
 COLS = ["record_id", "timestamp_local", "record_type", "job_category", "job_statement", "actor_person_id", "household_id",
         "from_party_id", "to_party_id", "beneficiary_person_id", "district", "channel", "payment_method", "amount_gross",
         "amount_paid_by_user", "amount_paid_by_third_party", "third_party_payer", "funding_level", "imputed_public_cost",
@@ -446,7 +448,7 @@ class Sim:
         return how
 
     # ------------------------------------------------------------------ output
-    def write_records(self, path, overrides=None):
+    def write_records(self, path, overrides=None, tagger=None):
         rows = self.rows
         order = sorted(range(len(rows)), key=lambda i: (rows[i][1], i))
         rid = [None] * len(rows)
@@ -457,9 +459,11 @@ class Sim:
         nover = 0
         with open(path, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
-            w.writerow(COLS)
+            w.writerow(COLS + (BLOCK_COLS if tagger else []))
             for i in order:
                 r = list(rows[i])
+                if tagger:
+                    r += tagger.tag(rows[i])
                 r[0] = rid[i]
                 r[1] = "%sT%02d:%02d:00" % (date, r[1] // 60, r[1] % 60)
                 r[29] = rid[r[29]] if r[29] is not None else ""
