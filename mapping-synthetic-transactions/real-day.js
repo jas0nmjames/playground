@@ -197,7 +197,7 @@
     const CAR = new Set(['car', 'ride_from_family_or_friend', 'carpool']), BUS = new Set(['transit', 'school_bus', 'paratransit']), WALK = new Set(['walk', 'bike']);
     const tyMap = new Map(TYPES.map((t, i) => [t, i])), ocMap = new Map(OUTS.map((t, i) => [t, i])), catMap = new Map();
     const tre = /(?:T|\s)(\d{1,2}):(\d{2})(?::(\d{2}))?/;
-    const recs = []; let i = 0, last = performance.now(), anySec = false, firstId = '', lastId = '';
+    const recs = []; let i = 0, last = performance.now(), anySec = false, firstId = '', lastId = '', firstTs = '';
     const resolve = (id, hh) => {
       if (!id) return null;
       return PER.get(id) || HHM.get(id) || ORG.get(id) || unknown;
@@ -207,6 +207,7 @@
     while (R.p < N) {
       const o = R.p, n = R.row(); if (n < 8) continue;
       D.off[i] = o;
+      if (!i) firstTs = R.str(cT);
       const m = tre.exec(R.str(cT)); let s = 0;
       if (m) { s = +m[1] * 3600 + +m[2] * 60 + (m[3] ? +m[3] : 0); if (m[3] && m[3] !== '00') anySec = true; }
       D.sec[i] = Math.min(86399, s);
@@ -264,7 +265,7 @@
     for (const [v3, list] of stands) v3.stands = list;
     const mx = Math.max(...hourly) || 1;
     return {
-      records: recs, cum: { money: cm, fails: cf, unpaid: cu }, minuteIdx: minute, soundDensity: SD,
+      records: recs, date: (/^\d{4}-\d{2}-\d{2}/.exec(firstTs) || [''])[0], cum: { money: cm, fails: cf, unpaid: cu }, minuteIdx: minute, soundDensity: SD,
       recById: { get: (id) => { const ii = byId ? byId.get(id) : /^R\d+$/.test(id) ? parseInt(id.slice(1), 10) - 1 : -1; return ii >= 0 && ii < n ? recs[pos[ii]] : undefined; } },
       purchaseRate: (t) => { const h = (t / 60) % 24, a = Math.floor(h), f = h - a; return (4 * (hourly[a] * (1 - f) + hourly[(a + 1) % 24] * f)) / mx; },
     };
@@ -300,7 +301,7 @@
       Object.assign(H, { records: day.records, cum: day.cum, minuteIdx: day.minuteIdx, recById: day.recById, soundDensity: day.soundDensity });
       H.RATE.purchase = day.purchaseRate;
       App.useDay();
-      status({ state: 'real', n: day.records.length });
+      status({ state: 'real', n: day.records.length, date: day.date });
     } catch (e) {
       console.error(e);
       status({ state: 'failed', msg: String(e.message || e) });

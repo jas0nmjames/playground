@@ -55,6 +55,10 @@ The Miniature view at 12:19 p.m., playing at five minutes a second. Purple dashe
 
 The same moment in the Map view, zoomed out to show most of the sheet.
 
+![The intro over the dimmed city: "One day in Medianville", what the city is, how it was made and who made it, with Enter the city, Explore the data and About the project](screenshots/intro-desktop.jpg)
+
+On a first visit, an intro opens over the city while the day loads, and **About** in the header reopens it. The full [About page](about/) covers the origin, method, sources, limits and credits ([phone](screenshots/intro-phone.jpg); About page on [desktop](screenshots/about-desktop.jpg) and [phone](screenshots/about-phone.jpg)).
+
 ### Systems lens
 
 ![The systems lens: six stacked layers of Larkin Avenue, with record 6 selected, lines dropping to the circumstances behind it, callouts on the right and the Rollover loop drawn through the top two layers](screenshots/systems-lens.jpg)
@@ -93,6 +97,8 @@ The viewer's own placeholder day plays while the real one downloads. The chip in
 - **Timeline.** Bars show records per ten minutes. Plum marks flag ten-minute stretches where failures run well above the day's usual share: overnight, when autopays bounce, and in the evening. Speeds are Live (the real clock), 1, 5 and 20 minutes a second. Page Up and Page Down move an hour.
 - **Sound.** Off until you turn it on with the **Sound** button in the header or the **S** key. There are two layers, each with its own switch and volume, and the mix is remembered in your browser. **Background** (25% to start) is a quiet city that follows the hour: traffic and buses from the day's car and transit trips, voices from in-person records, birds at dawn, crossing chirps and wind. It follows the time of day in real seconds, so it doesn't speed up with playback. Zooming in brings the street closer; zooming out or tilting low toward the skyline leaves mostly wind and distant traffic. **Records** (60% to start) plays a soft pluck for each record shown, pitched by kind: income high, purchases and bills in the middle, public services and unpaid work low. A low thud marks a record that didn't work. Above 12 records a second the plucks thin into a sampled cloud, so faster playback sounds busier but not louder. The sound is all generated in the browser (`sound.js`), and it pauses when the tab is hidden. It was tuned in the Halvern Sound Lab.
 - With reduced motion requested, the viewer starts paused and draws paths without animating them.
+- **Intro and About.** A first visit opens an intro over the city: what Medianville is, how it was made and who made it. Its main button reads "Loading the day…" until the run is in, then "Enter the city"; Esc, the close button or a click on the dimmed city also close it. It's remembered in your browser (`medianville-intro-v1`), and **About** in the header opens it again. Any `#lens=…` or `#view=…` link, and `?intro=0`, skip it; `?intro=1` shows it anyway. While it's open the viewer's keys do nothing.
+- **Data.** **Data** in the header opens the explorer. A record's **Look closer** list and a household's day each end with **Open in data explorer**, which opens the explorer on that record (`explorer/#record-R0000001`) or household (`explorer/#household-H00001`).
 
 ## Reading the systems lens
 
@@ -138,7 +144,8 @@ Opening an `index.html` as a file can't fetch the data, so each animated page th
 
 | Path | What it is |
 |---|---|
-| `index.html` | The latest viewer, Miniature and Map: the city plan, both views, the activity panel, playback and the systems lens overlay |
+| `index.html` | The latest viewer, Miniature and Map: the city plan, both views, the activity panel, playback, the systems lens overlay and the first-visit intro |
+| `about/index.html` | The About page: what the project is, where it came from, how it was made, sources, limits and credits. Plain HTML and CSS. |
 | `real-day.js` | Loads the run for the latest viewer and folds it onto its town (see below) |
 | `sound.js` | The latest viewer's sound, generated in the browser with Web Audio |
 | `v1/index.html` | Archived: the night map (canvas map, timeline, ticker, record sheets and filters) |
@@ -152,11 +159,12 @@ Opening an `index.html` as a file can't fetch the data, so each animated page th
 | `data/halvern/out/summary.md` | Counts, calibration against the anchors, fees, public dollars and the costliest frictions |
 | `data/halvern/detailed_sample_500.csv` | The 500 hand-written records |
 | `data/halvern/simulate.py`, `halvern_sim/` | The simulator (Python 3.10+ and numpy). The package's own [README](data/halvern/README.md) explains how to re-run it for another date, a storm, or several days in a row. |
-| `screenshots/` | The five screenshots above |
+| `screenshots/` | The screenshots above, plus the intro and the About page |
 | `reference/` | The documents behind the project, listed below |
 
 ### Reference documents
 
+- [Design decision log](reference/design-decisions.md): every decision behind the project, with why, what else was considered, what it costs and whose call it was. Written after the rename to Medianville.
 - [Seeing the Margins: What a Representative American Day Reveals](reference/seeing-the-margins.md): the research white paper. Why no real city stands in for the US, and what fragility, payment habits and government look like in an ordinary day.
 - [Synthetic Mid-America: City Design v0.1](reference/synthetic-mid-america-city-design-v0.1.md): the design of the city, covering districts, economy, transaction model, field visits, and the lenses used to read it.
 - [Halvern transaction generator prompt](reference/halvern-transaction-generator-prompt.md): the prompt that generated the data.
@@ -253,6 +261,8 @@ The systems lens was one Claude app session (claude-opus-5-5) on November 18, 20
 
 The data explorer was one Claude app session (claude-opus-5-5) on November 19, 2026. It read the run and v3's loader, wrote `explorer/index.html`, checked its counts against the run's summary, tested it in headless Chrome at desktop and phone sizes, took the screenshot, and wrote these README sections. That session couldn't push, so the change came to this repository as a patch. Its row is an estimate of about 70 model requests, counted from the session's tool calls rather than measured.
 
+The intro, the About page and the data links were one Claude Code session (claude-opus-5-5) on November 20, 2026, from Jason's handoff and decision log. It checked the repository for the old name, wrote the intro over the viewer and the About page, added the Data and About links and the explorer links in the record and household sheets, added the decision log to `reference/`, tested it all in headless Chrome at desktop and phone sizes (51 checks, covering focus, keys, deep links, blocked storage and reduced motion), ran the simulator's tests, took the screenshots, updated this README and opened the pull request into `development`. Its row counts 56 model requests measured in the session transcript and about 10 more estimated for the README, the commit, the pull request and the reply.
+
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | November 16, 2026 | Claude app | claude-fable-5-2 | not measurable from here | — | — |
@@ -262,6 +272,7 @@ The data explorer was one Claude app session (claude-opus-5-5) on November 19, 2
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 1.008 kWh | 0.389 kg CO₂ | 0.504 L |
 | November 18, 2026 | Claude app (systems lens) | claude-opus-5-5 | 1.620 kWh | 0.625 kg CO₂ | 0.810 L |
 | November 19, 2026 | Claude app (data explorer) | claude-opus-5-5 | 1.260 kWh | 0.486 kg CO₂ | 0.630 L |
-| **Total (countable)** | | | **4.698 kWh** | **1.813 kg CO₂** | **2.349 L** |
+| November 20, 2026 | Claude Code (intro, About page, data links) | claude-opus-5-5 | 1.188 kWh | 0.459 kg CO₂ | 0.594 L |
+| **Total (countable)** | | | **5.886 kWh** | **2.272 kg CO₂** | **2.943 L** |
 
 [^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads.
