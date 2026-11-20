@@ -3,6 +3,26 @@ from .config import DISTRICTS, HOODS, SECNAME
 
 DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 
+# Closed on a federal holiday (the observed date). Government offices, banks and credit unions close on all of them;
+# many private offices and clinics close on the six major ones; most big retailers also close on Thanksgiving.
+HOLIDAY_CLOSED = {"benefits_office", "city", "county", "community_college", "courthouse", "dmv", "federal_office", "health_dept",
+                  "housing_authority", "library", "post_office", "probation", "school_district", "senior_center", "ssa", "usda",
+                  "va_clinic", "workforce", "bank", "bank_hq", "credit_union", "head_start", "community_action", "legal_aid", "vita"}
+MAJOR_CLOSED = {"prof_firm", "admin_firm", "law", "accounting", "insurer_office", "mgmt_hq", "software", "fqhc", "free_clinic",
+                "after_school", "tax_prep", "check_casher", "payday", "title_loan", "pawn", "car_dealer", "bhph_dealer", "construction",
+                "manufacturer", "wholesaler", "farm_supply", "ship_notary", "phone_store", "trade_school", "college_private",
+                "private_school", "food_pantry", "food_bank", "thrift"}
+THANKSGIVING_CLOSED = {"supercenter", "department", "home_center", "warehouse_club", "clothing", "electronics", "sporting",
+                       "auto_parts", "tire", "oil_change", "car_wash", "luxury_boutique", "dollar"}
+
+
+def closed_for_holiday(kind, cal):
+    h = cal.get("holiday")
+    if not h:
+        return False
+    return (kind in HOLIDAY_CLOSED or (cal["holiday_major"] and kind in MAJOR_CLOSED)
+            or (h == "Thanksgiving Day" and kind in THANKSGIVING_CLOSED | MAJOR_CLOSED))
+
 
 def parse_hours(hours, dow):
     """Return (open, close) minutes for the weekday, or (None, None) if closed that day."""
@@ -97,6 +117,8 @@ class Builder:
         o = Org("O%04d" % (len(self.orgs) + 1), self.uniq(name, d), kind, otype, SECNAME.get(sec, sec), d,
                 max(1, int(size)), accepts, hours, notes)
         o.open, o.close = parse_hours(hours, self.cal["dow"])
+        if closed_for_holiday(kind, self.cal):
+            o.open, o.close = None, None
         self.orgs.append(o)
         return o
 

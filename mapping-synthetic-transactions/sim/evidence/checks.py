@@ -202,8 +202,8 @@ def write_report(out, days, baseline=None, label="v2 in progress (`sim/`)"):
           "notice to shutoff, and the concentration of overdraft fees, need the month run (option B).",
           "- Most classes are represented by October days. Heating-season (Nov-Mar) and cooling-season (Jun-Sep) effects are "
           "only in the days that fall in those months.",
-          "- The simulator has no federal-holiday logic, so the holiday day runs as an ordinary weekday.",
-          "- Storm and heat day counts (%d and %d) are placeholders until NOAA Storm Events data is downloaded." % (typed_days.STORM_DAYS, typed_days.HEAT_DAYS)]
+          "- Storm (%.2f) and heat (%.2f) weekdays a year are 2015-2025 averages for Halvern's counties (`sources/derived/weather_days.csv`); "
+          "afternoon thunderstorms are not modeled." % (typed_days.STORM_DAYS, typed_days.HEAT_DAYS)]
     with open(os.path.join(out, "evidence_checks.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(L) + "\n")
 

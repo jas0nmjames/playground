@@ -1,7 +1,7 @@
 """Household day, part B: food, shopping, getting around, health care."""
 import math
 from .config import SALES_TAX, TRANSIT_SERVED, PART_B_DEDUCTIBLE
-from .engine import ANY, DAY, EVE, OFFICE, SHOP, LUNCH, MORN, MEAL, AFT, NIGHT
+from .engine import ANY, DAY, EVE, GAS, OFFICE, SHOP, LUNCH, MORN, MEAL, AFT, NIGHT
 from .day_a import push
 
 TRANSIT_COST = 9.80
@@ -214,7 +214,7 @@ def gen_shopping(sim, H, q):
         gqm = .5 if H.gq else 1.0
         work_d = P.wd if (P.works and not P.wfh and P.wd in TRANSIT_SERVED) else None
         for (kind, cat, rate, mult, kinds, amtf, taxable, dur, wait, prefs, scale, pwork) in SIMPLE:
-            pr = rate * tm * gqm * sim.cfg.get("PURCHASE_FREQ", 1.0)
+            pr = rate * tm * gqm * sim.cfg.get("PURCHASE_FREQ", 1.0) * sim.dow_mult
             if rng.random() >= pr * 2.5:
                 continue
             if rng.random() >= mult(P, H) / 2.5:
@@ -243,7 +243,7 @@ def gen_shopping(sim, H, q):
             push(q, t, lambda t=t, P=P, W=W, amt=amt: sim.pay(t, P, H, W, None, "food", "workplace_cafeteria_or_vending", amt, taxable=True,
                                                                ctx=dict(org=P.org.name), tmin=6, to=P.org))
         for (kind, cat, rate, mult, kinds, amtf, taxable) in ONLINE:
-            pr = rate * (1.15 if tm < .9 else 1.0) * sim.cfg.get("PURCHASE_FREQ", 1.0)
+            pr = rate * (1.15 if tm < .9 else 1.0) * sim.cfg.get("PURCHASE_FREQ", 1.0) * sim.dow_mult
             if rng.random() >= pr * 2.5 or rng.random() >= mult(P, H) / 2.5:
                 continue
             org = sim.X[rng.choice(kinds)]
@@ -289,7 +289,7 @@ def gen_food(sim, H, q):
         return
     W0 = H.wallets[0]
     dsince = (cal["dom"] - H.snap_day) if H.snap else 99
-    pm = .20 * wx["trips"] * (1.2 if n >= 4 else .75 if n == 1 else 1.0)
+    pm = .20 * wx["trips"] * (1.2 if n >= 4 else .75 if n == 1 else 1.0) * sim.dow_mult
     if 0 <= dsince <= 2:
         pm *= 2.1
     if any(p.ss_cohort in cal["ss_cohorts"] for p in H.members if p.ss):
@@ -519,7 +519,7 @@ def gen_transport(sim, H, q):
             org = sim.pick(("gas",), P.wd if (P.works and P.wd in TRANSIT_SERVED and rng.random() < .4) else H.district, 3.5)
             if org is None:
                 continue
-            t = sim.slot(P, 8, ((330, 560, 1.2), (690, 800, .5), (930, 1290, 1.5)), org.open, org.close)
+            t = sim.slot(P, 8, GAS, org.open, org.close)
             if t is None:
                 continue
 

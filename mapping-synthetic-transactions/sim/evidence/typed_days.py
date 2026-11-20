@@ -4,7 +4,8 @@ Every day of 2027 is put into exactly one class by `classify()`, using the simul
 (Social Security cohorts, SSI day, tax season, EITC refund wave) and OPM's observed federal holidays.
 Each class is represented by one or two simulated days; a representative's weight is the number of
 2027 days in its class divided by the number of representatives. Storm and heat days are carved out
-of the ordinary weekdays at fixed provisional counts until NOAA Storm Events data is in.
+of the ordinary weekdays at the 2015-2025 average for Halvern's counties (sources/derived/weather_days.csv,
+built by sources/tools/weather_days.py from NOAA Storm Events and Atlanta airport daily highs).
 """
 import csv
 import datetime as dt
@@ -14,15 +15,26 @@ import sys
 SIM_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if SIM_DIR not in sys.path:
     sys.path.insert(0, SIM_DIR)
-from halvern_sim.config import calendar  # noqa: E402
+from halvern_sim.config import MAJOR_HOLIDAYS, calendar, federal_holidays  # noqa: E402
 
 YEAR = 2027
 HOLIDAYS_CSV = os.path.join(os.path.dirname(SIM_DIR), "sources", "derived", "federal_holidays_2027.csv")
-STORM_DAYS, HEAT_DAYS = 4, 8   # provisional: replace with counts from NOAA Storm Events (manifest row noaa_storm_events)
+WEATHER_CSV = os.path.join(os.path.dirname(SIM_DIR), "sources", "derived", "weather_days.csv")
+
+
+def weather_counts():
+    """Average storm and heat weekdays a year, 2015-2025 (the file's mean row)."""
+    with open(WEATHER_CSV, newline="", encoding="utf-8") as f:
+        mean = next(r for r in csv.DictReader(f) if r["year"].startswith("mean"))
+    return float(mean["storm_weekdays"]), float(mean["heat_weekdays"])
+
+
+STORM_DAYS, HEAT_DAYS = weather_counts()   # about 1.4 and 8.3
 
 # class -> (representative days, weather, what the class covers)
 CLASSES = {
-    "holiday": ([dt.date(2027, 7, 5)], "ordinary", "observed federal holiday on a weekday (the simulator has no holiday logic yet, so this runs as an ordinary weekday)"),
+    "holiday_major": ([dt.date(2027, 7, 5)], "ordinary", "New Year's, Memorial, Independence, Labor, Thanksgiving and Christmas Days (observed): banks, government and most offices closed"),
+    "holiday_minor": ([dt.date(2027, 10, 11)], "ordinary", "MLK Day, Washington's Birthday, Juneteenth, Columbus and Veterans Days: banks and government closed, most private employers open"),
     "saturday": ([dt.date(2027, 10, 9)], "ordinary", "Saturdays"),
     "sunday": ([dt.date(2027, 10, 10)], "ordinary", "Sundays"),
     "eitc_wave": ([dt.date(2027, 3, 2)], "ordinary", "weekdays Feb 26-Mar 5 when EITC/ACTC refunds land (PATH Act hold)"),
@@ -34,8 +46,8 @@ CLASSES = {
     "weekday_early": ([dt.date(2027, 10, 5)], "ordinary", "other weekdays, days 2-10 of the month (SNAP issuance window, rent)"),
     "weekday_mid": ([dt.date(2027, 10, 14)], "ordinary", "other weekdays, days 11-20"),
     "weekday_late": ([dt.date(2027, 10, 26)], "ordinary", "other weekdays, days 21-31"),
-    "storm": ([dt.date(2027, 1, 19)], "storm", "winter storm weekdays (provisional count %d)" % STORM_DAYS),
-    "heat": ([dt.date(2027, 7, 22)], "heat", "heat-wave weekdays (provisional count %d)" % HEAT_DAYS),
+    "storm": ([dt.date(2027, 1, 19)], "storm", "winter or tropical storm weekdays that close schools (%.2f a year, NOAA 2015-25)" % STORM_DAYS),
+    "heat": ([dt.date(2027, 7, 22)], "heat", "weekdays with a high of 95 F or more (%.2f a year, Atlanta airport 2015-25)" % HEAT_DAYS),
 }
 
 
@@ -47,7 +59,7 @@ def holidays():
 def classify(d, hol):
     c = calendar(d)
     if d in hol:
-        return "holiday"
+        return "holiday_major" if federal_holidays(d.year).get(d) in MAJOR_HOLIDAYS else "holiday_minor"
     if c["dow"] == 5:
         return "saturday"
     if c["dow"] == 6:

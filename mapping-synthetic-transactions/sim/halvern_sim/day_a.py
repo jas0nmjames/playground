@@ -31,6 +31,25 @@ def subtract(awake, busy):
     return [[s, e] for s, e in sorted(out) if e - s >= 5]
 
 
+OFFICE_SCHED = ("day", "school", "early", "split")
+
+
+def holiday_work(p, sk, cal):
+    """Multiplier on the chance of working on a federal holiday. NCS March 2026: 81% of private-industry workers have paid
+    holidays, 8 a year on average (so the six major ones plus about two more); state and local government workers 11.
+    Shift, evening and gig schedules (hospitals, police, retail, food service) mostly work."""
+    major = cal["holiday_major"]
+    if sk == "school":
+        return 1.0 if cal["school_day"] else .05
+    if p.sector in ("gov", "fed"):
+        return (.9 if major else 1.0) if sk not in OFFICE_SCHED else .05
+    if p.sector == "fin" and sk in OFFICE_SCHED:
+        return .08
+    if sk in OFFICE_SCHED:
+        return .15 if major else .75
+    return .9 if major else 1.0
+
+
 WORK_P = {"day": (.93, .62), "school": (.94, .7), "early": (.92, .6), "shift3": (.72, .55), "shift12": (.45, .35), "var": (.70, .52),
           "late": (.70, .5), "eve": (.80, .6), "night": (.72, .5), "split": (.93, .7), "gig": (.72, .5), "farm": (.88, .6)}
 
@@ -57,6 +76,8 @@ def skeleton(sim, H):
             pw = WORK_P[sk][0 if p.ft or p.emp == "self_employed" else 1]
             if not weekday and sk in ("day", "school", "early", "split"):
                 pw *= .08
+            if cal["holiday"]:
+                pw *= holiday_work(p, sk, cal)
             if p.seasonal and not cal["growing"]:
                 pw *= .62
             if sk in ("early", "farm") and p.sector in ("constr", "ag", "self"):
@@ -141,15 +162,22 @@ def skeleton(sim, H):
         p.free = subtract([(wake + 15, p.bed - 10)], p.busy)
 
 
-def paid_today(p, cal):
-    c, pd = p.cadence, p.payday
+def _paid_on(p, c):
+    cad, pd = p.cadence, p.payday
     if not pd:
         return False
-    if c == "weekly":
-        return pd[0] == cal["dow"]
-    if c == "biweekly":
-        return pd[0] == cal["dow"] and pd[1] == cal["week_parity"]
-    return cal["dom"] in pd
+    if cad == "weekly":
+        return pd[0] == c["dow"]
+    if cad == "biweekly":
+        return pd[0] == c["dow"] and pd[1] == c["week_parity"]
+    return c["dom"] in pd
+
+
+def paid_today(p, cal):
+    """Payroll lands only on bank days; a payday that falls on a weekend or holiday is paid the business day before."""
+    if not cal["bank_day"]:
+        return False
+    return _paid_on(p, cal) or any(_paid_on(p, c) for c in cal["pay_ahead"])
 
 
 def handle_check(sim, q, P, H, W, amt, t0, what):
@@ -381,13 +409,13 @@ def gen_income(sim, H, q):
                 sim.emit(rng.randint(1, 360), "income", "income", "pension_payment", p, H, X["x_pension"], p, channel="automatic",
                          method="ach" if W.bank is not None else "check", gross=p.pension, lens=("aging",), ctx=dict(amt="%.2f" % p.pension, net="%.2f" % net))
             push(q, 6, run)
-        if p.va and cal["days_since_first"] == 0:
+        if p.va and cal["ssi_today"]:   # VA compensation follows the same 1st-or-business-day-before rule as SSI
             def run(p=p, W=W):
                 sim.credit(W, p.va, "bank")
                 sim.emit(rng.randint(1, 300), "benefit_issuance", "income", "va_compensation_deposit", p, H, X["x_va"], p, channel="automatic", method="ach",
                          gross=p.va, third=p.va, payer="VA disability compensation", fund="federal", ctx=dict(amt="%.2f" % p.va))
             push(q, 5, run)
-        if p.ui and (int(p.pid[1:]) % 5) == cal["dow"] % 5:
+        if p.ui and cal["bank_day"] and (int(p.pid[1:]) % 5) == cal["dow"]:   # weekday deposits only (v1 also paid one group on Saturdays)
             amt = round(p.ui / 4.33, 2)
 
             def run(p=p, W=W, amt=amt):
@@ -479,13 +507,22 @@ def gen_income(sim, H, q):
 
 
 # ---------------------------------------------------------------------------------------------- bills
-def due_today(b, cal):
+def _due_on(b, c):
     kind, org, amt, dom, method, W, freq, meta = b
     if freq == "M":
-        return dom == cal["dom"]
+        return dom == c["dom"]
     if freq == "W":
-        return dom == cal["dow"]
-    return dom[0] == cal["dow"] and dom[1] == cal["week_parity"]
+        return dom == c["dow"]
+    return dom[0] == c["dow"] and dom[1] == c["week_parity"]
+
+
+def due_today(b, cal):
+    """ACH autopays post only on bank days; one due on a weekend or holiday posts the next business day."""
+    if b[4] == "ach_auto":
+        if not cal["bank_day"]:
+            return False
+        return _due_on(b, cal) or any(_due_on(b, c) for c in cal["ach_catchup"])
+    return _due_on(b, cal)
 
 
 LATE_FEE = {"rent": (50, 100), "electric_bill": (5, 18), "gas_bill": (5, 15), "water_bill": (5, 12), "internet_bill": (10, 15),

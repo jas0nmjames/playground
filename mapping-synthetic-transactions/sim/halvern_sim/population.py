@@ -880,7 +880,8 @@ def build_population(sim):
                     ben = 25
                 if ben >= 20:
                     H.snap = round(ben)
-                    H.snap_day = rng.randint(1, 10)
+                    rng.randint(1, 10)   # v1's load-day draw, kept so the main stream (and the people) stay the same
+                    H.snap_day = C.draw_table(C.side_rng(sim.cfg["RANDOM_SEED"], "snap_day", H.hid).random(), C.SNAP_LOAD_DAYS)
         wic_ok = [p for p in H.members if p.age < 5]
         if wic_ok and (mi <= 1.85 * pov_m or H.snap) and rng.random() < .74:
             H.wic = 62.0 * len(wic_ok) + (58 if any(p.age < 1 for p in wic_ok) else 0)
