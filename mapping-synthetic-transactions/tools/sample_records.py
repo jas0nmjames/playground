@@ -161,6 +161,8 @@ def main():
     ap.add_argument("--selection", help="write [record_id, job_category, actor_person_id] per card here")
     ap.add_argument("--label", default="")
     ap.add_argument("--start", type=int, default=1, help="number the cards from here")
+    ap.add_argument("--compact", action="store_true", help="one line per record (for the writer) instead of cards")
+    ap.add_argument("--ids", help="a selection.json ([record_id, ...] rows): show exactly these records instead of drawing a sample")
     a = ap.parse_args()
 
     recs = list(rows(os.path.join(a.run, "records.csv")))
@@ -173,7 +175,12 @@ def main():
             o = old.get(k, 0)
             if o == 0 or (max(c, o) >= 5 and (c >= 1.5 * o or c <= o / 1.5)):
                 focus.add(k)
-    idx = pick(recs, hh, a.n, a.salt, focus, a.focus_share if focus else 0)
+    if a.ids:
+        with open(a.ids) as f:
+            want = {row[0] for row in json.load(f)}
+        idx = [i for i, r in enumerate(recs) if r["record_id"] in want]
+    else:
+        idx = pick(recs, hh, a.n, a.salt, focus, a.focus_share if focus else 0)
     need = set()
     for i in idx:
         r = recs[i]
@@ -181,6 +188,49 @@ def main():
     people = {p["person_id"]: p for p in rows(os.path.join(a.run, "persons.csv")) if p["person_id"] in need}
     by_id = {r["record_id"]: r for r in recs}
 
+    if a.compact:
+        lines = []
+        for i in idx:
+            r = recs[i]
+            p, H = people.get(r["actor_person_id"]), hh.get(r["household_id"])
+            who = "-"
+            if p is not None:
+                who = "%s%s %s" % (p["sex"], p["age"], (p["occupation"] if p["occupation"] not in ("", "none") else p["employment_status"]).replace("employed_", ""))
+                if p["disability"] != "none":
+                    who += " dis:" + p["disability"]
+                who += " cov:" + p["health_coverage"]
+                if p["benefits_received"] not in ("", "none"):
+                    who += " ben:" + p["benefits_received"]
+            hd = "-"
+            if H is not None:
+                hd = "%s %sp $%dk %s %s %s veh%s %s" % (H["household_type"].replace("group_quarters:", "GQ:"), H["size"], round(float(H["annual_income"]) / 1000),
+                                                       H["alice_status"], H["banked_status"], H["housing_tenure"].replace("owner_", "own_"), H["vehicles"], H["primary_language"])
+            other = next((orgs[x]["name"] for x in (r["to_party_id"], r["from_party_id"]) if x in orgs), "-")
+            ben = ""
+            if r["beneficiary_person_id"] and r["beneficiary_person_id"] != r["actor_person_id"] and r["beneficiary_person_id"] in people:
+                b = people[r["beneficiary_person_id"]]
+                ben = " for:%s%s" % (b["sex"], b["age"])
+            m = "g%s u%s" % (r["amount_gross"], r["amount_paid_by_user"])
+            if float(r["amount_paid_by_third_party"] or 0):
+                m += " t%s[%s]" % (r["amount_paid_by_third_party"], r["third_party_payer"][:40])
+            if float(r["fee_amount"] or 0):
+                m += " fee%s(%s)" % (r["fee_amount"], r["fee_type"])
+            tm = "%sm" % r["time_minutes"] + (" w%s" % r["wait_minutes"] if r["wait_minutes"] not in ("", "0") else "") + \
+                 (" %smi %s" % (r["travel_miles"], r["travel_mode"]) if float(r["travel_miles"] or 0) else "")
+            rel = ""
+            if r["related_record_id"] in by_id:
+                q = by_id[r["related_record_id"]]
+                rel = " after:%s/%s" % (q["job_category"].split(".")[1], q["outcome"])
+            lines.append("%s %s %s %s %s | %s | %s | %s%s | %s | %s/%s | %s | %s %s%s | %s" % (
+                r["record_id"], r["timestamp_local"][11:16], r["record_type"], r["job_category"], r["district"], who, hd, other, ben, m,
+                r["payment_method"], r["channel"], tm, r["outcome"], r["friction_tags"], rel, r["narrative"]))
+        with open(a.out, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+        if a.selection:
+            with open(a.selection, "w") as f:
+                json.dump([[recs[i]["record_id"], recs[i]["job_category"], recs[i]["actor_person_id"]] for i in idx], f)
+        print("%d lines to %s; %d focus kinds; record types %s" % (len(idx), a.out, len(focus), Counter(recs[i]["record_type"] for i in idx).most_common()))
+        return
     out = ["# Records to read%s" % (": " + a.label if a.label else ""), "",
            "%d records from `%s` (%d records in the run). Stratified by district, record type and income group%s." % (
                len(idx), os.path.basename(os.path.normpath(a.run)), len(recs),

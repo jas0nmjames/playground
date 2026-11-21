@@ -101,3 +101,28 @@ Both readers found the same few things. The households carry most of the trouble
    - Offerings at a mosque, synagogue, temple, gurdwara or Buddhist center support that place, not "my church", and drop the collection plate.
    - Care for a child under 16 is meals, medicine, dressing, watching, rides, therapy exercises and homework, never pills and bills (the same-length lists keep the main draws in line).
    - An app transfer's statement follows its purpose (settling up, or helping someone); "a" and "an" before occupations; "1 hour", not "1 hours"; "one child" and "two kids", not "Dropped 1"; "When the job is a water heater swap"; "Social Security disability (SSDI)" instead of "ssdi"; prescription narratives say "prescription" so they fit either statement.
+
+## The hand-written records
+
+After the fixes, the simulator was frozen at commit `dd0e6b6` (decision 2.5), and 300 records of the baseline day were drawn with salt 500. 120 of them (40%) came from the 59 job kinds new or changed since v1, one per kind in turn, and the rest were stratified by district, record type and income group. Claude Code wrote each one's job statement and narrative in `sim/detail_parts/part*.txt`. `tools/merge_detailed.py` merged them into `sim/detailed_overrides.csv`, keyed by record id, job and actor. Rerun, the baseline day applies all 300 and changes nothing else (`sim/tests/test_handwritten.py`).
+
+A second reader that had not seen the code checked every one against its own fields. Its [report](medianville-v2-handwritten-second-reader.md) found 23 contradictions and 54 weaker problems.
+
+**Contradictions.** All 23 were fixed. For example:
+- tax withheld "every week" from a biweekly check;
+- a mortgage draft for a home owned outright;
+- a "brother" who is a 72-year-old woman;
+- a woman with low vision who "drives";
+- a nursing-home shift for a hospital worker;
+- the Earned Income Tax Credit named for a $198,604 household;
+- the same man filing for divorce in the morning and paying for "my wife's green card case" that night.
+
+**Weaker problems.** 46 were fixed, along with every "round trip" and every relative the fields don't name. The rest were kept. Most of those are details the second reader couldn't see because they come from the simulator's own narrative, such as settlements in 21 days, $40 a month on a medical bill, an amount past due, or a federal and state split.
+
+**Record problems the reading surfaced, listed as limits rather than hidden:**
+- refundable credits paid to high-income households (about 140 of the day's 640);
+- Medicare's home health benefit for a 42-year-old on a marketplace plan;
+- federal withholding on incomes too low to owe;
+- a 74-mile therapy trip that fits in 53 minutes, because `time_minutes` leaves out travel.
+
+The second reader also found the text samey within a record type: more than a quarter of the statements end "so I can keep". Some were varied in the fixes. The rest is the cost of one writer in one sitting.
