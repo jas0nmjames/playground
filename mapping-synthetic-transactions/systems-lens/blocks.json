@@ -263,7 +263,9 @@
       "the Pelham rowhouses, 1962"
      ],
      "body": "A federal urban renewal grant paid the city to clear eleven blocks of rowhouses west of the courthouse for a civic center and parking. About 900 households were moved, most of them renters, and few were offered a place to come back to.",
-     "under": [],
+     "under": [
+      "DH1"
+     ],
      "rep": [
       1.5,
       1.5
@@ -815,6 +817,127 @@
        }
       ]
      }
+    },
+    {
+     "id": "DW1",
+     "scope": "district",
+     "types": [
+      "econ"
+     ],
+     "year": "2025",
+     "layer": "econ",
+     "title": "Fees fall on thin balances",
+     "lines": [
+      "Downtown: fees land on",
+      "the thinnest balances"
+     ],
+     "body": "Across downtown, short balances cost money. Nationally an out-of-network ATM withdrawal averages $4.86 and an overdraft about $27, and about 9% of accounts pay 79% of all overdraft and returned-payment fees.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E009",
+      "E011"
+     ]
+    },
+    {
+     "id": "DW2",
+     "scope": "district",
+     "types": [
+      "pol",
+      "env"
+     ],
+     "year": "2025",
+     "layer": "pol",
+     "title": "Buses that don't come",
+     "lines": [
+      "Downtown buses miss",
+      "their own schedule"
+     ],
+     "body": "Downtown riders depend on buses that run late or not at all. Where a route cancels 5% of trips, a five-day commuter meets a no-show bus about once every two weeks. In one large rider survey, 77% said bus problems made them miss something important in the past month.",
+     "under": [
+      "DE1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E041",
+      "E043"
+     ]
+    },
+    {
+     "id": "DW3",
+     "scope": "district",
+     "types": [
+      "econ",
+      "soc"
+     ],
+     "year": "2024",
+     "layer": "econ",
+     "title": "Schedules with little notice",
+     "lines": [
+      "Hourly schedules posted",
+      "less than two weeks out"
+     ],
+     "body": "Downtown jobs are mostly hourly service work. Nationally about two-thirds of service workers get their schedules with less than two weeks' notice, and 11% had a shift cancelled in the past month.",
+     "under": [],
+     "rep": [
+      11.1,
+      2.3
+     ],
+     "evidence_ids": [
+      "E040",
+      "E046"
+     ]
+    },
+    {
+     "id": "DH1",
+     "scope": "district",
+     "types": [
+      "hist",
+      "pol"
+     ],
+     "year": "1949–1974",
+     "layer": "hist",
+     "title": "Renewal and highways through downtown",
+     "lines": [
+      "Urban renewal and highways",
+      "cleared downtown blocks"
+     ],
+     "body": "From the Housing Act of 1949 to the program's end in 1974, federal urban renewal cleared older downtown blocks across the country, and the 1956 interstate program routed highways through many of them. Cheap housing near downtown jobs was among what was lost.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "Housing Act of 1949, Title I; Federal-Aid Highway Act of 1956; University of Richmond, Renewing Inequality"
+    },
+    {
+     "id": "DE1",
+     "scope": "district",
+     "types": [
+      "env"
+     ],
+     "year": "ongoing",
+     "layer": "env",
+     "title": "Pavement holds the heat",
+     "lines": [
+      "Downtown runs hotter",
+      "than its surroundings"
+     ],
+     "body": "Downtown is mostly pavement and roofs with few trees. The EPA estimates the heat island effect makes daytime temperatures in urban areas about 1 to 7°F higher than in outlying areas, which raises cooling bills and makes waiting at a bus stop harder.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "US EPA, Heat Island Effect (Learn About Heat Islands)"
     }
    ],
    "patterns": [
@@ -1166,11 +1289,80 @@
        "from": "EC1"
       }
      ]
+    },
+    "D1": {
+     "name": "Backup rides drain the budget",
+     "kind": "R",
+     "seen": [
+      "A1",
+      "A2"
+     ],
+     "text": "When the bus doesn't come, a ride-hail fills in. Each backup ride spends cash that could have gone toward a car or a home closer to work, so the bus stays the only way and the next no-show costs again.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 2,
+       "c": 3.8,
+       "r": 5.6,
+       "t": "Buses that don't come"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 5.6,
+       "r": 6.4,
+       "t": "Paid backup rides"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 6.0,
+       "r": 6.2,
+       "t": "Cash left for a car or a closer home"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More no-shows mean more ride-hail backups."
+      ],
+      [
+       "b",
+       "c",
+       "−",
+       "Backup rides spend the cash."
+      ],
+      [
+       "c",
+       "a",
+       "−",
+       "Less cash left keeps the bus the only way, no-shows and all."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "DW2",
+       "to": "a",
+       "sign": "+",
+       "t": "Routes that cancel trips make no-shows routine."
+      },
+      {
+       "from": "DH1",
+       "to": "a",
+       "sign": "+",
+       "t": "Highways and renewal moved cheap housing away from the jobs, so more trips depend on the bus."
+      }
+     ]
     }
    },
    "start": {
     "pattern": "A3",
     "loop": "R1"
+   },
+   "districtStart": {
+    "loop": "D1"
    }
   },
   {
@@ -1412,7 +1604,9 @@
       6,
       3
      ],
-     "under": [],
+     "under": [
+      "DH1"
+     ],
      "lines": [
       "Federal appraisal map rates",
       "these blocks “hazardous”"
@@ -2179,6 +2373,153 @@
        }
       ]
      }
+    },
+    {
+     "id": "DW1",
+     "scope": "district",
+     "types": [
+      "econ"
+     ],
+     "year": "2016",
+     "layer": "econ",
+     "title": "High-cost lenders fill the gap",
+     "lines": [
+      "Payday and title lenders",
+      "where banks pulled back"
+     ],
+     "body": "Across the inner suburbs, storefront lenders stand in for the banks that left. Nationally about 12 million people a year use payday loans, paying about $520 in fees to keep borrowing $375, mostly for rent and utilities rather than emergencies.",
+     "under": [
+      "EC1",
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E019"
+     ]
+    },
+    {
+     "id": "DW2",
+     "scope": "district",
+     "types": [
+      "econ",
+      "env"
+     ],
+     "year": "2024",
+     "layer": "econ",
+     "title": "Behind on the utility bill",
+     "lines": [
+      "One household in six is",
+      "behind on utilities"
+     ],
+     "body": "About one household in six is behind on utility bills, and utilities disconnected electric service about 13.5 million times in 2024. Nearly 40% of households earning under $50,000 struggle to pay for energy.",
+     "under": [
+      "DE1"
+     ],
+     "rep": [
+      10.0,
+      1.5
+     ],
+     "evidence_ids": [
+      "E082"
+     ]
+    },
+    {
+     "id": "DW3",
+     "scope": "district",
+     "types": [
+      "soc",
+      "econ"
+     ],
+     "year": "2017",
+     "layer": "soc",
+     "title": "Check cashers chosen on purpose",
+     "lines": [
+      "Check cashers chosen for",
+      "known, upfront fees"
+     ],
+     "body": "Many people here cash checks at a storefront even when they have a bank account. A researcher who worked behind a check-cashing counter found customers chose it for clear fees, fast money and service, to avoid surprise bank fees and holds.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E014",
+      "E015"
+     ]
+    },
+    {
+     "id": "DW4",
+     "scope": "district",
+     "types": [
+      "pol"
+     ],
+     "year": "2026",
+     "layer": "pol",
+     "title": "Local routes thinned",
+     "lines": [
+      "Driver shortages thin",
+      "the local bus routes"
+     ],
+     "body": "Local routes through the inner suburbs run short of drivers, and riders describe delays that have become routine for months at a time.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E067"
+     ]
+    },
+    {
+     "id": "DH1",
+     "scope": "district",
+     "types": [
+      "hist",
+      "pol",
+      "econ"
+     ],
+     "year": "1930s",
+     "layer": "hist",
+     "title": "Neighborhoods graded for lending",
+     "lines": [
+      "1930s maps graded which",
+      "neighborhoods got loans"
+     ],
+     "body": "In the 1930s the federal Home Owners' Loan Corporation graded neighborhoods for mortgage risk, A to D, and the lowest grade was outlined in red. Federal mortgage insurance followed similar rules for decades, so lending, and the family wealth that comes with owning a home, flowed unevenly across the inner suburbs.",
+     "under": [],
+     "rep": [
+      10.0,
+      1.5
+     ],
+     "source_note": "University of Richmond, Mapping Inequality (HOLC maps)"
+    },
+    {
+     "id": "DE1",
+     "scope": "district",
+     "types": [
+      "env",
+      "econ"
+     ],
+     "year": "1945–1970",
+     "layer": "env",
+     "title": "Postwar houses getting old",
+     "lines": [
+      "Postwar housing now",
+      "past its repair cycle"
+     ],
+     "body": "Most inner-suburb housing went up in the postwar building boom. The median American home is now more than 40 years old, and houses this age need new roofs, furnaces and wiring, costs that land on owners with the least saved.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "Census American Housing Survey (median year built)"
     }
    ],
    "patterns": [
@@ -2707,11 +3048,80 @@
        "t": "A payout means one less payday renewal."
       }
      ]
+    },
+    "D1": {
+     "name": "Borrowing to cover borrowing",
+     "kind": "R",
+     "seen": [
+      "R3",
+      "R4"
+     ],
+     "text": "A paycheck that comes up short gets covered with a payday loan or an overdraft. The fees come due out of the next paycheck, which leaves it short too, so the borrowing repeats.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 4.8,
+       "r": 6.6,
+       "t": "Short before payday"
+      },
+      {
+       "k": "b",
+       "p": 1,
+       "c": 6.6,
+       "r": 5.4,
+       "t": "High-cost loan or overdraft"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 4.6,
+       "r": 6.6,
+       "t": "Fees due next payday"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "Coming up short means another high-cost loan or overdraft."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More borrowing means more fees due."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "The fees leave the next paycheck short too."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "DW1",
+       "to": "b",
+       "sign": "+",
+       "t": "Storefront lenders are the nearest credit."
+      },
+      {
+       "from": "DH1",
+       "to": "a",
+       "sign": "+",
+       "t": "Decades of lending exclusion left less family wealth to fall back on."
+      }
+     ]
     }
    },
    "start": {
     "pattern": "R3",
     "loop": "R2"
+   },
+   "districtStart": {
+    "loop": "D1"
    }
   },
   {
@@ -2917,7 +3327,9 @@
       "sold for subdivisions, 1994–2008"
      ],
      "body": "Two family dairies sold out as milk prices fell and land values rose. Builders platted them into cul-de-sacs of four-bedroom houses, sold with builder financing to families moving out from the inner suburbs.",
-     "under": [],
+     "under": [
+      "DH1"
+     ],
      "rep": [
       6,
       4
@@ -3286,6 +3698,130 @@
        }
       ]
      }
+    },
+    {
+     "id": "DW1",
+     "scope": "district",
+     "types": [
+      "econ",
+      "soc"
+     ],
+     "year": "2025",
+     "layer": "econ",
+     "title": "Child care priced like rent",
+     "lines": [
+      "Child care: about $13,000",
+      "a year per family"
+     ],
+     "body": "Across the outer suburbs, two-earner families buy child care to cover long commutes. Nationally it averaged $13,184 a year in 2025, about 10% of a two-parent household's income and a third of a single parent's.",
+     "under": [
+      "DE1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E081"
+     ]
+    },
+    {
+     "id": "DW2",
+     "scope": "district",
+     "types": [
+      "soc",
+      "econ"
+     ],
+     "year": "2025",
+     "layer": "soc",
+     "title": "Caring for parents from a distance",
+     "lines": [
+      "Caregivers spend about",
+      "$11,500 a year of their own"
+     ],
+     "body": "Many families here care for an aging parent while both adults work. Family caregivers now spend about $11,508 a year out of pocket, about 31% of their income, and half have made a major financial sacrifice.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E048",
+      "E049"
+     ]
+    },
+    {
+     "id": "DW3",
+     "scope": "district",
+     "types": [
+      "pol"
+     ],
+     "year": "2025",
+     "layer": "pol",
+     "title": "Errands that still need a counter",
+     "lines": [
+      "Most license errands",
+      "still happen in person"
+     ],
+     "body": "Government errands still mean a drive and a wait. In one state about 68% of driver's license transactions happen in person, and customers at a suburban office reported waits from half an hour to more than two hours, far above the agency's statewide average.",
+     "under": [
+      "DE1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E084",
+      "E085",
+      "E086"
+     ]
+    },
+    {
+     "id": "DH1",
+     "scope": "district",
+     "types": [
+      "hist",
+      "pol"
+     ],
+     "year": "1956",
+     "layer": "hist",
+     "title": "Interchanges reach the farms",
+     "lines": [
+      "Interstate exits brought",
+      "the city to the farms"
+     ],
+     "body": "The 1956 interstate program put highway exits in farm country within commuting distance of the city. Over the following decades, land near the interchanges turned into subdivisions and shopping centers, and the outer suburbs grew around the car.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "Federal-Aid Highway Act of 1956"
+    },
+    {
+     "id": "DE1",
+     "scope": "district",
+     "types": [
+      "env",
+      "pol"
+     ],
+     "year": "2001–2016",
+     "layer": "env",
+     "title": "Zoned for driving",
+     "lines": [
+      "Homes, shops and schools",
+      "zoned miles apart"
+     ],
+     "body": "Farmland kept giving way to development: American Farmland Trust counts about 11 million acres of farm and ranch land converted nationally from 2001 to 2016, most of it to low-density housing. Zoning keeps homes, shops and schools in separate areas, so almost every errand needs a car.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "American Farmland Trust, Farms Under Threat (2020)"
     }
    ],
    "patterns": [
@@ -3632,11 +4168,80 @@
        "from": "E1"
       }
      ]
+    },
+    "D1": {
+     "name": "Buying back time",
+     "kind": "R",
+     "seen": [
+      "F5",
+      "F6"
+     ],
+     "text": "Long drives eat the hours between work, school and home, so families pay for care and activities to cover them. Paying for those takes more hours at work, which leaves even less slack for the driving.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 6.8,
+       "r": 6.6,
+       "t": "Hours lost to driving"
+      },
+      {
+       "k": "b",
+       "p": 1,
+       "c": 4.6,
+       "r": 4.6,
+       "t": "Paid care and activities"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 8.8,
+       "r": 4.2,
+       "t": "Hours worked to pay for them"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More hours in the car mean more paid care to cover them."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More paid care means more hours worked to pay for it."
+      ],
+      [
+       "c",
+       "a",
+       "+",
+       "More hours at work leave less slack in the day."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "DW1",
+       "to": "b",
+       "sign": "+",
+       "t": "Child care priced like rent makes every covered hour expensive."
+      },
+      {
+       "from": "DE1",
+       "to": "a",
+       "sign": "+",
+       "t": "Zoning that separates everything puts more miles in every day."
+      }
+     ]
     }
    },
    "start": {
     "pattern": "F2",
     "loop": "R1"
+   },
+   "districtStart": {
+    "loop": "D1"
    }
   },
   {
@@ -3911,7 +4516,9 @@
       "1,100 jobs move overseas"
      ],
      "body": "The textile mill that gave the town its name ran for 96 years. It closed in 1998 as production moved overseas, and the mill houses along the river were sold to absentee landlords.",
-     "under": [],
+     "under": [
+      "DH1"
+     ],
      "rep": [
       2,
       1.4
@@ -4368,6 +4975,158 @@
        }
       ]
      }
+    },
+    {
+     "id": "DW1",
+     "scope": "district",
+     "types": [
+      "pol"
+     ],
+     "year": "2027",
+     "layer": "pol",
+     "title": "Paperwork that ends coverage",
+     "lines": [
+      "Most lost coverage is",
+      "lost to paperwork"
+     ],
+     "body": "Across the satellite city, coverage depends on paperwork. In the Medicaid unwinding, two-thirds or more of disenrollments were procedural; missed interviews cause up to half of SNAP denials; and each churn costs the agency about $80. Work reporting for Medicaid starts nationally in January 2027.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E023",
+      "E024",
+      "E025",
+      "E030"
+     ]
+    },
+    {
+     "id": "DW2",
+     "scope": "district",
+     "types": [
+      "econ",
+      "pol"
+     ],
+     "year": "2025",
+     "layer": "econ",
+     "title": "Hours that won't hold still",
+     "lines": [
+      "Hours change week to week;",
+      "reports are due monthly"
+     ],
+     "body": "Retail and restaurant hours change from week to week, so a monthly work report can fail even for people who work. In one state's first year, enrollees struggled to upload proof and the website sometimes went down.",
+     "under": [
+      "DW1",
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E026",
+      "E027",
+      "E031"
+     ]
+    },
+    {
+     "id": "DW3",
+     "scope": "district",
+     "types": [
+      "pol",
+      "econ"
+     ],
+     "year": "2024",
+     "layer": "pol",
+     "title": "Raises that cost more than they pay",
+     "lines": [
+      "A $200 raise that costs",
+      "$800 in benefits"
+     ],
+     "body": "Benefits phase out sharply as pay rises. One restaurant worker's raise of about $200 a month would have cost her more than $800 a month in assistance, so some workers turn raises down.",
+     "under": [],
+     "rep": [
+      10.0,
+      1.5
+     ],
+     "evidence_ids": [
+      "E066"
+     ]
+    },
+    {
+     "id": "DW4",
+     "scope": "district",
+     "types": [
+      "econ"
+     ],
+     "year": "2018",
+     "layer": "econ",
+     "title": "The car as collateral",
+     "lines": [
+      "Cars that the lender",
+      "can switch off"
+     ],
+     "body": "Subprime car loans here often come with starter-interrupt devices. One Southeast servicer admitted disabling cars at least 5,200 times when the borrower was not in default. Lenders say the devices let them lend to people who would otherwise be turned down.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      11.1,
+      2.3
+     ],
+     "evidence_ids": [
+      "E061",
+      "E063",
+      "E064"
+     ]
+    },
+    {
+     "id": "DH1",
+     "scope": "district",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1979–2010",
+     "layer": "hist",
+     "title": "The factories close",
+     "lines": [
+      "Factory jobs peak in 1979,",
+      "then fall by a third"
+     ],
+     "body": "US manufacturing employment peaked in 1979 at about 19.6 million jobs and fell by roughly a third during the 2000s alone. Mill and factory towns lost their steady, full-time work, and hourly service jobs took its place.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "BLS Current Employment Statistics, manufacturing employment (CES3000000001)"
+    },
+    {
+     "id": "DE1",
+     "scope": "district",
+     "types": [
+      "env",
+      "econ"
+     ],
+     "year": "ongoing",
+     "layer": "env",
+     "title": "Empty mills and old ground",
+     "lines": [
+      "Vacant mill sites the city",
+      "can't easily reuse"
+     ],
+     "body": "The closed plants left large buildings and sites that may be contaminated. The EPA puts the number of brownfields nationally at 450,000 to 1 million; cleanup costs keep many idle, so the land that once held the jobs sits empty.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "US EPA, Brownfields (frequently asked questions; GAO's 2004 estimate)"
     }
    ],
    "patterns": [
@@ -4683,11 +5442,98 @@
        "from": "P3"
       }
      ]
+    },
+    "D1": {
+     "name": "Churn",
+     "kind": "R",
+     "seen": [
+      "M7"
+     ],
+     "text": "Hours that change week to week make a monthly work report easy to miss. A missed report ends coverage, care gets put off until it is urgent, and the sick days and urgent visits move the hours again.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 0,
+       "c": 6.0,
+       "r": 6.6,
+       "t": "Hours change"
+      },
+      {
+       "k": "b",
+       "p": 2,
+       "c": 7.4,
+       "r": 5.6,
+       "t": "Report missed or rejected"
+      },
+      {
+       "k": "c",
+       "p": 2,
+       "c": 5.4,
+       "r": 6.4,
+       "t": "Coverage lost"
+      },
+      {
+       "k": "d",
+       "p": 1,
+       "c": 6.0,
+       "r": 6.6,
+       "t": "Care put off, then urgent"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "Hours that move make a monthly report easy to miss."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "A missed or rejected report ends coverage."
+      ],
+      [
+       "c",
+       "d",
+       "+",
+       "Without coverage, care waits until it is urgent."
+      ],
+      [
+       "d",
+       "a",
+       "+",
+       "Sick days and urgent visits move the hours again."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "DW1",
+       "to": "b",
+       "sign": "+",
+       "t": "Procedural rules end coverage over one missed form."
+      },
+      {
+       "from": "DW2",
+       "to": "a",
+       "sign": "+",
+       "t": "Retail and restaurant hours change week to week."
+      },
+      {
+       "from": "DH1",
+       "to": "a",
+       "sign": "+",
+       "t": "Steady mill jobs gave way to hourly work whose hours move."
+      }
+     ]
     }
    },
    "start": {
     "pattern": "M4",
     "loop": "R2"
+   },
+   "districtStart": {
+    "loop": "D1"
    }
   },
   {
@@ -5007,7 +5853,9 @@
       "abandoned, 1979"
      ],
      "body": "Dunmore grew up around a rail siding and a grain elevator. The railroad abandoned the branch in 1979, the elevator went to trucks, and Main Street lost the trade that came with the trains.",
-     "under": [],
+     "under": [
+      "DH1"
+     ],
      "rep": [
       6,
       1.2
@@ -5336,6 +6184,156 @@
        }
       ]
      }
+    },
+    {
+     "id": "DW1",
+     "scope": "district",
+     "types": [
+      "econ",
+      "soc"
+     ],
+     "year": "2023",
+     "layer": "econ",
+     "title": "Cash where the banks left",
+     "lines": [
+      "More cash, more ATM fees",
+      "where branches closed"
+     ],
+     "body": "Across the rural towns, banking means a drive or a fee. About two-thirds of unbanked households use only cash, and an out-of-network ATM withdrawal averages a record $4.86.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E011",
+      "E014"
+     ]
+    },
+    {
+     "id": "DW2",
+     "scope": "district",
+     "types": [
+      "econ",
+      "soc"
+     ],
+     "year": "2016",
+     "layer": "econ",
+     "title": "Home care hours go unfilled",
+     "lines": [
+      "Approved home care hours",
+      "with no aide to fill them"
+     ],
+     "body": "Approved home care often goes unstaffed. In one agency survey, 85% lacked staff to cover every shift and 43% left shifts unfilled at least seven times a month; one rural state counted about 11,000 approved hours unstaffed each week.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.0,
+      1.5
+     ],
+     "evidence_ids": [
+      "E053",
+      "E054",
+      "E055"
+     ]
+    },
+    {
+     "id": "DW3",
+     "scope": "district",
+     "types": [
+      "econ"
+     ],
+     "year": "2024",
+     "layer": "econ",
+     "title": "Called in on a day off",
+     "lines": [
+      "Small-store shifts called",
+      "in at the last minute"
+     ],
+     "body": "The town's jobs are thin and the stores are short-staffed. Workers describe being called in at the last minute, even on days off, and scrambling for child care when they are.",
+     "under": [],
+     "rep": [
+      11.1,
+      2.3
+     ],
+     "evidence_ids": [
+      "E040",
+      "E047"
+     ]
+    },
+    {
+     "id": "DW4",
+     "scope": "district",
+     "types": [
+      "pol",
+      "env"
+     ],
+     "year": "2026",
+     "layer": "pol",
+     "title": "Dialysis an hour away",
+     "lines": [
+      "Specialty care an",
+      "hour's drive away"
+     ],
+     "body": "Rural residents average about 14 miles to the nearest dialysis unit, but closures stretch that fast: when one small hospital closed its unit, a patient's time on the road tripled to more than nine hours a week.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E051",
+      "E052"
+     ]
+    },
+    {
+     "id": "DH1",
+     "scope": "district",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1935–today",
+     "layer": "hist",
+     "title": "Fewer, bigger farms",
+     "lines": [
+      "From 6.8 million farms",
+      "to about 1.9 million"
+     ],
+     "body": "The number of US farms peaked at about 6.8 million in 1935 and is now about 1.9 million, on larger acreages with fewer workers. Towns that served many small farms lost customers, rail traffic and young families as the farms consolidated.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "USDA Census of Agriculture; USDA ERS farm counts"
+    },
+    {
+     "id": "DE1",
+     "scope": "district",
+     "types": [
+      "env",
+      "soc"
+     ],
+     "year": "ongoing",
+     "layer": "env",
+     "title": "Homes on rented land",
+     "lines": [
+      "Manufactured homes,",
+      "often on rented lots"
+     ],
+     "body": "Manufactured homes are far more common in rural towns than in cities. Many sit on rented lots in parks, so the owners own the house but not the ground under it, and moving the house is rarely practical.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "Census American Community Survey (housing type), with the Housing Assistance Council's rural tabulations; CFPB, Manufactured Housing Finance (2021)"
     }
    ],
    "patterns": [
@@ -5649,11 +6647,93 @@
        "from": "P2"
       }
      ]
+    },
+    "D1": {
+     "name": "The care gap",
+     "kind": "R",
+     "seen": [
+      "N5",
+      "N6"
+     ],
+     "text": "When no aide comes, a family member covers the shift and loses work hours. The lost pay leaves less money for paid care, so more of the next week's shifts go unfilled too.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 1,
+       "c": 3.4,
+       "r": 5.2,
+       "t": "Aide shifts unfilled"
+      },
+      {
+       "k": "b",
+       "p": 0,
+       "c": 5.0,
+       "r": 6.6,
+       "t": "Family member covers"
+      },
+      {
+       "k": "c",
+       "p": 1,
+       "c": 8.2,
+       "r": 6.0,
+       "t": "Family work hours lost"
+      },
+      {
+       "k": "d",
+       "p": 1,
+       "c": 5.4,
+       "r": 6.9,
+       "t": "Money for paid care"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More unfilled shifts mean more care from family."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "More covering means more work hours lost."
+      ],
+      [
+       "c",
+       "d",
+       "−",
+       "Lost hours leave less money for paid care."
+      ],
+      [
+       "d",
+       "a",
+       "−",
+       "Less money for paid care leaves more shifts unfilled."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "DW2",
+       "to": "a",
+       "sign": "+",
+       "t": "Approved hours often have no aide to fill them."
+      },
+      {
+       "from": "DH1",
+       "to": "a",
+       "sign": "+",
+       "t": "Fewer working-age people stayed, so fewer are left to staff care."
+      }
+     ]
     }
    },
    "start": {
     "pattern": "N1",
     "loop": "R1"
+   },
+   "districtStart": {
+    "loop": "D1"
    }
   },
   {
@@ -6005,7 +7085,9 @@
       "sold or merged, 1980–95"
      ],
      "body": "High interest rates and falling land prices in the 1980s broke many family farms. Neighbors bought them out, and today four operations farm what forty families did. Former farm families stayed on and found other work.",
-     "under": [],
+     "under": [
+      "DH1"
+     ],
      "rep": [
       3,
       2
@@ -6413,6 +7495,157 @@
        }
       ]
      }
+    },
+    {
+     "id": "DW1",
+     "scope": "district",
+     "types": [
+      "env",
+      "econ"
+     ],
+     "year": "2024",
+     "layer": "env",
+     "title": "A pharmacy desert",
+     "lines": [
+      "A 36-mile round trip",
+      "to the nearest pharmacy"
+     ],
+     "body": "Across open country, prescriptions mean a long drive. About 1 in 7 Americans lives in a pharmacy desert, and nonmetro residents average an 85-minute, 36-mile round trip. More than 7,000 pharmacies closed from 2022 through 2024.",
+     "under": [
+      "DE1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E056",
+      "E057"
+     ]
+    },
+    {
+     "id": "DW2",
+     "scope": "district",
+     "types": [
+      "econ"
+     ],
+     "year": "2022",
+     "layer": "econ",
+     "title": "Prices at the counter, debt after",
+     "lines": [
+      "Prescriptions over $250:",
+      "most left at the counter"
+     ],
+     "body": "When a prescription costs more than $250 out of pocket, more than half are left at the counter. 41% of adults carry health care debt, and about two-thirds of them have put off care because of cost.",
+     "under": [
+      "DW1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E058",
+      "E059",
+      "E060"
+     ]
+    },
+    {
+     "id": "DW3",
+     "scope": "district",
+     "types": [
+      "soc",
+      "econ"
+     ],
+     "year": "2024",
+     "layer": "soc",
+     "title": "Caregivers on the road",
+     "lines": [
+      "Caregivers who spend their",
+      "days driving to treatment"
+     ],
+     "body": "Out here a treatment day can be a whole day. In one rural region, dialysis patients ride a medical transit bus more than 200 miles, three days a week, and the family members who go with them say it takes most of their free time.",
+     "under": [
+      "DE1"
+     ],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E050"
+     ]
+    },
+    {
+     "id": "DW4",
+     "scope": "district",
+     "types": [
+      "pol",
+      "econ"
+     ],
+     "year": "2025",
+     "layer": "pol",
+     "title": "Seasonal guest workers",
+     "lines": [
+      "Seasonal crews on",
+      "guest-worker visas"
+     ],
+     "body": "Farms here hire seasonal crews on H-2A visas, whose minimum wage is set by federal rule and has been fought over in court. Nationally they are a small group, but in farm counties they are much of the harvest.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "evidence_ids": [
+      "E087",
+      "E088"
+     ]
+    },
+    {
+     "id": "DH1",
+     "scope": "district",
+     "types": [
+      "hist",
+      "econ"
+     ],
+     "year": "1980s",
+     "layer": "hist",
+     "title": "The farm crisis",
+     "lines": [
+      "1980s farm crisis: land",
+      "values fall, farms sold"
+     ],
+     "body": "In the early 1980s high interest rates and falling export prices collapsed farmland values. From their 1982 peak to 1987 they fell by about a third nationally, and by more than half in Iowa. Many indebted farms were sold, and the people and businesses around them left too.",
+     "under": [],
+     "rep": [
+      10.9,
+      0.3
+     ],
+     "source_note": "USDA ERS farm real estate values, as reported in FDIC, History of the Eighties, vol. 1, ch. 8 (1997)"
+    },
+    {
+     "id": "DE1",
+     "scope": "district",
+     "types": [
+      "env",
+      "pol"
+     ],
+     "year": "1940–today",
+     "layer": "env",
+     "title": "Services consolidated far away",
+     "lines": [
+      "Schools and hospitals",
+      "consolidated into distance"
+     ],
+     "body": "Rural services were merged into fewer, farther places. The number of public school districts fell from about 117,000 in 1940 to about 13,000 today, and more than a hundred rural hospitals have closed or stopped inpatient care since 2010. Each merger added miles to ordinary trips.",
+     "under": [
+      "DH1"
+     ],
+     "rep": [
+      10.0,
+      1.5
+     ],
+     "source_note": "NCES Digest of Education Statistics, table 214.10; UNC Sheps Center rural hospital closures"
     }
    ],
    "patterns": [
@@ -6728,11 +7961,99 @@
        "from": "E2"
       }
      ]
+    },
+    "D1": {
+     "name": "Distance and price",
+     "kind": "R",
+     "seen": [
+      "C3",
+      "C7"
+     ],
+     "text": "Out here a prescription means a long drive, so some get skipped or put off. Conditions worsen, which means more trips to care, and every trip pays the distance again.",
+     "nodes": [
+      {
+       "k": "a",
+       "p": 3,
+       "c": 4.8,
+       "r": 6.6,
+       "t": "Miles to the pharmacy"
+      },
+      {
+       "k": "b",
+       "p": 1,
+       "c": 7.4,
+       "r": 6.0,
+       "t": "Prescriptions skipped or delayed"
+      },
+      {
+       "k": "c",
+       "p": 0,
+       "c": 6.6,
+       "r": 5.2,
+       "t": "Condition worsens"
+      },
+      {
+       "k": "d",
+       "p": 0,
+       "c": 4.4,
+       "r": 6.2,
+       "t": "More trips to care"
+      }
+     ],
+     "links": [
+      [
+       "a",
+       "b",
+       "+",
+       "More miles mean more prescriptions skipped or put off."
+      ],
+      [
+       "b",
+       "c",
+       "+",
+       "Skipped doses let a condition worsen."
+      ],
+      [
+       "c",
+       "d",
+       "+",
+       "A worse condition means more trips to care."
+      ],
+      [
+       "d",
+       "a",
+       "+",
+       "More trips make the distance cost more."
+      ]
+     ],
+     "drivers": [
+      {
+       "from": "DW1",
+       "to": "a",
+       "sign": "+",
+       "t": "A pharmacy desert puts the counter a long drive away."
+      },
+      {
+       "from": "DW2",
+       "to": "b",
+       "sign": "+",
+       "t": "Prices over $250 mean most are left at the counter."
+      },
+      {
+       "from": "DE1",
+       "to": "a",
+       "sign": "+",
+       "t": "Each consolidation adds miles between people and care."
+      }
+     ]
     }
    },
    "start": {
     "pattern": "C1",
     "loop": "R1"
+   },
+   "districtStart": {
+    "loop": "D1"
    }
   }
  ]
