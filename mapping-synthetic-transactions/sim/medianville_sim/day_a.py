@@ -480,6 +480,8 @@ def gen_income(sim, H, q):
             pr = (.17 if cal["eitc_wave"] else .012) if (eitc and kids) else .0105
             if not earners and not any(p.pension or p.inv for p in ad):
                 pr = .002
+            if sim.carry is not None and ("F:" + W.wid) in sim.carry.refunded:
+                pr = -1.0           # carried runs: one federal refund a season (carry.py)
             if rng.random() < pr:
                 if eitc and kids:
                     credit = round(min(8200, max(600, rng.gauss(3400 + 1300 * min(kids, 3), 1100))), 2)
@@ -507,14 +509,18 @@ def gen_income(sim, H, q):
                                  lens=("labor", "family_care"), related=i, ctx=ctx)
                     sim.credit(W, total - fees, "prepaid" if how == "prepaid" else "bank")
                     H.flags.add("refund_today")
+                    if sim.carry is not None:
+                        sim.carry.refunded.add("F:" + W.wid)
                 push(q, 3, run)
-            elif rng.random() < .006:
+            elif rng.random() < .006 and (sim.carry is None or ("S:" + W.wid) not in sim.carry.refunded):
                 amt = round(rng.uniform(60, 880), 2)
 
                 def run(p=ad[0], W=W, amt=amt):
                     sim.credit(W, amt, "bank")
                     sim.emit(rng.randint(1, 400), "income", "income", "state_tax_refund", p, H, X["x_staterev"], p, channel="automatic",
                              method="ach" if W.bank is not None else "check", gross=amt, lens=("public_finance",), ctx=dict(amt="%.2f" % amt))
+                    if sim.carry is not None:
+                        sim.carry.refunded.add("S:" + W.wid)
                 push(q, 4, run)
 
 

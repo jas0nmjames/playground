@@ -421,7 +421,7 @@ def gen_public(sim, H, q):
                                                                   tmin=60 + w, wait=w, miles=miles, mode=mode, fr=tfr, lens=("labor",), ctx=dict(org=org.name)),
                wait=(5, 40))
     # ---- free tax help
-    if cal["tax_season"] and H.income < 69000 and not H.gq and sim.by_kind.get("vita") and rng.random() < .0036:
+    if cal["tax_season"] and H.income < 69000 and not H.gq and sim.by_kind.get("vita") and rng.random() < .0036 and (sim.carry is None or sim.carry.file_once(H)):
         org = sim.pick(("vita",), d, 12.0)
         if org is not None:
             def run(t, miles, mode, tfr, w):
@@ -768,6 +768,10 @@ def gen_money(sim, H, q):
             push(q, 400, lambda: W0.give("prepaid", H.tanf))
     if cal["tax_season"] and not H.gq and any(p.wage > 0 or p.pension or p.inv for p in H.adults):
         r = rng.random()
+        if sim.carry is not None and H.hid in sim.carry.filed and r < max(.0088, TAX_PAID + .0042):
+            r = 1.0                 # carried runs: one return a season (carry.py)
+        elif sim.carry is not None and r < TAX_PAID + .0042:
+            sim.carry.filed.add(H.hid)
         P = rng.choice([p for p in H.adults if not p.inpatient] or [head])
         # v2: paid preparation x 2.1 (v1 .0042). IRS 2026: 56% of e-filed returns came from tax professionals (about 54%
         # paid), and three quarters of Medianville's ~48,000 returns filed in the 85-day season is ~420 a day.

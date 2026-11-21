@@ -36,6 +36,7 @@ class Carry:
         self.loans = []             # open payday and online installment loans
         self.tloans = {}            # household id -> title loan (None once paid off or repossessed)
         self.cars_lost = {}         # household id -> cars repossessed during the run
+        self.anchor = {}            # account id -> checking balance on the run's first day (the SCF-matched opening)
         self.refunded = set()       # accounts that received this tax season's refund
         self.filed = set()          # households that filed this tax season
         self.links = []             # today's links.csv rows (record ids filled in after the day is written)
@@ -49,11 +50,13 @@ class Carry:
         c.retries, c.util, c.od, c.loans = st["retries"], st["util"], st["od"], st["loans"]
         c.tloans, c.cars_lost = st["tloans"], st["cars_lost"]
         c.refunded, c.filed = set(st["refunded"]), set(st["filed"])
+        c.anchor = st["anchor"]
         return c
 
     def to_state(self):
         return dict(seed=self.seed, first=self.first, n=self.n + 1, seq=self.seq, retries=self.retries, util=self.util, od=self.od,
-                    loans=self.loans, tloans=self.tloans, cars_lost=self.cars_lost, refunded=sorted(self.refunded), filed=sorted(self.filed))
+                    loans=self.loans, tloans=self.tloans, cars_lost=self.cars_lost, refunded=sorted(self.refunded), filed=sorted(self.filed),
+                    anchor=self.anchor)
 
     def new_id(self, prefix):
         self.seq += 1
@@ -74,6 +77,9 @@ class Carry:
         self.org = {o.oid: o for o in sim.orgs}
         self._cal = {}
         start_title_loans(self, sim)
+        if self.n == 0:
+            warm_tax_season(self, sim)
+            self.anchor = {W.wid: round(W.bank, 2) for W in sim.wallets if W.bank is not None}
 
     def begin_day(self, sim, q):
         """After the day's schedules are drawn and before the households' own plans: carried obligations come first."""
@@ -88,8 +94,21 @@ class Carry:
         """After the day's queue has run and card payments have posted."""
         overdraft_end_of_day(self, sim)
         self.loans = [L for L in self.loans if L["status"] != "closed"]
+        sweep_surplus(self, sim)
 
     # overdraft chains (section 3 below): called from engine.Sim.pay, day_a.gen_bills and the retry queue
+    def snap_pace(self, H):
+        """How much more (or less) often a SNAP household makes its main grocery trip, by how much of the month's benefit
+        is left (section 5 below)."""
+        return min(SNAP_PACE[2], max(SNAP_PACE[1], SNAP_PACE[0] + SNAP_PACE[3] * H.snap_bal / max(1.0, H.snap)))
+
+    def file_once(self, H):
+        """One tax return a season (free preparation, paid preparation or software)."""
+        if H.hid in self.filed:
+            return False
+        self.filed.add(H.hid)
+        return True
+
     def od_ok(self, W, amt):
         """Will the bank cover this item into overdraft? Not past the daily fee cap, and not past the account's overdraft
         limit; otherwise the item is declined or returned."""
@@ -273,8 +292,9 @@ def retry_day(c, sim, q):
         H, W, P = c.hh.get(e["hid"]), c.wal.get(e["wid"]), c.per.get(e["pid"])
         if H is None or W is None or e["bill"] >= len(H.bills) or H.bills[e["bill"]][0] != e["kind"]:
             continue
-        if P is None or P.age < 18 or P.inpatient:
-            P = next((a for a in W.owners if a.age >= 18 and not a.inpatient), None)
+        if P is None or P.age < 18 or (P.inpatient and e["mode"] == "manual"):
+            # a lender's or merchant's retry needs nobody at home; paying by hand needs an adult who is not in hospital
+            P = next((a for a in W.owners if a.age >= 18 and not (a.inpatient and e["mode"] == "manual")), None)
             if P is None:
                 keep.append(dict(e, next=(c.today + dt.timedelta(days=1)).isoformat()))
                 continue
@@ -665,7 +685,7 @@ def overdraft_overnight(c, sim):
             P = next((a for a in W.owners if a.age >= 18), W.owners[0])
             fee = float(W.od_fee)
             W.take("debit", fee)
-            i = sim.emit(c.crng.randint(60, 240), "bill_payment", "money_services", "extended_overdraft_fee", P, W.hh, P, W.bank_org, channel="automatic",
+            i = sim.emit(c.crng.randint(1, 4), "bill_payment", "money_services", "extended_overdraft_fee", P, W.hh, P, W.bank_org, channel="automatic",
                          method="debit", gross=fee, user=fee, fee_type="extended_overdraft_fee", fee=fee, fr=("insufficient_funds",),
                          ctx=dict(org=W.bank_org.name, amt="%.0f" % fee, days=days))
             o["last"] = c.link(i, "overdraft", o["id"], "extended_fee", W=W, earlier=o["last"])
@@ -945,3 +965,91 @@ def title_day(c, sim, q):
 
 def _ordinal_day(n):
     return "%d%s" % (n, "th" if 11 <= n % 100 <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th"))
+
+
+# ---------------------------------------------------------------------------------------------- 5. balance paths
+# SNAP. Carried, the balance runs down from the day the month's benefit loads (day_a.gen_income) as the household shops
+# (day_b.gen_food). Households spend fastest right after the load and stretch what is left: the main grocery trip comes
+# more often the more of the month's benefit is left (a multiplier of .5 to 2.2, from .55 + 1.6 x balance/benefit). The
+# coefficients are an estimate (no redemption-timing source was downloaded), fitted on the carried month so that about
+# half the benefit is spent in the first week, about three quarters in two weeks, and little is left at the next load.
+# A one-day run's opening SNAP balance (finance.build_finance) is unchanged.
+SNAP_PACE = (.6, .5, 2.0, 1.25)          # intercept, floor, ceiling, slope
+
+# Checking. Carried, checking rises on paydays and benefit days and falls with the bills and spending between them. The
+# one-day simulator sets spending by counts and shares (payments per adult, the CE spending order), not by dollars against
+# income, so households above ALICE take in more than they spend; carried, their checking would climb by about $3,400 a
+# month. Most such households move what they do not need out of checking ("pay yourself first"). Here, on a day money
+# comes in, an account holding more than twice its opening balance plus $500 moves the excess over one and a half times
+# the opening balance to savings, recorded as a transfer (an estimate, so that checking follows the pay cycle around its
+# opening level instead of drifting up). Opening balances are the SCF-matched ones of the run's first day.
+SWEEP_ABOVE, SWEEP_KEEP, SWEEP_PAD = 2.0, 1.5, 500.0
+
+# Once a season. The one-day simulator draws each day's tax refunds and filings on their own; carried day after day,
+# the same filer would be refunded again and again (in a first March test, about $2,200 per ALICE household). In a
+# carried run each account gets one federal and one state refund a season and each household files once
+# (day_a.gen_income, day_c.gen_money and gen_public). The run's first day inherits the season so far: each account or
+# household has already been refunded or filed with the chance the same daily rates give from January 25 to the day
+# before, except that EITC and child tax credit refunds wait for the PATH Act wave (from February 26).
+def warm_tax_season(c, sim):
+    from .day_c import TAX_PAID
+    start = dt.date(c.today.year, 1, 25)
+    if c.today <= start:
+        return
+    days = [start + dt.timedelta(days=k) for k in range((c.today - start).days)]
+    days = [d for d in days if c.cal(d)["tax_season"]]
+    if not days:
+        return
+    wave = sum(1 for d in days if c.cal(d)["eitc_wave"])
+    for H in sim.households:
+        if H.gq:
+            continue
+        W0 = H.wallets[0]
+        for W in H.wallets:
+            earners = [p for p in W.owners if p.wage > 0]
+            ad = [p for p in W.owners if p.age >= 18]
+            if not ad:
+                continue
+            wages = sum(p.wage for p in earners)
+            kids = len(H.kids) if W is W0 else 0
+            eitc = bool(earners) and wages < (22000 if not kids else 52000 + 6000 * min(kids, 3)) and (kids or 25 <= ad[0].age < 65)
+            if eitc and kids:
+                stay = (1 - .17) ** wave            # PATH Act: no EITC refunds before the wave
+            else:
+                pr = .0105 if (earners or any(p.pension or p.inv for p in ad)) else .002
+                stay = (1 - pr) ** len(days)
+            if c.crng.random() >= stay:
+                c.refunded.add("F:" + W.wid)
+            if c.crng.random() >= (1 - .006) ** len(days):
+                c.refunded.add("S:" + W.wid)
+        if any(p.wage > 0 or p.pension or p.inv for p in H.adults):
+            pf = TAX_PAID + (.0042 if H.internet != "no" else 0.0) + (.0036 if H.income < 69000 else 0.0)
+            if c.crng.random() >= (1 - pf) ** len(days):
+                c.filed.add(H.hid)
+
+
+def money_in_today(c, sim, W):
+    from .day_a import paid_today
+    cal = sim.cal
+    for p in W.owners:
+        if p.emp in ("employed_full_time", "employed_part_time") and p.org is not None and paid_today(p, cal):
+            return True
+        if (p.ss and p.ss_cohort in cal["ss_cohorts"]) or ((p.ssi or p.va) and cal["ssi_today"]):
+            return True
+    return False
+
+
+def sweep_surplus(c, sim):
+    """End of a day money came in: move checking well above its opening level to savings."""
+    for W in sim.wallets:
+        a = c.anchor.get(W.wid)
+        if a is None or W.bank is None or W.bank <= SWEEP_ABOVE * a + SWEEP_PAD or not money_in_today(c, sim, W):
+            continue
+        amt = round(W.bank - SWEEP_KEEP * a, 2)
+        P = next((p for p in W.owners if p.age >= 18), None)
+        if P is None or amt < 50:
+            continue
+        W.bank -= amt
+        W.savings += amt
+        sim.emit(c.crng.randint(1200, 1400), "transfer", "money_services", "transfer_to_savings", P, W.hh, P, W.bank_org, channel="app", method="ach",
+                 gross=amt, tmin=3, ctx=dict(org=W.bank_org.name, amt="%.0f" % amt))

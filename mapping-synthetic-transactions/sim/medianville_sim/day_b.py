@@ -318,6 +318,8 @@ def gen_food(sim, H, q):
         pm *= 2.1
     if any(p.ss_cohort in cal["ss_cohorts"] for p in H.members if p.ss):
         pm *= 1.5
+    if sim.carry is not None and H.snap:
+        pm *= sim.carry.snap_pace(H)       # carried runs: SNAP balances run down from the load day (carry.py)
     kindw = {"above": (("grocery_full", .55), ("supercenter", .20), ("warehouse_club", .10), ("grocery_indep", .09), ("grocery_discount", .06)),
              "alice": (("grocery_full", .36), ("supercenter", .25), ("grocery_discount", .20), ("grocery_indep", .12), ("dollar", .05), ("warehouse_club", .02)),
              "poverty": (("grocery_discount", .28), ("supercenter", .25), ("grocery_full", .20), ("grocery_indep", .15), ("dollar", .12))}[H.alice]
