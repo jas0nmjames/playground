@@ -1021,9 +1021,13 @@ def gen_care(sim, H, q):
                     elif W.cash >= amt:
                         m = "cash"
                     else:
+                        # cash out what savings holds to make up the rest (phase 4: v2 set cash to the loss outright, which made
+                        # or lost money whenever cash was not zero or savings fell short; identical whenever it balanced)
                         m = "cash"
-                        W.cash = amt
-                        W.savings = max(0.0, W.savings - amt)
+                        mv = min(W.savings, amt - W.cash)
+                        W.savings -= mv
+                        W.cash += mv
+                        amt = min(amt, W.cash)
                     W.take(m, amt)
                     emit(t, "transfer", "money_services", "scam_loss", p, H, p, X["x_scam"], channel="phone", method=m, gross=amt, user=amt, tmin=rng.randint(40, 120),
                          outcome="completed", fr=("scam_attempt",), ctx=dict(how=how, amt="%.0f" % amt, via=rng.choice(["gift cards read over the phone", "a wire from the bank branch", "a payment-app transfer", "a deposit into a crypto kiosk"])))
