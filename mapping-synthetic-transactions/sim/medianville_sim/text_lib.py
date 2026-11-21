@@ -467,6 +467,9 @@ T["earned_wage_advance"] = k("get part of my pay early", "When payday is days aw
 T["payday_loan_disbursed"] = k("take out a payday loan", "When a bill cannot wait and I have nothing left, I want cash today, so I can keep the lights on.", "Borrowed ${amt} at {org}; ${due} due next payday.")
 T["online_installment_loan_disbursed"] = k("take out an online loan", "When I am short and the storefront is closed, I want an online loan, so I can cover the gap.", "Online loan of ${amt} funded to checking.")
 T["payday_loan_repayment"] = k("repay the payday loan", "When payday comes, I want the loan cleared, so I can stop paying fees.", "Loan paid off to {org}.")
+T["online_loan_repayment"] = k("repay the online loan", "When payday comes, I want the online loan cleared, so I can stop paying fees.", "Online loan paid off to {org}; ${amt} came out of checking.")
+T["online_loan_renewal"] = k("repay the online loan", "When I cannot repay the online loan and still pay rent, I want more time, so I can keep the full amount from coming out.",
+                             "Paid only the ${fee} fee to {org}; the online loan renews to the next payday.")
 T["payday_loan_rollover"] = k("repay the payday loan", "When I cannot repay the loan and eat, I want two more weeks, so I can keep the full amount from coming out.",
                               "Paid only the ${fee} fee to {org}; the loan rolls over.")
 T["caregiving_purchase_for_family_member"] = k("buy what my {rel} needs", "When I am looking after my {rel}, I want to pick up what they need on the way, so I can keep them stocked without another trip.",

@@ -73,6 +73,7 @@ class Carry:
         self.per = {p.pid: p for p in sim.persons}
         self.org = {o.oid: o for o in sim.orgs}
         self._cal = {}
+        start_title_loans(self, sim)
 
     def begin_day(self, sim, q):
         """After the day's schedules are drawn and before the households' own plans: carried obligations come first."""
@@ -80,10 +81,13 @@ class Carry:
         set_aside_for_bills(self, sim)
         retry_day(self, sim, q)
         shutoff_day(self, sim, q)
+        payday_day(self, sim, q)
+        title_day(self, sim, q)
 
     def end_day(self, sim):
         """After the day's queue has run and card payments have posted."""
         overdraft_end_of_day(self, sim)
+        self.loans = [L for L in self.loans if L["status"] != "closed"]
 
     # overdraft chains (section 3 below): called from engine.Sim.pay, day_a.gen_bills and the retry queue
     def od_ok(self, W, amt):
@@ -692,3 +696,252 @@ def rent_after_overdraft(c, W, idx, e):
         return
     e["od"] = o["id"]
     o["last"] = e["od_last"] = c.link(idx, "overdraft", o["id"], "rent_missed", W=W, earlier=o["last"])
+
+
+# ---------------------------------------------------------------------------------------------- 4. payday and title rollovers
+# Payday loans. CFPB, "Data Point: Payday Lending" (2014; sources/raw/payday_cfpb): over 80% of loans are renewed or
+# followed by another loan within 14 days; of new loan sequences, 38% end with the first loan repaid and 5% with it in
+# default (borrowers paid weekly to semimonthly; 30% and 4% for monthly borrowers); 12% run to 11 or more loans; half of
+# all loans are in sequences of 10 or more; 64% of new borrowers become renewers and 20% defaulters. A first loan here is
+# meant to be repaid 38% of the time, renewed 57% and defaulted 5%; each later one renewed 84%, repaid 12% and defaulted
+# 4%. That reproduces the 80% renewal share, the 12% of sequences past ten loans and half of loans in long sequences.
+# What the account holds can change the plan: a loan meant to be repaid that cannot be is renewed for the fee, and a
+# renewal whose fee cannot be paid bounces. A bounced loan is re-presented twice (3 and 5 business days later) and then
+# goes to collections. Each loan is due on the borrower's first payday at least a week away (two weeks for most).
+# The one-day simulator's "new loans" stand for loans and renewals together (T02 counts both, as the California and
+# Texas reports do), so a carried run starts a new sequence at 1/4.56 of the one-day rate (4.56 loans per sequence).
+PAYDAY_FIRST = (.38, .57, .05)          # repay, renew, default
+PAYDAY_LATER = (.12, .84, .04)
+PAYDAY_SEQ_START = 1 / 4.56
+PAYDAY_REPRESENT = (3, 5)
+PAYDAY_TERM_MIN = 7
+
+
+def payday_start_ok(c, W):
+    """A new loan sequence (one at a time per account)."""
+    return not any(L["wid"] == W.wid and L["status"] != "collections" for L in c.loans) and c.crng.random() < PAYDAY_SEQ_START
+
+
+def next_payday(c, sim, W, P, min_days=PAYDAY_TERM_MIN):
+    """The borrower's first payday at least `min_days` away (a post-dated check or debit is set for it); else two weeks."""
+    from .day_a import paid_today
+    owners = [P] + [p for p in W.owners if p is not P and p.age >= 18]
+    for k in range(min_days, 36):
+        d = c.today + dt.timedelta(days=k)
+        cal = c.cal(d)
+        for p in owners:
+            if p.emp in ("employed_full_time", "employed_part_time") and p.org is not None and paid_today(p, cal):
+                return d
+            if (p.ss and p.ss_cohort in cal["ss_cohorts"]) or ((p.ssi or p.va) and cal["ssi_today"]):
+                return d
+    return c.next_bank_day(c.today + dt.timedelta(days=14))
+
+
+def payday_opened(c, sim, W, P, org, amt, fee, idx, kind="storefront"):
+    lid = c.new_id("P")
+    first = c.link(idx, "payday_loan", lid, "borrowed", W=W)
+    c.loans.append(dict(id=lid, kind=kind, hid=W.hh.hid, wid=W.wid, pid=P.pid, org=org.oid, principal=amt, fee=round(fee, 2), n=1, fees_paid=0.0,
+                        due=next_payday(c, sim, W, P).isoformat(), start=c.date, status="open", tries=0, last=first))
+
+
+def warm_payday_loans(c, sim):
+    """The loans already out on a run's first day: about one per (one-day new-loan rate x days a loan is out) eligible
+    accounts, each at a point in its sequence drawn from the steady state, due within its term (no records: those loans
+    were taken before the run began)."""
+    from .day_c import PAYDAY_NEW
+    lenders, online = sim.by_kind.get("payday") or [], sim.X["x_cc2"]
+    stay = [1.0, PAYDAY_FIRST[1]]
+    for k in range(2, 30):
+        stay.append(stay[-1] * PAYDAY_LATER[1])
+    for H in sim.households:
+        if H.gq in ("jail", "nursing_home"):
+            continue
+        for W in H.wallets:
+            own = [p for p in W.owners if p.age >= 18 and not p.inpatient]
+            if not own or W.bank is None or not (W.status != "above" or W.revolver) or not any(p.wage > 0 for p in own):
+                continue
+            P = c.crng.choice(own)
+            due = next_payday(c, sim, W, P, 1)
+            term = max(7, (due - c.today).days)
+            if c.crng.random() >= PAYDAY_NEW * term:
+                continue
+            store = bool(lenders) and c.crng.random() < .58
+            org = min(lenders, key=lambda o: (o.district != H.district, c.crng.random())) if store else online
+            amt = float(c.crng.choice([200, 255, 300, 300, 350, 400, 500]))
+            fee = round(amt * c.crng.choice([.15, .15, .175]) * (1.0 if store else 1.6), 2)
+            u, n = c.crng.random() * sum(stay), 1
+            acc = stay[0]
+            while acc < u and n < len(stay):
+                acc += stay[n]
+                n += 1
+            c.loans.append(dict(id=c.new_id("P"), kind="storefront" if store else "online", hid=H.hid, wid=W.wid, pid=P.pid, org=org.oid, principal=amt,
+                                fee=fee, n=n, fees_paid=round(fee * (n - 1), 2), due=due.isoformat(), start=None, status="open", tries=0, last=None, warm=True))
+
+
+def payday_day(c, sim, q):
+    from .day_a import push
+    if c.n == 0 and not c.loans:
+        warm_payday_loans(c, sim)
+    if not sim.cal["bank_day"]:
+        return
+    for L in c.loans:
+        if L["status"] == "collections" or L["due"] > c.date:
+            continue
+        H, W, P = c.hh.get(L["hid"]), c.wal.get(L["wid"]), c.per.get(L["pid"])
+        if H is None or W is None or P is None or W.bank is None:
+            L["status"] = "collections"
+            continue
+        t = c.crng.randint(200, 420)
+        push(q, t, lambda L=L, H=H, W=W, P=P, t=t: payday_due(c, sim, L, H, W, P, t))
+    c.loans = [L for L in c.loans if L["status"] != "closed"]
+
+
+def payday_due(c, sim, L, H, W, P, t):
+    org = c.org[L["org"]]
+    store = L["kind"] == "storefront"
+    due = round(L["principal"] + L["fee"], 2)
+    fee = L["fee"]
+    k_repay, k_roll = ("payday_loan_repayment", "payday_loan_rollover") if store else ("online_loan_repayment", "online_loan_renewal")
+    ctx = dict(org=org.name, amt="%.2f" % due, fee="%.2f" % fee, n=L["n"], principal="%.0f" % L["principal"])
+    first_note = "loan taken before the run began" if L.get("warm") and L["last"] is None else ""
+    if L["status"] == "default":                     # the lender re-presents the bounced debit
+        if W.bank >= due:
+            W.take("ach", due)
+            ctx["again"] = "the lender sent the debit again after it bounced"
+            i = sim.emit(t, "bill_payment", "money_services", k_repay, P, H, P, org, channel="automatic", method="ach", gross=due, user=due,
+                         fee_type="payday_finance_charge", fee=fee, ctx=ctx)
+            L["last"] = c.link(i, "payday_loan", L["id"], "repaid_after_bounce", W=W, earlier=L["last"])
+            L["status"] = "closed"
+            return
+        return _payday_bounce(c, sim, L, H, W, P, t, org, due, ctx, k_repay)
+    plan = PAYDAY_FIRST if L["n"] == 1 else PAYDAY_LATER
+    r = c.crng.random()
+    intent = "repay" if r < plan[0] else "renew" if r < plan[0] + plan[1] else "default"
+    if intent == "repay" and W.bank >= due:
+        W.take("ach", due)
+        i = sim.emit(t, "bill_payment", "money_services", k_repay, P, H, P, org, channel="automatic", method="ach", gross=due, user=due,
+                     fee_type="payday_finance_charge", fee=fee, ctx=ctx)
+        L["last"] = c.link(i, "payday_loan", L["id"], "repaid", W=W, earlier=L["last"], note=first_note)
+        L["status"] = "closed"
+        return
+    if intent != "default" and (W.bank >= fee or (store and W.cash >= fee)):
+        m = "ach" if W.bank >= fee else "cash"
+        W.take(m, fee)
+        L["fees_paid"] = round(L["fees_paid"] + fee, 2)
+        ctx["again"] = ("renewal number %d of the same $%.0f; $%.0f in fees so far" % (L["n"], L["principal"], L["fees_paid"]))
+        i = sim.emit(t if m == "ach" else c.crng.randint(600, 1000), "bill_payment", "money_services", k_roll, P, H, P, org,
+                     channel="automatic" if m == "ach" else "in_person", method=m, gross=due, user=fee, fee_type="rollover_fee", fee=fee, outcome="partial",
+                     fr=("insufficient_funds",), tmin=0 if m == "ach" else 20, ctx=ctx)
+        L["last"] = c.link(i, "payday_loan", L["id"], "renewed", W=W, earlier=L["last"], note=first_note)
+        L["n"] += 1
+        L["due"] = next_payday(c, sim, W, P).isoformat()
+        return
+    return _payday_bounce(c, sim, L, H, W, P, t, org, due, ctx, k_repay, first_note)
+
+
+def _payday_bounce(c, sim, L, H, W, P, t, org, due, ctx, kind, note=""):
+    nsf = float(c.crng.choice([15, 25, 30, 35]))
+    ctx["reason"] = "the lender's debit bounced" if L["status"] != "default" else "the re-sent debit bounced again"
+    i = sim.emit(t, "failed_attempt", "money_services", kind, P, H, P, org, channel="automatic", method="ach", gross=due, fee_type="returned_payment_fee",
+                 fee=nsf, outcome="failed", fr=("insufficient_funds",), ctx=ctx)
+    L["last"] = c.link(i, "payday_loan", L["id"], "bounced", W=W, earlier=L["last"], note=note)
+    L["fee"] = round(L["fee"] + nsf, 2)
+    L["status"] = "default"
+    L["tries"] += 1
+    if L["tries"] <= len(PAYDAY_REPRESENT):
+        L["due"] = c.add_bank_days(PAYDAY_REPRESENT[L["tries"] - 1]).isoformat()
+    else:
+        L["status"] = "collections"          # sold or sent to a collector; no more debits this month
+
+
+# Title loans: the stock opened by finance.open_title_loans on a run's first day is carried from then on. A missed
+# payment leaves the loan behind (twice as likely to end in repossession, day_c.overnight_lenders) until paid, tried
+# again on the next day money comes in; a repossessed car stays gone for the rest of the run; a title loan taken during the
+# run joins the book, due a month later.
+def start_title_loans(c, sim):
+    if c.n == 0 and not c.tloans:
+        for H in sim.households:
+            if H.tloan is not None:
+                L = dict(H.tloan)
+                c.tloans[H.hid] = dict(L, org=L["org"].oid, late=False, last=None, warm=True, id=c.new_id("T"))
+    for H in sim.households:
+        lost = c.cars_lost.get(H.hid, 0)
+        if lost:
+            H.vehicles = max(0, H.vehicles - lost)
+        if H.hid in c.tloans:
+            L = c.tloans[H.hid]
+            H.tloan = None if L is None else dict(L, org=c.org[L["org"]])
+        elif H.tloan is not None:
+            H.tloan = None      # the build draws the same stock every day; only the carried book counts
+
+
+def title_taken(c, sim, H, P, org, amt, idx):
+    if c.tloans.get(H.hid):
+        return
+    tid = c.new_id("T")
+    c.tloans[H.hid] = dict(id=tid, kind="single", org=org.oid, principal=float(amt), dom=min(28, c.today.day), left=1, months=0, late=False,
+                           last=c.link(idx, "title_loan", tid, "borrowed", H=H), start=c.date)
+
+
+def repossessed(c, sim, H, idx):
+    L = c.tloans.get(H.hid)
+    if L:
+        c.link(idx, "title_loan", L["id"], "repossessed", H=H, earlier=L.get("last"),
+               note="loan taken before the run began" if L.get("warm") and L.get("last") is None else "")
+    c.tloans[H.hid] = None
+    c.cars_lost[H.hid] = c.cars_lost.get(H.hid, 0) + 1
+
+
+def title_day(c, sim, q):
+    from .day_c import go, TITLE_INSTALL_FEE, TITLE_PAYOFF_SHARE, TITLE_SINGLE_FEE
+    from .engine import SHOP
+    for hid, L in c.tloans.items():
+        if not L:
+            continue
+        H = c.hh.get(hid)
+        due_today = c.today.day == L["dom"] and (L.get("paid") or "")[:7] != c.date[:7]
+        if H is None or H.gq or not (due_today or (L["late"] and L.get("next") and L["next"] <= c.date)):
+            continue
+        W = H.wallets[0]
+        P = next((a for a in W.owners if a.age >= 18 and not a.inpatient), None)
+        if P is None:
+            continue
+        org = c.org[L["org"]]
+        p = L["principal"]
+        if L["kind"] == "single":
+            fee = round(p * TITLE_SINGLE_FEE, 2)
+            payoff = W.liquid() >= p + fee and c.crng.random() < TITLE_PAYOFF_SHARE * 2
+            kind, amt, f = ("title_loan_payment", p, ("title_loan_finance_charge", fee)) if payoff else ("title_loan_rollover", fee, None)
+            ctx = dict(note=", which pays it off and gets the title back") if payoff else dict(owed="%.0f" % p, n=L["months"] + 1)
+        else:
+            part, fee = round(p / max(1, L["left"]), 2), round(p * TITLE_INSTALL_FEE, 2)
+            payoff, kind, amt, f = L["left"] <= 1, "title_loan_payment", part, ("title_loan_finance_charge", fee)
+            ctx = dict(note="; that was the last payment" if L["left"] <= 1 else "; %d payments left" % (L["left"] - 1))
+        if L["late"]:
+            ctx["again"] = "a late payment, after the one due on the %s was missed" % _ordinal_day(L["dom"])
+
+        def fn(t, miles, mode, tfr, w, L=L, H=H, W=W, P=P, org=org, kind=kind, amt=amt, f=f, ctx=ctx, payoff=payoff):
+            i, oc, m = sim.pay(t, P, H, W, org, "money_services", kind, amt, ctx=ctx, tmin=15 + w, wait=w, miles=miles, mode=mode, fr=tfr, rtype="bill_payment",
+                               fee=f, quiet_fail=0.0, lens=("consumer_finance",))
+            note = "loan taken before the run began" if L.get("warm") and L.get("last") is None else ""
+            if oc != "completed":
+                L["last"] = c.link(i, "title_loan", L["id"], "missed_payment", H=H, earlier=L.get("last"), note=note)
+                L["late"], L["next"] = True, next_money_day(c, sim, W).isoformat()
+                return
+            L["late"], L["paid"] = False, c.date
+            if L["kind"] == "single" and not payoff:
+                L["months"] += 1
+                L["last"] = c.link(i, "title_loan", L["id"], "rolled_over", H=H, earlier=L.get("last"), note=note)
+            elif payoff:
+                c.link(i, "title_loan", L["id"], "paid_off", H=H, earlier=L.get("last"), note=note)
+                c.tloans[H.hid] = None
+                H.tloan = None
+            else:
+                L["left"] -= 1
+                L["last"] = c.link(i, "title_loan", L["id"], "installment_paid", H=H, earlier=L.get("last"), note=note)
+        if go(sim, q, P, H, org, c.crng.randint(10, 25), SHOP, fn, wait=(0, 15)) is None:
+            L["late"], L["next"] = True, (c.today + dt.timedelta(days=1)).isoformat()
+
+
+def _ordinal_day(n):
+    return "%d%s" % (n, "th" if 11 <= n % 100 <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th"))
