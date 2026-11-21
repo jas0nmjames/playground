@@ -1,12 +1,12 @@
 ---
 published: 2026-11-17
-updated: 2026-11-20
+updated: 2026-11-21
 tags: generative
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
 
-Two animated views of Medianville, an invented American city of about 100,000 people, that play back all 201,753 records from one simulated day (Wednesday, March 3, 2027): purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. The latest viewer replays the same day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation.
+Two animated views of Medianville, an invented American city of about 100,000 people, that play back every record of one simulated day: Wednesday, March 3, 2027 by default (202,402 records in v2), or any of 18 other days that together stand for 2027. The records are purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. The latest viewer replays the same day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation. A menu in the header of both switches days.
 
 **Start here:** [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) always opens the latest viewer. Earlier versions stay online, unchanged, in `v1/` and `v3/`.
 
@@ -29,9 +29,9 @@ No viewer v2 shipped: the second round was a set of visual-direction prototypes 
 | Data run | File | Status |
 |---|---|---|
 | v1: Wednesday, March 3, 2027 | `data/halvern_2027-03-03.zip` | Frozen as shipped. The archived viewers load it. |
-| v1, renamed | `data/medianville_2027-03-03.zip` | Current: the same run with only the city's name changed, written by `tools/rename_run.py`. The latest viewer and the explorer load it until v2 ships. |
-| v2: the evidence update | Simulator in `sim/` (the `medianville_sim` package); runs to be packaged as `data/runs/v2/medianville_<date>.zip` | In progress; see the [data update plan](reference/medianville-data-update-plan.md) |
-| v2, phase 4: March 1–31, 2027, carried day to day | GitHub Release `medianville-v2-month-2027-03`: [download (about 460 MB), not needed to use the site](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip) | Built 2026-11-20: 5.7 million records with the chains across days (unpaid bills, shutoffs, overdrafts, payday and title loans). The pages never load it. Checks and summary in `sim/evidence/results/v2_month_2027-03/`; see the [month run record](reference/medianville-2027-03-month-run-record.md). |
+| v1, renamed | `data/medianville_2027-03-03.zip` | The same run with only the city's name changed, written by `tools/rename_run.py`. The latest viewer and the explorer list it in their day menu as v1. |
+| v2: the evidence update | `data/runs/v2/medianville_<date>.zip`, 19 days listed in `data/runs/manifest.json`; simulator in `sim/` (the `medianville_sim` package), frozen at commit `dd0e6b6` | Current, 2026-11-21. The baseline day (Wednesday, March 3, 2027, with 300 hand-written records) and the 18 typed days that stand for 2027. The latest viewer and the explorer open the baseline day; `?run=<id>` or the day menu opens another. See the [data update plan](reference/medianville-data-update-plan.md) and the [close reading](reference/medianville-v2-close-reading.md). |
+| v2, phase 4: March 1–31, 2027, carried day to day | GitHub Release `medianville-v2-month-2027-03`: [download (about 460 MB), not needed to use the site](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip) | Built 2026-11-20 and rebuilt 2026-11-21 on the frozen simulator: 5.7 million records with the chains across days (unpaid bills, shutoffs, overdrafts, payday and title loans). The pages never load it. Checks and summary in `sim/evidence/results/v2_month_2027-03/`; see the [month run record](reference/medianville-2027-03-month-run-record.md). |
 
 ## Views
 
@@ -43,7 +43,7 @@ No viewer v2 shipped: the second round was a set of visual-direction prototypes 
 | Record kinds | 13 colors, one per record type | 6 kinds with their own color, line and head: purchase, income, bill, public service, unpaid work, failure |
 | Needs | Any modern browser | WebGL, plus three.js from a CDN (falls back to the map without it) |
 
-Both animated pages play the same run and link to each other and to the systems lens in their footers. The latest viewer and the data explorer load `data/medianville_2027-03-03.zip`; the night map, now an archive, loads the original, `data/halvern_2027-03-03.zip`. The two files hold the same records, under the city's new and first names.
+Both animated pages link to each other and to the systems lens in their footers. The latest viewer and the data explorer read `data/runs/manifest.json` (through `runs.js`) and open its default run, v2's baseline day; the day menu reloads the page with `?run=<id>`, and the link to the other viewer keeps the choice. Without the manifest they fall back to `data/medianville_2027-03-03.zip`. The night map, now an archive, loads the original v1 file, `data/halvern_2027-03-03.zip`.
 
 ### Night map
 
@@ -120,7 +120,7 @@ Everything in the lens is a composite of documented US patterns on invented bloc
 
 ## Using the data explorer
 
-The page downloads the run (16 MB) and unpacks it in the browser, which takes a few seconds; nothing is uploaded anywhere.
+The page downloads the day (12 to 19 MB) and unpacks it in the browser, which takes a few seconds; nothing is uploaded anywhere. The day menu in the header opens another day.
 
 - **Tabs.** Records, Households, People and Organizations are tables; Summary is the day at a glance.
 - **Filters.** The left column lists each field with a count beside every value, and the counts follow the other filters. Records filter by kind, whether it didn't work, outcome, area of life, job, household income tier, district, friction, fee, channel, payment method, travel mode, third-party payer, funding level, lens, hand-written text and time of day. Households, people and organizations have their own, such as tier, circumstances, a $400 emergency, coverage, benefits, sector or what an organization accepts. On a phone, the filters open from a button.
@@ -132,7 +132,7 @@ The page downloads the run (16 MB) and unpacks it in the browser, which takes a 
 - **Download.** The filtered records download as CSV with all 31 columns.
 - **Summary.** Who had something not work, by income tier; fees by tier; records and failures by hour; frictions; unpaid work; and who else pays. Select a bar or row to open the records behind it.
 
-"Didn't work" follows the run's own definition: a failed attempt, or a record that ended declined, abandoned, failed or rescheduled. Partial records count as worked. With it, the Summary matches the run's `summary.md`: 6,896 records, and 13.4% of households (28.5% in poverty, 16.1% ALICE, 9.5% above ALICE). Unpaid hours count time spent plus waiting (16,736 hours), as the summary does.
+"Didn't work" follows the run's own definition: a failed attempt, or a record that ended declined, abandoned, failed or rescheduled. Partial records count as worked. With it, the Summary matches the run's `summary.md`. On v2's baseline day that is 6,168 records, and 12.3% of households (25.9% in poverty, 13.6% ALICE, 9.3% above ALICE); unpaid hours count time spent plus waiting (12,395 hours), as the summary does. (v1's March 3: 6,896 records, 13.4% of households, 16,736 unpaid hours.)
 
 The explorer doesn't link into a moment of the animations, because they don't accept a record or time in their address yet.
 
@@ -172,6 +172,14 @@ python3 ../tools/pack_month.py month evidence/results/v2_month_2027-03 ../data/m
 
 The typed-day year: `python3 evidence/checks.py run OUT --label TEXT`. Tests: `python3 -m pytest tests --run-slow`.
 
+The published days (phase 5): run the baseline day and each typed day into one folder (`simulate.py --out runs/2027-03-03`, then `--date D [--weather W] --out runs/D` for each day `evidence/typed_days.py` lists), then
+
+```bash
+python3 ../tools/pack_runs.py runs --commit dd0e6b6
+```
+
+which writes `data/runs/v2/medianville_<date>.zip` and `data/runs/manifest.json`, the same bytes every time. The baseline day picks up the hand-written text from `sim/detailed_overrides.csv` by itself. `tools/sample_records.py` draws a stratified sample of a run as readable cards (the close reading) or one line a record (for writing); `tools/merge_detailed.py` merges `sim/detail_parts/part*.txt` into the overrides.
+
 ## What's in this folder
 
 | Path | What it is |
@@ -179,6 +187,7 @@ The typed-day year: `python3 evidence/checks.py run OUT --label TEXT`. Tests: `p
 | `index.html` | The latest viewer, Miniature and Map: the city plan, both views, the activity panel, playback, the systems lens overlay and the first-visit intro |
 | `about/index.html` | The About page: what the project is, where it came from, how it was made, sources, limits and credits. Plain HTML and CSS. |
 | `real-day.js` | Loads the run for the latest viewer and folds it onto its town (see below) |
+| `runs.js` | Reads `data/runs/manifest.json` for both viewers: which day to open (the default, or `?run=<id>`) and the day menu |
 | `sound.js` | The latest viewer's sound, generated in the browser with Web Audio |
 | `v1/index.html` | Archived: the night map (canvas map, timeline, ticker, record sheets and filters) |
 | `v3/index.html`, `v3/real-day.js` | Archived: Miniature and Map (v3) as first shipped |
@@ -187,13 +196,16 @@ The typed-day year: `python3 evidence/checks.py run OUT --label TEXT`. Tests: `p
 | `systems-lens/directions.html` | The three directions tried first (Section, Exploded view, The Works), in their original hand-drawn style |
 | `fflate.js` | [fflate](https://github.com/101arrowz/fflate) (MIT), used by every page to unzip the run in the browser |
 | `data/halvern_2027-03-03.zip` | The v1 run, frozen exactly as delivered under the city's first name: the data tables, the simulator, and the hand-written records. The archived viewers load this file. |
-| `data/medianville_2027-03-03.zip` | The same run with only the name changed, in every file's contents and paths (`medianville/`). The latest viewer and the explorer load this file until v2 ships. |
+| `data/medianville_2027-03-03.zip` | The same run with only the name changed, in every file's contents and paths (`medianville/`). The day menu lists it as v1. |
+| `data/runs/manifest.json`, `data/runs/v2/medianville_<date>.zip` | v2's published days: the baseline day and the 18 typed days, each a zip of the day's tables, the systems lens's blocks, the simulator, a README and `SHA256SUMS` (the baseline day also carries the hand-written text). The manifest lists every run, v1 included, with its size and SHA-256. |
 | `tools/rename_run.py` | Writes the renamed copy from the frozen zip. Mapping the copy back gives every file of the original byte for byte; `sim/tests/test_rename_run.py` checks it. |
 | `data/halvern/` | The frozen v1 package unpacked so it can be read on GitHub, without the four large tables (`records.csv`, 77 MB; `persons.csv`; `households.csv`; `household_ledger.csv`), which are only in the zip |
 | `data/halvern/out/summary.md` | Counts, calibration against the anchors, fees, public dollars and the costliest frictions |
 | `data/halvern/detailed_sample_500.csv` | The 500 hand-written records |
 | `data/halvern/simulate.py`, `halvern_sim/` | The v1 simulator, frozen (Python 3.10+ and numpy). The package's own [README](data/halvern/README.md) explains how to re-run it for another date, a storm, or several days in a row. `sim/tests` checks that it still reproduces the zip byte for byte. |
-| `sim/simulate.py`, `sim/medianville_sim/` | The v2 simulator in progress, with its tests (`sim/tests/`), evidence targets (`sim/evidence_targets.csv`) and typed-day checks (`sim/evidence/`). See the [data update plan](reference/medianville-data-update-plan.md). `medianville_sim/carry.py` is what a run of several days carries from one day to the next (phase 4). |
+| `sim/detailed_overrides.csv`, `sim/detailed_sample.csv`, `sim/detail_parts/` | v2's 300 hand-written records: the text keyed to the baseline day's record ids, the finished rows on their own, and the parts they were written in |
+| `tools/pack_runs.py`, `tools/sample_records.py`, `tools/merge_detailed.py` | Pack the published days and write the manifest; draw samples to read or write; merge the hand-written parts |
+| `sim/simulate.py`, `sim/medianville_sim/` | The v2 simulator, frozen for v2's hand-written records, with its tests (`sim/tests/`), evidence targets (`sim/evidence_targets.csv`) and typed-day checks (`sim/evidence/`). See the [data update plan](reference/medianville-data-update-plan.md). `medianville_sim/carry.py` is what a run of several days carries from one day to the next (phase 4). |
 | `sim/evidence/month.py`, `sim/evidence/month_targets.csv` | The month's evidence checks: its targets, the chains across days, and the typed-day targets over the month |
 | `sim/evidence/results/v2_month_2027-03/` | The March 2027 month's `summary.md` and `evidence_checks.md`. The month itself is a Release download (above), not in the repo. |
 | `tools/pack_month.py` | Packs a carried month into one zip, the same bytes every time, with a `SHA256SUMS` file inside |
@@ -209,13 +221,25 @@ The typed-day year: `python3 evidence/checks.py run OUT --label TEXT`. Tests: `p
 - [Medianville transaction generator prompt](reference/medianville-transaction-generator-prompt.md): the prompt that generated the data.
 - [How the Medianville day was built](reference/medianville-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed.
 - [Medianville run record](reference/medianville-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
-- [Medianville month run record](reference/medianville-2027-03-month-run-record.md): the March 2027 month (v2, phase 4): dates, seed, records, size, SHA-256, how to rebuild it, and where to download it.
+- [Medianville month run record](reference/medianville-2027-03-month-run-record.md): the March 2027 month (v2, phase 4, rebuilt in phase 5): dates, seed, records, size, SHA-256, how to rebuild it, and where to download it.
+- [Medianville v2 run record](reference/medianville-v2-run-record.md): the 19 published days (v2, phase 5): kinds, weights, records, sizes, SHA-256, how they were checked and how to rebuild them.
+- [Medianville v2 close reading](reference/medianville-v2-close-reading.md): 200 records read by two readers before v2 was frozen, what they found, what was fixed and what was left for v3; the second readers' reports on [the sample](reference/medianville-v2-second-reader.md) and on [the hand-written records](reference/medianville-v2-handwritten-second-reader.md) are kept as written.
 - [Medianville Systems Lens: design record](reference/medianville-systems-lens.md): the directions tried for the systems lens, what was decided, and what waits for the next run.
 - [Medianville Miniature: realism design record](reference/medianville-miniature-realism.md): the tilt-shift references, the iterations tried in the realism lab, what was kept and how it works.
 
 Everything in the data is synthetic. People, businesses and local agencies are invented. Federal programs keep their real names because the specification requires them. Synthetic data suggests where to look; it isn't evidence.
 
 **Wages are boosted on purpose.** Each worker is paid 1.23 times the national pay for their occupation, about 14% more than a real worker in the same job in 2027. Medianville's households are smaller than real ones, so fewer paychecks reach each home, and the boost makes up for it. Household incomes, balances and bills are closer to right this way, but one person's paycheck runs high, so compare households rather than occupations. The [data update plan](reference/medianville-data-update-plan.md) explains the numbers; the next version, which rebuilds households at their real size, drops the boost.
+
+**What v2 still gets wrong.** v2 keeps v1's people so the two can be compared, and some of v1's households don't hold up. The [close reading](reference/medianville-v2-close-reading.md) lists them, and the next version, drawn from Census microdata, redraws them:
+- SSI goes to people whose household income or spouse rules it out, and some SSI recipients have no Medicaid.
+- Coverage doesn't always follow eligibility, such as uninsured adults with no income.
+- Every renter with no income pays the same $380.
+- Refundable credits reach some households earning well over the EITC limit (about 140 of the day's 640).
+- Some jobs are paired with unrelated employers.
+- A few trips run 60 to 80 miles.
+- Overdraft fees fall on fewer accounts than in life.
+- `time_minutes` counts the wait but not the travel.
 
 ## How the night map works
 
@@ -232,6 +256,8 @@ Changes since the Claude artifact it came from:
 - A footer credits the page, links to the latest viewer and v3, and gives the impact figure below.
 
 ## How the Miniature and Map use the real day (since v3)
+
+The figures in this section are for v1's March 3, the day v3 first loaded; v2's days differ a little (the explorer and each run's `summary.md` have their counts).
 
 v3 was built as a Claude artifact around its own placeholder day: 4,130 records among 225 homes and 100 named buildings. `real-day.js` (once `v3/real-day.js`) swaps in the real run once it has downloaded. Records keep their real ids, names, amounts, districts, job statements and narratives. Only where they are drawn is approximate, because v3 draws one small town rather than the run's six districts.
 
@@ -307,6 +333,14 @@ The rename to Medianville was one Claude Code session (claude-opus-5-5) on Novem
 
 Phase 4, the month, was one Claude Code session (claude-opus-5-5) on November 20, 2026, from Jason's brief. It set up Python 3.11 and numpy on the Mac and checked that the unchanged simulator reproduced the typed-day year byte for byte, then made the simulator carry consequences from one day to the next, one commit per change: a retry queue for unpaid bills, notice-to-shutoff timers, overdraft chains, payday and title rollovers, SNAP and checking balance paths, and week-to-week income, each with its tests. It reran the typed-day year after every commit (unchanged each time), fixed an old scam-loss branch that made money when carried balances triggered it, wrote two source tools (SHED bills, EIA-112 disconnections), ran March 2027 at full scale twice (fitting four carried-only terms after the first), wrote the month's evidence checks and packing tool, built the bundle, and updated the plan, the decision log and this README. Its row counts 205 model requests measured in the session transcript and about 10 more estimated for the commit, the pull request and the reply; at the time of measuring, the session had used ≈ 92M tokens, about 98% of them cache reads. The two full-city month runs, the typed-day reruns and the tests ran on the Mac's CPU and are not counted.
 
+Phase 5, reading and publishing v2, was one Claude Code session (claude-opus-5-5) on November 21, 2026, from Jason's go-ahead.
+
+1. **Groundwork.** It built the run packer, the manifest and the day menu for both viewers, and tested them in the browser at desktop and phone widths.
+2. **Close reading.** It drew 200 fresh records as cards and read them, then measured each suspicion across the whole day against v1. A second Claude agent read the same cards without the code.
+3. **Fixes.** On Jason's choice it made three fixes, one commit and one test file each: owner housing costs from AHS by income, the records, and the text. It reran the typed-day year and the month (every target held), and verified and recorded the month.
+4. **Hand-written records.** It froze the simulator and wrote 300 hand-written records. A second agent checked them against their fields, and it fixed what that turned up.
+5. **Publishing.** It packed and verified the 19 days and updated this README, the About page, the plan, the decision log and the run records.
+
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | November 16, 2026 | Claude app | claude-fable-5-2 | not measurable from here | — | — |
@@ -319,6 +353,7 @@ Phase 4, the month, was one Claude Code session (claude-opus-5-5) on November 20
 | November 20, 2026 | Claude Code (intro, About page, data links) | claude-opus-5-5 | 1.188 kWh | 0.459 kg CO₂ | 0.594 L |
 | November 20, 2026 | Claude Code (rename to Medianville) | claude-opus-5-5 | 3.546 kWh | 1.369 kg CO₂ | 1.773 L |
 | November 20, 2026 | Claude Code (phase 4: the month) | claude-opus-5-5 | 3.870 kWh | 1.494 kg CO₂ | 1.935 L |
-| **Total (countable)** | | | **13.302 kWh** | **5.135 kg CO₂** | **6.651 L** |
+| November 21, 2026 | Claude Code (phase 5: read and publish) | claude-opus-5-5 | 5.400 kWh | 2.084 kg CO₂ | 2.700 L |
+| **Total (countable)** | | | **18.702 kWh** | **7.219 kg CO₂** | **9.351 L** |
 
-[^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads.
+[^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads. The phase 5 row is 300 requests: 285 measured in the session's transcript and its two reader agents' transcripts (deduplicated by message id; about 106M tokens, nearly all cache reads), and 15 estimated for the last commit, the pull request and the reply.

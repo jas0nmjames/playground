@@ -155,6 +155,18 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Note:** v1's households are built by rule to match national shares. They aren't drawn from ACS microdata, so site copy shouldn't say they are.
 - **Source:** data update plan section 9.
 
+### 2.11 Fix what v2 broke and what the records say wrong; leave the people for v3
+- **Decided:** Before the freeze, fix the one problem v2 made worse (owners' housing costs drawn apart from income), the records that don't add up or don't fit (claims, practices, invoices, payers, fees, waits), and text that doesn't fit the person or place. Leave the population's problems (SSI and Medicaid against income, coverage against eligibility, $0-income rent, jobs tied to the wrong employers, long trips) as v2's known limits.
+- **Why:** The fixes change no one's identity, so 2.10's before-and-after comparison holds, and every typed-day target stayed in range after them. The population's problems are v1's and need the population redrawn, which v3 does from microdata anyway.
+- **Considered:** Fixing the population's problems now as well (breaks comparability and means retuning); freezing as it was (keeps a regression v2 introduced).
+- **Cost:** v2 still shows SSI where it couldn't be paid, refundable credits on high incomes and some 60-80 mile trips. The month was rebuilt, and its Release asset has to be replaced.
+- **Who:** Jason, on a proposal. **When:** 2026-11-21. **Source:** `reference/medianville-v2-close-reading.md`.
+
+### 2.12 Two readers, and a second reader for the hand-written text
+- **Decided:** The close reading had two readers for 200 records: Claude Code, which built the simulator and then measured each suspicion across the whole day, and a separate agent that saw only the record cards. After the freeze, 300 records were hand-written (40% from the job kinds new or changed since v1, the rest stratified), and a second reader that had not seen the code checked each one against its own fields.
+- **Why:** 2.6's "next time": a reader who knows the code reads past what it expects. The outside reader found the $380 rent floor and the ignored travel time, which the first reader had missed.
+- **Who:** Build, following 2.6. **When:** 2026-11-21. **Source:** close reading; `sim/detail_parts/`.
+
 ---
 
 ## 3. The viewer: how the day is shown
@@ -240,6 +252,17 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 5.3 Design labs stay in the project
 - **Decided:** Design labs happen as artifacts in this project, and nothing reaches the repo on its own. Work merges into `development` first, and Jason promotes to `main`.
 - **Source:** integration plan.
+
+### 5.4 Days chosen from a manifest, each its own link
+- **Decided:** Both viewers read `data/runs/manifest.json` through `runs.js`, open its default run (v2's baseline day) and list every run, v1 included, in a day menu. Choosing a day reloads the page with `?run=<id>`, and the link to the other viewer carries it. Without the manifest the pages load v1's zip, as before.
+- **Why:** A reload gives every day its own address and avoids resetting a loaded day in place. A manifest lets new runs ship without touching the pages.
+- **Who:** Build, on the plan's section 7. **When:** 2026-11-21.
+
+### 5.5 The typed-day zips go in the repo, once
+- **Decided:** The baseline day and the 18 typed days are committed as `data/runs/v2/medianville_<date>.zip` (about 280 MB together), only after the simulator was frozen and the hand-written text merged.
+- **Why:** The site must serve them (Pages doesn't serve Git LFS), and a zip committed twice stays in the history twice.
+- **Cost:** The repository grows by about 280 MB. The month stays a Release download (1.15).
+- **Who:** Jason (plan section 7), Build (when). **When:** 2026-11-21.
 
 ---
 
