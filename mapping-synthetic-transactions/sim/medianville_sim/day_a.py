@@ -612,11 +612,13 @@ def gen_bills(sim, H, q):
                     W.take("ach", amt)
                     i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel="automatic", method="ach", gross=amt + third, user=amt, third=third,
                                  payer=payer, fund=fund, fr=fr, lens=lens, ctx=ctx)
-                elif W.od and amt - max(have, 0) < 900 and rng.random() < .6:
+                elif W.od and amt - max(have, 0) < 900 and (sim.carry is None or sim.carry.od_ok(W, amt)) and rng.random() < .6:
                     W.take("ach", amt + W.od_fee)
                     sim.bump("overdraft")
                     i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel="automatic", method="ach", gross=amt + third, user=amt + W.od_fee,
                                  third=third, payer=payer, fund=fund, fee_type="overdraft_fee", fee=W.od_fee, fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx)
+                    if sim.carry is not None:
+                        sim.carry.overdraft(sim, W, i)
                 else:
                     rf = float(rng.choice([15, 20, 25, 25, 30, 35]))
                     ctx2 = dict(ctx)
@@ -669,7 +671,7 @@ def gen_bills(sim, H, q):
                         bill_missed(sim.carry, sim, H, bi, W, P, i, amt, late=lfee)
                 else:
                     f = cf[1] if cf else 0.0
-                    if W.bank >= amt + f or W.od:
+                    if W.bank >= amt + f or (W.od and (sim.carry is None or sim.carry.od_ok(W, amt + f))):
                         odf = W.od_fee if W.bank < amt + f else 0
                         W.take("ach", amt + f + odf)
                         if odf:
@@ -677,6 +679,8 @@ def gen_bills(sim, H, q):
                         i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel=method, method="ach", gross=amt + third, user=amt + f + odf, third=third,
                                      payer=payer, fund=fund, fee_type=((cf[0] if cf else "") + ("+overdraft_fee" if odf and cf else "overdraft_fee" if odf else "")),
                                      fee=f + odf, tmin=dur, fr=frx + (["insufficient_funds"] if odf else []), lens=lens, ctx=ctx)
+                        if odf and sim.carry is not None:
+                            sim.carry.overdraft(sim, W, i)
                     else:
                         part = round(max(0, W.bank) * rng.uniform(.6, .95), 2)
                         if kind in ("rent", "electric_bill", "gas_bill", "water_bill", "credit_card_payment", "car_payment") and part > 20:

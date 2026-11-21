@@ -67,6 +67,7 @@ class Carry:
         self.today = sim.cal["date"]
         self.crng = random.Random("carry|%s|%s" % (self.seed, self.date))
         self.links, self.refs = [], []
+        self.od_today = {}
         self.hh = {H.hid: H for H in sim.households}
         self.wal = {W.wid: W for W in sim.wallets}
         self.per = {p.pid: p for p in sim.persons}
@@ -75,12 +76,23 @@ class Carry:
 
     def begin_day(self, sim, q):
         """After the day's schedules are drawn and before the households' own plans: carried obligations come first."""
+        overdraft_overnight(self, sim)
         set_aside_for_bills(self, sim)
         retry_day(self, sim, q)
         shutoff_day(self, sim, q)
 
     def end_day(self, sim):
         """After the day's queue has run and card payments have posted."""
+        overdraft_end_of_day(self, sim)
+
+    # overdraft chains (section 3 below): called from engine.Sim.pay, day_a.gen_bills and the retry queue
+    def od_ok(self, W, amt):
+        """Will the bank cover this item into overdraft? Not past the daily fee cap, and not past the account's overdraft
+        limit; otherwise the item is declined or returned."""
+        return self.od_today.get(W.wid, 0) < OD_DAILY_CAP and (W.bank or 0.0) - amt >= -OD_LIMIT
+
+    def overdraft(self, sim, W, idx):
+        overdraft_fee_charged(self, sim, W, idx)
 
     def after_write(self, sim, out):
         """Record ids exist only once records.csv is written: resolve today's references and write links.csv."""
@@ -207,8 +219,11 @@ def bill_missed(c, sim, H, bi, W, P, idx, owed, fees=0.0, late=0.0, how="missed"
         mode, nxt = "card", c.today + dt.timedelta(days=CARD_GAPS[0])
     else:
         mode, nxt = "manual", next_money_day(c, sim, W)
-    c.retries.append(dict(id=eid, hid=H.hid, wid=W.wid, pid=P.pid, bill=bi, kind=kind, org=b[1].oid, owed=round(owed, 2), fees=round(fees + late, 2),
-                          due=c.date, late=bool(late), ret=bool(fees), tries=1, mode=mode, next=nxt.isoformat(), last=first))
+    e = dict(id=eid, hid=H.hid, wid=W.wid, pid=P.pid, bill=bi, kind=kind, org=b[1].oid, owed=round(owed, 2), fees=round(fees + late, 2),
+             due=c.date, late=bool(late), ret=bool(fees), tries=1, mode=mode, next=nxt.isoformat(), last=first)
+    c.retries.append(e)
+    if kind in RENT_KINDS:
+        rent_after_overdraft(c, W, idx, e)
 
 
 def next_money_day(c, sim, W):
@@ -302,7 +317,7 @@ def retry_attempt(c, sim, t, e, H, W, P, b):
             if have >= need:
                 W.take("ach", need)
                 paid, oc = need, "completed"
-            elif W.od and need - max(have, 0) < 900 and c.crng.random() < .6:
+            elif W.od and need - max(have, 0) < 900 and c.od_ok(W, need) and c.crng.random() < .6:
                 W.take("ach", need + W.od_fee)
                 sim.bump("overdraft")
                 paid, oc = need + W.od_fee, "overdraft"
@@ -339,6 +354,8 @@ def retry_attempt(c, sim, t, e, H, W, P, b):
         ft = "+".join(x for x in (ftype, "overdraft_fee" if odf else "") if x)
         i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel=channel, method=method, gross=owed, user=paid, fee_type=ft, fee=fees + odf,
                      fr=["insufficient_funds"] if odf else [], ctx=ctx, **kw)
+        if odf:
+            c.overdraft(sim, W, i)
         return _settle(c, sim, e, W, i, "paid_late", paid - odf, owed)
     if oc == "partial":
         ctx["short"] = "%.2f" % (need - paid)
@@ -360,6 +377,8 @@ def _settle(c, sim, e, W, i, step, paid, owed):
     if i is not None:
         e["last"] = c.link(i, "unpaid_bill", e["id"], step, W=W, earlier=e["last"])
         e["n"] = e.get("n", 1) + 1
+        if e.get("od") and step in ("paid_late", "partial"):
+            e["od_last"] = c.link(i, "overdraft", e["od"], "late_rent_paid" if step == "paid_late" else "late_rent_part", W=W, earlier=e.get("od_last"))
     e["tries"] += 1
     if step == "paid_late":
         e["next"] = None
@@ -596,3 +615,80 @@ def reconnect(c, sim, T, H, P, t):
     else:                       # the rest of a plan is still owed; a new notice can follow later
         T.update(state="notice", off=None, reconnect_on=None, decided=False, plan=True,
                  due=(c.today + dt.timedelta(days=c.crng.choice([21, 28]))).isoformat())
+
+
+# ---------------------------------------------------------------------------------------------- 3. overdraft chains
+# Once balances carry, an account that goes below zero stays there until money comes in, so the next card swipe or
+# autopay overdraws it again: one overdraft leads to more fees, and a rent payment that comes due while the account is
+# under water fails and is paid late with the lease's late fee. A chain runs from an account's first overdraft fee until
+# it closes a day at or above zero.
+# Bank terms (estimates; banks that still charge overdraft fees mostly cap them per day and many have dropped extended
+# fees, but the local banks here keep them): at most three overdraft fees a day; no item that would take the account more
+# than $500 below zero; an extended overdraft fee, equal to the bank's overdraft fee, once an account has been below zero
+# for seven days. Someone whose account is already below zero tries a card that will not clear about a third as often
+# (engine.Sim.methods).
+# Concentration is measured, not set: the CFPB found 9% of accounts paying 79% of overdraft and NSF fees over a year
+# ("Data point: Frequent overdrafters", 2017). Overdraft fees fall only on accounts opted in to coverage
+# (finance.OD_OPT_IN), which the one-day simulator already fixes.
+RENT_WINDOW = 14               # a rent payment missed within two weeks of an overdraft fee joins that overdraft's chain
+OD_DAILY_CAP = 3
+OD_LIMIT = 500.0                # the furthest below zero a bank lets an account go (estimate; a one-day run caps each item at $260)
+EXTENDED_OD_DAYS = 7
+RENT_KINDS = ("rent", "lot_rent")
+
+
+def overdraft_fee_charged(c, sim, W, idx):
+    c.od_today[W.wid] = c.od_today.get(W.wid, 0) + 1
+    o = c.od.get(W.wid)
+    if o is None or (o.get("closed") and o["closed"] < c.date):
+        o = c.od[W.wid] = dict(id=c.new_id("O"), start=c.date, last=None, fees=0, neg_since=None, ext=False, closed=None)
+        step = "first_overdraft"
+    else:
+        step = "more_fees"
+    o["last"] = c.link(idx, "overdraft", o["id"], step, W=W, earlier=o["last"])
+    o["fees"] += 1
+    o["last_fee"] = c.date
+
+
+def overdraft_overnight(c, sim):
+    """An account below zero for a week draws the extended overdraft fee, once per chain."""
+    for wid, o in c.od.items():
+        W = c.wal.get(wid)
+        if W is None or W.bank is None or not W.od_fee or o["ext"] or o["neg_since"] is None or o.get("closed"):
+            continue
+        days = (c.today - D(o["neg_since"])).days
+        if days >= EXTENDED_OD_DAYS and W.bank < 0:
+            P = next((a for a in W.owners if a.age >= 18), W.owners[0])
+            fee = float(W.od_fee)
+            W.take("debit", fee)
+            i = sim.emit(c.crng.randint(60, 240), "bill_payment", "money_services", "extended_overdraft_fee", P, W.hh, P, W.bank_org, channel="automatic",
+                         method="debit", gross=fee, user=fee, fee_type="extended_overdraft_fee", fee=fee, fr=("insufficient_funds",),
+                         ctx=dict(org=W.bank_org.name, amt="%.0f" % fee, days=days))
+            o["last"] = c.link(i, "overdraft", o["id"], "extended_fee", W=W, earlier=o["last"])
+            o["ext"] = True
+
+
+def overdraft_end_of_day(c, sim):
+    """A chain stays open while the account closes the day below zero. A closed chain is remembered for two weeks, so a
+    rent payment the fees left short can still be tied to it."""
+    for wid in list(c.od):
+        W = c.wal.get(wid)
+        o = c.od[wid]
+        if W is None or W.bank is None or W.bank >= 0:
+            if o.get("closed") is None:
+                o["closed"] = c.date
+            if (c.today - D(o["last_fee"])).days >= RENT_WINDOW:
+                del c.od[wid]
+        else:
+            o["closed"] = None
+            if o["neg_since"] is None:
+                o["neg_since"] = c.date
+
+
+def rent_after_overdraft(c, W, idx, e):
+    """A rent payment that fails within two weeks of an overdraft fee on the same account joins that overdraft's chain."""
+    o = c.od.get(W.wid)
+    if o is None or (c.today - D(o["last_fee"])).days > RENT_WINDOW:
+        return
+    e["od"] = o["id"]
+    o["last"] = e["od_last"] = c.link(idx, "overdraft", o["id"], "rent_missed", W=W, earlier=o["last"])

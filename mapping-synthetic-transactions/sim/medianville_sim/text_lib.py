@@ -436,6 +436,8 @@ T["school_closure_child_care_scramble"] = k("find child care for a closed school
 T["atm_withdrawal"] = k("get cash from the ATM", ["When I need cash for the week, I want to pull it from my account, so I can pay the places that do not take cards.",
                                                  "When my wallet is empty, I want forty dollars out, so I can cover small things."],
                         ["Withdrew ${amt} at an ATM ({org}).", "${amt} cash from the machine at {org}."])
+T["extended_overdraft_fee"] = k("get the account back above zero", "When the account has been overdrawn for a week, I want it back above zero, so I can stop the bank's fees piling up.",
+                                "{org} charged a ${amt} extended overdraft fee: the account has been below zero for {days} days.")
 T["transfer_from_savings"] = k("move money from savings", "When checking is nearly empty, I want to pull from savings, so I can avoid an overdraft.", "Moved ${amt} from savings to checking.")
 T["transfer_to_savings"] = k("move money to savings", "When there is a little extra, I want it out of checking, so I can keep from spending it.", "Moved ${amt} to savings.")
 T["mobile_check_deposit"] = k("deposit a check by phone", "When I am handed a check, I want it deposited from my phone, so I can skip the branch.", "Mobile deposit of a {what}; ${avail} available now.")
