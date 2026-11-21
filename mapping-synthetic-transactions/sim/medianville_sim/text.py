@@ -117,7 +117,7 @@ def make(rng, kind, ctx, outcome, F, wait, fee, fee_type):
         tails.append(" Came up $%s short of the full amount." % ctx["short"])
     lt = ctx.get("later")
     if lt and lt not in ("0", "0.00", "0.0"):
-        tails.append(" About $%s more will be billed later." % lt)
+        tails.append(" About $%s more will be billed later%s." % (lt, " (%s)" % ctx["later_why"] if ctx.get("later_why") else ""))
     if ctx.get("late") and ctx.get("late") != "1":
         tails.append(" Includes a $%s late fee." % ctx["late"])
     if ctx.get("hike"):

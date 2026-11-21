@@ -10,9 +10,9 @@ from medianville_sim.carry import LINK_COLS, Carry
 # typed-day year is checked the same way at full scale. Phase 4 pinned it at development 7013a0f; phase 5's fixes from
 # the v2 close reading (reference/medianville-v2-close-reading.md) re-pin it, one commit per fix.
 ONE_DAY_SHA256 = {
-    "records.csv": "2e73a1452720c869b6dd2fb7d2b17d36661bfb694b9aa1dfc96306ce394b89d7",
-    "household_ledger.csv": "5af183179d61040c4d755e470f93434e1a296dfa487d4a6f43daf0da5c1226d4",
-    "summary.md": "23e9461bca310222248718c39d869faf533f0a4e08fde36563d137f9bb80f46b",
+    "records.csv": "641e372cb63d6acceea85cea8c7af75506d7f73f1bb573e0d91371eb4b2cdd81",
+    "household_ledger.csv": "e1ff5a01c81d9a57a772cc21e9227a474cd31d070cbab064bf4ab5719ab92e9a",
+    "summary.md": "e4783b8366c47be90d2316bedb0c41aa36c9c51104baba9c0e7569037a9345a8",
 }
 
 

@@ -136,7 +136,7 @@ def business_day(sim):
                     b2b(rng.randint(300, 900), "raw_materials_delivery", o, sup, amt, user=0.0, method="none", outcome="partial", ctx=dict(org=o.name, terms="net 45"))
                 if rng.random() < (.85 if big else .30):
                     amt = round(o.size * rng.uniform(380, 1100), 2)
-                    b2b(rng.randint(420, 1020), "customer_shipment_invoiced", X["x_customers"], o, amt, user=0.0, method="none", outcome="partial", ctx=dict(org=o.name, terms="net 45"))
+                    b2b(rng.randint(420, 1020), "customer_shipment_invoiced", X.get("x_buyers", X["x_customers"]), o, amt, user=0.0, method="none", outcome="partial", ctx=dict(org=o.name, terms="net 45"))
             elif k == "hospital":
                 ws = rng.choice(med_ws)
                 b2b(rng.randint(300, 480), "medical_supply_delivery", o, ws, round(o.size * rng.uniform(18, 46), 2), user=0.0, method="none", outcome="partial", ctx=dict(org=ws.name, buyer=o.name))
@@ -253,8 +253,8 @@ def business_day(sim):
                 amt = round(math.exp(rng.gauss(math.log(3600), .9)), 2)
                 b2b(rng.randint(300, 900), "late_invoice_paid", X["x_customers"], o, amt, channel="mail", method="check", fr=("wait",),
                     ctx=dict(org=o.name, days=rng.choice([41, 52, 58, 67, 84]), amt="%.0f" % amt))
-    # ---- 7. public bodies paying vendors, grants and subsidies
-    if weekday:
+    # ---- 7. public bodies paying vendors, grants and subsidies (not on bank holidays: v2 phase 5)
+    if weekday and cal.get("bank_day", True):
         govs = K["county"] + K["city"] + K["school_district"]
         pool = vendors + K.get("prof_firm", []) + services + K.get("wholesaler", []) + K.get("trucking", [])
         for _ in range(pois(rng, 30 * sc if cal["dow"] == 2 else 8 * sc)):
@@ -265,7 +265,7 @@ def business_day(sim):
         cc = K.get("child_care", [])
         for o in rng.sample(cc, min(len(cc), pois(rng, 6 * sc))):
             amt = round(rng.uniform(900, 8600), 2)
-            b2b(rng.randint(60, 360), "child_care_subsidy_payment_to_provider", X["x_snap"], o, amt, user=0.0, rtype="benefit_issuance", channel="automatic", method="ach", third=amt,
+            b2b(rng.randint(60, 360), "child_care_subsidy_payment_to_provider", K["benefits_office"][0], o, amt, user=0.0, rtype="benefit_issuance", channel="automatic", method="ach", third=amt,
                 payer="State child care assistance (CCDF)", fund="mixed", lens=("family_care", "public_finance"), ctx=dict(org=o.name))
         np_ = K.get("nonprofit", [])
         if np_ and rng.random() < min(1.0, 1.2 * sc):

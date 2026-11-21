@@ -313,7 +313,7 @@ T["urgent_care_visit"] = k("be seen at {org}", "When it cannot wait for an appoi
 T["emergency_department_visit"] = k("be treated in the emergency department", "When it is serious or after hours, I want the emergency room, so I can be treated right away.",
                                     "{hrs} hours in the emergency department at {org} for {who}.")
 T["emergency_visit_uncompensated"] = k("be treated in the emergency department", "When I am sick and uninsured, I want the one door that cannot turn me away, so I can be treated.",
-                                       "{hrs} hours in the emergency department at {org}; no insurance on file.")
+                                       "{hrs} hours in the emergency department at {org}; no insurance on file. The hospital will bill ${bill}; if it goes unpaid, about ${cost} of its cost is written off as charity care.")
 T["ems_ambulance_transport"] = k("get to the hospital by ambulance", "When it is an emergency, I want an ambulance, so I can get to the hospital alive.", "Ambulance to {org} for {who}.")
 T["ems_response_no_transport"] = k("get help from paramedics", "When something goes wrong at home, I want paramedics to check, so I can know whether it is serious.", "Paramedics responded: {why}.")
 T["hospital_admission"] = k("be admitted to {org}", "When the doctors say I need to stay, I want a bed, so I can get the treatment I need.", "Admitted to {org} {via}.")
@@ -323,9 +323,9 @@ T["childbirth_hospital_stay"] = k("give birth at {org}", "When labor starts, I w
 T["hospice_care_day"] = k("receive hospice care", "When treatment is over, I want comfort and my family near, so I can be at peace.", "Hospice nurse visit from {org}.")
 T["prescription_pickup"] = k("pick up a prescription at {org}", ["When my refill is ready, I want to pick it up, so I can keep taking it without a gap.",
                                                                "When the doctor calls in something new, I want it filled today, so I can start treatment."],
-                             ["{brand} prescription at {org}: cash price ${cash}, copay ${cp}.", "Picked up a {brand} refill at {org}; copay ${cp}.", "Filled {who} prescription at {org}."])
+                             ["{brand} prescription at {org}: cash price ${cash}; {priced}.", "Picked up a {brand} prescription at {org}; paid ${cp} at the counter.", "Filled {who} prescription at {org}."])
 T["prescription_mail_order"] = k("get a mail-order refill", "When I take the same medicine every day, I want ninety days mailed, so I can skip the pharmacy line.",
-                                 "{brand} refill shipped by {org}; copay ${cp}.")
+                                 "{brand} refill shipped by {org}; {priced}.")
 T["dental_visit"] = k("go to the dentist at {org}", "When a cleaning is due or a tooth hurts, I want to be seen, so I can stop it from getting worse.",
                       ["Dental visit for {who} at {org}: {svc}.", "{svc} at {org}."])
 T["vision_exam_and_glasses"] = k("get an eye exam at {org}", "When my glasses stop working, I want an exam and new lenses, so I can see to drive and read.", "Eye exam and glasses at {org}.")
@@ -392,7 +392,7 @@ T["tanf_cash_issuance"] = k("receive cash assistance", "When my assistance is is
 T["child_support_received"] = k("receive child support", "When the other parent's payment clears the state, I want it deposited, so I can cover the kids' costs.", "Child support passed through the state unit.")
 T["federal_tax_refund"] = k("receive my tax refund", ["When the refund finally arrives, I want it in my account, so I can catch up on what has been waiting.",
                                                     "When I filed in January, I want the refund I have been tracking, so I can pay down bills."],
-                            ["Federal refund of ${refund} by {via}.", "Refund deposited: ${amt} in all."])
+                            ["Federal refund of ${refund} by {via}.", "Refund deposited: {parts}."])
 T["refundable_tax_credit"] = k("receive my tax credits", "When I work and raise kids on a small income, I want the credits I qualify for, so I can get ahead for a month or two.",
                                "Earned Income and Child Tax Credit portion of the refund: ${credit}.")
 T["state_tax_refund"] = k("receive the state refund", "When the state return is processed, I want the refund, so I can put it toward bills.", "State income tax refund.")

@@ -686,7 +686,8 @@ def visit(sim, q, P, H, kinds, svc, kind, base, dur, wait, prefs=OFFICE, tele=Fa
             org = sim.pick(("fqhc",), H.district, 12.0)
             kind = "community_health_center_visit"
         else:
-            org = sim.pick(kinds, H.district, scale * (1.6 if H.district in ("D5", "D6") else 1.0))
+            org = sim.pick(kinds, H.district, scale * (1.6 if H.district in ("D5", "D6") else 1.0),
+                           who="child" if P.age < 18 else ("adult_f" if P.sex == "F" else "adult_m"))
     if org is None or org.open is None:
         return
     if svc in ("primary", "specialist"):
@@ -696,6 +697,7 @@ def visit(sim, q, P, H, kinds, svc, kind, base, dur, wait, prefs=OFFICE, tele=Fa
     else:
         allowed = round(base * PAYF.get(cov, 1.15) * rng.uniform(.85, 1.2), 2)
     now, third, payer, fund, later = cover(sim, P, allowed, svc)
+    why_later = "the Part B deductible and 20% coinsurance" if (later and payer == "Medicare Part B") else ""
     if org.kind == "fqhc" and cov == "uninsured":
         now = float(rng.choice([25, 30, 40, 45]))
         third, payer, fund, later = allowed - now, "Health center sliding-fee subsidy (federal health center grant)", "federal", 0.0
@@ -710,7 +712,7 @@ def visit(sim, q, P, H, kinds, svc, kind, base, dur, wait, prefs=OFFICE, tele=Fa
     actor = comp if (comp is not None and P.age < 16) else P
     sched = comp if comp is not None else P
     c = dict(ctx or {})
-    c.update(org=org.name, who=("my child" if P.age < 16 else "me"), age=P.age)
+    c.update(org=org.name, who=("my child" if P.age < 16 else "me"), age=P.age, later_why=why_later)
     payee_w = (comp.wallet if comp is not None and P.age < 16 else P.wallet)
     if tele:
         t = sim.slot(sched, dur, ((480, 1140, 1),))
@@ -805,6 +807,15 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             cp = round(cash * ((.5 if brand else .38) if disc else 1.0), 2)
             third, payer, fund = 0.0, ("pharmacy discount card (no payer)" if disc else ""), ""
         fills.append((brand, cash, round(max(cp, 0), 2), round(max(third, 0), 2), payer, fund))
+
+    # v2 phase 5: the record's gross is what the fill was charged (the plan's price, or what an uninsured buyer paid), so
+    # gross = plan + patient on every claim; the cash price is named in the narrative. v1 showed the cash price as gross.
+    def priced(cp, third, payer):
+        if third:
+            return "the plan's price was $%.2f and the copay $%.2f" % (cp + third, cp)
+        if payer:
+            return "a discount card brought it down to $%.2f" % cp
+        return "paid the cash price"
     W = actor.wallet
     if mail:
         t = rng.randint(120, 480)
@@ -812,11 +823,10 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
         def runm(t=t):
             for brand, cash, cp, third, payer, fund in fills:
                 i, oc, m = sim.pay(t, actor, H, W, None, "health", "prescription_mail_order", cp + third, channel="automatic",
-                                   ctx=dict(org=org.name, cash="%.2f" % cash, cp="%.2f" % cp, brand="brand" if brand else "generic"),
+                                   ctx=dict(org=org.name, cash="%.2f" % cash, cp="%.2f" % cp, brand="brand" if brand else "generic",
+                                            priced=priced(cp, third, payer)),
                                    rtype="insurance_claim" if third else "purchase", third=third, payer=payer, fund=fund, zero="insurance",
                                    ben=P, to=org, quiet_fail=0.0)
-                if i is not None and oc == "completed":
-                    sim.fix_rx_row(i, cash)
         push(q, t, runm)
         return
     miles, mode, mins, tfr = sim.trip(actor, H, H.district, org.district, rng.random() < .5)
@@ -835,7 +845,8 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             return
         prev = None
         for k, (brand, cash, cp, third, payer, fund) in enumerate(fills):
-            c = dict(org=org.name, cash="%.2f" % cash, cp="%.2f" % cp, brand="brand" if brand else "generic", who=("my child's" if P.age < 16 else "my"))
+            c = dict(org=org.name, cash="%.2f" % cash, cp="%.2f" % cp, brand="brand" if brand else "generic", who=("my child's" if P.age < 16 else "my"),
+                     priced=priced(cp, third, payer))
             r = rng.random()
             if r < .055:
                 why = rng.choice(["it was not ready yet", "it was not ready yet", "the refill needed the doctor's approval", "the insurer wanted a prior authorization"]) if not brand or r < .03 else "the insurer wanted a prior authorization"
@@ -864,8 +875,6 @@ def rx_pickup(sim, q, P, H, nfill=None, after=None):
             i, oc, m = sim.pay(t + k, actor, H, W, org, "health", "prescription_pickup", cp + third, ctx=c, tmin=10 if k == 0 else 1, wait=w if k == 0 else 0,
                                miles=miles if k == 0 else 0, mode=mode, fr=F if k == 0 else (), rtype="insurance_claim" if third else "purchase", third=third,
                                payer=payer, fund=fund, defer=0.0, zero="insurance", ben=P, quiet_fail=0.0, related=prev)
-            if i is not None and oc == "completed":
-                sim.fix_rx_row(i, cash)
     push(q, t, run)
 
 
@@ -991,8 +1000,11 @@ def ed_visit(sim, q, P, H):
     org = hosp[1] if (H.district in ("D1", "D2") and rng.random() < .7) or (H.district == "D3" and rng.random() < .5) else hosp[0]
     cov = P.cov
     # MEPS 2024 emergency room visits (h254e, facility plus doctor): median $674, mean $1,405; about $741 and $1,545 in 2027.
-    # v1 drew a median near $1,280 with a short tail.
-    allowed = round(min(40000, max(150, rng.lognormvariate(math.log(950), 1.2))) * (PAYF.get(cov, 1.15) if cov != "uninsured" else 1.0), 2)
+    # v1 drew a median near $1,280 with a short tail. v2 phase 5: draws under $600 are pressed into $300-600 (an estimate;
+    # a visit lasting hours carries a facility fee, and the v2 close reading found an uninsured 6.9-hour stay billed
+    # $181.59 in all), smoothly, so no amount piles up; v1's floor was $150.
+    x = rng.lognormvariate(math.log(950), 1.2)
+    allowed = round(min(40000, max(x, 300 + .5 * x)) * (PAYF.get(cov, 1.15) if cov != "uninsured" else 1.0), 2)
     dur = rng.randint(150, 420)
     w = rng.randint(12, 190)
     t = sim.slot(P, 60, ((0, 1320, 1),))
@@ -1028,7 +1040,7 @@ def ed_visit(sim, q, P, H):
             i = sim.emit(t, "public_service_encounter", "health", "emergency_visit_uncompensated", actor, H, org, P, ben=P, method="none", gross=allowed, user=0.0,
                          third=cost, payer="Uncompensated care (hospital charity care, Medicaid disproportionate-share funds)", fund="mixed", imputed=cost,
                          tmin=min(dur, 1439 - int(t)), wait=min(w, max(0, 1439 - int(t))), miles=miles, mode="ambulance" if ems else ("car" if H.vehicles else "ride_from_family_or_friend"), outcome="partial",
-                         fr=("wait",), lens=("health_cost",), related=rel, ctx=dict(c, later="%.0f" % allowed))
+                         fr=("wait",), lens=("health_cost",), related=rel, ctx=dict(c, bill="%.0f" % allowed, cost="%.0f" % cost))
         else:
             now, third, payer, fund, later = cover(sim, P, allowed, "ed")
             if now > 0 and rng.random() < .6:

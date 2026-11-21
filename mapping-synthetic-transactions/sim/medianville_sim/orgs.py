@@ -546,7 +546,16 @@ def build_orgs(rng, cal, scale=1.0):
     ]
     for kind, nm, otype, sec, note in ext:
         o = add(kind, nm, otype, sec, "EXT", 1, "ach;debit;credit;check" if otype != "government" else "ach;check;debit;credit", "24h", note)
+        if kind in PSEUDO_PARTIES:
+            o.sector = PSEUDO_SECTOR
     return B.orgs
+
+
+# Pseudo-parties stand for many people or firms at once. v1 filed them under "Other services (repair, salons, religious
+# organizations)", which the v2 close reading's second reader took at its word. Outside Medianville, so never in the employer
+# match by sector (build_population skips EXT), and the label changes nothing else.
+PSEUDO_PARTIES = ("x_customers", "x_outemp", "x_abroad", "x_outfam", "x_scam")
+PSEUDO_SECTOR = "Many parties (not one organization)"
 
 
 def index_orgs(orgs):
@@ -602,6 +611,13 @@ def add_cbp_outlets(sim):
         o.open, o.close = parse_hours(o.hours, sim.cal["dow"])
         sim.orgs.append(o)
         added += 1
+    # v2 phase 5: the businesses that buy what Medianville's manufacturers ship. v1 invoiced them to "Customers (general
+    # public)", the pseudo-party for receipts from households. Added last, so no other organization's id moves.
+    o = Org("O%04d" % (len(sim.orgs) + 1), "Out-of-area business customers", "x_buyers", "business", SECNAME["whole"], "EXT", 1,
+            "ach;check", "24h", "pseudo-party for manufacturers' and wholesalers' customers outside Medianville")
+    o.open, o.close = parse_hours(o.hours, sim.cal["dow"])
+    sim.orgs.append(o)
     sim.by_kind, sim.by_kd = index_orgs(sim.orgs)
     sim.by_name = {o.name: o for o in sim.orgs}
+    sim.X["x_buyers"] = o
     return added
