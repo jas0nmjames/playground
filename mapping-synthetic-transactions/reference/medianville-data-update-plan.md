@@ -73,7 +73,7 @@ A single day is too few for three reasons: annual shares (rent, insurance) can't
 | Option | What it is | Size | Needs from the generator |
 |---|---|---|---|
 | **A. A typed-day set** (recommended first) | 10–12 days that stand for a year, each with a weight: ordinary weekday early, mid and late month; Friday payday; Saturday; Sunday; the 1st; each Social Security Wednesday; a February refund day; a holiday; a storm day; a heat day | about 190 MB zipped | Almost nothing; runs today |
-| **B. One continuous month** (recommended second) | March 1–31, 2027, balances carried day to day | about 500 MB zipped, 3.3 GB unpacked | Real carry-over: unpaid bills retried and fined, notices that become shutoffs, overdraft chains, SNAP balances running down, payday rollovers, income swings |
+| **B. One continuous month** (recommended second) | March 1–31, 2027, balances carried day to day | about 500 MB zipped, 3.3 GB unpacked (built 2026-11-20: 459 MB zipped, 3.10 GB unpacked) | Real carry-over: unpaid bills retried and fined, notices that become shutoffs, overdraft chains, SNAP balances running down, payday rollovers, income swings |
 | **C. A year at 10% scale** | 4,140 households for 365 days, the roster aging and changing | about 600 MB zipped | Roster changes between days: aging, births, deaths, job changes, moves, new caregiving |
 | **D. Past and future snapshots** | Medianville at −20, −10, +10, +20 years | per snapshot, as a day | District age and direction; CBO projections |
 
@@ -129,24 +129,25 @@ GitHub limits decide the rest: a file over 100 MB is refused, a Pages site shoul
 
 ## 8. Phases
 
-| Phase | Work | Done when |
-|---|---|---|
-| 0. Set up | Bring the evidence files and this plan into the repo; copy the simulator to `sim/`; turn the existing checks into tests; confirm v1 reproduces byte for byte | Tests pass, v1 reproduces |
-| 1. Measure | Write `evidence_targets.csv`; add the evidence checks to the summary; run the typed-day set with the **unchanged** simulator | Every target has a measured value across the year's days |
-| 2. Download | Tier 1 and 2 sources, logged in the manifest | Caregiving, cash and calendars have real inputs |
-| 3. Change | Groups 1, 2 and 4; recalibrate across the typed-day set | Anchors and evidence checks in tolerance |
-| 3b. Rename | Rename the city to Medianville in the simulator, the latest pages and the docs, before any v2 run is packaged or any v2 record is hand-written; write a renamed copy of the v1 run for the latest pages. The frozen v1 run, the archived viewers and past results keep the first name | The typed-day year, mapped back, matches batch R byte for byte; the copy, mapped back, matches the v1 zip byte for byte |
-| 4. A month | Group 3; run March 2027 | Chains visible: notice to shutoff, overdraft to fee to late rent |
-| 5. Read and publish | Close reading of a fresh sample; hand-write v2's records; package as `data/runs/v2/medianville_<date>.zip`; run picker in the viewers; update the README and project docs | PR into `development` |
-| 6. Later | ACS PUMS population (v3); year at 10%; snapshots | — |
+| Phase | Work | Done when | Status |
+|---|---|---|---|
+| 0. Set up | Bring the evidence files and this plan into the repo; copy the simulator to `sim/`; turn the existing checks into tests; confirm v1 reproduces byte for byte | Tests pass, v1 reproduces | Done (2026-11-18) |
+| 1. Measure | Write `evidence_targets.csv`; add the evidence checks to the summary; run the typed-day set with the **unchanged** simulator | Every target has a measured value across the year's days | Done (2026-11-19) |
+| 2. Download | Tier 1 and 2 sources, logged in the manifest | Caregiving, cash and calendars have real inputs | Done (2026-11-19) |
+| 3. Change | Groups 1, 2 and 4; recalibrate across the typed-day set | Anchors and evidence checks in tolerance | Done (2026-11-20) |
+| 3b. Rename | Rename the city to Medianville in the simulator, the latest pages and the docs, before any v2 run is packaged or any v2 record is hand-written; write a renamed copy of the v1 run for the latest pages. The frozen v1 run, the archived viewers and past results keep the first name | The typed-day year, mapped back, matches batch R byte for byte; the copy, mapped back, matches the v1 zip byte for byte | Done (2026-11-20, PR #77) |
+| 4. A month | Group 3; run March 2027 | Chains visible: notice to shutoff, overdraft to fee to late rent | Done (2026-11-20, branch `medianville-v2-phase4`): see the status note in section 10 |
+| 5. Read and publish | Close reading of a fresh sample; hand-write v2's records; package as `data/runs/v2/medianville_<date>.zip`; run picker in the viewers; update the README and project docs | PR into `development` | Next |
+| 6. Later | ACS PUMS population (v3); year at 10%; snapshots | — | Later |
 
 ## 9. Decisions for you
 
 1. **Same people or new people?** Keeping v1's population keeps comparisons clean (same households, before and after). Rebuilding from ACS PUMS is more truthful but breaks comparability and the hand-written sample. Recommended: keep the population for v2, rebuild in v3. **Decided 2026-11-20: keep the population for v2, and with it v1's wage boost (see the wage note in section 10).**
-2. **How far past one day:** the typed-day set only, or the month too.
-3. **Where the big bundles live:** Releases, or local only.
+2. **How far past one day:** the typed-day set only, or the month too. **Decided 2026-11-20: the month too (phase 4).**
+3. **Where the big bundles live:** Releases, or local only. **Decided 2026-11-20: a GitHub Release, which Jason creates; never committed and never on the site (decision 1.15).**
 4. **Georgia evidence:** keep Medianville national, using Georgia-specific findings (title pawn rates, Pathways) for field visits and texture only. Recommended.
 5. **Project docs:** revise the evidence report's section 2 and the generator prompt's friction section to match the table in section 1.
+6. **Overdraft concentration (added 2026-11-20, phase 4).** The month shows overdraft fees far more concentrated than the CFPB's 9% of accounts paying 79% of fees, because only accounts opted in to debit-card overdraft coverage can overdraw (`finance.OD_OPT_IN`, about 6.6% of accounts), and that is part of the one-day population. Under Reg E the opt-in covers only ATM and one-time debit card payments; checks, ACH debits and recurring card payments can be paid into overdraft without it. Options: (a) leave it and read fees as falling on a narrower group than in life; (b) let banks pay some ACH and recurring items into overdraft for accounts without the opt-in, which spreads fees but changes the one-day path and the typed-day year (T01 would need retuning); (c) wait for v3, which redraws the population anyway. Recommended: (c), noting it in the month's limits now (decision 1.11).
 
 ## 10. The v2 change list (added 2026-11-19, after the downloads)
 
@@ -159,6 +160,8 @@ Phase 2 brought in 41 datasets (about 2.0 GB, raw files outside git; see `source
 **Status (2026-11-20), on branch `halvern-v2-phase3`.** Batches C, I, J and P are done; each was rerun across the typed-day year (`sim/evidence/results/v2_*_typed_days_2027/`). Checked against the source and left as v1: CE everyday spending, SNAP amounts, eviction filings, moves, renters' housing costs, the rural share of residents (RUCC confirms 14%), and wages (see the wage note). Not done: I5 late payments (the NY Fed figures give rates on balances, not account counts), I12 energy bill sizes (RECS 2024 v1 has none yet), P5 births and deaths (NCHS summaries not downloaded), and the excess of groceries, bars, salons, laundromats and churches against CBP (removing outlets would redraw the population). Estimates with no counting source are labeled in the code: lender shutoffs, prescriptions abandoned over $250, care-visit purchases, the benefits-cliff raise, call-ins and kept availability, Direct Express calls. Batch R (rate tuning) is done too: every firm target is in range or present across the typed-day year (`v2_rates_typed_days_2027`). Several targets were reset from the downloads: T02 payday loans 10-25 a day (California and Texas 2025), T03 title payments 5-10 (Texas 2025), T11 rural cash 18.7% (DCPC 2025), T12 paid preparation about 54% of all returns (IRS 2026), and T16 disconnect notices 40-55 (RECS 2024). Overdraft concentration and notice-to-shutoff chains still need the month run (option B).
 
 **Status (2026-11-20), phase 3b, on branch `medianville-rename`.** The city is renamed to Medianville, after phase 3 and before any v2 run is packaged or any v2 record is hand-written. The simulator package is now `sim/medianville_sim/`. Rerun across the typed-day year and mapped back, every output (records, tables, summaries and evidence results, 181 files) matches batch R byte for byte, so the rename changed nothing but the name; `v2_rates_typed_days_2027` was regenerated and differs only in the name. The latest pages load `data/medianville_2027-03-03.zip`, a copy of v1 with only the name changed; the frozen v1 run, the archived viewers and the earlier results keep the first name. Next: phase 4 (the month) or phase 5 (packaging as `data/runs/v2/medianville_<date>.zip`).
+
+**Status (2026-11-20), phase 4, on branch `medianville-v2-phase4`.** Group 3 is done, one commit and one test file per change, all in `sim/medianville_sim/carry.py` and run only when days are carried (`--days` above 1, `--state-in` or `--carry`): a retry queue for unpaid bills with late fees from each bill's terms; notice-to-shutoff timers with grace, disconnection, reconnection fee and reconnection; overdraft chains (one overdraft leading to more fees and sometimes a late rent payment); payday and title rollovers with renewal fees; SNAP balances that run down from the load day and checking that follows the pay calendar; and week-to-week hours for hourly and gig workers. Each day of a carried run also writes `links.csv`, which ties records into chains across days. The one-day path is unchanged: the typed-day year was rerun after every commit and `v2_rates_typed_days_2027` matched byte for byte each time. Along the way an old scam-loss branch that made money whenever it ran (`day_c.gen_care`) was fixed, with no effect on the typed-day year. March 1-31, 2027 was run at full scale, its carried-only terms fitted once to the targets, and rerun: 5,733,890 records. Every month target is in range (`sim/evidence/results/v2_month_2027-03/evidence_checks.md`): 168 overdraft fees, 42 notices, 12.4 disconnections and 18 payday loans and renewals a day; 29% of notices end in a shutoff and 89% of shutoffs are reconnected by month's end; 76% of payday loans due are renewed; 14.7% of adults have a bill unpaid at month's end against SHED's 15.2%. All three chains are visible: 1,288 notices, 383 of them reaching a disconnection; 84 overdraft chains reaching a missed rent payment, 30 then paid late or in part; 792 payday renewals. The one miss is overdraft concentration: 1.1% of accounts pay 79% of fees against the CFPB's 9%, because only the 6.6% of accounts opted in to coverage can overdraw (section 9, item 6). Two new source tools: `sources/tools/shed_bills.py` (SHED 2025, bills unpaid this month) and `sources/tools/eia112_disconnections.py` (EIA-112 2024). SIPP and the JPMorgan Chase Institute's figures are still not downloaded, so weekly hours are labeled estimates. The month is a GitHub Release download (`medianville-v2-month-2027-03`; [run record](medianville-2027-03-month-run-record.md)). Next: phase 5.
 
 ### C. Calendar and weights
 
@@ -235,4 +238,4 @@ I2, I3, I4 and I7 change the population's money and incomes (not who the people 
 
 ### What the downloads can't settle
 
-Household structure stays rule-built until ACS PUMS (tier 3). General trip lengths need NHTS. Income swings need SIPP or JPMC. Overdraft concentration and notice-to-shutoff chains can only be checked across the month run (option B).
+Household structure stays rule-built until ACS PUMS (tier 3). General trip lengths need NHTS. Income swings need SIPP or JPMC (phase 4 uses labeled estimates). Overdraft concentration and notice-to-shutoff chains can only be checked across the month run (option B); phase 4 checked both.
