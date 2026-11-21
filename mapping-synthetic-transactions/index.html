@@ -121,6 +121,8 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .mini-tiles .v { font-weight:700; font-size:17px; }
 .feed.inline { padding:0; overflow:visible; margin:0 -12px; }
 .chip.warn { color:#8E3B6D; border-color:#E7C7DA; background:#FBF1F6; }
+.runpick { font:600 13px var(--ui); color:var(--ink); background:#fff; border:1px solid var(--ctrl); border-radius:999px; min-height:32px; padding:4px 10px; max-width:100%; cursor:pointer; }
+.runpick:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
 .credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
 .credit a { color:var(--ink2); }
 .credit a:hover { color:var(--ink); }
@@ -285,6 +287,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <h1>Medianville in Motion</h1>
     <span class="chip">Simulated city · no real people</span>
     <span class="chip" id="datachip" role="status">Placeholder day · loading the real one</span>
+    <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   </div>
   <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
@@ -1814,7 +1817,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     return `<p class="eyebrow">${iconSVG(vk, 24)}<span>${REC[vk].label}</span></p>
       <h2 id="sheet-title" tabindex="-1" class="big ${a.cls}">${a.txt}</h2>
       <p class="status">${status}${fail ? `<span class="why">${esc(H.reason(r))}</span>` : ''}</p>
-      ${kv([['From', partyLine(r._from)], ['To', to], ['Method', esc(H.methodLabel(r)) || (vk === 'unpaid' || vk === 'service' ? 'No money moved' : '')], ['Time', `${H.fmt(r._t)}, Wednesday, March 3`], ['Category', esc(H.catLabel(r))], r._real ? ['Record', `${esc(r.record_id)}${r._handWritten ? ' · hand-written' : ''}`] : null])}
+      ${kv([['From', partyLine(r._from)], ['To', to], ['Method', esc(H.methodLabel(r)) || (vk === 'unpaid' || vk === 'service' ? 'No money moved' : '')], ['Time', `${H.fmt(r._t)}, ${App.dayIso ? MedianvilleRuns.dateLabel(App.dayIso, { weekday: 'long', month: 'long', day: 'numeric' }) : 'Wednesday, March 3'}`], ['Category', esc(H.catLabel(r))], r._real ? ['Record', `${esc(r.record_id)}${r._handWritten ? ' · hand-written' : ''}`] : null])}
       <h3>Breakdown</h3>${bd}
       <h3>The job</h3><blockquote class="job">“${esc(r.job_statement)}”</blockquote>
       ${r.narrative ? `<p class="narr">${esc(r.narrative)}</p>` : ''}
@@ -2271,6 +2274,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Placeholder day · the real one didn’t load';
     if (st.state !== 'loading') say(c.textContent);
   };
+  // real-day.js calls this once it knows which run it will load (sel is null without a manifest)
+  App.onRuns = (sel) => {
+    if (!sel || !window.MedianvilleRuns) return;
+    App.dayIso = sel.run.date;
+    MedianvilleRuns.picker($('#runpick'), sel);
+    MedianvilleRuns.carry($('#data-link'), sel);
+    const d = App.runDate(sel.run.date); if (d) $('#intro-date').textContent = d;
+    if (sel.run.records) $('#intro-n').textContent = sel.run.records.toLocaleString('en-US');
+    if (!sel.found) say('That day is not in the list; showing ' + sel.run.label + '.');
+  };
   // '2027-03-03' → 'Wednesday, March 3, 2027' (or 'March 3, 2027' without the weekday)
   App.runDate = (iso, weekday = true) => {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if (!m) return '';
@@ -2374,6 +2387,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 })();
 </script>
 <script src="fflate.js"></script>
+<script src="runs.js"></script>
 <script src="real-day.js"></script>
 <script src="sound.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>

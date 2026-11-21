@@ -32,6 +32,55 @@ DEFAULT_REASON = {"social_security_office_visit": "the line outlasted the office
 GEN = ("take care of {label}", ["When {label} comes due, I want to take care of it without losing the day, so I can get back to everything else."], ["{Label}."])
 
 
+# v2 phase 5: statements and narratives that fit the person and the place. The v2 close reading found work talk from
+# people who don't work, gas from households with no car, "support my church" at mosques and temples, and a
+# self-employed stylist afraid of "losing my job". Each rule swaps in wording; the text draws its own random numbers,
+# so no figure moves. (kind, test on who) -> (statements or None, narratives or None).
+NO_WORK = {
+    "fast_food": ["When everyone is hungry and we are still out, I want something cheap and fast, so I can get us fed without another stop.",
+                  "When I do not feel like cooking, I want something hot and quick, so I can eat without a sink full of dishes."],
+    "gas_fill_up": ["When the tank is near empty, I want to fill up, so I can get through the week's errands.",
+                    "When I only have a few dollars until the next check, I want enough gas for the next trips, so I can keep driving.",
+                    "When I pass the cheapest station, I want to top off, so I can avoid paying more later."],
+    "haircut": ["When I am overdue for a cut, I want an hour in the chair, so I can feel like myself again."],
+    "school_dropoff": ["When the bell is about to ring, I want the kids at the door, so I can get them there on time."],
+    "car_repossessed": ["When I fall behind on the title loan, I want to keep the car, so I can still get to appointments and the store."],
+    "car_disabled_by_lender": ["When I head out in the morning, I want the car to start, so I can get where I need to go."],
+    "caregiving_at_home": ["When someone in my home cannot manage alone, I want to help with the day's needs, so I can keep them safe at home.",
+                           "When care falls to me, I want to fit it around everything else, so I can keep the house running too."],
+}
+NO_WORK_NARR = {"school_dropoff": ["Car line at {school}.", "Dropped {n} at {school}."]}
+NO_CAR = {"cash_tips": ["When the shift ends, I want my tips counted out, so I can buy groceries on the way home."],
+          "gig_payout_instant": ["When I finish a shift of deliveries, I want today's earnings now, so I can cover tomorrow's costs."]}
+SELF_EMP = {"missed_shift_for_sick_child": ["When my child is sick and there is no one else, I want to stay home without losing my customers, so I can take care of them."]}
+FAITH = (("Masjid", "my mosque"), ("Islamic", "my mosque"), ("Mosque", "my mosque"), ("Synagogue", "my synagogue"), ("Beth ", "my synagogue"),
+         ("Gurdwara", "the gurdwara"), ("Buddhist", "the center"), ("Hindu", "the temple"), ("Temple", "the temple"))
+P2P_OWED = ("splitting", "paying a friend back", "buying a used item", "a share of rent")
+SS_KIND = {"social security retirement": "Social Security retirement", "ssdi": "Social Security disability (SSDI)",
+           "social security survivor": "Social Security survivor"}
+COUNT = {1: "one child", 2: "two kids", 3: "three kids", 4: "four kids", 5: "five kids"}
+
+
+def fit(kind, c, who, hh):
+    """Statements and narratives that fit this person and place, or (None, None) to keep the template's own."""
+    if kind == "church_offering":
+        place = next((w for k, w in FAITH if k in c.get("org", "")), None)
+        if place:
+            return (["When I go to services, I want to give what I can, so I can support %s." % place],
+                    ["Donation at {org}.", "Gift at {org} during the week's gathering."])
+    if kind == "p2p_transfer" and c.get("why"):
+        owed = c["why"].startswith(P2P_OWED)
+        return ([T["p2p_transfer"][1][0 if owed else 1]], None)
+    if who is not None:
+        if who.emp == "self_employed" and kind in SELF_EMP:
+            return SELF_EMP[kind], None
+        if not who.works and kind in NO_WORK:
+            return NO_WORK[kind], NO_WORK_NARR.get(kind)
+    if hh is not None and not hh.vehicles and kind in NO_CAR:
+        return NO_CAR[kind], None
+    return None, None
+
+
 class _D(dict):
     def __missing__(self, k):
         return ""
@@ -66,9 +115,19 @@ def want_to(js):
     return "%s, I want to have %s, so %s" % (head, mot, tail)
 
 
-def make(rng, kind, ctx, outcome, F, wait, fee, fee_type):
+def make(rng, kind, ctx, outcome, F, wait, fee, fee_type, who=None, hh=None):
     spec = T.get(kind)
     c = _D(ctx)
+    if c.get("occ"):
+        c["an_occ"] = ("an " if c["occ"][:1].lower() in "aeiou" else "a ") + c["occ"]
+    if isinstance(c.get("n"), int) and kind in ("school_dropoff", "school_pickup", "pickup_arranged_with_someone_else"):
+        c["n"] = COUNT.get(c["n"], "%d kids" % c["n"])
+    if kind == "social_security_deposit" and c.get("kind"):
+        c["kind"] = SS_KIND.get(c["kind"], c["kind"])
+    if str(c.get("hrs")) in ("1", "1.0"):
+        c["hrs_word"] = "1 hour"
+    elif c.get("hrs"):
+        c["hrs_word"] = "%s hours" % c["hrs"]
     c["label"] = kind.replace("_", " ")
     c["Label"] = _cap(c["label"])
     if c.get("org") == "Out-of-area employers":
@@ -85,6 +144,8 @@ def make(rng, kind, ctx, outcome, F, wait, fee, fee_type):
         MISSING[kind] = MISSING.get(kind, 0) + 1
         spec = GEN
     act, jss, nss = spec
+    alt_js, alt_ns = fit(kind, c, who, hh)
+    jss, nss = alt_js or jss, alt_ns or nss
     js = _f(jss[0] if len(jss) == 1 else rng.choice(jss), c)
     act = _f(act, c)
     bad = outcome in ("declined", "abandoned", "failed", "rescheduled")
@@ -117,7 +178,7 @@ def make(rng, kind, ctx, outcome, F, wait, fee, fee_type):
         tails.append(" Came up $%s short of the full amount." % ctx["short"])
     lt = ctx.get("later")
     if lt and lt not in ("0", "0.00", "0.0"):
-        tails.append(" About $%s more will be billed later." % lt)
+        tails.append(" About $%s more will be billed later%s." % (lt, " (%s)" % ctx["later_why"] if ctx.get("later_why") else ""))
     if ctx.get("late") and ctx.get("late") != "1":
         tails.append(" Includes a $%s late fee." % ctx["late"])
     if ctx.get("hike"):

@@ -1,11 +1,13 @@
 // ===== Medianville in Motion v3 · the real synthetic day =====
-// Loads data/medianville_2027-03-03.zip (v1's 201,753 records under the city's new name) and puts it on v3's city.
-// v3 draws one small town, so the run's six districts and 1,672 organizations are
+// Loads one day's run and puts it on v3's city. Which day comes from data/runs/manifest.json through runs.js: the
+// manifest's default, or ?run=<id>. Without a manifest it loads data/medianville_2027-03-03.zip (v1's 201,753 records
+// under the city's new name). v3 draws one small town, so the run's six districts and its organizations are
 // folded onto its homes and buildings (see FOLD and kindOf below). Records keep their
 // real ids, names, amounts, districts and text; only their position on the map is
 // approximate. Until the zip has loaded, v3's own placeholder day plays.
 (function () {
-  const RUN = 'data/medianville_2027-03-03.zip';
+  const FALLBACK = 'data/medianville_2027-03-03.zip';
+  let RUN = FALLBACK, RUN_BYTES = 16182979;
   const pad = (n, w) => String(n).padStart(w, '0');
 
   // ---------- CSV read straight from bytes (same reader as the night map) ----------
@@ -51,7 +53,7 @@
   async function download(prog) {
     if (!window.fflate) throw new Error('the unzip helper did not load');
     const res = await fetch(RUN); if (!res.ok) throw new Error('the server answered ' + res.status);
-    const total = +res.headers.get('content-length') || 16182979, rd = res.body.getReader(), got = {};
+    const total = +res.headers.get('content-length') || RUN_BYTES, rd = res.body.getReader(), got = {};
     let fail = null, seen = 0;
     const unz = new fflate.Unzip(); unz.register(fflate.UnzipInflate);
     unz.onfile = (f) => {
@@ -294,6 +296,9 @@
     const status = (t) => App.status && App.status(t);
     status({ state: 'loading', p: 0 });
     try {
+      const sel = window.MedianvilleRuns ? await window.MedianvilleRuns.resolve(['']) : null;
+      if (sel) { RUN = sel.url; RUN_BYTES = sel.run.bytes || RUN_BYTES; }
+      if (App.onRuns) App.onRuns(sel);
       const bufs = await download((p) => status({ state: 'loading', p: p * 0.55 }));
       const day = await build(bufs, (p) => status({ state: 'loading', p: 0.55 + p * 0.45 }));
       patchWords();

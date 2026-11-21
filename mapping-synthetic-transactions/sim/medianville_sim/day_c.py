@@ -12,6 +12,10 @@ CARE_AT_HOME_DAILY = .76                     # chance a household care link prod
 CARE_AT_HOME_CARING_SHARE = .44              # of those, physical care and looking after (ATUS 0304) rather than help (0305)
 CARING_TASKS = ["meals and medications", "bathing and dressing", "keeping company and supervising"]
 HELPING_TASKS = ["a ride and an errand", "sorting pills and paying bills", "housework and laundry"]
+# v2 phase 5: what care looks like for a child (the close reading found a 5-year-old helped with "sorting pills and paying
+# bills"); the same lengths as the adult lists, so the draws line up
+CHILD_CARING_TASKS = ["meals and medicine", "bathing and dressing", "keeping watch through a bad day"]
+CHILD_HELPING_TASKS = ["a ride to an appointment", "therapy exercises at home", "homework and getting ready for bed"]
 LUNCH_COST, BFAST_COST = 4.95, 2.85
 PAY_K12 = "%s general fund (state aid, local property tax, federal Title I and IDEA)"
 
@@ -844,10 +848,10 @@ def gen_care(sim, H, q):
                 # ATUS 2023-25 (sources/derived/atus_caregiving.csv): caring for household adults (0304) runs about 84 minutes
                 # among those who do it, helping them (0305) about 28; together about 56 minutes, 2.6 minutes a day per person 15+
                 caring = rng.random() < CARE_AT_HOME_CARING_SHARE
-                tasks = rng.choice(CARING_TASKS if caring else HELPING_TASKS)
+                tasks = rng.choice((CHILD_CARING_TASKS if caring else CHILD_HELPING_TASKS) if c.age < 16 else (CARING_TASKS if caring else HELPING_TASKS))
                 dur = rng.randint(40, 130) if caring else rng.randint(10, 45)
             else:
-                tasks = rng.choice(CARING_TASKS + HELPING_TASKS)
+                tasks = rng.choice(CHILD_CARING_TASKS + CHILD_HELPING_TASKS if c.age < 16 else CARING_TASKS + HELPING_TASKS)
                 dur = rng.randint(40, 140)
             if same:
                 t = sim.slot(p, dur, ((390, 560, 1.0), (1020, 1290, 1.5), (600, 1000, .6)))

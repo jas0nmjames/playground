@@ -296,7 +296,7 @@ T["energy_assistance_pledge"] = k("receive an energy assistance pledge", "When m
 T["utility_billing_phone_call"] = k("sort out {matter} with {org} by phone", "When the bill does not look right, I want a person on the phone, so I can get it corrected.",
                                     "Call to {org} about {matter}.")
 T["jail_phone_call"] = k("call home", "When I get phone time, I want to call my family, so I can hear how the kids are.", "{mins}-minute call through {org}.")
-T["power_outage"] = k("keep the power on", "When the power goes out, I want it back before the food spoils, so I can keep the house running.", "Power was out for about {hrs} hours.")
+T["power_outage"] = k("keep the power on", "When the power goes out, I want it back before the food spoils, so I can keep the house running.", "Power was out for about {hrs_word}.")
 # ------------------------------------------------------------------------------------------------ health
 T["doctor_visit"] = k("see the doctor at {org}", ["When something has been bothering {who} for a while, I want it checked, so I can know what it is.",
                                                 "When a checkup or a refill visit is due, I want to get it done, so I can keep prescriptions current."],
@@ -311,9 +311,9 @@ T["telehealth_visit"] = k("have a video visit with {org}", "When it is hard to g
 T["urgent_care_visit"] = k("be seen at {org}", "When it cannot wait for an appointment but is not the emergency room, I want a walk-in clinic, so I can be treated today.",
                            "Walk-in visit for {who} at {org}.")
 T["emergency_department_visit"] = k("be treated in the emergency department", "When it is serious or after hours, I want the emergency room, so I can be treated right away.",
-                                    "{hrs} hours in the emergency department at {org} for {who}.")
+                                    "{hrs_word} in the emergency department at {org} for {who}.")
 T["emergency_visit_uncompensated"] = k("be treated in the emergency department", "When I am sick and uninsured, I want the one door that cannot turn me away, so I can be treated.",
-                                       "{hrs} hours in the emergency department at {org}; no insurance on file.")
+                                       "{hrs_word} in the emergency department at {org}; no insurance on file. The hospital will bill ${bill}; if it goes unpaid, about ${cost} of its cost is written off as charity care.")
 T["ems_ambulance_transport"] = k("get to the hospital by ambulance", "When it is an emergency, I want an ambulance, so I can get to the hospital alive.", "Ambulance to {org} for {who}.")
 T["ems_response_no_transport"] = k("get help from paramedics", "When something goes wrong at home, I want paramedics to check, so I can know whether it is serious.", "Paramedics responded: {why}.")
 T["hospital_admission"] = k("be admitted to {org}", "When the doctors say I need to stay, I want a bed, so I can get the treatment I need.", "Admitted to {org} {via}.")
@@ -323,9 +323,9 @@ T["childbirth_hospital_stay"] = k("give birth at {org}", "When labor starts, I w
 T["hospice_care_day"] = k("receive hospice care", "When treatment is over, I want comfort and my family near, so I can be at peace.", "Hospice nurse visit from {org}.")
 T["prescription_pickup"] = k("pick up a prescription at {org}", ["When my refill is ready, I want to pick it up, so I can keep taking it without a gap.",
                                                                "When the doctor calls in something new, I want it filled today, so I can start treatment."],
-                             ["{brand} prescription at {org}: cash price ${cash}, copay ${cp}.", "Picked up a {brand} refill at {org}; copay ${cp}.", "Filled {who} prescription at {org}."])
+                             ["{brand} prescription at {org}: cash price ${cash}; {priced}.", "Picked up a {brand} prescription at {org}; paid ${cp} at the counter.", "Filled {who} prescription at {org}."])
 T["prescription_mail_order"] = k("get a mail-order refill", "When I take the same medicine every day, I want ninety days mailed, so I can skip the pharmacy line.",
-                                 "{brand} refill shipped by {org}; copay ${cp}.")
+                                 "{brand} refill shipped by {org}; {priced}.")
 T["dental_visit"] = k("go to the dentist at {org}", "When a cleaning is due or a tooth hurts, I want to be seen, so I can stop it from getting worse.",
                       ["Dental visit for {who} at {org}: {svc}.", "{svc} at {org}."])
 T["vision_exam_and_glasses"] = k("get an eye exam at {org}", "When my glasses stop working, I want an exam and new lenses, so I can see to drive and read.", "Eye exam and glasses at {org}.")
@@ -363,7 +363,7 @@ T["wic_clinic_appointment"] = k("keep the WIC appointment", "When my WIC certifi
 # ------------------------------------------------------------------------------------------------ income and benefits
 T["paycheck_direct_deposit"] = k("get paid", ["When payday comes, I want my check in my account, so I can pay what is due.",
                                              "When I have been watching the balance all week, I want my pay to land, so I can stop juggling."],
-                                 ["{cadence} pay from {org}: ${gross} gross, ${net} after deductions.", "Direct deposit from {org}; ${net} net.", "Pay as a {occ} at {org}."])
+                                 ["{cadence} pay from {org}: ${gross} gross, ${net} after deductions.", "Direct deposit from {org}; ${net} net.", "Pay as {an_occ} at {org}."])
 T["paycheck_paycard"] = k("get paid on the paycard", "When payday comes and I have no bank account, I want my pay on the card, so I can spend it today.",
                           "{cadence} pay from {org} loaded to a paycard: ${net} net.")
 T["paycheck_paper_check"] = k("get my paycheck", "When the boss hands out checks, I want mine, so I can cash it before the weekend.", "Paper check from {org}: ${net} net.")
@@ -373,12 +373,12 @@ T["payroll_fica"] = k("pay Social Security and Medicare tax", "When I get paid, 
                       ["Social Security and Medicare tax, 7.65% of gross.", "Payroll tax on this check."])
 T["union_dues"] = k("pay union dues", "When I get paid, I want my dues sent, so I can keep the contract's protection.", "Union dues deducted from pay.")
 T["wage_garnishment"] = k("have wages garnished", "When a court order sits on my paycheck, I want to know what is left, so I can plan the two weeks.", "Court-ordered garnishment taken from this check.")
-T["cash_tips"] = k("take home tips", "When the shift ends, I want my tips counted out, so I can buy gas and groceries tonight.", ["Cash tips from the shift at {org}.", "Tips as a {occ}."])
+T["cash_tips"] = k("take home tips", "When the shift ends, I want my tips counted out, so I can buy gas and groceries tonight.", ["Cash tips from the shift at {org}.", "Tips as {an_occ}."])
 T["gig_payout_instant"] = k("cash out today's earnings", "When I finish driving, I want today's earnings now, so I can fill the tank for tomorrow.", "Instant cash-out of the day's app earnings.")
 T["gig_payout_weekly"] = k("get the weekly gig payout", "When the week's trips are totaled, I want the deposit, so I can cover my bills.", "Weekly payout for app-based driving and delivery work.")
 T["self_employment_receipts"] = k("get paid by customers", ["When a job is finished, I want to be paid the same day, so I can cover materials and my own bills.",
                                                           "When I work for myself, I want money coming in most days, so I can keep the business going."],
-                                  ["Customer payments for work as a {occ}.", "Day's receipts as a {occ}."])
+                                  ["Customer payments for work as {an_occ}.", "Day's receipts as {an_occ}."])
 T["social_security_deposit"] = k("receive Social Security", ["When my payment date arrives, I want the deposit there in the morning, so I can pay rent and fill prescriptions.",
                                                             "When I live on one check a month, I want it to arrive on schedule, so I can plan every dollar."],
                                  ["Monthly {kind} benefit: ${gross} gross, ${net} deposited.", "Social Security deposit of ${net}."])
@@ -392,7 +392,7 @@ T["tanf_cash_issuance"] = k("receive cash assistance", "When my assistance is is
 T["child_support_received"] = k("receive child support", "When the other parent's payment clears the state, I want it deposited, so I can cover the kids' costs.", "Child support passed through the state unit.")
 T["federal_tax_refund"] = k("receive my tax refund", ["When the refund finally arrives, I want it in my account, so I can catch up on what has been waiting.",
                                                     "When I filed in January, I want the refund I have been tracking, so I can pay down bills."],
-                            ["Federal refund of ${refund} by {via}.", "Refund deposited: ${amt} in all."])
+                            ["Federal refund of ${refund} by {via}.", "Refund deposited: {parts}."])
 T["refundable_tax_credit"] = k("receive my tax credits", "When I work and raise kids on a small income, I want the credits I qualify for, so I can get ahead for a month or two.",
                                "Earned Income and Child Tax Credit portion of the refund: ${credit}.")
 T["state_tax_refund"] = k("receive the state refund", "When the state return is processed, I want the refund, so I can put it toward bills.", "State income tax refund.")
@@ -479,15 +479,15 @@ T["snap_interview_call"] = k("keep my SNAP", "When the SNAP office calls for my 
 T["raise_declined_benefits_cliff"] = k("take the raise", "When my boss offers a raise, I want to take it without losing more than I gain, so I can actually get ahead.",
                                        "Turned down a ${raise_hr}-an-hour raise at {org}; it would have cost {loss}.")
 T["called_in_on_day_off"] = k("rest on my day off", "When the manager calls me in on my day off, I want to say yes without wrecking the day, so I can keep the hours and my plans.",
-                              ["Called in to {org} on a day off for {hrs} hours.", "Got the call to come in to {org} today."])
+                              ["Called in to {org} on a day off for {hrs_word}.", "Got the call to come in to {org} today."])
 T["kept_availability_open"] = k("keep my hours", "When my schedule is never set, I want to stay reachable on my days off, so I can get the hours when they come.",
                                 "Kept the day open in case {org} called; made no other plans.")
 T["direct_express_call"] = k("get to my benefits", "When something is wrong with my benefits card, I want someone to fix it on the phone, so I can pay for what I need this week.",
                              "Called the Direct Express line about the benefits card.")
 T["left_work_aide_no_show"] = k("go to work", "When my family member's aide does not show, I want someone to be there with them, so I can stay at work.",
-                                "Left work early when the aide from {org} did not come; lost ${lost} for {hrs} hours.")
+                                "Left work early when the aide from {org} did not come; lost ${lost} for {hrs_word}.")
 T["covered_missed_aide_shift"] = k("look after my family member", "When the aide does not come, I want to step in, so I can be sure my {rel} is not left alone.",
-                                   "Covered the {hrs} hours the aide from {org} missed.")
+                                   "Covered the {hrs_word} the aide from {org} missed.")
 T["care_delayed_by_medical_debt"] = k("see a doctor", "When I am sick and still paying off the last medical bill, I want to see a doctor without adding to it, so I can get better without more debt.",
                                      ["Put off seeing a doctor: {reason}.", "Did not make the appointment; still paying ${debt} a month on an old medical bill."])
 T["care_delayed_by_cost"] = k("see a doctor", "When something is wrong, I want to see a doctor I can afford, so I can get it treated before it gets worse.",
@@ -548,7 +548,7 @@ T["job_interview"] = k("go to a job interview", "When I finally get an interview
 T["weekly_unemployment_certification"] = k("certify for unemployment", "When the claim week closes, I want to certify, so I can be paid.", "Weekly certification filed.")
 T["career_center_visit"] = k("get help at {org}", "When my search is going nowhere, I want someone to look at my résumé, so I can find work sooner.", "Résumé help and job leads at {org}.")
 T["sent_home_early"] = k("work my full shift", "When I am scheduled for a full shift, I want to work all of it, so I can earn what I planned on.",
-                         ["Sent home {hrs} hours early from {org}; about ${lost} in pay gone.", "{org} cut the shift short by {hrs} hours."])
+                         ["Sent home {hrs_word} early from {org}; about ${lost} in pay gone.", "{org} cut the shift short by {hrs_word}."])
 T["shift_cancelled_short_notice"] = k("work my scheduled shift", "When I arrange my week around a shift, I want it to happen, so I can earn the pay I counted on.",
                                       ["{org} cancelled the shift with {notice} notice; about ${lost} in pay gone.", "Shift at {org} dropped {notice}."])
 T["turned_down_extra_hours"] = k("pick up extra hours", "When my manager offers more hours, I want to say yes, so I can earn more without losing the help that keeps us afloat.",
@@ -556,8 +556,8 @@ T["turned_down_extra_hours"] = k("pick up extra hours", "When my manager offers 
 T["ride_to_work_fee"] = k("pay for the ride to work", "When the fields are miles from town and I have no car, I want a seat in the crew van, so I can get to work.",
                           ["Paid the driver for the ride out to {org}.", "Cash to the crew driver for the trip to the fields."])
 T["missed_shift_for_sick_child"] = k("go to work", "When my child is sick and there is no one else, I want to stay home without losing my job, so I can take care of them.",
-                                     "Missed {hrs} hours of work to stay with a sick {age}-year-old; about ${lost} unpaid.")
-T["late_or_missed_shift"] = k("get to work on time", "When my ride fails, I want to make my shift anyway, so I can keep my hours.", "Lost {hrs} hours and about ${lost} because {why}.")
+                                     "Missed {hrs_word} of work to stay with a sick {age}-year-old; about ${lost} unpaid.")
+T["late_or_missed_shift"] = k("get to work on time", "When my ride fails, I want to make my shift anyway, so I can keep my hours.", "Lost {hrs_word} and about ${lost} because {why}.")
 # ------------------------------------------------------------------------------------------------ civic and legal
 T["driver_license_renewal"] = k("renew my driver's license", "When my license is about to expire, I want it renewed, so I can keep driving to work.", ["License renewed at {org}.", "Renewal processed by {org}."])
 T["first_driver_license"] = k("get my first license", "When I pass the test, I want my license, so I can drive myself.", "First license issued at {org}.")
@@ -572,7 +572,7 @@ T["probation_supervision_fee"] = k("pay the supervision fee", "When my monthly c
 T["cash_bond_posted"] = k("post bond", "When someone in my family is in jail, I want them out before their shift, so I can keep them from losing the job.", "Bond posted at {org}.")
 T["jail_day"] = k("get through a day in jail", "When I cannot make bail, I want my court date to come, so I can go home.", "Day in custody at {org}.")
 T["jail_account_deposit"] = k("put money on a jail account", "When my relative is inside, I want money on their account, so I can let them call home.", "Deposit through {org}.")
-T["building_permit"] = k("get a building permit", "When I am building {what}, I want the permit, so I can pass inspection.", "Permit for {what}.")
+T["building_permit"] = k("get a building permit", "When the job is {what}, I want the permit first, so I can pass inspection.", "Permit for {what}.")
 T["pet_license"] = k("license the dog", "When the city requires a tag, I want it done, so I can avoid a fine.", "Pet license renewed online.")
 T["yard_sale_permit"] = k("get a yard sale permit", "When I am clearing out the garage, I want the permit, so I can hold the sale.", "Yard sale permit.")
 T["residential_parking_permit"] = k("get a parking permit", "When my street is permit-only, I want a sticker, so I can park near home.", "Residential parking permit.")
@@ -653,5 +653,5 @@ T["government_vendor_payment"] = k("pay a vendor", "When the check run goes out,
 T["child_care_subsidy_payment_to_provider"] = k("get paid for subsidized care", "When I care for children on assistance, I want the state's payment, so I can pay my teachers.", "State subsidy payment to {org}.")
 T["grant_disbursement"] = k("receive a grant", "When the campaign distributes funds, I want our grant, so I can keep the program open.", "Grant payment to {org}.")
 T["office_catering_order"] = k("order lunch for the office", "When there is a working lunch, I want food delivered, so I can keep the meeting going.", "{buyer} ordered lunch for {n} from {org}.")
-T["self_employed_supplies"] = k("buy what the job needs at {org}", "When tomorrow's job needs supplies, I want them bought, so I can do the work.", "Bought {what} at {org} for work as a {occ}.")
+T["self_employed_supplies"] = k("buy what the job needs at {org}", "When tomorrow's job needs supplies, I want them bought, so I can do the work.", "Bought {what} at {org} for work as {an_occ}.")
 T["eviction_filing_fee"] = k("file an eviction", "When a tenant is months behind, I want to file, so I can recover the unit.", "{org} filed an eviction case.")

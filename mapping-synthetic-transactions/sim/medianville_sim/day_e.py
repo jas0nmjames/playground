@@ -6,6 +6,8 @@ from .day_b import errand, online, bus_ride
 from .day_c import go, pois, rround, hand_pay
 from .config import SALES_TAX
 
+MARRIAGE_FEE = (66.0, 56.0)   # the county courthouse and the rural one; an estimate inside the $56-76 v1 drew from
+
 P2P_PURPOSES = [
     ("splitting a dinner or bar tab", .19, (8, 55), "peer"), ("paying a friend back", .12, (10, 120), "peer"),
     ("sending money to family", .16, (25, 400), "family"), ("paying a babysitter", .07, (30, 90), "sitter"),
@@ -74,11 +76,13 @@ def p2p(sim, q):
                 i = emit(t, "transfer", "money_services", "p2p_transfer", s, H, s, to, ben=r if r is not None else "", channel="app", method="p2p_app", gross=amt, user=amt,
                          tmin=2, lens=(("family_care",) if "family" in why or "student" in why or "babysitter" in why else ()) + (("small_business",) if "yard work" in why or "hairdresser" in why else ()),
                          ctx=ctx)
-                if r is not None and rng.random() < .13 and amt >= 20:
+                # an instant cash-out goes to a bank debit card, so the unbanked can't make one (v2 phase 5: v1 wrote them with
+                # the fee in the narrative and none charged)
+                if r is not None and rng.random() < .13 and amt >= 20 and r.wallet.bank is not None:
                     fee = round(max(.25, amt * .0175), 2)
-                    r.wallet.take("p2p_app", fee) if r.wallet.bank is not None else None
+                    r.wallet.take("p2p_app", fee)
                     emit(min(1439, t + rng.randint(1, 30)), "transfer", "money_services", "p2p_instant_cash_out", r, r.hh, r, app, channel="app", method="p2p_app", gross=amt,
-                         user=fee if r.wallet.bank is not None else 0.0, fee_type="instant_transfer_fee", fee=fee if r.wallet.bank is not None else 0.0, tmin=1, related=i,
+                         user=fee, fee_type="instant_transfer_fee", fee=fee, tmin=1, related=i,
                          ctx=dict(amt="%.2f" % amt, fee="%.2f" % fee, org=app.name))
             elif W.cc_limit - W.cc_bal >= amt * 1.03 and rng.random() < .35:
                 fee = round(amt * .03, 2)
@@ -235,7 +239,8 @@ def life_events(sim, q):
     for H in rng.sample(cohab, min(len(cohab), rround(rng, 2.41 * sc * (1.0 if court else .1)))):
         P = H.head
         org = courts[0] if H.district != "D5" and H.district != "D6" else courts[-1]
-        fee = float(rng.choice([56, 62, 66, 76]))
+        rng.choice((0, 1, 2, 3))                     # kept so the draws line up; v1 drew the fee here
+        fee = MARRIAGE_FEE[0 if org is courts[0] else 1]   # one fee per county courthouse (v2 phase 5: v1 drew $56-76 each time)
         errand(sim, q, P, H, org, "civic_legal", "marriage_license", fee, rng.randint(20, 35), OFFICE, taxable=False, wait=(5, 40), ctx=dict(), quiet_fail=0.0,
                fee=("courthouse_ceremony_fee", 50.0) if rng.random() < .3 else None)
     for H in rng.sample(married, min(len(married), rround(rng, .92 * sc * (1.0 if court else 0)))):
@@ -339,6 +344,8 @@ def civic(sim, q):
     def dmv_visit(P, org, rel=None, extra_fr=()):
         H = P.hh
         what, fee = rng.choice([("driver_license_renewal", 32.0), ("driver_license_renewal", 32.0), ("state_id_card", 12.0), ("real_id_upgrade", 32.0), ("first_driver_license", 42.0), ("title_transfer", 18.0)])
+        if what == "first_driver_license" and not (P.age <= 24 or {"immigrant_household", "recent_immigrant_household"} & set(H.notes)):
+            what, fee = "driver_license_renewal", 32.0   # a first license goes to the young and the newly arrived (v2 phase 5: v1 gave them at any age)
 
         def run(t, miles, mode, tfr, w, P=P, org=org, what=what, fee=fee, rel=rel):
             if rng.random() < .14:

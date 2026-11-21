@@ -1125,29 +1125,60 @@ def assign_sick_leave(sim, PP):
         p.psl = srng.random() < pr
 
 
-# Owner housing costs (mortgage payment, or taxes, insurance and fees; utilities are separate bills), redrawn so cost
-# burdens match AHS 2023 (sources/raw/ahs, household.csv: TOTHCAMT less UTILAMT over HINCP, weighted): mortgaged owners
-# median 18% of income, 24% over 30%, 10% over half; owners without a mortgage median 8%, 14% over 30%, 8% over half.
-# v1 tied owners' costs to income (mortgages at least 14-29% of it), so the median was too high and heavy burdens too rare.
-# Applied after the population is built, on its own stream, so v1's people and draws stay as they were.
+# Owner housing costs (mortgage payment, or taxes, insurance and fees; utilities are separate bills), drawn from what
+# owners at the same income pay in AHS 2023 (sources/derived/ahs_owner_costs.csv, sources/tools/ahs_owner_costs.py:
+# TOTHCAMT less UTILAMT, weighted quantiles by HINCP band). Income bands are in 2023 dollars (Medianville's 2027 incomes
+# / 1.13) and costs are carried to 2027 by the same factor, then scaled by district (OWNER_PITI, relative to the city's
+# owner-weighted mean). v1 tied owners' costs to income too tightly (mortgages at least 14-29% of it); batch I's first
+# redraw matched AHS's cost burdens but drew cost apart from income, which put 9% of owners without a mortgage at its
+# $2,500 cap and had a 95-year-old on $16,648 paying $2,476 a month (v2 close reading, item 1).
+# AHS has about 4.5% of owners paying more than their whole income, mostly owners living on savings that HINCP leaves
+# out; Medianville counts withdrawals as income, so costs are held to 60% of income without a mortgage and 80% with one
+# (an estimate). Applied after the population is built, on its own stream, so v1's people and draws stay as they were.
 OWNER_PITI = {"D1": 1700, "D2": 1500, "D3": 2180, "D4": 1380, "D5": 1020, "D6": 1080}
-OWNER_COST = dict(mort_mult=.9, mort_sigma=.5, mort_floor=(0.0, .10), free_share=.34, free_sigma=1.1, free_income=.01)
-# fit (15,000 households): mortgaged median 16%, 25% over 30%, 11% over half; no mortgage 8%, 14%, 7%
+AHS_DOLLARS = 1.13
+AHS_QS = (.01, .05, .10, .20, .30, .40, .50, .60, .70, .80, .90, .95, .99)
+AHS_OWNER_COST = {   # (income band from, to) -> monthly cost at AHS_QS, 2023 dollars
+    "free": [((0, 25000), (2, 33, 64, 122, 182, 241, 311, 390, 499, 631, 914, 1307, 3196)),
+             ((25000, 50000), (21, 68, 116, 174, 234, 290, 360, 441, 551, 695, 996, 1352, 3148)),
+             ((50000, 100000), (38, 106, 160, 228, 289, 352, 422, 504, 617, 768, 1070, 1425, 3091)),
+             ((100000, 200000), (76, 192, 242, 323, 387, 475, 551, 654, 781, 980, 1286, 1758, 4445)),
+             ((200000, None), (66, 270, 366, 481, 599, 699, 805, 950, 1157, 1494, 2048, 2745, 7349))],
+    "mortgage": [((0, 25000), (114, 330, 446, 587, 740, 892, 1109, 1357, 1576, 2024, 2866, 4262, 10397)),
+                 ((25000, 50000), (286, 444, 551, 710, 833, 956, 1087, 1243, 1453, 1766, 2419, 3295, 8222)),
+                 ((50000, 100000), (381, 595, 720, 905, 1056, 1199, 1378, 1588, 1825, 2191, 2870, 3698, 9872)),
+                 ((100000, 200000), (511, 750, 922, 1187, 1381, 1571, 1781, 2028, 2336, 2728, 3411, 4263, 9029)),
+                 ((200000, None), (675, 1112, 1385, 1798, 2125, 2406, 2754, 3161, 3635, 4316, 5630, 7294, 14590))],
+}
+OWNER_COST_CAP = {"free": (.60, 100), "mortgage": (.80, 400)}   # share of monthly income, and a floor for very low incomes
+
+
+def ahs_owner_quantile(kind, income_2023, u):
+    """Monthly cost at quantile u for an owner household with this 2023-dollar income: piecewise linear between the AHS
+    quantiles, running on to half the 1st percentile at u=0 and 1.25 times the 99th at u=1, so no value is a pile-up."""
+    qs = next(q for (lo, hi), q in AHS_OWNER_COST[kind] if income_2023 >= lo and (hi is None or income_2023 < hi))
+    xs = (0.0,) + AHS_QS + (1.0,)
+    ys = (qs[0] * .5,) + qs + (qs[-1] * 1.25,)
+    for i in range(1, len(xs)):
+        if u <= xs[i]:
+            t = (u - xs[i - 1]) / (xs[i] - xs[i - 1])
+            return ys[i - 1] + t * (ys[i] - ys[i - 1])
+    return ys[-1]
 
 
 def reshape_owner_costs(sim, HH):
     srng = C.side_rng(sim.cfg["RANDOM_SEED"], "owner_cost")
-    k = OWNER_COST
-    for H in HH:
-        if H.gq or H.tenure not in ("owner_with_mortgage", "owner_free_and_clear") or H.mobile_home:
-            continue
-        mi = H.income / 12.0
-        base = OWNER_PITI[H.district]
-        if H.tenure == "owner_with_mortgage":
-            piti = base * k["mort_mult"] * math.exp(srng.gauss(0, k["mort_sigma"]))
-            H.housing_cost = round(min(9800, max(piti, mi * srng.uniform(*k["mort_floor"]))), 0)
-        else:
-            H.housing_cost = round(max(150, min(2500, base * k["free_share"] * math.exp(srng.gauss(0, k["free_sigma"])) + mi * k["free_income"])), 0)
+    owners = [H for H in HH if not H.gq and H.tenure in ("owner_with_mortgage", "owner_free_and_clear") and not H.mobile_home]
+    mean_piti = sum(OWNER_PITI[H.district] for H in owners) / max(1, len(owners))
+    for H in owners:
+        kind = "mortgage" if H.tenure == "owner_with_mortgage" else "free"
+        u = srng.random()
+        cost = ahs_owner_quantile(kind, H.income / AHS_DOLLARS, u) * AHS_DOLLARS * OWNER_PITI[H.district] / mean_piti
+        share, floor = OWNER_COST_CAP[kind]
+        cap = max(floor, share * H.income / 12.0)
+        if cost > cap:   # held under the cap, spread over its top quarter by the same draw, so no amount piles up
+            cost = cap * (.75 + .25 * ((u * 7919.0) % 1.0))
+        H.housing_cost = round(max(1.0, cost), 0)
 
 
 # H-2A guest workers on the job, per 1,000 US residents, by month: DOL's FY2025 disclosure file

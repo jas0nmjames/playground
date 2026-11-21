@@ -503,7 +503,8 @@ def gen_income(sim, H, q):
                     t = rng.randint(1, 400)
                     total = credit + refund
                     how = "prepaid" if via in ("prepaid", "refund_transfer") and W.bank is None else ("ach" if via != "prepaid" else "prepaid")
-                    ctx = dict(amt="%.2f" % total, credit="%.2f" % credit, refund="%.2f" % refund, fee="%.2f" % fees, via=via.replace("_", " "))
+                    ctx = dict(amt="%.2f" % total, credit="%.2f" % credit, refund="%.2f" % refund, fee="%.2f" % fees, via=via.replace("_", " "),
+                               parts=("$%.2f refund plus $%.2f in refundable credits, $%.2f in all" % (refund, credit, total)) if credit else "$%.2f" % refund)
                     i = sim.emit(t, "income", "income", "federal_tax_refund", p, H, X["x_treasury"], p, channel="automatic", method=how, gross=refund,
                                  user=fees, fee_type="tax_prep_and_refund_transfer_fees" if fees else "", fee=fees,
                                  lens=("public_finance",) + (("consumer_finance",) if fees else ()), ctx=ctx)

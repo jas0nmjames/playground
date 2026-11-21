@@ -6,13 +6,13 @@ import os
 from conftest import read_csv
 from medianville_sim.carry import LINK_COLS, Carry
 
-# The 10% one-day run (conftest.run10) as the simulator wrote it before phase 4 (development at 7013a0f). Carried runs
-# must not change a single byte of it; the typed-day year (sim/evidence/results/v2_rates_typed_days_2027) is checked
-# the same way at full scale.
+# The 10% one-day run (conftest.run10) as the simulator writes it. Carried runs must not change a single byte of it; the
+# typed-day year is checked the same way at full scale. Phase 4 pinned it at development 7013a0f; phase 5's fixes from
+# the v2 close reading (reference/medianville-v2-close-reading.md) re-pin it, one commit per fix.
 ONE_DAY_SHA256 = {
-    "records.csv": "a238cf07e6a72bae6dfb4036c09305e0ca0fe888029aab769710eab4382d3db2",
-    "household_ledger.csv": "5292312ecace971833c9094defbf92eb4fa7a35cf3f16cead2712bac77289179",
-    "summary.md": "31182e59abce0382170a471927585b0e80665d7522563b9f2d9dffd040a6a9cf",
+    "records.csv": "d75d8181e836e9670082ebb30fbdb177adc505e9a5db6a153ad1ca876bb7c025",
+    "household_ledger.csv": "e1ff5a01c81d9a57a772cc21e9227a474cd31d070cbab064bf4ab5719ab92e9a",
+    "summary.md": "e4783b8366c47be90d2316bedb0c41aa36c9c51104baba9c0e7569037a9345a8",
 }
 
 

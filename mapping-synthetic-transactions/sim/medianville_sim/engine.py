@@ -77,16 +77,23 @@ class Sim:
     def bump(self, k, v=1):
         self.stats[k] = self.stats.get(k, 0) + v
 
-    def pick(self, kinds, origin, scale=7.0):
+    # v2 phase 5: practices a patient would not be seen at, by patient (close reading: 162 adults a day at pediatric offices)
+    NOT_FOR = {"adult_f": ("Pediatric",), "adult_m": ("Pediatric", "Women's Health"),
+               "child": ("Internal Medicine", "Women's Health", "Cardiology")}
+
+    def pick(self, kinds, origin, scale=7.0, who=None):
+        """One draw, weighted by size and distance. `who` ('child', 'adult_f', 'adult_m') leaves out practices that don't
+        see that patient; the draw count is the same either way."""
         if origin not in INTRA:
             origin = "D2"
-        key = (kinds, origin, scale)
+        key = (kinds, origin, scale, who)
         c = self._pc.get(key)
         if c is None:
             lst, cum, tot = [], [], 0.0
+            skip = self.NOT_FOR.get(who, ())
             for k in kinds:
                 for o in self.by_kind.get(k, ()):
-                    if o.district == "EXT" or o.open is None:
+                    if o.district == "EXT" or o.open is None or any(x in o.name for x in skip):
                         continue
                     tot += (o.size ** .5) * math.exp(-DIST[(origin, o.district)] / scale)
                     lst.append(o)
@@ -125,10 +132,6 @@ class Sim:
         self.skimmed = set(rng.sample(snap_h, min(len(snap_h), k))) if k else set()
         groc = self.by_kind.get("grocery_full", [])
         self.down_org = rng.choice(groc) if groc else None
-
-    def fix_rx_row(self, i, cash):
-        """Prescription rows show the cash price as amount_gross; copay and plan payment stay as transacted."""
-        self.rows[i][13] = round(max(cash, self.rows[i][13]), 2)
 
     def car_fail(self, H, P, q):
         """A car that will not start, and what the household does about it."""
@@ -246,6 +249,8 @@ class Sim:
         if H is None and P is not None:
             H = P.hh
         t = int(max(0, min(1439, t)))
+        if wait > tmin:          # time_minutes counts the wait (v2 phase 5: about 5,200 records a day had a wait longer than their time)
+            tmin = tmin + wait
         F = list(dict.fromkeys(fr))
         if fee > 0 and "fee" not in F:
             F.append("fee")
@@ -302,7 +307,7 @@ class Sim:
                 ad("farmworker")
         if H is not None and H.district in ("D5", "D6") and (F or miles >= 8 or top in ("health", "public_services", "civic_legal", "utilities", "business", "income", "work")):
             ad("rural")
-        js, narr = TX.make(self.trng, kind, ctx or {}, outcome, F, wait, fee, fee_type)
+        js, narr = TX.make(self.trng, kind, ctx or {}, outcome, F, wait, fee, fee_type, who=P, hh=H)
         frm = frm.pid if hasattr(frm, "pid") else frm.oid if hasattr(frm, "oid") else frm
         to = to.pid if hasattr(to, "pid") else to.oid if hasattr(to, "oid") else to
         ben = ben.pid if hasattr(ben, "pid") else ben
