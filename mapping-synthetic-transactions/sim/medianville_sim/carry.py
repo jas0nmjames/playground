@@ -447,7 +447,7 @@ def _settle(c, sim, e, W, i, step, paid, owed):
 
 # ---------------------------------------------------------------------------------------------- 2. notice-to-shutoff timers
 # A shutoff notice gives a date. Before it, the household pays the past-due balance, sets up a payment plan, or asks the
-# community action agency for crisis help; if none of that happens, a crew disconnects the service on a business day
+# community action agency for crisis help (pledged four times in ten); if none of that happens, a crew disconnects the service on a business day
 # (Monday to Thursday) soon after the date. Getting it back costs the past-due amount (or the part the utility asks
 # for) plus a reconnection fee, a phone call with a wait, a trip to a payment counter for anyone paying cash, and a
 # reconnection the next business day; gas needs a technician and someone at home for a four-hour window.
@@ -457,7 +457,7 @@ def _settle(c, sim, e, W, i, step, paid, owed):
 # finds one in seven). The response shares below are estimates fitted to those two figures on the carried month.
 CREW_DAYS = (0, 1, 2, 3)                # Monday to Thursday
 CREW_LAG = (0, 0, 1, 2)                 # business days after the notice date before the crew comes (estimate)
-PAY_IN_FULL, PLAN, PLAN_DOWN, ASK_HELP, HELP_PLEDGE = .85, .55, (.3, .5), .70, .30
+PAY_IN_FULL, PLAN, PLAN_DOWN, ASK_HELP, HELP_PLEDGE = .85, .70, (.3, .5), .70, .40
 RECONNECT_FEE = (35.0, 45.0, 50.0, 75.0)
 NOTICE_WARM_DAYS = 10
 
@@ -661,15 +661,15 @@ def reconnect(c, sim, T, H, P, t):
 # it closes a day at or above zero.
 # Bank terms (estimates; banks that still charge overdraft fees mostly cap them per day and many have dropped extended
 # fees, but the local banks here keep them): at most three overdraft fees a day; no item that would take the account more
-# than $500 below zero; an extended overdraft fee, equal to the bank's overdraft fee, once an account has been below zero
-# for seven days. Someone whose account is already below zero tries a card that will not clear about a third as often
-# (engine.Sim.methods).
+# than $400 below zero; an extended overdraft fee, equal to the bank's overdraft fee, once an account has been below zero
+# for seven days. Someone whose account is already below zero tries a card that will not clear less than a third as often
+# (engine.Sim.methods). The limit and that habit were fitted to T01 on the full-city month.
 # Concentration is measured, not set: the CFPB found 9% of accounts paying 79% of overdraft and NSF fees over a year
 # ("Data point: Frequent overdrafters", 2017). Overdraft fees fall only on accounts opted in to coverage
 # (finance.OD_OPT_IN), which the one-day simulator already fixes.
 RENT_WINDOW = 14               # a rent payment missed within two weeks of an overdraft fee joins that overdraft's chain
 OD_DAILY_CAP = 3
-OD_LIMIT = 500.0                # the furthest below zero a bank lets an account go (estimate; a one-day run caps each item at $260)
+OD_LIMIT = 400.0                # the furthest below zero a bank lets an account go (estimate; a one-day run caps each item at $260)
 EXTENDED_OD_DAYS = 7
 RENT_KINDS = ("rent", "lot_rent")
 
@@ -889,8 +889,8 @@ def _payday_bounce(c, sim, L, H, W, P, t, org, due, ctx, kind, note=""):
 
 # Title loans: the stock opened by finance.open_title_loans on a run's first day is carried from then on. A missed
 # payment leaves the loan behind (twice as likely to end in repossession, day_c.overnight_lenders) until paid, tried
-# again on the next day money comes in; a repossessed car stays gone for the rest of the run; a title loan taken during the
-# run joins the book, due a month later.
+# again on the next day money comes in if that covers it (otherwise the household waits, with no trip); a repossessed car
+# stays gone for the rest of the run; a title loan taken during the run joins the book, due a month later.
 def start_title_loans(c, sim):
     if c.n == 0 and not c.tloans:
         for H in sim.households:
@@ -951,6 +951,9 @@ def title_day(c, sim, q):
             payoff, kind, amt, f = L["left"] <= 1, "title_loan_payment", part, ("title_loan_finance_charge", fee)
             ctx = dict(note="; that was the last payment" if L["left"] <= 1 else "; %d payments left" % (L["left"] - 1))
         if L["late"]:
+            if not due_today and W.liquid() < amt + (f[1] if f else 0.0):
+                L["next"] = next_money_day(c, sim, W).isoformat()      # still short: wait for the next money in, no trip
+                continue
             ctx["again"] = "a late payment, after the one due on the %s was missed" % _ordinal_day(L["dom"])
 
         def fn(t, miles, mode, tfr, w, L=L, H=H, W=W, P=P, org=org, kind=kind, amt=amt, f=f, ctx=ctx, payoff=payoff):

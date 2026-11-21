@@ -354,7 +354,7 @@ class Sim:
                 out.append("cash")
         # most people know when a card will not clear and do not try it
         # (carried runs: someone whose account is already below zero knows it and rarely tries the card; carry.py)
-        keep = [m for m in out if W.avail(m) >= amt or (m == "debit" and W.od and rng.random() < (.35 if self.carry is None or W.bank >= 0 else .12))
+        keep = [m for m in out if W.avail(m) >= amt or (m == "debit" and W.od and rng.random() < (.35 if self.carry is None or W.bank >= 0 else .10))
                 or rng.random() > aware]
         return keep
 
