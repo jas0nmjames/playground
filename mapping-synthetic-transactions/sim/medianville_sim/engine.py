@@ -307,7 +307,7 @@ class Sim:
                 ad("farmworker")
         if H is not None and H.district in ("D5", "D6") and (F or miles >= 8 or top in ("health", "public_services", "civic_legal", "utilities", "business", "income", "work")):
             ad("rural")
-        js, narr = TX.make(self.trng, kind, ctx or {}, outcome, F, wait, fee, fee_type)
+        js, narr = TX.make(self.trng, kind, ctx or {}, outcome, F, wait, fee, fee_type, who=P, hh=H)
         frm = frm.pid if hasattr(frm, "pid") else frm.oid if hasattr(frm, "oid") else frm
         to = to.pid if hasattr(to, "pid") else to.oid if hasattr(to, "oid") else to
         ben = ben.pid if hasattr(ben, "pid") else ben
