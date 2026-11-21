@@ -228,6 +228,16 @@ a.go { text-decoration:none; }
 }
 @media (min-width:1280px) { #drawer-btn { display:none; } }
 @media (max-width:1279px) { .lens-panel { left:0; } .lens-city { display:none; } }
+/* on a phone the lens takes the whole screen (the drawer, fixed above the city, would otherwise show around it), and its
+   bar wraps, so the context line (the district note included) stays readable */
+@media (max-width:760px) {
+  .lens { position:fixed; z-index:45; }
+  .lens-panel { grid-template-rows:auto minmax(0,1fr); }
+  .lens-bar { flex-wrap:wrap; gap:6px 10px; padding:6px 12px 8px; min-height:52px; }
+  .lens-sel { flex:1; min-width:0; }
+  .lens-ctx { flex:1 1 100%; white-space:normal; font-size:13px; line-height:1.35; }
+  .lens-esc { display:none; }
+}
 @media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
 /* printed map sheet */
 svg.quad text { font-family:"Barlow Condensed", "Arial Narrow", sans-serif; }
@@ -369,7 +379,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         <label class="sr-only" for="lens-block">Mapped block</label>
         <select id="lens-block" class="lens-sel"></select>
         <span class="lens-ctx" id="lens-ctx"></span>
-        <span class="dim small">Esc closes the lens</span>
+        <span class="dim small lens-esc">Esc closes the lens</span>
       </div>
       <iframe id="lens-frame" title="Systems lens: Larkin Avenue in six layers"></iframe>
     </section>
@@ -1667,6 +1677,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   // One composite block per district is mapped in systems-lens/blocks.json. The run tags every record made by a block
   // household with block_id, and with block_pattern when it follows one of the block's patterns. The lens draws the block and
   // shows the opened record; this side sends it the record, the block's counts so far today and its latest records.
+  // Every other record opens its district's block in district mode: the circumstances true across the whole district, with
+  // the context bar saying the record is from elsewhere in the district, never on the block.
   const Lens = {
     on: false, ready: false, pending: null, wasPlaying: false, opener: null, frameBlock: null, doc: null, last: null, cur: null,
     async loadDoc() {
@@ -1676,6 +1688,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       return this.doc;
     },
     block(id) { return this.doc && this.doc.blocks.find((b) => b.id === id); },
+    // the mapped block for a district code (D1..D6), when it has a district tier
+    districtBlock(d) { return (d && this.doc && this.doc.blocks.find((b) => b.district === d && b.contexts.some((c) => c.scope === 'district'))) || null; },
     pattern(bid, pid) { const b = this.block(bid); return b && b.patterns.find((p) => p.id === pid); },
     match(r) { return r && r._blk && r._pat ? { block: r._blk, pattern: r._pat } : null; },
     sub(k) { const b = this.block(k.block), p = this.pattern(k.block, k.pattern); return b && p ? `${p.title} · ${b.name}` : 'A pattern mapped in the Systems lens'; },
@@ -1703,17 +1717,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       for (const k in recs) recs[k] = recs[k].slice(-5).reverse().map((r) => this.payload(r));
       return { counts, recs, household: hhId ? { id: hhId, recs: mine.slice(-12).reverse().map((r) => this.payload(r)) } : null };
     },
-    async open(block, pattern, fromId, opener, hhId) {
+    // district: open on the block's district tier, for a record or household from elsewhere in its district
+    async open(block, pattern, fromId, opener, hhId, district) {
       await this.loadDoc();
       if (!this.doc) { say('The Systems lens could not load its mapped blocks.'); return; }
-      const b = this.block(block) || this.block(this.last) || this.block('larkin') || this.doc.blocks[0];
-      const r = fromId ? H.recById.get(fromId) : null, p = pattern ? this.pattern(b.id, pattern) : null;
-      this.last = b.id; this.cur = { block: b.id, pattern: p ? p.id : null, fromId: r && p ? r.record_id : null, hhId: hhId || null };
+      const b = this.block(block) || this.districtBlock(block) || this.block(this.last) || this.block('larkin') || this.doc.blocks[0];
+      const dm = !!district && b.contexts.some((c) => c.scope === 'district');
+      const r = fromId ? H.recById.get(fromId) : null, p = !dm && pattern ? this.pattern(b.id, pattern) : null;
+      this.last = b.id; this.cur = { block: b.id, pattern: p ? p.id : null, fromId: r && (p || dm) ? r.record_id : null, hhId: hhId || null, district: dm };
       $('#lens-block').value = b.id;
-      $('#lens-ctx').innerHTML = `${esc(b.district)} ${esc(b.districtName)}` + (p ? ` · <b>${esc(p.title)}</b>` : hhId ? ` · <b>${esc(hhId)}</b>’s records here` : ' · pick a pattern to trace');
+      $('#lens-ctx').innerHTML = dm ? `<b>Opened from ${!r && hhId ? 'a household' : 'a record'} elsewhere in ${esc(b.districtName)}</b> · ${esc(b.name)} is its mapped block`
+        : `${esc(b.district)} ${esc(b.districtName)}` + (p ? ` · <b>${esc(p.title)}</b>` : hhId ? ` · <b>${esc(hhId)}</b>’s records here` : ' · pick a pattern to trace');
+      $('#lens-ctx').title = $('#lens-ctx').textContent;
       this.load(b.id);
-      this.post({ type: 'open', pattern: this.cur.pattern, record: this.cur.fromId ? this.payload(r) : null, live: H.realLoaded ? this.live(b.id, hhId) : null });
-      history.replaceState(null, '', '#lens=' + [b.id, this.cur.pattern || '', this.cur.fromId || ''].join('/').replace(/\/+$/, ''));
+      this.post({ type: 'open', district: dm, pattern: this.cur.pattern, record: this.cur.fromId ? this.payload(r) : null, household: dm && !r ? this.cur.hhId : null,
+        live: H.realLoaded ? this.live(b.id, dm ? null : hhId) : null });
+      history.replaceState(null, '', '#lens=' + [b.id, dm ? 'district' : this.cur.pattern || '', this.cur.fromId || ''].join('/').replace(/\/+$/, ''));
       if (this.on) return;
       this.on = true; this.opener = opener || document.activeElement;
       this.wasPlaying = S.playing; if (S.playing) setPlaying(false);
@@ -1722,9 +1741,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       $('#scene').inert = true; $('#rail').inert = true;
       $('#lens-btn').setAttribute('aria-pressed', 'true');
       setTimeout(() => $('#lens-back').focus({ preventScroll: true }), S.rm ? 0 : 460);
-      say(`Systems lens open on ${b.name}${p ? `, showing ${p.title.toLowerCase()}` : ''}. Escape goes back to the city.`);
+      say(dm ? `Systems lens open on what holds across ${b.districtName}, mapped at ${b.name}. Escape goes back to the city.`
+        : `Systems lens open on ${b.name}${p ? `, showing ${p.title.toLowerCase()}` : ''}. Escape goes back to the city.`);
     },
-    refresh() { if (this.on && this.cur) this.open(this.cur.block, this.cur.pattern, this.cur.fromId, null, this.cur.hhId); },
+    refresh() { if (this.on && this.cur) this.open(this.cur.block, this.cur.pattern, this.cur.fromId, null, this.cur.hhId, this.cur.district); },
     close() {
       if (!this.on) return;
       this.on = false;
@@ -1746,24 +1766,31 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         const r = H.recById.get(top.id), k = this.match(r);
         if (k) return this.open(k.block, k.pattern, r.record_id, opener);
         if (r && r._blk) return this.open(r._blk, null, null, opener, r.household_id);
+        const db = r && this.districtBlock(r.district);
+        if (db) return this.open(db.id, null, r.record_id, opener, null, true);
       }
-      if (top && top.type === 'hhday') { const p = H.party.get(top.id); if (p && p.block) return this.open(p.block, null, null, opener, top.id); }
+      if (top && top.type === 'hhday') {
+        const p = H.party.get(top.id), db = p && !p.block && this.districtBlock(p.dist);
+        if (p && p.block) return this.open(p.block, null, null, opener, top.id);
+        if (db) return this.open(db.id, null, null, opener, top.id, true);
+      }
       this.open(this.last, null, null, opener);
     },
-    // #lens=<block>[/<pattern>[/<record>]] opens the lens; #view=map or #view=mini picks the view
+    // #lens=<block>[/<pattern>[/<record>]] opens the lens, and #lens=<block>/district[/<record>] its district tier;
+    // #view=map or #view=mini picks the view
     fromHash(realReady) {
       const q = new URLSearchParams(location.hash.slice(1)), v = q.get('view'), L = q.get('lens');
       if (!realReady && (v === 'map' || v === 'mini')) setView(v);
       if (!L) return;
-      const [block, pat, rid] = L.split('/');
+      const [block, p0, rid] = L.split('/'), dm = p0 === 'district', pat = dm ? null : p0 || null;
       if (rid) {
         if (!realReady) return; // the record exists once the real day has loaded
-        const r = H.recById.get(rid); if (!r) return this.open(block, pat || null, null);
+        const r = H.recById.get(rid); if (!r) return this.open(block, pat, null, null, null, dm);
         if (r._t > S.t) seek(r._t + .01);
         selectRecord(rid, scene());
-        return this.open(block, pat || null, rid);
+        return this.open(block, pat, rid, null, null, dm);
       }
-      if (!realReady) this.open(block, pat || null, null);
+      if (!realReady) this.open(block, pat, null, null, null, dm);
     },
   };
 
@@ -1831,10 +1858,11 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function closerHTML(r) {
     const k = Lens.match(r), day = r.household_id
       ? `<button class="go" data-hhday="${r.household_id}"><span class="gi">${CLOCK_ICON}</span><span><b>This household’s day</b><small>Every record for ${esc(r.household_id)}, in time order</small></span><span class="chev" aria-hidden="true">›</span></button>` : '';
-    let lens;
+    let lens, db;
     if (k) lens = `<button class="go" data-lens="${k.block}/${k.pattern}" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>${esc(Lens.sub(k))}</small></span><span class="chev" aria-hidden="true">›</span></button>`;
     else if (r._blk) { const b = Lens.block(r._blk); lens = `<button class="go" data-lens="${r._blk}/" data-hh="${esc(r.household_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes this household’s block</b><small>${esc(b ? b.name : 'A mapped block')} · this record isn’t one of its patterns</small></span><span class="chev" aria-hidden="true">›</span></button>`; }
-    else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>Not mapped yet. One block in each district is mapped so far.</small></span></div>`;
+    else if ((db = Lens.districtBlock(r.district))) lens = `<button class="go" data-lens="${db.id}/district" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes places like this</b><small>Across ${esc(db.districtName)} · ${esc(db.name)} is its mapped block</small></span><span class="chev" aria-hidden="true">›</span></button>`;
+    else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>This record has no district, so there is no mapped block to open.</small></span></div>`;
     const data = r._real ? explorerGo('record', r.record_id, `${esc(r.record_id)} with every field, as a table`) : '';
     return `<h3>Look closer</h3><div class="closer">${day}${lens}${data}</div>`;
   }
@@ -1862,17 +1890,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const p = H.party.get(id), all = H.records.filter((r) => r.household_id === id), so = all.filter((r) => r._i < S.idx), later = all.filter((r) => r._i >= S.idx);
     const inn = so.filter((r) => r._vk === 'income').reduce((s, r) => s + r.amount_gross, 0), out = so.filter((r) => (r._vk === 'purchase' || r._vk === 'bill')).reduce((s, r) => s + r.amount_paid_by_user, 0);
     const un = so.filter((r) => r._vk === 'unpaid').reduce((s, r) => s + r.time_minutes, 0), fails = so.filter((r) => r._vk === 'fail').length;
+    const db = !p.block && Lens.districtBlock(p.dist);
     return `<p class="eyebrow"><span>Household’s day</span></p><h2 id="sheet-title" tabindex="-1" class="title">${esc(p.name)}</h2>${p.info ? `<p class="dim">${esc(hhInfo(p))}</p>` : ''}<p class="dim">${esc(whereOf(p))} · so far, to ${H.fmt(S.t)}</p>
       <div class="mini-tiles"><div><span class="lbl">Money in</span><span class="v in">${H.fmtMoney(inn, true)}</span></div><div><span class="lbl">Money out</span><span class="v">${H.fmtMoney(-out, true)}</span></div><div><span class="lbl">Unpaid</span><span class="v">${H.fmtHours(un)}</span></div><div><span class="lbl">Failures</span><span class="v">${fails}</span></div></div>
       <p class="dim small">Its paths stay drawn on the city while this is open.</p>
-      ${p.block ? hhLensHTML(p, so) : ''}
-      ${p.info ? `<div class="closer" style="${p.block ? 'border-top:0' : 'margin-top:12px'}">${explorerGo('household', id, `${esc(id)}: its people, money and every record`)}</div>` : ''}
+      ${p.block ? hhLensHTML(p, so) : db ? hhDistrictHTML(p, db) : ''}
+      ${p.info ? `<div class="closer" style="${p.block || db ? 'border-top:0' : 'margin-top:12px'}">${explorerGo('household', id, `${esc(id)}: its people, money and every record`)}</div>` : ''}
       <h3>So far today</h3>${so.length ? `<ul class="feed inline">${so.slice().reverse().map((r) => rowHTML(r)).join('')}</ul>` : '<p class="dim">Nothing yet today.</p>'}
       ${later.length ? `<h3>Later today</h3><ul class="feed inline later">${later.map((r) => rowHTML(r)).join('')}</ul>` : ''}`;
   }
   function hhLensHTML(p, so) {
     const b = Lens.block(p.block), n = so.filter((r) => r._pat).length;
     return `<div class="closer" style="margin-top:12px"><button class="go" data-lens="${p.block}/" data-hh="${esc(p.id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this household’s day</b><small>${esc(b ? b.name : 'A mapped block')} · ${n ? `${n} of its records so far follow mapped patterns` : 'none of its records so far follow mapped patterns'}</small></span><span class="chev" aria-hidden="true">›</span></button></div>`;
+  }
+  // a household off the mapped block opens its district's block on the district tier
+  function hhDistrictHTML(p, db) {
+    return `<div class="closer" style="margin-top:12px"><button class="go" data-lens="${db.id}/district" data-hh="${esc(p.id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this household’s day</b><small>Across ${esc(db.districtName)} · ${esc(db.name)} is its mapped block</small></span><span class="chev" aria-hidden="true">›</span></button></div>`;
   }
   function openHouseholdDay(id) {
     unpinHousehold(); S.hhDay = id; pinHousehold(id);
@@ -2129,7 +2162,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const row = e.target.closest('button.row, #chooser button[data-id]');
       if (row) { closeChooser(); selectRecord(row.dataset.id, row.closest('#chooser') ? scene() : row); return; }
       const hd = e.target.closest('[data-hhday]'); if (hd) { openHouseholdDay(hd.dataset.hhday); return; }
-      const ln = e.target.closest('[data-lens]'); if (ln) { const [bk, pt] = ln.dataset.lens.split('/'); Lens.open(bk, pt || null, ln.dataset.from || null, ln, ln.dataset.hh || null); return; }
+      const ln = e.target.closest('[data-lens]'); if (ln) { const [bk, pt] = ln.dataset.lens.split('/'), dm = pt === 'district'; Lens.open(bk, dm ? null : pt || null, ln.dataset.from || null, ln, ln.dataset.hh || null, dm); return; }
       const lo = e.target.closest('[data-lens-open]'); if (lo) { e.preventDefault(); Lens.open(null, null, lo); return; }
     });
     document.addEventListener('keydown', (e) => {
