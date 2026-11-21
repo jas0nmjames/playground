@@ -15,3 +15,6 @@ dut-dut/assets/references/
 mapping-synthetic-transactions/sources/raw/
 __pycache__/
 .pytest_cache/
+# Medianville month bundles: built locally, published as GitHub Release assets, never committed
+mapping-synthetic-transactions/data/*_month.zip
+mapping-synthetic-transactions/data/*_month.zip.part
