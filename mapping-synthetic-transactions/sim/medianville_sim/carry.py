@@ -13,6 +13,7 @@ record that belongs to a chain, naming the chain, its step and the earlier recor
 """
 import csv
 import datetime as dt
+import math
 import os
 import random
 
@@ -101,6 +102,18 @@ class Carry:
         """How much more (or less) often a SNAP household makes its main grocery trip, by how much of the month's benefit
         is left (section 5 below)."""
         return min(SNAP_PACE[2], max(SNAP_PACE[1], SNAP_PACE[0] + SNAP_PACE[3] * H.snap_bal / max(1.0, H.snap)))
+
+    def volatile(self, p):
+        return hours_sigma(p) > 0
+
+    def hours(self, p, gig=False, d=None):
+        """This week's hours as a share of usual for an hourly or gig worker (1.0 for everyone else); section 6 below."""
+        return hours_factor(self, p, d or self.today, gig)
+
+    def period_hours(self, p, per):
+        """Average weekly hours factor over the weeks a paycheck covers (the weeks before payday)."""
+        weeks = {52: 1, 26: 2, 24: 2, 12: 4}.get(per, 2)
+        return sum(hours_factor(self, p, self.today - dt.timedelta(days=7 * k), False) for k in range(1, weeks + 1)) / weeks
 
     def file_once(self, H):
         """One tax return a season (free preparation, paid preparation or software)."""
@@ -1053,3 +1066,47 @@ def sweep_surplus(c, sim):
         W.savings += amt
         sim.emit(c.crng.randint(1200, 1400), "transfer", "money_services", "transfer_to_savings", P, W.hh, P, W.bank_org, channel="app", method="ach",
                  gross=amt, tmin=3, ctx=dict(org=W.bank_org.name, amt="%.0f" % amt))
+
+
+# ---------------------------------------------------------------------------------------------- 6. week-to-week income
+# Hourly and gig workers' hours change from week to week. Estimate: SIPP and the JPMorgan Chase Institute's volatility
+# figures were not downloaded (sources/manifest.csv rows sipp and jpmc_volatility are still to_fetch), so the sizes here
+# are labeled estimates. Each such worker gets a weekly hours factor, lognormal with mean 1, from a stream of its own
+# (person and ISO week, so it is the same whichever day asks): standard deviation .22 for variable-schedule hourly
+# workers, .12 for other part-time workers, .38 for gig work; a week is correlated with the one before (an MA(1) with
+# theta .6, lag-one correlation about .44). The factor scales the chance of working each day that week
+# (day_a.skeleton), the gross on a paycheck (the weeks it covers; day_a.gen_income) and gig earnings. Salaried and other
+# full-time fixed-schedule pay is unchanged. At these sizes a variable-schedule worker's hours in a four-week month range
+# about 45% of usual from the best week to the worst.
+HOURS_SIGMA = {"variable": .22, "part_time": .12, "gig": .38}
+HOURS_THETA = .6
+
+
+def hours_sigma(p, gig=False):
+    if gig and p.gig:
+        return HOURS_SIGMA["gig"]
+    if not p.emp.startswith("employed"):
+        return 0.0
+    if p.wsched == "variable":
+        return HOURS_SIGMA["variable"]
+    if p.emp == "employed_part_time":
+        return HOURS_SIGMA["part_time"]
+    return 0.0
+
+
+def hours_factor(c, p, d, gig=False):
+    sig = hours_sigma(p, gig)
+    if not sig:
+        return 1.0
+    from .config import side_rng
+    cache = c.__dict__.setdefault("_hz", {})
+
+    def z(day):
+        y, w, _ = day.isocalendar()
+        k = (p.pid, y, w)
+        v = cache.get(k)
+        if v is None:
+            v = cache[k] = side_rng(c.seed, "hours", p.pid, y, w).gauss(0, 1)
+        return v
+    x = (z(d) + HOURS_THETA * z(d - dt.timedelta(days=7))) / math.sqrt(1 + HOURS_THETA ** 2)
+    return math.exp(sig * x - sig * sig / 2)

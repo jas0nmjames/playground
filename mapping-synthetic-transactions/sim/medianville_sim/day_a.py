@@ -83,6 +83,8 @@ def skeleton(sim, H):
                 pw *= .62
             if sk in ("early", "farm") and p.sector in ("constr", "ag", "self"):
                 pw *= (1.0 if wx["trips"] > .9 else .5)
+            if sim.carry is not None:
+                pw = min(.98, pw * sim.carry.hours(p))     # carried runs: this week's hours (carry.py)
             if rng.random() < pw:
                 p.works = True
                 ft = p.ft or p.emp == "self_employed"
@@ -243,6 +245,8 @@ def gen_income(sim, H, q):
         if p.emp in ("employed_full_time", "employed_part_time") and p.org is not None and paid_today(p, cal):
             per = {"weekly": 52, "biweekly": 26, "semimonthly": 24, "monthly": 12}[p.cadence]
             gross = p.wage / per * (rng.uniform(.80, 1.16) if p.wsched == "variable" else rng.uniform(.98, 1.03))
+            if sim.carry is not None and sim.carry.volatile(p):
+                gross = p.wage / per * sim.carry.period_hours(p, per) * rng.uniform(.98, 1.02)   # carried runs: hours worked in the pay period
             if p.tipped:
                 gross *= 1.12
             gross = round(gross, 2)
@@ -308,14 +312,14 @@ def gen_income(sim, H, q):
                          ctx=dict(amt="%.0f" % amt, occ=p.occ, org=p.org.name if p.org else "the shop"))
             push(q, t, run)
         # ---------------- gig payouts
-        if p.gig and (p.works if p.sched == "gig" else rng.random() < .30):
+        if p.gig and (p.works if p.sched == "gig" else rng.random() < .30 * (sim.carry.hours(p, gig=True) if sim.carry is not None else 1.0)):
             main = p.sched == "gig"
             tstart = None
             if not main:
                 tstart = sim.slot(p, rng.randint(120, 210), EVE)
                 if tstart is None:
                     continue
-            earn = round(rng.uniform(55, 195) if main else rng.uniform(22, 88), 2)
+            earn = round((rng.uniform(55, 195) if main else rng.uniform(22, 88)) * (sim.carry.hours(p, gig=True) if sim.carry is not None else 1.0), 2)
             instant = rng.random() < .55
             fee = (rng.choice([.85, 1.49, 1.99]) if instant else 0.0)
             weekly = (not instant) and cal["dow"] in (1, 2) and rng.random() < .6

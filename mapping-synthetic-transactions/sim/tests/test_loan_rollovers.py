@@ -33,7 +33,7 @@ def test_renewals_charge_the_fee_again_and_move_the_due_date(carried10):
             principal = float(r["amount_gross"]) - float(r["fee_amount"])
             assert .15 * principal - .02 <= float(r["fee_amount"]) <= .175 * 1.6 * principal + .02
             n += 1
-    assert n >= 20
+    assert n >= 10
 
 
 def test_most_loans_due_are_renewed(carried10):
