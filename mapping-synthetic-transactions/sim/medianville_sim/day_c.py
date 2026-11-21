@@ -4,6 +4,7 @@ from .engine import ANY, DAY, EVE, OFFICE, SHOP, MORN, AFT
 from .day_a import push, subtract
 from .day_b import errand, online, bus_ride, inc
 from .config import SALES_TAX
+from .carry import can_notice, notice_sent, payday_opened, payday_start_ok, repossessed, title_taken
 
 SCHOOL_COST = [103.6, 97.9, 108.4]          # imputed cost per pupil per school day, by district (see assumptions)
 # unpaid care for someone in the same household, set from ATUS 2023-25 (v2; v1 drew .80 a day and 50-200 minutes)
@@ -420,7 +421,7 @@ def gen_public(sim, H, q):
                                                                   tmin=60 + w, wait=w, miles=miles, mode=mode, fr=tfr, lens=("labor",), ctx=dict(org=org.name)),
                wait=(5, 40))
     # ---- free tax help
-    if cal["tax_season"] and H.income < 69000 and not H.gq and sim.by_kind.get("vita") and rng.random() < .0036:
+    if cal["tax_season"] and H.income < 69000 and not H.gq and sim.by_kind.get("vita") and rng.random() < .0036 and (sim.carry is None or sim.carry.file_once(H)):
         org = sim.pick(("vita",), d, 12.0)
         if org is not None:
             def run(t, miles, mode, tfr, w):
@@ -627,14 +628,30 @@ def gen_money(sim, H, q):
 
                     def run(t, miles, mode, tfr, w, P=P, W=W, amt=amt, fee=fee, org=org):
                         W.give("cash", amt)
-                        emit(t, "transfer", "money_services", "payday_loan_disbursed", P, H, org, P, method="cash", gross=amt, fee_type="payday_finance_charge_due_at_payback",
-                             fee=fee, tmin=25 + w, wait=w, miles=miles, mode=mode, fr=tfr, ctx=dict(org=org.name, amt="%.0f" % amt, fee="%.2f" % fee, due="%.2f" % (amt + fee)))
-                    go(sim, q, P, H, org, 25, SHOP, run, wait=(0, 15))
+                        i = emit(t, "transfer", "money_services", "payday_loan_disbursed", P, H, org, P, method="cash", gross=amt, fee_type="payday_finance_charge_due_at_payback",
+                                 fee=fee, tmin=25 + w, wait=w, miles=miles, mode=mode, fr=tfr, ctx=dict(org=org.name, amt="%.0f" % amt, fee="%.2f" % fee, due="%.2f" % (amt + fee)))
+                        if sim.carry is not None:
+                            payday_opened(sim.carry, sim, W, P, org, amt, fee, i)
+                    if sim.carry is None or payday_start_ok(sim.carry, W):
+                        go(sim, q, P, H, org, 25, SHOP, run, wait=(0, 15))
+                elif sim.carry is not None:
+                    # carried runs: an online loan is due in full on the next payday, like a storefront one (carry.py)
+                    if payday_start_ok(sim.carry, W):
+                        t = sim.slot_soft(P, 14, EVE)
+
+                        def runo(t=t, P=P, W=W, amt=amt, fee=round(fee * 1.6, 2)):
+                            W.give("bank", amt)
+                            i = emit(t, "transfer", "money_services", "online_installment_loan_disbursed", P, H, X["x_cc2"], P, channel="online", method="ach", gross=amt,
+                                     fee_type="finance_charge_due_at_payback", fee=fee, tmin=14, ctx=dict(amt="%.0f" % amt, fee="%.2f" % fee))
+                            payday_opened(sim.carry, sim, W, P, X["x_cc2"], amt, fee, i, kind="online")
+                        push(q, t, runo)
                 else:
                     t = sim.slot_soft(P, 14, EVE)
                     push(q, t, lambda t=t, P=P, W=W, amt=amt, fee=fee: (W.give("bank", amt), emit(t, "transfer", "money_services", "online_installment_loan_disbursed", P, H, X["x_cc2"], P,
                                                                                                        channel="online", method="ach", gross=amt, fee_type="finance_charge_due_at_payback",
                                                                                                        fee=round(fee * 1.6, 2), tmin=14, ctx=dict(amt="%.0f" % amt, fee="%.2f" % (fee * 1.6)))))
+            elif r < PAYDAY_NEW + PAYDAY_DUE and sim.carry is not None:
+                pass        # carried runs: loans come due from the loan book (carry.py), not from a draw
             elif r < PAYDAY_NEW + PAYDAY_DUE:
                 due = float(rng.choice([230, 293.25, 345, 402.5, 460, 575]))
                 feeonly = round(due - due / 1.15, 2)
@@ -669,11 +686,20 @@ def gen_money(sim, H, q):
         if low and H.vehicles and rng.random() < .000092 and sim.by_kind.get("title_loan"):   # Texas 2025: 8.1 new title loans per 1,000 a year (v1 .00013)
             org = sim.pick(("title_loan",), d, 12.0)
             amt = float(rng.choice([400, 600, 800, 1000, 1500]))
-            go(sim, q, P, H, org, 40, SHOP,
-               lambda t, miles, mode, tfr, w, P=P, W=W, amt=amt, org=org: (W.give("cash", amt), emit(t, "transfer", "money_services", "title_loan_disbursed", P, H, org, P, method="cash",
-                                                                                                      gross=amt, fee_type="monthly_finance_charge", fee=round(amt * .25, 2), tmin=40 + w,
-                                                                                                      wait=w, miles=miles, mode=mode, fr=tfr, ctx=dict(org=org.name, amt="%.0f" % amt, fee="%.0f" % (amt * .25)))),
-               wait=(0, 20))
+            if sim.carry is None:
+                go(sim, q, P, H, org, 40, SHOP,
+                   lambda t, miles, mode, tfr, w, P=P, W=W, amt=amt, org=org: (W.give("cash", amt), emit(t, "transfer", "money_services", "title_loan_disbursed", P, H, org, P, method="cash",
+                                                                                                          gross=amt, fee_type="monthly_finance_charge", fee=round(amt * .25, 2), tmin=40 + w,
+                                                                                                          wait=w, miles=miles, mode=mode, fr=tfr, ctx=dict(org=org.name, amt="%.0f" % amt, fee="%.0f" % (amt * .25)))),
+                   wait=(0, 20))
+            elif not sim.carry.tloans.get(H.hid):
+                # carried runs: the new loan joins the title-loan book, due a month later (carry.py)
+                def runt(t, miles, mode, tfr, w, P=P, W=W, amt=amt, org=org):
+                    W.give("cash", amt)
+                    i = emit(t, "transfer", "money_services", "title_loan_disbursed", P, H, org, P, method="cash", gross=amt, fee_type="monthly_finance_charge",
+                             fee=round(amt * .25, 2), tmin=40 + w, wait=w, miles=miles, mode=mode, fr=tfr, ctx=dict(org=org.name, amt="%.0f" % amt, fee="%.0f" % (amt * .25)))
+                    title_taken(sim.carry, sim, H, P, org, amt, i)
+                go(sim, q, P, H, org, 40, SHOP, runt, wait=(0, 20))
         if W.status != "above" and rng.random() < .0011:
             org = sim.pick(("pawn",), d, 8.0)
             r = rng.random()
@@ -742,6 +768,10 @@ def gen_money(sim, H, q):
             push(q, 400, lambda: W0.give("prepaid", H.tanf))
     if cal["tax_season"] and not H.gq and any(p.wage > 0 or p.pension or p.inv for p in H.adults):
         r = rng.random()
+        if sim.carry is not None and H.hid in sim.carry.filed and r < max(.0088, TAX_PAID + .0042):
+            r = 1.0                 # carried runs: one return a season (carry.py)
+        elif sim.carry is not None and r < TAX_PAID + .0042:
+            sim.carry.filed.add(H.hid)
         P = rng.choice([p for p in H.adults if not p.inpatient] or [head])
         # v2: paid preparation x 2.1 (v1 .0042). IRS 2026: 56% of e-filed returns came from tax professionals (about 54%
         # paid), and three quarters of Medianville's ~48,000 returns filed in the 85-day season is ~420 a day.
@@ -1020,9 +1050,13 @@ def gen_care(sim, H, q):
                     elif W.cash >= amt:
                         m = "cash"
                     else:
+                        # cash out what savings holds to make up the rest (phase 4: v2 set cash to the loss outright, which made
+                        # or lost money whenever cash was not zero or savings fell short; identical whenever it balanced)
                         m = "cash"
-                        W.cash = amt
-                        W.savings = max(0.0, W.savings - amt)
+                        mv = min(W.savings, amt - W.cash)
+                        W.savings -= mv
+                        W.cash += mv
+                        amt = min(amt, W.cash)
                     W.take(m, amt)
                     emit(t, "transfer", "money_services", "scam_loss", p, H, p, X["x_scam"], channel="phone", method=m, gross=amt, user=amt, tmin=rng.randint(40, 120),
                          outcome="completed", fr=("scam_attempt",), ctx=dict(how=how, amt="%.0f" % amt, via=rng.choice(["gift cards read over the phone", "a wire from the bank branch", "a payment-app transfer", "a deposit into a crypto kiosk"])))
@@ -1244,8 +1278,18 @@ def gen_misc(sim, H, q):
             org = util[1]
             what = util[0].replace("_bill", "")
             if r < SHUTOFF_NOTICE:
-                emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
-                     outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=rng.choice([5, 7, 10])))
+                if sim.carry is not None:
+                    # carried runs: the notice starts a timer (carry.py); disconnections come only from timers that run out
+                    if can_notice(sim.carry, H):
+                        days = rng.choice([5, 7, 10])
+                        i = emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
+                                 outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=days))
+                        notice_sent(sim.carry, sim, H, util, P, i, past, days)
+                else:
+                    emit(rng.randint(660, 960), "non_monetary_job", "utilities", "shutoff_notice_received", P, H, org, P, channel="mail", tmin=rng.randint(4, 15),
+                         outcome="partial", fr=("insufficient_funds",), lens=("housing",), ctx=dict(org=org.name, amt="%.2f" % past, what=what, days=rng.choice([5, 7, 10])))
+            elif sim.carry is not None:
+                pass
             else:
                 fee = float(rng.choice([35, 45, 50, 75]))
                 t = sim.slot_soft(P, 15, ((480, 900, 1.0),))
@@ -1355,7 +1399,7 @@ def overnight_lenders(sim):
 
     def behind(H):
         L = H.tloan
-        return H.wallets[0].liquid() < L["principal"] * (TITLE_SINGLE_FEE if L["kind"] == "single" else .3)
+        return H.wallets[0].liquid() < L["principal"] * (TITLE_SINGLE_FEE if L["kind"] == "single" else .3) or bool(L.get("late"))
     loans = [H for H in sim.households if H.tloan is not None and H.vehicles and not H.gq]
     nb = sum(1 for H in loans if behind(H))
     # borrowers who are behind are 6.5 times as likely to lose the car; normalized so the average stays at the Texas rate
@@ -1367,9 +1411,11 @@ def overnight_lenders(sim):
         P = H.head
         if L is not None:
             if rng.random() < TITLE_REPO_PER_LOAN_DAY * (2.6 if behind(H) else .4) * norm:
-                emit(rng.randint(90, 330), "failed_attempt", "transportation", "car_repossessed", P, H, L["org"], P, method="none", gross=L["principal"],
-                     outcome="failed", fr=("insufficient_funds",), lens=("consumer_finance",),
-                     ctx=dict(org=L["org"].name, amt="%.0f" % L["principal"], reason="the title loan was behind and the lender sent a tow truck"))
+                i = emit(rng.randint(90, 330), "failed_attempt", "transportation", "car_repossessed", P, H, L["org"], P, method="none", gross=L["principal"],
+                         outcome="failed", fr=("insufficient_funds",), lens=("consumer_finance",),
+                         ctx=dict(org=L["org"].name, amt="%.0f" % L["principal"], reason="the title loan was behind and the lender sent a tow truck"))
+                if sim.carry is not None:
+                    repossessed(sim.carry, sim, H, i)
                 H.vehicles -= 1
                 H.tloan = None
                 H.flags.add("car_lost_today")
@@ -1396,7 +1442,7 @@ def overnight_lenders(sim):
 def gen_title_loans(sim, H, q):
     """The monthly title-loan payment on its due day: a payoff, a fee-only rollover, or an installment."""
     L = H.tloan
-    if L is None or H.gq or sim.cal["dom"] != L["dom"]:
+    if L is None or H.gq or sim.cal["dom"] != L["dom"] or sim.carry is not None:   # carried runs: carry.title_day
         return
     rng = sim.rng
     W = H.wallets[0]

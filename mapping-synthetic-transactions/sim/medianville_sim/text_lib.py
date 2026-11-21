@@ -279,6 +279,14 @@ T["reconnection_payment"] = k("get the {what} turned back on", "When service has
                               "Paid {org} by phone to restore the {what}.")
 T["sought_emergency_utility_help"] = k("ask {org} for emergency help", "When I cannot pay to get service back, I want an agency to pledge the difference, so I can get reconnected.",
                                        "Called {org} about emergency help with the {what} bill.")
+T["past_due_utility_payment"] = k("pay the past-due {what} balance", "When a shutoff notice gives me a date, I want the past-due balance paid before it, so I can keep the {what} on.",
+                                  ["Paid ${amt} past due to {org} before the shutoff date.", "Cleared the past-due {what} balance with {org}."])
+T["utility_payment_arrangement"] = k("set up a payment plan with {org}", "When a shutoff date is coming and I cannot pay it all, I want a payment plan, so I can keep the {what} on while I catch up.",
+                                     "Called {org} and set up a payment plan on the {what} account: ${down} now, ${rest} over the next weeks.")
+T["utility_assistance_pledge"] = k("get help with the {what} bill", "When I cannot pay the shutoff amount myself, I want an agency to help, so I can keep the {what} on.",
+                                   "{agency} pledged ${amt} toward the {what} bill at {org}.")
+T["service_reconnected"] = k("get the {what} back on", "When I have paid to get service back, I want it on as soon as possible, so I can get the household back to normal.",
+                             ["{org} turned the {what} back on after {days} days off.", "The {what} is back on; it was off {days} days."])
 T["utility_connection_deposit"] = k("put down a utility deposit", "When I open an account at a new address, I want the deposit paid, so I can have power on move-in day.",
                                     "Deposit to {org} to start service.")
 T["energy_assistance_application"] = k("apply for energy assistance at {org}", "When the heating bills pile up, I want to apply for help, so I can keep the heat on.",
@@ -428,6 +436,8 @@ T["school_closure_child_care_scramble"] = k("find child care for a closed school
 T["atm_withdrawal"] = k("get cash from the ATM", ["When I need cash for the week, I want to pull it from my account, so I can pay the places that do not take cards.",
                                                  "When my wallet is empty, I want forty dollars out, so I can cover small things."],
                         ["Withdrew ${amt} at an ATM ({org}).", "${amt} cash from the machine at {org}."])
+T["extended_overdraft_fee"] = k("get the account back above zero", "When the account has been overdrawn for a week, I want it back above zero, so I can stop the bank's fees piling up.",
+                                "{org} charged a ${amt} extended overdraft fee: the account has been below zero for {days} days.")
 T["transfer_from_savings"] = k("move money from savings", "When checking is nearly empty, I want to pull from savings, so I can avoid an overdraft.", "Moved ${amt} from savings to checking.")
 T["transfer_to_savings"] = k("move money to savings", "When there is a little extra, I want it out of checking, so I can keep from spending it.", "Moved ${amt} to savings.")
 T["mobile_check_deposit"] = k("deposit a check by phone", "When I am handed a check, I want it deposited from my phone, so I can skip the branch.", "Mobile deposit of a {what}; ${avail} available now.")
@@ -457,6 +467,9 @@ T["earned_wage_advance"] = k("get part of my pay early", "When payday is days aw
 T["payday_loan_disbursed"] = k("take out a payday loan", "When a bill cannot wait and I have nothing left, I want cash today, so I can keep the lights on.", "Borrowed ${amt} at {org}; ${due} due next payday.")
 T["online_installment_loan_disbursed"] = k("take out an online loan", "When I am short and the storefront is closed, I want an online loan, so I can cover the gap.", "Online loan of ${amt} funded to checking.")
 T["payday_loan_repayment"] = k("repay the payday loan", "When payday comes, I want the loan cleared, so I can stop paying fees.", "Loan paid off to {org}.")
+T["online_loan_repayment"] = k("repay the online loan", "When payday comes, I want the online loan cleared, so I can stop paying fees.", "Online loan paid off to {org}; ${amt} came out of checking.")
+T["online_loan_renewal"] = k("repay the online loan", "When I cannot repay the online loan and still pay rent, I want more time, so I can keep the full amount from coming out.",
+                             "Paid only the ${fee} fee to {org}; the online loan renews to the next payday.")
 T["payday_loan_rollover"] = k("repay the payday loan", "When I cannot repay the loan and eat, I want two more weeks, so I can keep the full amount from coming out.",
                               "Paid only the ${fee} fee to {org}; the loan rolls over.")
 T["caregiving_purchase_for_family_member"] = k("buy what my {rel} needs", "When I am looking after my {rel}, I want to pick up what they need on the way, so I can keep them stocked without another trip.",

@@ -4,6 +4,7 @@ import itertools
 from .config import DIST, INTRA, PART_B_PREMIUM, STATE_INCOME_TAX
 from .engine import ANY, DAY, EVE, OFFICE, SHOP, LUNCH, MORN
 from .finance import BILL_CAT
+from .carry import bill_missed
 
 _ctr = itertools.count()
 
@@ -82,6 +83,8 @@ def skeleton(sim, H):
                 pw *= .62
             if sk in ("early", "farm") and p.sector in ("constr", "ag", "self"):
                 pw *= (1.0 if wx["trips"] > .9 else .5)
+            if sim.carry is not None:
+                pw = min(.98, pw * sim.carry.hours(p))     # carried runs: this week's hours (carry.py)
             if rng.random() < pw:
                 p.works = True
                 ft = p.ft or p.emp == "self_employed"
@@ -242,6 +245,8 @@ def gen_income(sim, H, q):
         if p.emp in ("employed_full_time", "employed_part_time") and p.org is not None and paid_today(p, cal):
             per = {"weekly": 52, "biweekly": 26, "semimonthly": 24, "monthly": 12}[p.cadence]
             gross = p.wage / per * (rng.uniform(.80, 1.16) if p.wsched == "variable" else rng.uniform(.98, 1.03))
+            if sim.carry is not None and sim.carry.volatile(p):
+                gross = p.wage / per * sim.carry.period_hours(p, per) * rng.uniform(.98, 1.02)   # carried runs: hours worked in the pay period
             if p.tipped:
                 gross *= 1.12
             gross = round(gross, 2)
@@ -307,14 +312,14 @@ def gen_income(sim, H, q):
                          ctx=dict(amt="%.0f" % amt, occ=p.occ, org=p.org.name if p.org else "the shop"))
             push(q, t, run)
         # ---------------- gig payouts
-        if p.gig and (p.works if p.sched == "gig" else rng.random() < .30):
+        if p.gig and (p.works if p.sched == "gig" else rng.random() < .30 * (sim.carry.hours(p, gig=True) if sim.carry is not None else 1.0)):
             main = p.sched == "gig"
             tstart = None
             if not main:
                 tstart = sim.slot(p, rng.randint(120, 210), EVE)
                 if tstart is None:
                     continue
-            earn = round(rng.uniform(55, 195) if main else rng.uniform(22, 88), 2)
+            earn = round((rng.uniform(55, 195) if main else rng.uniform(22, 88)) * (sim.carry.hours(p, gig=True) if sim.carry is not None else 1.0), 2)
             instant = rng.random() < .55
             fee = (rng.choice([.85, 1.49, 1.99]) if instant else 0.0)
             weekly = (not instant) and cal["dow"] in (1, 2) and rng.random() < .6
@@ -479,6 +484,8 @@ def gen_income(sim, H, q):
             pr = (.17 if cal["eitc_wave"] else .012) if (eitc and kids) else .0105
             if not earners and not any(p.pension or p.inv for p in ad):
                 pr = .002
+            if sim.carry is not None and ("F:" + W.wid) in sim.carry.refunded:
+                pr = -1.0           # carried runs: one federal refund a season (carry.py)
             if rng.random() < pr:
                 if eitc and kids:
                     credit = round(min(8200, max(600, rng.gauss(3400 + 1300 * min(kids, 3), 1100))), 2)
@@ -506,14 +513,18 @@ def gen_income(sim, H, q):
                                  lens=("labor", "family_care"), related=i, ctx=ctx)
                     sim.credit(W, total - fees, "prepaid" if how == "prepaid" else "bank")
                     H.flags.add("refund_today")
+                    if sim.carry is not None:
+                        sim.carry.refunded.add("F:" + W.wid)
                 push(q, 3, run)
-            elif rng.random() < .006:
+            elif rng.random() < .006 and (sim.carry is None or ("S:" + W.wid) not in sim.carry.refunded):
                 amt = round(rng.uniform(60, 880), 2)
 
                 def run(p=ad[0], W=W, amt=amt):
                     sim.credit(W, amt, "bank")
                     sim.emit(rng.randint(1, 400), "income", "income", "state_tax_refund", p, H, X["x_staterev"], p, channel="automatic",
                              method="ach" if W.bank is not None else "check", gross=amt, lens=("public_finance",), ctx=dict(amt="%.2f" % amt))
+                    if sim.carry is not None:
+                        sim.carry.refunded.add("S:" + W.wid)
                 push(q, 4, run)
 
 
@@ -544,7 +555,7 @@ def gen_bills(sim, H, q):
     rng, cal, X = sim.rng, sim.cal, sim.X
     head = H.head
     adult = [p for p in H.adults if p.wallet is H.wallets[0]] or [head]
-    for b in H.bills:
+    for bi, b in enumerate(H.bills):
         if not due_today(b, cal):
             continue
         kind, org, amt, dom, method, W, freq, meta = b
@@ -605,17 +616,19 @@ def gen_bills(sim, H, q):
         if method == "ach_auto":
             t = rng.randint(90, 420)
 
-            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, fr=fr, third=third, payer=payer, fund=fund, lens=lens):
+            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, fr=fr, third=third, payer=payer, fund=fund, lens=lens, bi=bi):
                 have = W.bank if W.bank is not None else -1
                 if have >= amt:
                     W.take("ach", amt)
                     i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel="automatic", method="ach", gross=amt + third, user=amt, third=third,
                                  payer=payer, fund=fund, fr=fr, lens=lens, ctx=ctx)
-                elif W.od and amt - max(have, 0) < 900 and rng.random() < .6:
+                elif W.od and amt - max(have, 0) < 900 and (sim.carry is None or sim.carry.od_ok(W, amt)) and rng.random() < .6:
                     W.take("ach", amt + W.od_fee)
                     sim.bump("overdraft")
                     i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel="automatic", method="ach", gross=amt + third, user=amt + W.od_fee,
                                  third=third, payer=payer, fund=fund, fee_type="overdraft_fee", fee=W.od_fee, fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx)
+                    if sim.carry is not None:
+                        sim.carry.overdraft(sim, W, i)
                 else:
                     rf = float(rng.choice([15, 20, 25, 25, 30, 35]))
                     ctx2 = dict(ctx)
@@ -624,6 +637,8 @@ def gen_bills(sim, H, q):
                     i = sim.emit(t, "failed_attempt", cat, kind, P, H, P, org, channel="automatic", method="ach", gross=amt + third, user=0,
                                  fee_type="returned_payment_fee", fee=rf, outcome="failed", fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx2)
                     H.flags.add("nsf_today")
+                    if sim.carry is not None:
+                        bill_missed(sim.carry, sim, H, bi, W, P, i, amt, fees=rf, how="returned")
                 if kind == "mortgage" and H.escrow and i is not None and sim.rows[i][2] == "bill_payment":
                     tx = round(amt * rng.uniform(.16, .24), 2)
                     sim.emit(t, "tax", "housing", "property_tax_escrow", P, H, P, sim.one("county"), channel="automatic", method="ach", gross=tx, user=0,
@@ -632,9 +647,11 @@ def gen_bills(sim, H, q):
         elif method == "card_auto":
             t = rng.randint(30, 430)
 
-            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, fr=fr, lens=lens):
-                sim.pay(t, P, H, W, None, cat, kind, amt, taxable=(kind in ("streaming_subscription", "other_subscription")), channel="automatic",
-                        ctx=ctx, fr=fr, lens=lens, rtype="bill_payment", quiet_fail=0.0, to=org)
+            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, fr=fr, lens=lens, bi=bi):
+                i, oc, m = sim.pay(t, P, H, W, None, cat, kind, amt, taxable=(kind in ("streaming_subscription", "other_subscription")), channel="automatic",
+                                   ctx=ctx, fr=fr, lens=lens, rtype="bill_payment", quiet_fail=0.0, to=org)
+                if sim.carry is not None and oc not in ("completed", "partial"):
+                    bill_missed(sim.carry, sim, H, bi, W, P, i, amt, how="declined")
             push(q, t, run)
         elif method in ("online", "phone"):
             dur = rng.randint(3, 9) if method == "online" else rng.randint(7, 16)
@@ -655,13 +672,16 @@ def gen_bills(sim, H, q):
             if H.internet == "no" and method == "online":
                 frx.append("digital_barrier")
 
-            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, cf=cf, usecard=usecard, dur=dur, method=method, frx=frx, third=third, payer=payer, fund=fund, lens=lens):
+            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, cf=cf, usecard=usecard, dur=dur, method=method, frx=frx, third=third, payer=payer, fund=fund, lens=lens,
+                    bi=bi, lfee=(fee[1] if fee else 0.0)):
                 if usecard or W.bank is None:
                     i, oc, m = sim.pay(t, P, H, W, None, cat, kind, amt, channel=method, ctx=ctx, tmin=dur, fr=frx, lens=lens, rtype="bill_payment",
                                        fee=cf, quiet_fail=0.0, to=org, third=0.0)
+                    if sim.carry is not None and oc not in ("completed", "partial"):
+                        bill_missed(sim.carry, sim, H, bi, W, P, i, amt, late=lfee)
                 else:
                     f = cf[1] if cf else 0.0
-                    if W.bank >= amt + f or W.od:
+                    if W.bank >= amt + f or (W.od and (sim.carry is None or sim.carry.od_ok(W, amt + f))):
                         odf = W.od_fee if W.bank < amt + f else 0
                         W.take("ach", amt + f + odf)
                         if odf:
@@ -669,6 +689,8 @@ def gen_bills(sim, H, q):
                         i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel=method, method="ach", gross=amt + third, user=amt + f + odf, third=third,
                                      payer=payer, fund=fund, fee_type=((cf[0] if cf else "") + ("+overdraft_fee" if odf and cf else "overdraft_fee" if odf else "")),
                                      fee=f + odf, tmin=dur, fr=frx + (["insufficient_funds"] if odf else []), lens=lens, ctx=ctx)
+                        if odf and sim.carry is not None:
+                            sim.carry.overdraft(sim, W, i)
                     else:
                         part = round(max(0, W.bank) * rng.uniform(.6, .95), 2)
                         if kind in ("rent", "electric_bill", "gas_bill", "water_bill", "credit_card_payment", "car_payment") and part > 20:
@@ -677,11 +699,15 @@ def gen_bills(sim, H, q):
                             ctx2["short"] = "%.2f" % (amt - part)
                             i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, channel=method, method="ach", gross=amt, user=part, tmin=dur,
                                          outcome="partial", fr=frx + ["insufficient_funds"], lens=lens, ctx=ctx2)
+                            if sim.carry is not None:
+                                bill_missed(sim.carry, sim, H, bi, W, P, i, amt - part, late=lfee, how="partial")
                         else:
                             ctx2 = dict(ctx)
                             ctx2["reason"] = "the account could not cover it today"
                             i = sim.emit(t, "failed_attempt", cat, kind, P, H, P, org, channel=method, method="ach", gross=amt, tmin=dur, outcome="abandoned",
                                          fr=frx + ["insufficient_funds"], lens=lens, ctx=ctx2)
+                            if sim.carry is not None:
+                                bill_missed(sim.carry, sim, H, bi, W, P, i, amt, late=lfee)
                 if kind == "mortgage" and H.escrow and i is not None and sim.rows[i][2] == "bill_payment":
                     tx = round(amt * rng.uniform(.16, .24), 2)
                     sim.emit(t, "tax", "housing", "property_tax_escrow", P, H, P, sim.one("county"), channel="automatic", method="ach", gross=tx, user=0,
@@ -690,7 +716,7 @@ def gen_bills(sim, H, q):
         elif method == "check_mail":
             t = sim.slot_soft(P, 6, ((480, 720, 1), (1020, 1260, 1)))
 
-            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, fee=fee, fr=fr, lens=lens):
+            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, amt=amt, ctx=ctx, fee=fee, fr=fr, lens=lens, bi=bi):
                 f = fee[1] if fee else 0.0
                 if W.bank is not None and W.bank >= amt + f:
                     W.take("check", amt + f + .78)
@@ -699,8 +725,10 @@ def gen_bills(sim, H, q):
                 else:
                     ctx2 = dict(ctx)
                     ctx2["reason"] = "the checkbook balance would not cover it, so the envelope stayed on the counter"
-                    sim.emit(t, "failed_attempt", cat, kind, P, H, P, org, channel="mail", method="check", gross=amt, tmin=4, outcome="abandoned",
-                             fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx2)
+                    i = sim.emit(t, "failed_attempt", cat, kind, P, H, P, org, channel="mail", method="check", gross=amt, tmin=4, outcome="abandoned",
+                                 fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx2)
+                    if sim.carry is not None:
+                        bill_missed(sim.carry, sim, H, bi, W, P, i, amt, late=f)
             push(q, t, run)
         elif method in ("in_person", "money_order"):
             # where the payment is physically made
@@ -721,12 +749,14 @@ def gen_bills(sim, H, q):
             if t is None:
                 ctx2 = dict(ctx)
                 ctx2["reason"] = "the office hours ended before anyone in the household was free"
-                sim.emit(rng.randint(1020, 1200), "failed_attempt", cat, kind, P, H, P, org, channel="in_person", method="cash", gross=amt, tmin=2,
-                         outcome="rescheduled", fr=fr + ["hours_mismatch"] + tfr, lens=lens, ctx=ctx2)
+                i = sim.emit(rng.randint(1020, 1200), "failed_attempt", cat, kind, P, H, P, org, channel="in_person", method="cash", gross=amt, tmin=2,
+                             outcome="rescheduled", fr=fr + ["hours_mismatch"] + tfr, lens=lens, ctx=ctx2)
+                if sim.carry is not None:
+                    bill_missed(sim.carry, sim, H, bi, W, P, i, amt, how="no_time")
                 continue
             mo = method == "money_order" or (agent and kind in ("rent", "car_payment", "auto_insurance"))
 
-            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, dest=dest, amt=amt, ctx=ctx, fee=fee, fr=fr, mo=mo, agent=agent, miles=miles, mode=mode, tfr=tfr, lens=lens):
+            def run(t=t, W=W, P=P, kind=kind, cat=cat, org=org, dest=dest, amt=amt, ctx=ctx, fee=fee, fr=fr, mo=mo, agent=agent, miles=miles, mode=mode, tfr=tfr, lens=lens, bi=bi):
                 f = fee[1] if fee else 0.0
                 ft = fee[0] if fee else ""
                 rel = None
@@ -762,12 +792,16 @@ def gen_bills(sim, H, q):
                     part = round(have * rng.uniform(.7, .95), 0)
                     W.take("cash", part)
                     ctx["short"] = "%.2f" % (amt - part)
-                    sim.emit(t, "bill_payment", cat, kind, P, H, P, org, method="cash", gross=amt, user=part, tmin=14, wait=rng.randint(0, 15),
-                             miles=miles, mode=mode, outcome="partial", fr=fr + tfr + ["insufficient_funds"], lens=lens, ctx=ctx)
+                    i = sim.emit(t, "bill_payment", cat, kind, P, H, P, org, method="cash", gross=amt, user=part, tmin=14, wait=rng.randint(0, 15),
+                                 miles=miles, mode=mode, outcome="partial", fr=fr + tfr + ["insufficient_funds"], lens=lens, ctx=ctx)
+                    if sim.carry is not None:
+                        bill_missed(sim.carry, sim, H, bi, W, P, i, amt - part, late=(fee[1] if fee else 0.0), how="partial")
                 else:
                     ctx["reason"] = "there was not enough cash to cover the bill"
-                    sim.emit(t, "failed_attempt", cat, kind, P, H, P, org, method="cash", gross=amt, tmin=4, miles=0, mode=mode, outcome="abandoned",
-                             fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx)
+                    i = sim.emit(t, "failed_attempt", cat, kind, P, H, P, org, method="cash", gross=amt, tmin=4, miles=0, mode=mode, outcome="abandoned",
+                                 fr=fr + ["insufficient_funds"], lens=lens, ctx=ctx)
+                    if sim.carry is not None:
+                        bill_missed(sim.carry, sim, H, bi, W, P, i, amt, late=(fee[1] if fee else 0.0))
             push(q, t, run)
         elif method in ("p2p", "check_hand", "cash_hand"):
             t = sim.slot_soft(P, 2, ((600, 1080, 1),))

@@ -71,6 +71,7 @@ class Sim:
         self.trng = random.Random(cfg["RANDOM_SEED"] + 7)
         self.payroll, self.tanf_idx, self.delivery_orders, self.toll_draw = {}, {}, [], {}
         self.passholders, self.skimmed = set(), set()
+        self.carry = None             # carry.Carry in a carried run (several days); None in a one-day run
 
     # ------------------------------------------------------------------ helpers
     def bump(self, k, v=1):
@@ -352,7 +353,9 @@ class Sim:
             if "cash" in acc and "cash" not in out and (W.cash >= amt or not out):
                 out.append("cash")
         # most people know when a card will not clear and do not try it
-        keep = [m for m in out if W.avail(m) >= amt or (m == "debit" and W.od and rng.random() < .35) or rng.random() > aware]
+        # (carried runs: someone whose account is already below zero knows it and rarely tries the card; carry.py)
+        keep = [m for m in out if W.avail(m) >= amt or (m == "debit" and W.od and rng.random() < (.35 if self.carry is None or W.bank >= 0 else .10))
+                or rng.random() > aware]
         return keep
 
     def pay(self, t, P, H, W, org, cat, kind, amt, taxable=False, channel="in_person", ctx=None, tmin=0, wait=0, miles=0.0,
@@ -397,7 +400,7 @@ class Sim:
             down = m in CARDS and org is not None and org is self.down_org and self.cfg["CARD_READER_OUTAGE"][0] <= t <= self.cfg["CARD_READER_OUTAGE"][1]
             f2type, f2 = ftype, famt
             od = False
-            if m == "debit" and have < need and not tech and not down and W.od and need - max(have, 0) <= 260:
+            if m == "debit" and have < need and not tech and not down and W.od and need - max(have, 0) <= 260 and (self.carry is None or self.carry.od_ok(W, need)):
                 od = True
                 f2type, f2 = (ftype + "+overdraft_fee" if ftype else "overdraft_fee"), famt + W.od_fee
             if (have >= need or od) and not tech and not down:
@@ -421,6 +424,8 @@ class Sim:
                 i = self.emit(t, rtype, cat, kind, P, H, P, to, ben, channel=channel, method=m, gross=total, user=paid, third=third,
                               payer=payer, fund=fund, imputed=imputed, tax=tax, fee_type=f2type, fee=f2, tmin=tmin, wait=wait, miles=miles, mode=mode,
                               outcome=done, fr=F, lens=lens, related=prev, ctx=ctx)
+                if od and self.carry is not None:
+                    self.carry.overdraft(self, W, i)
                 return i, done, m
             why = "outage" if down else ("other" if tech else "insufficient_funds")
             if tech:

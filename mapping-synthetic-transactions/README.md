@@ -31,6 +31,7 @@ No viewer v2 shipped: the second round was a set of visual-direction prototypes 
 | v1: Wednesday, March 3, 2027 | `data/halvern_2027-03-03.zip` | Frozen as shipped. The archived viewers load it. |
 | v1, renamed | `data/medianville_2027-03-03.zip` | Current: the same run with only the city's name changed, written by `tools/rename_run.py`. The latest viewer and the explorer load it until v2 ships. |
 | v2: the evidence update | Simulator in `sim/` (the `medianville_sim` package); runs to be packaged as `data/runs/v2/medianville_<date>.zip` | In progress; see the [data update plan](reference/medianville-data-update-plan.md) |
+| v2, phase 4: March 1–31, 2027, carried day to day | GitHub Release `medianville-v2-month-2027-03`: [download (about 460 MB), not needed to use the site](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip) | Built 2026-11-20: 5.7 million records with the chains across days (unpaid bills, shutoffs, overdrafts, payday and title loans). The pages never load it. Checks and summary in `sim/evidence/results/v2_month_2027-03/`; see the [month run record](reference/medianville-2027-03-month-run-record.md). |
 
 ## Views
 
@@ -145,6 +146,32 @@ python3 -m http.server 5181 --directory mapping-synthetic-transactions
 
 Opening an `index.html` as a file can't fetch the data, so each animated page then plays its placeholder day, and the explorer says it couldn't load the run. The Miniature also needs internet access for three.js and its fonts.
 
+## Running the simulator
+
+The v2 simulator needs Python 3.10 or later and numpy. From `sim/`:
+
+```bash
+python3 simulate.py --out out
+```
+
+That is one day (Wednesday, March 3, 2027, the full city, seed 20270303). `--date`, `--weather storm|heat`, `--households N` and `--seed N` change it. With `--days N` the city is carried forward day by day: balances, unpaid bills waiting to be retried, shutoff notices running out, overdrafts, payday and title loans, SNAP balances and the weeks' hours all carry (`sim/medianville_sim/carry.py`), and each day also writes `links.csv`, which ties records into chains across days. `--state-out` and `--state-in` save and continue a carried run; `--carry` carries a single day.
+
+The March 2027 month (phase 4), its checks and its bundle:
+
+```bash
+python3 simulate.py --date 2027-03-01 --days 31 --out month
+```
+
+```bash
+python3 evidence/month.py month evidence/results/v2_month_2027-03
+```
+
+```bash
+python3 ../tools/pack_month.py month evidence/results/v2_month_2027-03 ../data/medianville_2027-03_month.zip
+```
+
+The typed-day year: `python3 evidence/checks.py run OUT --label TEXT`. Tests: `python3 -m pytest tests --run-slow`.
+
 ## What's in this folder
 
 | Path | What it is |
@@ -166,7 +193,10 @@ Opening an `index.html` as a file can't fetch the data, so each animated page th
 | `data/halvern/out/summary.md` | Counts, calibration against the anchors, fees, public dollars and the costliest frictions |
 | `data/halvern/detailed_sample_500.csv` | The 500 hand-written records |
 | `data/halvern/simulate.py`, `halvern_sim/` | The v1 simulator, frozen (Python 3.10+ and numpy). The package's own [README](data/halvern/README.md) explains how to re-run it for another date, a storm, or several days in a row. `sim/tests` checks that it still reproduces the zip byte for byte. |
-| `sim/simulate.py`, `sim/medianville_sim/` | The v2 simulator in progress, with its tests (`sim/tests/`), evidence targets (`sim/evidence_targets.csv`) and typed-day checks (`sim/evidence/`). See the [data update plan](reference/medianville-data-update-plan.md). |
+| `sim/simulate.py`, `sim/medianville_sim/` | The v2 simulator in progress, with its tests (`sim/tests/`), evidence targets (`sim/evidence_targets.csv`) and typed-day checks (`sim/evidence/`). See the [data update plan](reference/medianville-data-update-plan.md). `medianville_sim/carry.py` is what a run of several days carries from one day to the next (phase 4). |
+| `sim/evidence/month.py`, `sim/evidence/month_targets.csv` | The month's evidence checks: its targets, the chains across days, and the typed-day targets over the month |
+| `sim/evidence/results/v2_month_2027-03/` | The March 2027 month's `summary.md` and `evidence_checks.md`. The month itself is a Release download (above), not in the repo. |
+| `tools/pack_month.py` | Packs a carried month into one zip, the same bytes every time, with a `SHA256SUMS` file inside |
 | `sources/` | The download manifest and log, the tools that build `sources/derived/` from the raw downloads, and the derived tables the simulator reads. Raw files stay out of git. |
 | `screenshots/` | The screenshots above, plus the intro and the About page |
 | `reference/` | The documents behind the project, listed below |
@@ -179,6 +209,7 @@ Opening an `index.html` as a file can't fetch the data, so each animated page th
 - [Medianville transaction generator prompt](reference/medianville-transaction-generator-prompt.md): the prompt that generated the data.
 - [How the Medianville day was built](reference/medianville-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed.
 - [Medianville run record](reference/medianville-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
+- [Medianville month run record](reference/medianville-2027-03-month-run-record.md): the March 2027 month (v2, phase 4): dates, seed, records, size, SHA-256, how to rebuild it, and where to download it.
 - [Medianville Systems Lens: design record](reference/medianville-systems-lens.md): the directions tried for the systems lens, what was decided, and what waits for the next run.
 - [Medianville Miniature: realism design record](reference/medianville-miniature-realism.md): the tilt-shift references, the iterations tried in the realism lab, what was kept and how it works.
 
@@ -274,6 +305,8 @@ The intro, the About page and the data links were one Claude Code session (claud
 
 The rename to Medianville was one Claude Code session (claude-opus-5-5) on November 20, 2026, from Jason's brief, between v2's phase 3 and packaging. Before changing anything it ran the v2 simulator over the typed-day set and kept every output outside git. It renamed the simulator package and every invented name, reran the year, and mapped every output back to the old name: all 181 files matched batch R byte for byte. It wrote `tools/rename_run.py` and the renamed copy of v1 with a round-trip test, renamed the pages, the sound setting's key and the reference docs, updated the decision log, the data update plan and this README, ran the simulator's tests, tested the pages in headless Chrome at desktop and phone sizes, retook six screenshots and opened the pull request into `development`. Its row counts 182 model requests measured in the session transcript and about 15 more estimated for the commit, the pull request and the reply; at the time of measuring, the session had used ≈ 50M tokens, about 99% of them cache reads.
 
+Phase 4, the month, was one Claude Code session (claude-opus-5-5) on November 20, 2026, from Jason's brief. It set up Python 3.11 and numpy on the Mac and checked that the unchanged simulator reproduced the typed-day year byte for byte, then made the simulator carry consequences from one day to the next, one commit per change: a retry queue for unpaid bills, notice-to-shutoff timers, overdraft chains, payday and title rollovers, SNAP and checking balance paths, and week-to-week income, each with its tests. It reran the typed-day year after every commit (unchanged each time), fixed an old scam-loss branch that made money when carried balances triggered it, wrote two source tools (SHED bills, EIA-112 disconnections), ran March 2027 at full scale twice (fitting four carried-only terms after the first), wrote the month's evidence checks and packing tool, built the bundle, and updated the plan, the decision log and this README. Its row counts 205 model requests measured in the session transcript and about 10 more estimated for the commit, the pull request and the reply; at the time of measuring, the session had used ≈ 92M tokens, about 98% of them cache reads. The two full-city month runs, the typed-day reruns and the tests ran on the Mac's CPU and are not counted.
+
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | November 16, 2026 | Claude app | claude-fable-5-2 | not measurable from here | — | — |
@@ -285,6 +318,7 @@ The rename to Medianville was one Claude Code session (claude-opus-5-5) on Novem
 | November 19, 2026 | Claude app (data explorer) | claude-opus-5-5 | 1.260 kWh | 0.486 kg CO₂ | 0.630 L |
 | November 20, 2026 | Claude Code (intro, About page, data links) | claude-opus-5-5 | 1.188 kWh | 0.459 kg CO₂ | 0.594 L |
 | November 20, 2026 | Claude Code (rename to Medianville) | claude-opus-5-5 | 3.546 kWh | 1.369 kg CO₂ | 1.773 L |
-| **Total (countable)** | | | **9.432 kWh** | **3.641 kg CO₂** | **4.716 L** |
+| November 20, 2026 | Claude Code (phase 4: the month) | claude-opus-5-5 | 3.870 kWh | 1.494 kg CO₂ | 1.935 L |
+| **Total (countable)** | | | **13.302 kWh** | **5.135 kg CO₂** | **6.651 L** |
 
 [^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads.

@@ -100,6 +100,8 @@ def make(rng, kind, ctx, outcome, F, wait, fee, fee_type):
         nss = ["Rode the bus for {purpose} on a monthly pass.", "Bus ride for {purpose}; tapped the pass."]
     narr = _cap(_f(nss[0] if len(nss) == 1 else rng.choice(nss), c))
     tails = []
+    if ctx.get("again"):          # carried runs: a retried bill (medianville_sim/carry.py)
+        tails.append(" " + _cap(ctx["again"]) + ".")
     if ctx.get("debt"):
         tails.append(" The meal account was empty, so it went on the tab as a debt.")
     if ctx.get("waiver"):
