@@ -236,6 +236,13 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Cost:** The circumstances and figures are Claude-drafted composites of documented US patterns. They're labelled composite on screen and are waiting for Jason's review.
 - **Source:** mapped blocks.
 
+### 4.6 A district tier, so no record is a dead end
+- **Decided:** Each mapped block also carries circumstances true across its whole district (`"scope": "district"`) and a district loop (`D1`, opened by `districtStart`). A record or household off the mapped blocks opens its district's block in district mode: the district tier is the story, each with an "Across" pill naming the district, the block's own circumstances fold away, and the bar above the lens says the record is from elsewhere in the district. The explorer links to the lens by the same rules, and its "Lens" filter becomes "Lens tags".
+- **Why:** About 93% of records ended at a disabled "Not mapped yet" row. A district tier is honest about scale: it says what holds across the district without implying the record happened on the block.
+- **Also decided:** Seasonal guest workers in open country go on the political layer, so every district has a political circumstance. The social layer stays empty downtown, in the satellite city and in the rural town for now.
+- **Cost:** Display content only: no simulator change, no new or changed patterns or select rules, so every published run's tags stay valid. The district circumstances are Claude-drafted from the human-evidence report and national history, with figures checked against their sources; they wait for Jason's review like the blocks.
+- **Who:** Jason. **When:** 2026-11-21. **Source:** `medianville-phase6-lens-dead-ends-handoff.md` and its district history addendum.
+
 ---
 
 ## 5. Data access and the repo

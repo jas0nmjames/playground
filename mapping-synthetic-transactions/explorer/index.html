@@ -198,6 +198,7 @@ table.mini tr:last-child td { border-bottom:0; }
 .pbtn b { display:block; font-weight:600; line-height:1.25; color:var(--blue); }
 .pbtn span { display:block; font-size:12.5px; color:var(--ink2); margin-top:2px; overflow-wrap:anywhere; }
 .pbtn.plain b { color:var(--ink); }
+a.pbtn { text-decoration:none; }
 h3.sec { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); margin:20px 0 8px; border-top:1px solid var(--line); padding-top:14px; }
 dl.kv { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; margin:0; }
 dl.kv div { min-width:0; }
@@ -321,6 +322,9 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   const PAGES = 'https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/';
   const inRepo = /\/explorer\/(index\.html)?$/.test(location.pathname);
   $('#anim-link').href = inRepo ? '../' : PAGES;
+  // the systems lens's mapped blocks, for each record's "What shaped this" link (names, and each district's block)
+  let LENS = null, RUNSEL = null;
+  fetch((inRepo ? '../' : PAGES) + 'systems-lens/blocks.json').then((r) => (r.ok ? r.json() : null)).then((d) => { LENS = d; }).catch(() => { /* links fall back to ids */ });
   // which day: data/runs/manifest.json through runs.js (the default run, or ?run=<id>); without it, v1's zip
   let RUNS = ['../data/medianville_2027-03-03.zip', 'data/medianville_2027-03-03.zip'], RUN_BYTES = 16182979, DAY = '2027-03-03';
   const FFLATE = ['../fflate.js', 'fflate.js'], RUNSJS = ['../runs.js', 'runs.js'];
@@ -367,7 +371,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   async function pickRun() {
     try { await loadScript(RUNSJS, () => !!window.MedianvilleRuns, 'the run list'); } catch (e) { return; }
     const sel = await MedianvilleRuns.resolve(['../', '']); if (!sel) return;
-    RUNS = [sel.url]; RUN_BYTES = sel.run.bytes || RUN_BYTES; DAY = sel.run.date;
+    RUNS = [sel.url]; RUN_BYTES = sel.run.bytes || RUN_BYTES; DAY = sel.run.date; RUNSEL = sel;
     MedianvilleRuns.picker($('#runpick'), sel);
     MedianvilleRuns.carry($('#anim-link'), sel);
   }
@@ -581,7 +585,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       catFacet(R, 'travel_mode', 'travel', 'Travel mode'),
       catFacet(R, 'third_party_payer', 'payer', 'Paid in part by', { extra: { filterable: true } }),
       catFacet(R, 'funding_level', 'funding', 'Public funding level'),
-      tagFacet(R.lens, 'lens', 'Lens'),
+      tagFacet(R.lens, 'lens', 'Lens tags'),
       arrFacet(R.hw, ['Hand-written narrative'], 'hw', 'Hand-written records'),
     ];
     // district in fixed D1..D6 order
@@ -1122,6 +1126,25 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     v.scope = { label: lab, test: scopeTest(type, id) };
     closeSheet(); go('records');
   }
+  // "What shaped this": the systems lens over the city, by the viewer's rules. A record that follows a block pattern opens on
+  // it; one from a block household opens the block; any other opens its district's block on the district tier.
+  function lensHref(path) {
+    const u = new URL(inRepo ? '../' : PAGES, location.href);
+    if (RUNSEL && RUNSEL.run.id !== RUNSEL.manifest.default) u.searchParams.set('run', RUNSEL.run.id);
+    u.hash = 'lens=' + path;
+    return u.toString();
+  }
+  function lensHTML(R, i) {
+    const s = (c) => (R.cols[c] ? R.s(c, i) : ''), bid = s('block_id'), pat = s('block_pattern'), dist = s('district');
+    const blocks = (LENS && LENS.blocks) || [], b = blocks.find((x) => x.id === bid);
+    const db = !bid && blocks.find((x) => x.district === dist && x.contexts.some((c) => c.scope === 'district'));
+    let path, sub;
+    if (bid && pat) { const p = b && b.patterns.find((x) => x.id === pat); path = bid + '/' + pat; sub = (p ? p.title + ' · ' : 'Pattern ' + pat + ' · ') + (b ? b.name : bid); }
+    else if (bid) { path = bid; sub = `${b ? b.name : bid}, this household's block · the record isn't one of its patterns`; }
+    else if (db) { path = db.id + '/district'; sub = `Across ${db.districtName} · ${db.name} is its mapped block`; }
+    else return '';
+    return `<h3 class="sec">Systems lens</h3><a class="pbtn" href="${esc(lensHref(path))}" data-lens-link="${esc(path)}"><b>What shaped this</b><span>${esc(sub)}</span></a>`;
+  }
   function recordHTML(id) {
     const R = D.rec, i = R.row(id); if (i < 0) return '';
     const s = (c) => R.s(c, i), num = (c) => R.v(c, i);
@@ -1147,6 +1170,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       <h3 class="sec">Time and travel</h3>
       ${kv([['Started', clock(R.tmin[i])], ['Time spent', mins(num('time_minutes'))], ['Waiting', mins(num('wait_minutes'))], ['Travel', num('travel_miles') > 0 ? NF1.format(num('travel_miles')) + ' mi' + (s('travel_mode') ? ' · ' + esc(human(s('travel_mode'))) : '') : '—']])}
       ${fr.length || ln.length ? `<h3 class="sec">Tags</h3><div class="tags">${fr.map((t) => `<span class="tag f">${esc(human(t))}</span>`).join('')}${ln.map((t) => `<span class="tag">${esc(human(t))}</span>`).join('')}</div>` : ''}
+      ${lensHTML(R, i)}
       <h3 class="sec">People</h3>
       ${actor ? partyBtn(actor, D.partyLabel(actor), 'Did the job · ' + actor) : ''}
       ${ben && ben !== actor ? partyBtn(ben, D.partyLabel(ben), 'Benefited · ' + ben) : ''}

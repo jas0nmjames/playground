@@ -177,7 +177,7 @@
     if (b.households) eachRow(b.households, (R, Hd) => {
       const g = (k) => (Hd[k] != null ? R.str(Hd[k]) : '');
       const id = g('household_id'), dc = g('district'), fold = FOLD[dc] || 'older', list = homes[fold] || H.households, home = list[hash(id) % list.length];
-      const p = { id, type: 'household', name: 'Household ' + id, district: home.district, where: DNAME[dc] || dc, tile: home.tile, anchor: home.anchor, dwell: home.dwell, home,
+      const p = { id, type: 'household', name: 'Household ' + id, district: home.district, dist: dc, where: DNAME[dc] || dc, tile: home.tile, anchor: home.anchor, dwell: home.dwell, home,
         info: { type: g('household_type'), size: +g('size') || 0, income: +g('annual_income') || 0, alice: g('alice_status'), bank: g('banked_status'), tenure: g('housing_tenure') }, hi: hhList.length, block: g('block_id') };
       hhList.push(p); HHM.set(id, p); H.party.set(id, p); members.set(home, (members.get(home) || 0) + 1);
     });
