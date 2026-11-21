@@ -57,3 +57,23 @@ def test_balances_carry_from_one_day_to_the_next(carried10):
         c = close[r["household_id"]]
         for k in ("checking", "cash", "prepaid", "savings", "card_debt"):
             assert r["open_" + k] == c["close_" + k], (r["household_id"], k)
+
+
+def test_carried_runs_are_deterministic(carried10, tmp_path):
+    """Two carried days rerun from scratch match the fixture's first two days byte for byte (same seed)."""
+    import datetime as dt
+    import simulate
+    from conftest import TEST_HOUSEHOLDS
+    from medianville_sim.config import PARAMS
+
+    cfg = dict(PARAMS)
+    cfg["N_HOUSEHOLDS"] = TEST_HOUSEHOLDS
+    state = None
+    for k, (date, folder) in enumerate(carried10["days"][:2]):
+        cfg["SIM_DATE"] = dt.date.fromisoformat(date)
+        out = str(tmp_path / date)
+        st = str(tmp_path / ("state_%s.json" % date))
+        simulate.run_day(cfg, out, state_in=state, state_out=st, overrides=None, blocks_path=None, log=lambda *a: None, carried=True)
+        for name in ("records.csv", "links.csv", "household_ledger.csv"):
+            assert sha(os.path.join(out, name)) == sha(os.path.join(folder, name)), (date, name)
+        state = st

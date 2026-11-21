@@ -335,7 +335,10 @@ def write(M, out, label, month):
     for t in checks.read_csv(checks.TARGETS):
         v = checks.year_value(t["metric"], days_m) if t["metric"] != "cash_share_rural" else None
         tgt = t["tolerance"] if t["check"] in ("present", "report") else "%s to %s %s" % (t["target_low"], t["target_high"], t["unit"])
-        L.append("| %s | %s | %s | %s | %s |" % (t["target_id"], t["item"], checks.fmt(t["metric"], v), tgt, checks.verdict(t, v) if v is not None else "not measured"))
+        vd = checks.verdict(t, v) if v is not None else "not measured"
+        if t["target_id"] == "T02":
+            vd += "; new sequences only in a carried run (with renewals, M08: %s a day)" % fmt("payday_loans_and_renewals", V["payday_loans_and_renewals"])
+        L.append("| %s | %s | %s | %s | %s |" % (t["target_id"], t["item"], checks.fmt(t["metric"], v), tgt, vd))
     L += ["", "## Limits", "",
           "- One month, started cold on March 1 except for what is inherited: shutoff notices from the ten days before, the payday loans and title "
           "loans already out, and the tax season so far. The retry queue and the overdraft chains start empty, so the first days run a little light.",
