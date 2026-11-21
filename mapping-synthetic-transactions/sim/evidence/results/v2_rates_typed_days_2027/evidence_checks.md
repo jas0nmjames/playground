@@ -77,5 +77,5 @@ Simulator: v2 (`sim/`): all batches; rates tuned. 18 simulated days stand for 20
 
 - Each day is simulated from the same opening balances; nothing carries between days (option A). Chains such as notice to shutoff, and the concentration of overdraft fees, need the month run (option B).
 - Most classes are represented by October days. Heating-season (Nov-Mar) and cooling-season (Jun-Sep) effects are only in the days that fall in those months.
-- Storm (1.36) and heat (8.27) weekdays a year are 2015-2025 averages for Halvern's counties (`sources/derived/weather_days.csv`); afternoon thunderstorms are not modeled.
-- Wages are boosted on purpose: every worker is paid 1.23 times the national pay for their occupation (about 14% above real 2027 pay) to make up for Halvern's smaller households. Household money is closer to right this way; pay for a single job is not. Kept for v2, dropped in v3 (see WAGE_SCALE in `sim/halvern_sim/config.py`).
+- Storm (1.36) and heat (8.27) weekdays a year are 2015-2025 averages for Medianville's counties (`sources/derived/weather_days.csv`); afternoon thunderstorms are not modeled.
+- Wages are boosted on purpose: every worker is paid 1.23 times the national pay for their occupation (about 14% above real 2027 pay) to make up for Medianville's smaller households. Household money is closer to right this way; pay for a single job is not. Kept for v2, dropped in v3 (see WAGE_SCALE in `sim/medianville_sim/config.py`).

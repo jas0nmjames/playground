@@ -1,0 +1,50 @@
+R0128226|the food truck needs stock for the weekend|buy in bulk at the wholesale club|have enough for the Friday crowd|A 42-year-old food vendor spent $398.84 on meat, buns and paper goods at Stackhouse Wholesale Club – Sycamore Ridge.
+R0129355|the SNAP office calls for my interview|answer and get through it|keep the food benefits coming|A 39-year-old finished a 25-minute SNAP interview by phone with the state's Medianville office.
+R0129472|a shutoff notice comes in the mail|find the money or set up a plan|keep the power on for the kids|A 28-year-old caseworker got a notice from Medianville Power & Light: $513.58 past due, with disconnection in 5 days.
+R0130107|my cash assistance is on the card|take it out at the ATM|pay the rent in cash|A 46-year-old withdrew her $600.00 in TANF cash assistance at an ATM; it covers the rent with a little left over.
+R0132068|school lets out|pick up my grandson|have him home before his mother's shift ends|A 68-year-old waited 10 minutes in the pickup line at Lakeshore Middle School for her 13-year-old grandson.
+R0132556|the children I watch need afternoon snacks|stop at the grocery store|have them ready when the kids get back|A 37-year-old home child care provider spent $42.53 on snacks at Tillbrook Foods – Prairie Crossing.
+R0132958|a load is delivered and I need the cash now|sell the invoice to the factor|pay for fuel this week|A 44-year-old owner-operator collected $1,039.34 on a delivery by selling the invoice; the factoring company kept $31.18.
+R0133171|the roof on one of our units is leaking|pay the contractor|keep the tenants dry|Dunmore Square Rentals paid Osei Remodeling $1,173.28 by check for the repair.
+R0133373|the school asks for proof that we live in the district|have the residency form notarized|keep my brother enrolled|An 18-year-old waited 17 minutes at First Medianville Bank – Dunmore to have a school residency form notarized for free.
+R0133375|the car is making a noise|have a mechanic look at it|know whether it is safe|Ferreira Automotive's estimate for the repair was more than a 38-year-old could pay, so he drove home without it.
+R0133469|the car is due for an oil change|have it done this afternoon|keep it running|A 78-year-old's $90.09 debit charge at Moreau Auto Repair was declined when the bank flagged it for review.
+R0133483|I need to go to the clinic|take the bus|be there on time|A 55-year-old with no car rode the bus 6 miles on a $1.50 cash fare.
+R0134052|school lets out|pick up my son|get him home and back to my yards|A 29-year-old landscaper picked up his 5-year-old at Prairie Crossing Elementary School after a 4-minute wait.
+R0135404|my return is due and I worry about mistakes|have a CPA prepare it|get the refund right the first time|A 29-year-old desk clerk paid Calloway CPAs $459.56 to prepare his return.
+R0135490|my next job is across town|buy gas and trimmer line on the way|finish before dark|A 41-year-old landscaper spent $51.93 at Lantern Fuel & Go – Midtown.
+R0136050|my benefits renewal comes back|fix the form and send it again|keep my benefits|An 82-year-old's renewal packet came back from the state's Medianville office because a signature page was missing.
+R0136341|a customer is 60 days late|chase the payment|make this month's bills|A satellite-city business spent 26 minutes on a $4,785.52 invoice; the customer is disputing two line items.
+R0137526|my clients pay me in cash|take the day's earnings home|cover the groceries this week|A 42-year-old house cleaner took home $206.06 in cash from the day's clients.
+R0137997|a customer is 45 days late|chase the payment|make my own payroll|An outer-suburbs business called about a $2,116.83 invoice and was told the customer is away until Monday.
+R0138383|our benefits renewal comes back|fix the form and send it again|keep our benefits|A 24-year-old pharmacy technician's renewal came back from the state's Medianville office because her husband had not signed it.
+R0138387|I have to certify every week|log in and answer the questions|keep my unemployment coming|A 20-year-old filed his weekly unemployment certification online in 14 minutes.
+R0138705|the county tax bill is due|pay it online|keep the house clear of liens|A 90-year-old paid Tolliver County Government $953.26 in property tax online, plus a $1.00 fee.
+R0139086|the parents pay me for watching their children|collect the week's fees|cover my own bills|A 52-year-old home child care provider collected $772.22 in cash from parents.
+R0139345|the park's driveway is cracking|pay the concrete contractor|keep the road safe for residents|Route 9 Mobile Home Park paid Zhou Concrete (Crossroads) $1,581.85 by check.
+R0140241|my refill is ready|pick it up on the way home|keep taking it|A 65-year-old line cook paid a $5.00 copay at Wellspring Pharmacy – Old Depot; her Part D plan paid $6.30.
+R0140520|the cupboards are empty|do the week's shopping|feed us both|A 20-year-old drove 25.4 miles to Marlow's Market – Stonebridge and put $82.31 on a credit card.
+R0140959|my shift at the restaurant is over|take my tips home|buy groceries on the way|An 18-year-old server took home $82.00 in cash tips from Fitzgerald's Grill.
+R0140975|my SNAP balance has a little left|use the last of it|keep my cash for the light bill|An 86-year-old walked to Pennywell Discount Grocery – Foundry District and spent his last $8.46 in SNAP.
+R0140980|my next course starts soon|order the textbooks online|be ready for the first day|An 18-year-old spent $108.16 on textbooks from Bazaaro.
+R0142920|the rent is short and payday is a week off|borrow the money today|pay the landlord on time|A 34-year-old line cook borrowed $500.00 at Stopgap Cash Advance – Courthouse Square; $575.00 is due next payday.
+R0143425|my family abroad sends help|have the money arrive in my account|pay for my medicine|A 76-year-old received $500.00 from family abroad through an app.
+R0143570|my grandson has a fever|take him to urgent care|have a doctor see him today|A 53-year-old 911 dispatcher took her infant grandson to PromptCare Urgent Care – Eastgate; she paid $70.00 and her plan paid $166.16.
+R0146111|my grooming shift is over|take my tips home|buy dinner on the way|A 36-year-old pet groomer took home $11.00 in tips from a job outside Medianville.
+R0146368|I am converting my garage into a workshop|get the permit online|pass inspection|A 53-year-old paid the City of Medianville $75.00 online for a garage-conversion permit, plus a $1.88 fee.
+R0147743|I need to see a doctor and still owe the last bill|wait until the old bill is paid down|avoid adding more debt|A 41-year-old put off a doctor's visit; he is still paying $40 a month on the last medical bill.
+R0147887|I need cash for the farmers market|take it out at the ATM|pay the vendors who do not take cards|An 80-year-old withdrew $200.00 at the First Medianville Bank – Courthouse Square ATM.
+R0148130|my husband cannot manage his pills any more|sort them and pay the bills|keep him safe at home|An 85-year-old spent 28 minutes sorting her 87-year-old husband's pills and paying the household bills.
+R0148985|I moved across town|update my voter registration online|vote in the next election|A 37-year-old updated her voter registration online in 8 minutes after a move.
+R0149708|my bike tire is flat|get it fixed|ride to class tomorrow|A 23-year-old student got a ride 10.4 miles to Chainline Bicycles (Fox Hollow) and paid $53.80 for a tube and brake pads.
+R0150042|a tooth has been hurting for weeks|see a dentist I can pay for|fix it before it gets worse|A 23-year-old without dental coverage put off a filling that would cost about $240.
+R0150074|my knee has been bothering me|see a doctor I can afford|keep driving my route|A 74-year-old delivery driver put off a visit; the $160 cost was more than he had to spare this week.
+R0151348|my party preference has changed|update my voter registration|vote in the right primary|A 61-year-old updated her voter registration online to change her party preference.
+R0153594|my promotion came through|buy myself the bag I have wanted|celebrate|A 43-year-old teacher spent $2,509.90 on a designer bag at Atelier Corvane.
+R0155788|my memory has been getting worse|see my doctor without the drive|have him check my medicines|A 79-year-old saw his doctor at College Hill Primary Care by video for 15 minutes; Medicare Advantage paid $89.60.
+R0155817|my tutor has finished the week's lessons|pay her through the app|keep the lessons going|A 19-year-old student paid his tutor $74.00 through Palmo.
+R0157948|my granddaughter wants to play soccer this spring|sign her up for the league|have her on a team with her friends|A 58-year-old registered her 14-year-old granddaughter with Medianville Youth Soccer League; a scholarship covered the $125.00 fee.
+R0159462|I get my paper paycheck|have the payroll taxes taken out|earn credit toward Social Security|$53.27 in Social Security and Medicare tax came out of a 35-year-old stock clerk's paper check.
+R0159475|the Wednesday evening service begins|give what I can|support my parish|A 61-year-old put $20.00 in cash in the offering at St. Martin de Porres Catholic Parish (Dunmore).
+R0160230|my son's Medicaid renewal is due|take the forms to the office|keep him covered|A 54-year-old physical therapist arrived at the state's Medianville office after its 4:30 close; she will have to try again another day.
+R0160892|my taxes are simple this year|file for free online|keep the whole refund|A 50-year-old maintenance technician spent 96 minutes filing a free federal return online.

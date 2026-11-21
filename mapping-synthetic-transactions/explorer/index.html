@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern Data Explorer</title>
+<title>Medianville Data Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400&display=swap" rel="stylesheet">
 <style>
-/* Halvern Data Explorer: browse the March 3, 2027 run as tables.
-   Same tokens as Halvern in Motion v3 so the two read as one project. */
+/* Medianville Data Explorer: browse one day's run as tables (the day comes from data/runs/manifest.json, or ?run=<id>).
+   Same tokens as Medianville in Motion v3 so the two read as one project. */
 :root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --ink3:#7D8797; --line:#DDE2EA; --ctrl:#7D8797;
   --blue:#1F5AF0; --blue-soft:#E8EEFE; --green:#0A7A4B; --plum:#8E3B6D; --plum-soft:#F6EAF1; --r:12px;
   --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08);
@@ -31,6 +31,7 @@ header.top { position:relative; display:flex; align-items:center; gap:10px 18px;
 .brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; min-width:0; }
 h1 { font-size:18px; font-weight:700; margin:0; letter-spacing:-.01em; }
 .chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; }
+.runpick { border-radius:999px; min-height:32px; padding:4px 10px; font-size:13px; cursor:pointer; }
 .chip.err { color:var(--plum); border-color:var(--plum); background:var(--plum-soft); }
 nav.tabs { display:flex; gap:2px; border:1px solid var(--ctrl); border-radius:999px; padding:3px; background:var(--surface); overflow-x:auto; max-width:100%; }
 nav.tabs a { text-decoration:none; color:var(--ink2); font-weight:600; font-size:14px; padding:6px 13px; border-radius:999px; white-space:nowrap; min-height:32px; display:flex; align-items:center; }
@@ -197,6 +198,7 @@ table.mini tr:last-child td { border-bottom:0; }
 .pbtn b { display:block; font-weight:600; line-height:1.25; color:var(--blue); }
 .pbtn span { display:block; font-size:12.5px; color:var(--ink2); margin-top:2px; overflow-wrap:anywhere; }
 .pbtn.plain b { color:var(--ink); }
+a.pbtn { text-decoration:none; }
 h3.sec { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); margin:20px 0 8px; border-top:1px solid var(--line); padding-top:14px; }
 dl.kv { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; margin:0; }
 dl.kv div { min-width:0; }
@@ -252,8 +254,9 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
 <body>
 <header class="top" id="top">
   <div class="brand">
-    <h1>Halvern data explorer</h1>
+    <h1>Medianville data explorer</h1>
     <span class="chip" id="status" role="status">Loading the day…</span>
+    <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   </div>
   <nav class="tabs" aria-label="Tables">
     <a href="#records" data-v="records">Records</a>
@@ -270,7 +273,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
 <main id="main">
   <div class="loading" id="loading">
     <div class="box">
-      <h2>Loading Wednesday, March 3, 2027</h2>
+      <h2 id="load-h">Loading the day</h2>
       <p id="load-msg">Downloading the run (16 MB). It's unpacked in your browser.</p>
       <div class="bar"><i id="load-bar"></i></div>
       <p class="muted" id="load-sub"></p>
@@ -319,8 +322,13 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   const PAGES = 'https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/';
   const inRepo = /\/explorer\/(index\.html)?$/.test(location.pathname);
   $('#anim-link').href = inRepo ? '../' : PAGES;
-  const RUNS = ['../data/halvern_2027-03-03.zip', 'data/halvern_2027-03-03.zip'];
-  const FFLATE = ['../fflate.js', 'fflate.js'];
+  // the systems lens's mapped blocks, for each record's "What shaped this" link (names, and each district's block)
+  let LENS = null, RUNSEL = null;
+  fetch((inRepo ? '../' : PAGES) + 'systems-lens/blocks.json').then((r) => (r.ok ? r.json() : null)).then((d) => { LENS = d; }).catch(() => { /* links fall back to ids */ });
+  // which day: data/runs/manifest.json through runs.js (the default run, or ?run=<id>); without it, v1's zip
+  let RUNS = ['../data/medianville_2027-03-03.zip', 'data/medianville_2027-03-03.zip'], RUN_BYTES = 16182979, DAY = '2027-03-03';
+  const FFLATE = ['../fflate.js', 'fflate.js'], RUNSJS = ['../runs.js', 'runs.js'];
+  const dayLong = (weekday = true) => (window.MedianvilleRuns ? MedianvilleRuns.dateLabel(DAY, { year: 'numeric', month: 'long', day: 'numeric', ...(weekday ? { weekday: 'long' } : {}) }) : (weekday ? 'Wednesday, ' : '') + 'March 3, 2027');
   let framed = true; try { framed = window.self !== window.top; } catch (e) { framed = true; }
 
   // ---------- labels ----------
@@ -334,7 +342,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     t = t.replace(/\bsocial security\b/gi, 'Social Security');
     return t.charAt(0).toUpperCase() + t.slice(1);
   };
-  const DNAME = { D1: 'Downtown and core', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Halvern' };
+  const DNAME = { D1: 'Downtown and core', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Medianville' };
   const dname = (d) => (DNAME[d] ? DNAME[d] : human(d));
   const TYPE_L = { purchase: 'Purchase', public_service_encounter: 'Public service', bill_payment: 'Bill payment', non_monetary_job: 'Unpaid job', transfer: 'Transfer', income: 'Income',
     failed_attempt: 'Failed attempt', insurance_claim: 'Insurance claim', tax: 'Tax', benefit_issuance: 'Benefit issued', b2b: 'Business to business', benefit_redemption: 'Benefit spent' };
@@ -355,10 +363,17 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   const hhType = (t) => HH_TYPE[t] || human(t);
 
   // ---------- loading the run ----------
-  function loadScript(srcs) {
+  function loadScript(srcs, ready = () => !!window.fflate, what = 'the unzip helper') {
     return srcs.reduce((p, src) => p.then((ok) => ok || new Promise((res) => {
-      const s = document.createElement('script'); s.src = src; s.onload = () => res(!!window.fflate); s.onerror = () => { s.remove(); res(false); }; document.head.appendChild(s);
-    })), Promise.resolve(!!window.fflate)).then((ok) => { if (!ok) throw new Error('the unzip helper did not load'); });
+      const s = document.createElement('script'); s.src = src; s.onload = () => res(ready()); s.onerror = () => { s.remove(); res(false); }; document.head.appendChild(s);
+    })), Promise.resolve(ready())).then((ok) => { if (!ok) throw new Error(what + ' did not load'); });
+  }
+  async function pickRun() {
+    try { await loadScript(RUNSJS, () => !!window.MedianvilleRuns, 'the run list'); } catch (e) { return; }
+    const sel = await MedianvilleRuns.resolve(['../', '']); if (!sel) return;
+    RUNS = [sel.url]; RUN_BYTES = sel.run.bytes || RUN_BYTES; DAY = sel.run.date; RUNSEL = sel;
+    MedianvilleRuns.picker($('#runpick'), sel);
+    MedianvilleRuns.carry($('#anim-link'), sel);
   }
   class Grow {
     constructor(n) { this.b = new Uint8Array(n > 0 ? n : 1 << 22); this.n = 0; }
@@ -370,7 +385,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     let res = null;
     for (const u of RUNS) { try { const r = await fetch(u); if (r.ok) { res = r; break; } } catch (e) { /* try the next place */ } }
     if (!res) throw new Error('the run file could not be found');
-    const total = +res.headers.get('content-length') || 16019255, rd = res.body.getReader(), got = {};
+    const total = +res.headers.get('content-length') || RUN_BYTES, rd = res.body.getReader(), got = {};
     let fail = null, seen = 0;
     const unz = new fflate.Unzip(); unz.register(fflate.UnzipInflate);
     unz.onfile = (f) => {
@@ -570,7 +585,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       catFacet(R, 'travel_mode', 'travel', 'Travel mode'),
       catFacet(R, 'third_party_payer', 'payer', 'Paid in part by', { extra: { filterable: true } }),
       catFacet(R, 'funding_level', 'funding', 'Public funding level'),
-      tagFacet(R.lens, 'lens', 'Lens'),
+      tagFacet(R.lens, 'lens', 'Lens tags'),
       arrFacet(R.hw, ['Hand-written narrative'], 'hw', 'Hand-written records'),
     ];
     // district in fixed D1..D6 order
@@ -966,7 +981,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     const text = lines.join('\n') + '\n';
     if (framed) { try { await navigator.clipboard.writeText(text); toast(`Copied ${fmt(v.idx.length)} rows as CSV`); } catch (e) { toast("Couldn't copy here"); } return; }
     const url = URL.createObjectURL(new Blob([text], { type: 'text/csv' })), a = document.createElement('a');
-    a.href = url; a.download = 'halvern_2027-03-03_records_filtered.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    a.href = url; a.download = 'medianville_' + DAY + '_records_filtered.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
   }
 
   // ---------- summary ----------
@@ -1005,7 +1020,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     const domLab = (x) => DOM_L[x] || human(x);
     view.innerHTML = `<div class="content" style="height:100%"><div class="sum">
       <h2>The day at a glance</h2>
-      <p class="lede">Figures for the whole of Wednesday, March 3, 2027, across all 201,753 records. Select a bar or row to open the records or households behind it.</p>
+      <p class="lede">Figures for the whole of ${dayLong()}, across all ${fmt(n)} records. Select a bar or row to open the records or households behind it.</p>
       <div class="tiles">
         <div class="tile"><span class="lbl">Records</span><span class="val">${fmt(n)}</span><span class="sub">${fmt(R.cols.job_category.d.length)} kinds of job</span></div>
         <div class="tile"><span class="lbl">Money moved</span><span class="val">${usdC(money)}</span></div>
@@ -1111,6 +1126,25 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     v.scope = { label: lab, test: scopeTest(type, id) };
     closeSheet(); go('records');
   }
+  // "What shaped this": the systems lens over the city, by the viewer's rules. A record that follows a block pattern opens on
+  // it; one from a block household opens the block; any other opens its district's block on the district tier.
+  function lensHref(path) {
+    const u = new URL(inRepo ? '../' : PAGES, location.href);
+    if (RUNSEL && RUNSEL.run.id !== RUNSEL.manifest.default) u.searchParams.set('run', RUNSEL.run.id);
+    u.hash = 'lens=' + path;
+    return u.toString();
+  }
+  function lensHTML(R, i) {
+    const s = (c) => (R.cols[c] ? R.s(c, i) : ''), bid = s('block_id'), pat = s('block_pattern'), dist = s('district');
+    const blocks = (LENS && LENS.blocks) || [], b = blocks.find((x) => x.id === bid);
+    const db = !bid && blocks.find((x) => x.district === dist && x.contexts.some((c) => c.scope === 'district'));
+    let path, sub;
+    if (bid && pat) { const p = b && b.patterns.find((x) => x.id === pat); path = bid + '/' + pat; sub = (p ? p.title + ' · ' : 'Pattern ' + pat + ' · ') + (b ? b.name : bid); }
+    else if (bid) { path = bid; sub = `${b ? b.name : bid}, this household's block · the record isn't one of its patterns`; }
+    else if (db) { path = db.id + '/district'; sub = `Across ${db.districtName} · ${db.name} is its mapped block`; }
+    else return '';
+    return `<h3 class="sec">Systems lens</h3><a class="pbtn" href="${esc(lensHref(path))}" data-lens-link="${esc(path)}"><b>What shaped this</b><span>${esc(sub)}</span></a>`;
+  }
   function recordHTML(id) {
     const R = D.rec, i = R.row(id); if (i < 0) return '';
     const s = (c) => R.s(c, i), num = (c) => R.v(c, i);
@@ -1136,6 +1170,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       <h3 class="sec">Time and travel</h3>
       ${kv([['Started', clock(R.tmin[i])], ['Time spent', mins(num('time_minutes'))], ['Waiting', mins(num('wait_minutes'))], ['Travel', num('travel_miles') > 0 ? NF1.format(num('travel_miles')) + ' mi' + (s('travel_mode') ? ' · ' + esc(human(s('travel_mode'))) : '') : '—']])}
       ${fr.length || ln.length ? `<h3 class="sec">Tags</h3><div class="tags">${fr.map((t) => `<span class="tag f">${esc(human(t))}</span>`).join('')}${ln.map((t) => `<span class="tag">${esc(human(t))}</span>`).join('')}</div>` : ''}
+      ${lensHTML(R, i)}
       <h3 class="sec">People</h3>
       ${actor ? partyBtn(actor, D.partyLabel(actor), 'Did the job · ' + actor) : ''}
       ${ben && ben !== actor ? partyBtn(ben, D.partyLabel(ben), 'Benefited · ' + ben) : ''}
@@ -1213,7 +1248,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     $$('nav.tabs a').forEach((a) => a.setAttribute('aria-current', a.dataset.v === name ? 'page' : 'false'));
     view.onclick = null;
     if (name === 'summary') renderSummary(); else renderView(name);
-    document.title = 'Halvern Data Explorer · ' + name.charAt(0).toUpperCase() + name.slice(1);
+    document.title = 'Medianville Data Explorer · ' + name.charAt(0).toUpperCase() + name.slice(1);
   }
   window.addEventListener('popstate', route);
   window.addEventListener('hashchange', route);
@@ -1224,6 +1259,9 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     $('#retry').hidden = true; $('#status').classList.remove('err');
     try {
       await loadScript(FFLATE);
+      await pickRun();
+      $('#load-h').textContent = 'Loading ' + dayLong();
+      $('#load-msg').textContent = 'Downloading the run (' + Math.round(RUN_BYTES / 1e6) + " MB). It's unpacked in your browser.";
       $('#status').textContent = 'Downloading the day…';
       const bytes = await download((p) => { setBar(p * 0.55); $('#load-sub').textContent = Math.round(p * 100) + '% downloaded'; });
       $('#load-msg').textContent = 'Reading the tables.';
@@ -1240,7 +1278,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       }
       $('#load-sub').textContent = 'Linking records to households, people and places…'; await tick();
       D = derive(raw); buildViews(); setBar(1);
-      $('#status').textContent = fmt(D.rec.n) + ' records · March 3, 2027';
+      $('#status').textContent = fmt(D.rec.n) + ' records · ' + dayLong(false);
       $('#loading').hidden = true; $('#view').hidden = false;
       setTimeout(() => ($('#progress i').style.opacity = 0), 400);
       if (!location.hash) { try { history.replaceState(null, '', '#records'); } catch (e) { /* ignore */ } }

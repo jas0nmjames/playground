@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern Exploded Lens</title>
+<title>Medianville Exploded Lens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Same system as Halvern in Motion: slate page, white surfaces, Figtree with tabular figures, 12px radius, soft shadow. Layout: layers and loops on the left, the exploded stack in the middle, the detail sheet on the right. */
+/* Same system as Medianville in Motion: slate page, white surfaces, Figtree with tabular figures, 12px radius, soft shadow. Layout: layers and loops on the left, the exploded stack in the middle, the detail sheet on the right. */
 :root{
   --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797;
   --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
@@ -110,6 +110,21 @@ aside.rail{background:var(--surface);border-left:1px solid var(--line);display:f
 .chain .because{display:block;color:var(--ink2);font-size:13px}
 .note{margin:14px 0 0;padding:10px 12px;background:var(--page);border-left:3px solid var(--ctrl);border-radius:0 10px 10px 0;font-size:13px;color:var(--ink2)}
 
+/* the district tier: a stack swatch (every layer), a dark "Across <district>" pill, the record it was opened from, the block collapsed */
+.pbtn .sw.dist,.ic.dist{background:linear-gradient(180deg,var(--c-econ) 0 20%,var(--c-pol) 20% 40%,var(--c-env) 40% 60%,var(--c-soc) 60% 80%,var(--c-hist) 80% 100%)}
+.tools .distlist{margin-top:10px}
+.pill.dist{background:var(--ink);color:#fff}
+.from{display:flex;flex-direction:column;gap:2px;margin:2px 0 12px;padding:10px 12px;background:var(--page);border-left:3px solid var(--ink);border-radius:0 10px 10px 0}
+.from .lab{font-size:12.5px;font-weight:600;color:var(--ink2)}
+.from b{font-weight:600;font-size:14.5px;line-height:1.3}
+.from .sub{font-size:12.5px;color:var(--ink2);overflow-wrap:anywhere}
+details.more{margin:16px 0 0;border-top:1px solid var(--line);padding-top:6px}
+details.more summary{cursor:pointer;font-weight:600;font-size:14px;min-height:40px;display:flex;align-items:center;gap:8px;list-style:none;border-radius:8px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:rotate(-45deg);transition:transform .2s;margin:0 4px 0 2px}
+details.more[open] summary::before{transform:rotate(45deg)}
+.btn.backd{margin:8px 0 0 -10px;font-size:13.5px;min-height:32px}
+
 footer.bar{display:flex;align-items:center;gap:6px 16px;padding:9px 20px;background:var(--surface);border-top:1px solid var(--line);flex-wrap:wrap;font-size:12.5px;font-weight:600}
 footer .lg{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 footer .lg i{width:14px;height:14px;border-radius:4px;display:inline-block}
@@ -180,7 +195,7 @@ body.embed #plates{max-height:calc(100vh - 24px)}
 <div class="app">
   <header class="top">
     <div class="brand">
-      <h1>Halvern in Motion</h1>
+      <h1>Medianville in Motion</h1>
       <span class="chip">Simulated city · no real people</span>
       <span class="chip">Composite context · patterns from US history</span>
     </div>
@@ -289,6 +304,14 @@ RECORDS.forEach(r => { r.kindOf = "record"; r.plate = 0; BY[r.id] = r; });
 /* Loops: hypotheses for the next run to test. Nodes sit on the plate they belong to. */
 const LOOPS = BLOCK.loops;
 
+/* The district tier: circumstances with "scope": "district" hold across the block's whole district, not just its street,
+   and the district has its own loop (districtStart). A record from a household elsewhere in the district opens the lens
+   here in district mode: those circumstances are the story and the block's own stay collapsed. */
+const DISTRICT = CONTEXT.filter(c => c.scope === "district").sort((a, b) => a.plate - b.plate).map(c => c.id);
+const DSTART = BLOCK.districtStart && LOOPS[BLOCK.districtStart.loop] ? BLOCK.districtStart.loop : null;
+const DNAME = BLOCK.districtName || BLOCK.district, DSHORT = DNAME.split(" and ")[0];
+const isDist = id => !!BY[id] && BY[id].scope === "district";
+
 /* graph */
 function parents(id){ const it = BY[id]; return it.kindOf === "record" ? it.links : it.under; }
 function children(id){
@@ -312,14 +335,18 @@ function loopPlates(k){
 }
 
 /* state */
-const state = {sel:BLOCK.start.pattern, loop:BLOCK.start.loop, hover:null, solo:null, rec:null};
+const state = {sel:BLOCK.start.pattern, loop:BLOCK.start.loop, hover:null, solo:null, rec:null, district:false, from:null};
 let LIVE = null; // from v3 when embedded: {counts:{pattern:n}, recs:{pattern:[record…]}, household:{id, recs:[record…]}}
 /* ?embed=1 runs inside v3's lens overlay; ?rec=<pattern id> opens on that pattern and the first loop it appears in; ?rec= with no id opens with nothing picked */
 const EMBED = QS.get("embed") === "1";
 if(EMBED) document.body.classList.add("embed");
 function loopFor(id){ const e = Object.entries(LOOPS).find(([, L]) => L.seen.includes(id)); return e ? e[0] : null; }
 if(QS.has("rec")){ const r = QS.get("rec"); state.sel = BY[r] && BY[r].kindOf === "record" ? r : null; state.loop = state.sel ? loopFor(state.sel) : null; }
-const toParent = msg => { if(EMBED && window.parent !== window) window.parent.postMessage(Object.assign({source:"halvern-lens"}, msg), location.origin); };
+/* ?district=1 opens on the district tier */
+if(QS.get("district") === "1" && DISTRICT.length){ state.sel = null; state.district = true; state.loop = DSTART; }
+/* the story on the plates: the selection's chain, or in district mode with nothing picked, the district tier */
+function storySet(){ return state.sel ? closure(state.sel) : state.district ? new Set(DISTRICT) : null; }
+const toParent = msg => { if(EMBED && window.parent !== window) window.parent.postMessage(Object.assign({source:"medianville-lens"}, msg), location.origin); };
 
 /* ================================================================ drawing helpers */
 const SKIN = ["#F1D3B8","#E2B48E","#C98E62","#A56B43","#7D4E2E","#5A3620","#EBC4A0","#B7825A"];
@@ -372,7 +399,7 @@ const PLATES = [
 PLATES.forEach((P, i) => { if(BLOCK.plateSubs && BLOCK.plateSubs[i]) P.sub = BLOCK.plateSubs[i]; });
 s("rect", {x:0, y:0, width:1158, height:930, fill:"#F3F5F8", class:"bg"}, svgP);
 svgP.setAttribute("aria-label", `Exploded view of ${BLOCK.name} as six aligned layers, with links from records to circumstances and a feedback loop`);
-document.title = `Halvern Systems Lens · ${BLOCK.name}`;
+document.title = `Medianville Systems Lens · ${BLOCK.name}`;
 (function(){
   const sel = document.getElementById("blocksel");
   DOC.blocks.forEach(b => { const o = h("option", {value:b.id, text:`${b.name} · ${b.district}`}, sel); if(b.id === BLOCK.id) o.selected = true; });
@@ -380,8 +407,9 @@ document.title = `Halvern Systems Lens · ${BLOCK.name}`;
   document.getElementById("place").textContent = `${BLOCK.district} ${BLOCK.districtName} · Wed, Mar 3, 2027`;
   document.getElementById("blockname").textContent = BLOCK.name;
   document.getElementById("blocksum").textContent = BLOCK.summary;
-  document.getElementById("overcity").href = `../#lens=${BLOCK.id}`;
+  overCity();
 })();
+function overCity(){ document.getElementById("overcity").href = `../#lens=${BLOCK.id}${state.district ? "/district" : ""}`; }
 const stack = s("g", null, svgP);
 const overlay = s("g", {"pointer-events":"none"}, svgP);
 const calloutLayer = s("g", null, svgP);
@@ -544,9 +572,10 @@ label(svgP, 24, 922, "Composite circumstances on invented blocks. The same squar
 /* ---------------- layout and motion */
 let cur = null;
 function activePlates(){
-  if(!state.sel && !state.loop) return null;
+  const set = storySet();
+  if(!set && !state.loop) return null;
   const ps = new Set();
-  if(state.sel) closure(state.sel).forEach(id => ps.add(BY[id].plate));
+  if(set) set.forEach(id => ps.add(BY[id].plate));
   if(state.loop) loopPlates(state.loop).forEach(p => ps.add(p));
   return ps;
 }
@@ -630,21 +659,25 @@ function bezD(p0, c1, c2, p1, t){
 }
 function drawOverlay(){
   overlay.innerHTML = "";
-  const set = state.sel ? closure(state.sel) : null;
+  const set = storySet();
+  // a district circumstance holds across the district, so it gets no column: it is not at a place on the street
+  const placed = state.sel && !isDist(state.sel);
   Object.entries(featEls).forEach(([id, els]) => els.forEach(el => el.classList.toggle("dim", !!set && !set.has(id))));
   document.getElementById("soloNote").hidden = state.solo == null;
   if(state.solo != null){
-    if(state.sel){
+    if(placed){
       const it = BY[state.sel], cell = it.kindOf === "record" ? it.cell : it.rep, p = state.solo;
       s("polygon", {points:pts([gpt(p, cell[0], cell[1]), gpt(p, cell[0] + 1, cell[1]), gpt(p, cell[0] + 1, cell[1] + 1), gpt(p, cell[0], cell[1] + 1)]), fill:"#1F5AF0", opacity:.16, stroke:"#1F5AF0", "stroke-width":1}, overlay);
     }
     return;
   }
-  if(state.sel){
+  if(placed){
     const it = BY[state.sel], cell = it.kindOf === "record" ? it.cell : it.rep;
     const a = gpt(0, cell[0] + .5, cell[1] + .5), b = gpt(5, cell[0] + .5, cell[1] + .5);
     s("line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:"#1F5AF0", "stroke-width":12, opacity:.10}, overlay);
     for(let p = 0; p < 6; p++) s("polygon", {points:pts([gpt(p, cell[0], cell[1]), gpt(p, cell[0] + 1, cell[1]), gpt(p, cell[0] + 1, cell[1] + 1), gpt(p, cell[0], cell[1] + 1)]), fill:"#1F5AF0", opacity:.14, stroke:"#1F5AF0", "stroke-width":.8}, overlay);
+  }
+  if(set){
     edgesIn(set).forEach(([child, parent]) => {
       const A = anchor(child), B = anchor(parent), my = (A[1] + B[1]) / 2;
       const d = `M${A[0]} ${A[1]} C${A[0]} ${my} ${B[0]} ${my} ${B[0]} ${B[1]}`;
@@ -672,10 +705,17 @@ function drawCallouts(set){
     s("path", {d, stroke:"#FFFFFF", "stroke-width":4, fill:"none", opacity:.8, "pointer-events":"none"}, calloutLayer);
     s("path", {d, stroke:"#7D8797", "stroke-width":1, fill:"none", "pointer-events":"none"}, calloutLayer);
     s("circle", {cx:o.a[0], cy:o.a[1], r:4, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.4, "pointer-events":"none"}, calloutLayer);
-    const g = s("g", {class:"hit", tabindex:0, role:"button", "aria-label":`${c.title}, ${c.year}`}, calloutLayer);
+    const g = s("g", {class:"hit", tabindex:0, role:"button", "aria-label":`${c.title}, ${c.year}${c.scope === "district" ? `, across ${DNAME}` : ""}`}, calloutLayer);
     s("rect", {x:CX, y, width:CW, height:TH2, rx:10, fill:"#FFFFFF", stroke: state.sel === o.id ? "#1F5AF0" : "#DDE2EA", "stroke-width": state.sel === o.id ? 2 : 1, filter:"url(#liftsm)", class:"focusring"}, g);
     c.types.forEach((ty, j) => s("rect", {x:CX + 10 + j * 14, y:y + 9, width:10, height:10, rx:3, fill:col(ty)}, g));
-    s("text", {x:CX + 14 + c.types.length * 14, y:y + 18, class:"ui", "font-size":13, "font-weight":600, fill:"#5B6676", text:`${c.year} \u00b7 ${PLATES[c.plate].name}`}, g);
+    const mx = CX + 14 + c.types.length * 14;
+    if(c.scope === "district"){
+      // "Across <district>" pill, then the year when it fits
+      const tx = `Across ${DSHORT}`, pt = s("text", {x:mx + 7, y:y + 18, class:"ui", "font-size":11.5, "font-weight":700, fill:"#FFFFFF", text:tx}, g);
+      const w = (pt.getComputedTextLength() || tx.length * 6.6) + 14;
+      g.insertBefore(s("rect", {x:mx, y:y + 5.5, width:w, height:17, rx:8.5, fill:"#0E1B2E"}), pt);
+      if(mx + w + 8 + c.year.length * 7.4 < CX + CW - 6) s("text", {x:mx + w + 7, y:y + 18, class:"ui", "font-size":13, "font-weight":600, fill:"#5B6676", text:c.year}, g);
+    } else s("text", {x:mx, y:y + 18, class:"ui", "font-size":13, "font-weight":600, fill:"#5B6676", text:`${c.year} \u00b7 ${PLATES[c.plate].name}`}, g);
     label(g, CX + 10, y + 38, c.lines[0], {size:15, weight:500});
     label(g, CX + 10, y + 56, c.lines[1], {size:15, weight:500});
     onActivate(g, () => select(o.id));
@@ -799,9 +839,50 @@ function kv(parent, pairs){
   const dl = h("dl", {class:"kv"}, parent);
   pairs.forEach(([k, v]) => { const d = h("div", null, dl); h("dt", {text:k}, d); h("dd", {text:v}, d); });
 }
+/* district mode with nothing picked: the district tier is the story, the block's own circumstances and patterns are collapsed */
+function renderDistrict(){
+  const sh = h("div", {class:"sheet"}, detailEl);
+  const eb = h("div", {class:"eyebrow"}, sh);
+  h("span", {class:"ic sq dist", "aria-hidden":"true"}, eb);
+  h("span", {text:"District tier"}, eb);
+  h("h3", {class:"title", text:"What shapes places like this"}, sh);
+  const st = h("div", {class:"status"}, sh);
+  h("span", {class:"pill dist", text:`Across ${DNAME}`}, st);
+  h("span", {class:"pill neutral", text:"Composite"}, st);
+  const rec = state.from && state.from.record, hh = state.from && state.from.household;
+  if(rec){
+    const f = h("div", {class:"from"}, sh);
+    h("span", {class:"lab", text:`Opened from a record elsewhere in ${DNAME}`}, f);
+    h("b", {text:rec.title}, f);
+    h("span", {class:"sub", text:[rec.time, rec.amt, rec.id].filter(Boolean).join(" · ")}, f);
+  } else if(hh){
+    const f = h("div", {class:"from"}, sh);
+    h("span", {class:"lab", text:`Opened from a household elsewhere in ${DNAME}`}, f);
+    h("b", {text:hh}, f);
+  }
+  const where = rec ? `This record comes from elsewhere in ${DNAME}, not from ${BLOCK.name}. ` : hh ? `${hh} lives elsewhere in ${DNAME}, not on ${BLOCK.name}. ` : "";
+  h("p", {class:"why", text:`${where}These ${DISTRICT.length} circumstances hold across the whole of ${DNAME}, not just on ${BLOCK.name}, which is where the district is mapped.`}, sh);
+  h("h3", {text:`Across ${DNAME}`}, sh);
+  rowList(sh, DISTRICT);
+  const more = h("details", {class:"more"}, sh);
+  h("summary", {text:`On ${BLOCK.name} itself`}, more);
+  h("p", {class:"muted small", style:"margin:6px 0 0", text:"The block’s own circumstances and patterns. They are not this district-wide story."}, more);
+  h("h4", {text:"Circumstances on the block"}, more);
+  rowList(more, CONTEXT.filter(c => c.scope !== "district").sort((a, b) => a.plate - b.plate).map(c => c.id));
+  h("h4", {text:"Patterns on the block"}, more);
+  rowList(more, RECORDS.map(r => r.id));
+  h("p", {class:"note", text:"Composite circumstances drawn from national figures and documented cases, not from any one household’s history."}, sh);
+}
 function renderDetail(){
   detailEl.innerHTML = "";
   const id = state.sel;
+  if(!id && state.district){ renderDistrict(); return; }
+  if(id && state.district){
+    const b = h("button", {type:"button", class:"btn ghost backd"}, detailEl);
+    b.innerHTML = '<svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    b.appendChild(document.createTextNode(`Back to ${DSHORT}, across the district`));
+    b.addEventListener("click", () => select(null));
+  }
   if(!id){
     if(!EMBED){ h("p", {class:"none", text:"Select a record or a circumstance in the layers to see its details."}, detailEl); return; }
     const sh0 = h("div", {class:"sheet"}, detailEl);
@@ -862,12 +943,16 @@ function renderDetail(){
     h("h3", {text:"Shaped by"}, sh);
     rowList(sh, parents(id));
   } else {
-    h("span", {text:`Circumstance · ${PLATES[it.plate].name} layer`}, eb);
+    const dist = it.scope === "district";
+    h("span", {text:`${dist ? "District circumstance" : "Circumstance"} · ${PLATES[it.plate].name} layer`}, eb);
     h("h3", {class:"title", text:it.title}, sh);
     const st = h("div", {class:"status"}, sh);
+    if(dist) h("span", {class:"pill dist", text:`Across ${DNAME}`}, st);
     it.types.forEach(ty => { const p = h("span", {class:"pill type", text:TYPES[ty].name}, st); p.style.background = col(ty); });
+    if(dist) h("span", {class:"pill neutral", text:"Composite"}, st);
     h("p", {class:"why", text:it.body}, sh);
-    kv(sh, [["When", it.year === "today" ? "Now" : it.year], ["Layer", PLATES[it.plate].name], ["Pace", PLATES[it.plate].pace.replace(/^./, c => c.toUpperCase())]]);
+    kv(sh, [["When", it.year === "today" ? "Now" : it.year], ["Layer", PLATES[it.plate].name], ["Pace", PLATES[it.plate].pace.replace(/^./, c => c.toUpperCase())]].concat(dist ? [["Holds across", DNAME]] : []));
+    if(dist) h("p", {class:"note", text:`Composite. True across ${DNAME}, not ${BLOCK.name}’s own history: the figures are national or from documented cases, and nothing local is named.`}, sh);
     h("h3", {text:"Rests on"}, sh); rowList(sh, parents(id));
     h("h3", {text:"Shapes"}, sh); rowList(sh, children(id));
   }
@@ -929,6 +1014,17 @@ Object.entries(LOOPS).forEach(([k, L]) => {
   b.addEventListener("click", () => setLoop(state.loop === k ? null : k));
   loopBtns[k] = b;
 });
+/* the district tier, reachable from the block's own view too */
+let distBtn = null;
+if(DISTRICT.length){
+  const ul = h("ul", {class:"distlist"}, document.getElementById("blockname").parentNode);
+  distBtn = h("button", {type:"button", class:"pbtn", id:"distbtn", "aria-pressed":"false"}, h("li", null, ul));
+  h("span", {class:"sw dist"}, distBtn);
+  const m = h("span", null, distBtn);
+  h("b", {text:`Across ${DSHORT}`}, m);
+  h("small", {text:`${DISTRICT.length} circumstances true across the district, not just here`}, m);
+  distBtn.addEventListener("click", () => setDistrict(!state.district));
+}
 document.getElementById("allplates").addEventListener("click", () => setSolo(null));
 document.getElementById("noloop").addEventListener("click", () => setLoop(null));
 let hoverTimer = null;
@@ -940,8 +1036,15 @@ function setHover(p){
 function setSolo(p){ state.solo = p; state.hover = null; syncTools(); relayout(); }
 function setLoop(k){ state.loop = k; syncTools(); renderLoopCard(); renderDetail(); relayout(); }
 function select(id){ state.sel = id; if(state.rec && state.rec.pattern !== id) state.rec = null; syncTools(); renderDetail(); relayout(); }
+function setDistrict(on){
+  state.district = !!on && DISTRICT.length > 0; state.solo = null; state.sel = null; state.rec = null;
+  if(state.district) state.loop = DSTART;
+  else { if(state.loop === DSTART) state.loop = null; state.from = null; }
+  syncTools(); renderDetail(); renderLoopCard(); relayout(); overCity();
+}
 function syncTools(){
   const act = activePlates();
+  if(distBtn) distBtn.setAttribute("aria-pressed", String(state.district));
   plateBtns.forEach((b, p) => { b.setAttribute("aria-pressed", String(state.solo === p)); b.classList.toggle("inchain", !!act && act.has(p)); });
   Object.entries(loopBtns).forEach(([k, b]) => b.setAttribute("aria-pressed", String(state.loop === k)));
   document.getElementById("allplates").disabled = state.solo == null;
@@ -950,17 +1053,20 @@ function syncTools(){
 document.addEventListener("keydown", e => {
   if(e.key !== "Escape") return;
   if(EMBED){ if(state.solo != null) setSolo(null); else toParent({type:"close"}); return; }
-  if(state.solo != null) setSolo(null); else if(state.loop) setLoop(null); else if(state.sel) select(null);
+  if(state.solo != null) setSolo(null); else if(state.sel && state.district) select(null); else if(state.loop) setLoop(null); else if(state.sel) select(null); else if(state.district) setDistrict(false);
 });
-/* v3's overlay sends the opened record, this block's counts and its latest records; switching blocks reloads the frame */
+/* v3's overlay sends the opened record, this block's counts and its latest records; switching blocks reloads the frame.
+   With district set, the record (or household) is from elsewhere in the district: the lens opens on the district tier. */
 window.addEventListener("message", e => {
-  if(!EMBED || e.origin !== location.origin || !e.data || e.data.source !== "halvern-v3") return;
+  if(!EMBED || e.origin !== location.origin || !e.data || e.data.source !== "medianville-v3") return;
   if(e.data.type === "open"){
     LIVE = e.data.live || null;
-    const p = e.data.pattern && BY[e.data.pattern] ? e.data.pattern : null;
-    state.solo = null; state.sel = p; state.loop = p ? loopFor(p) : null;
+    const dist = !!e.data.district && DISTRICT.length > 0;
+    const p = !dist && e.data.pattern && BY[e.data.pattern] ? e.data.pattern : null;
+    state.solo = null; state.sel = p; state.district = dist; state.loop = dist ? DSTART : p ? loopFor(p) : null;
     state.rec = p && e.data.record ? Object.assign({}, e.data.record, {pattern:p}) : null;
-    syncTools(); renderDetail(); renderLoopCard(); relayout();
+    state.from = dist ? {record:e.data.record || null, household:e.data.household || null} : null;
+    syncTools(); renderDetail(); renderLoopCard(); relayout(); overCity();
   }
 });
 

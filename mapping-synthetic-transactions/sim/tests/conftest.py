@@ -44,13 +44,56 @@ def read_csv(path):
 def run10(tmp_path_factory):
     """Simulate the baseline date for a 10% city. Returns (sim, output folder)."""
     import simulate
-    from halvern_sim.config import PARAMS
+    from medianville_sim.config import PARAMS
 
-    out = str(tmp_path_factory.mktemp("halvern10"))
+    out = str(tmp_path_factory.mktemp("medianville10"))
     cfg = dict(PARAMS)
     cfg["N_HOUSEHOLDS"] = TEST_HOUSEHOLDS
     sim, _ = simulate.run_day(cfg, out, overrides=None, blocks_path=BLOCKS, log=lambda *a: None)
     return sim, out
+
+
+# The carried run used by the phase 4 tests: a 10% city carried from March 1 (a Monday) through March 12, long enough
+# for a ten-day shutoff notice to run out, a two-week payday loan to come due and two pay weeks to pass.
+CARRIED_FIRST, CARRIED_DAYS = "2027-03-01", 12
+
+
+@pytest.fixture(scope="session")
+def carried10(tmp_path_factory):
+    """Simulate a carried 10% city. Returns {"days": [(date, folder)], "states": [state dicts], "out": root}."""
+    import datetime as dt
+    import json
+    import simulate
+    from medianville_sim.config import PARAMS
+
+    root = str(tmp_path_factory.mktemp("medianville10_carried"))
+    cfg = dict(PARAMS)
+    cfg["N_HOUSEHOLDS"] = TEST_HOUSEHOLDS
+    first = dt.date.fromisoformat(CARRIED_FIRST)
+    days, states, state = [], [], None
+    for i in range(CARRIED_DAYS):
+        cfg["SIM_DATE"] = first + dt.timedelta(days=i)
+        out = os.path.join(root, cfg["SIM_DATE"].isoformat())
+        st_out = os.path.join(root, "state_%s.json" % cfg["SIM_DATE"].isoformat())
+        simulate.run_day(cfg, out, state_in=state, state_out=st_out, overrides=None, blocks_path=None, log=lambda *a: None, carried=True)
+        with open(st_out) as f:
+            states.append(json.load(f))
+        days.append((cfg["SIM_DATE"].isoformat(), out))
+        state = st_out
+    return {"days": days, "states": states, "out": root}
+
+
+def chains(carried, chain=None):
+    """{chain_id: [(date, links.csv row, records.csv row), ...]} across a carried run, in date and record order."""
+    out = {}
+    for date, folder in carried["days"]:
+        recs = {r["record_id"]: r for r in read_csv(os.path.join(folder, "records.csv"))}
+        for l in read_csv(os.path.join(folder, "links.csv")):
+            if chain is None or l["chain"] == chain:
+                out.setdefault(l["chain_id"], []).append((date, l, recs[l["record_id"]]))
+    for v in out.values():
+        v.sort(key=lambda x: (x[0], x[1]["record_id"]))
+    return out
 
 
 @pytest.fixture(scope="session")

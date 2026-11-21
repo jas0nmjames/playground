@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halvern in Motion: Miniature and Map</title>
+<title>Medianville in Motion: Miniature and Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
@@ -121,6 +121,8 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .mini-tiles .v { font-weight:700; font-size:17px; }
 .feed.inline { padding:0; overflow:visible; margin:0 -12px; }
 .chip.warn { color:#8E3B6D; border-color:#E7C7DA; background:#FBF1F6; }
+.runpick { font:600 13px var(--ui); color:var(--ink); background:#fff; border:1px solid var(--ctrl); border-radius:999px; min-height:32px; padding:4px 10px; max-width:100%; cursor:pointer; }
+.runpick:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
 .credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
 .credit a { color:var(--ink2); }
 .credit a:hover { color:var(--ink); }
@@ -226,6 +228,16 @@ a.go { text-decoration:none; }
 }
 @media (min-width:1280px) { #drawer-btn { display:none; } }
 @media (max-width:1279px) { .lens-panel { left:0; } .lens-city { display:none; } }
+/* on a phone the lens takes the whole screen (the drawer, fixed above the city, would otherwise show around it), and its
+   bar wraps, so the context line (the district note included) stays readable */
+@media (max-width:760px) {
+  .lens { position:fixed; z-index:45; }
+  .lens-panel { grid-template-rows:auto minmax(0,1fr); }
+  .lens-bar { flex-wrap:wrap; gap:6px 10px; padding:6px 12px 8px; min-height:52px; }
+  .lens-sel { flex:1; min-width:0; }
+  .lens-ctx { flex:1 1 100%; white-space:normal; font-size:13px; line-height:1.35; }
+  .lens-esc { display:none; }
+}
 @media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
 /* printed map sheet */
 svg.quad text { font-family:"Barlow Condensed", "Arial Narrow", sans-serif; }
@@ -282,9 +294,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 <body>
 <header class="top">
   <div class="brand">
-    <h1>Halvern in Motion</h1>
+    <h1>Medianville in Motion</h1>
     <span class="chip">Simulated city · no real people</span>
     <span class="chip" id="datachip" role="status">Placeholder day · loading the real one</span>
+    <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   </div>
   <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
@@ -366,7 +379,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         <label class="sr-only" for="lens-block">Mapped block</label>
         <select id="lens-block" class="lens-sel"></select>
         <span class="lens-ctx" id="lens-ctx"></span>
-        <span class="dim small">Esc closes the lens</span>
+        <span class="dim small lens-esc">Esc closes the lens</span>
       </div>
       <iframe id="lens-frame" title="Systems lens: Larkin Avenue in six layers"></iframe>
     </section>
@@ -407,7 +420,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <p class="sr-only" id="intro-live" aria-live="polite"></p>
   </section>
 </div>
-<script>// ===== Halvern in Motion v3 · shared city plan, parties, placeholder day, record language =====
+<script>// ===== Medianville in Motion v3 · shared city plan, parties, placeholder day, record language =====
 // Everything here is deterministic, so the Miniature and the Map draw the same city.
 (function () {
   const H = (window.H = {});
@@ -914,16 +927,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   });
   const NAMES = {
     cornershop: ['Millbank Corner Market', 'Weaver Street Grocery', 'Spring Street Mart', 'Lucky Seven Market', 'Hilltop Corner Store', 'Two Sisters Deli', 'Brickrow Bodega', 'Sunrise Mini Mart'],
-    grocery: ['Halvern Fresh Market', 'Route 9 Grocery Outlet'],
-    bigbox: ['Bargain Depot', 'Route 9 Home & Garden', 'Thrift Hall', 'Prairie Pharmacy & Goods', 'Cutler Supply Co.', 'Midway Furniture', 'Allday Dollar Store', 'Valley Farm & Fleet', 'Halvern Tire & Auto', 'Kidstuff Outlet', 'Plainsview Appliance', 'Second Chance Thrift', 'Route 9 Pet Supply', 'Halvern Hardware', 'Sunflower Craft & Fabric', 'Mid-America Mattress', 'Corner Cellular Repair', 'Prairie Sporting Goods', 'County Line Liquor', 'Halvern Rent-to-Own', 'Big Sky Paint', 'Cutler Feed Store', 'Sunrise Furniture Outlet', 'Halvern Office Supply', 'Prairie Thrift & Toys'],
+    grocery: ['Medianville Fresh Market', 'Route 9 Grocery Outlet'],
+    bigbox: ['Bargain Depot', 'Route 9 Home & Garden', 'Thrift Hall', 'Prairie Pharmacy & Goods', 'Cutler Supply Co.', 'Midway Furniture', 'Allday Dollar Store', 'Valley Farm & Fleet', 'Medianville Tire & Auto', 'Kidstuff Outlet', 'Plainsview Appliance', 'Second Chance Thrift', 'Route 9 Pet Supply', 'Medianville Hardware', 'Sunflower Craft & Fabric', 'Mid-America Mattress', 'Corner Cellular Repair', 'Prairie Sporting Goods', 'County Line Liquor', 'Medianville Rent-to-Own', 'Big Sky Paint', 'Cutler Feed Store', 'Sunrise Furniture Outlet', 'Medianville Office Supply', 'Prairie Thrift & Toys'],
     diner: ['Courthouse Diner', 'Blue Plate Diner', 'Route 9 Grill', 'Station Coffee', 'Mill Street Café', 'Lucky Wok', 'Prairie Taqueria'],
     gas: ['Route 9 Gas & Go', 'Millbank Fuel'],
     farmstand: ['Cutler Farm Stand'],
-    tower: ['Halvern Mutual Insurance', 'Prairie Health Billing', 'First Halvern Title', 'Courthouse Legal Center', 'Mid-America Call Center', 'Halvern Regional Bank Operations', 'Granary Tower Offices', 'Plainsview Logistics HQ', 'Halvern Daily Ledger', 'Northfield Software', 'County Courthouse Annex', 'Heartland Payroll Services', 'Prairie Wireless', 'Halvern Hospital Admin', 'Union Hall Tower', 'Halvern Health Partners', 'Riverbend Insurance Agency', 'Courthouse Square Apartments Office'],
-    office: ['Halvern Tax & Accounting', 'County Workforce Office', 'Courthouse Square Dental', 'Halvern Public Library', 'County Records Office', 'Main Street Realty', 'Halvern Chamber of Commerce', 'Legal Aid of Halvern', 'Halvern Community College Annex', 'Square Physical Therapy', 'Halvern Credit Union'],
-    shed: ['Railside Distribution', 'Halvern Box & Freight', 'Prairie Cold Storage', 'Midland Parts Supply', 'Railside Metal Works', 'Halvern Bottling', 'Plainsview Packaging', 'County Road Department', 'Railside Lumber', 'Halvern Printing', 'Mid-America Recycling', 'Halvern Bakery Plant', 'Plainsview Movers', 'Railside Auto Salvage', 'Halvern Ice Co.', 'Cutler Seed Warehouse', 'County Salt Barn', 'Midland Cabinets', 'Railside Tool & Die'],
-    tank: ['Railside Fuel Terminal', 'Halvern Feed & Grain Tanks', 'Prairie Propane', 'Mid-America Asphalt', 'Halvern Water Treatment', 'Prairie Ethanol', 'Railside Chemical Supply'],
-    utility: ['Halvern Power & Water'], bank: ['Halvern Savings Bank'], cityhall: ['Halvern City Hall'], clinic: ['Courthouse Square Clinic'], school: ['Millbank Elementary School'], church: ['Millbank Community Church'], bushub: ['Halvern Transit Center'], silo: ['Cutler Grain Co-op'],
+    tower: ['Medianville Mutual Insurance', 'Prairie Health Billing', 'First Medianville Title', 'Courthouse Legal Center', 'Mid-America Call Center', 'Medianville Regional Bank Operations', 'Granary Tower Offices', 'Plainsview Logistics HQ', 'Medianville Daily Ledger', 'Northfield Software', 'County Courthouse Annex', 'Heartland Payroll Services', 'Prairie Wireless', 'Medianville Hospital Admin', 'Union Hall Tower', 'Medianville Health Partners', 'Riverbend Insurance Agency', 'Courthouse Square Apartments Office'],
+    office: ['Medianville Tax & Accounting', 'County Workforce Office', 'Courthouse Square Dental', 'Medianville Public Library', 'County Records Office', 'Main Street Realty', 'Medianville Chamber of Commerce', 'Legal Aid of Medianville', 'Medianville Community College Annex', 'Square Physical Therapy', 'Medianville Credit Union'],
+    shed: ['Railside Distribution', 'Medianville Box & Freight', 'Prairie Cold Storage', 'Midland Parts Supply', 'Railside Metal Works', 'Medianville Bottling', 'Plainsview Packaging', 'County Road Department', 'Railside Lumber', 'Medianville Printing', 'Mid-America Recycling', 'Medianville Bakery Plant', 'Plainsview Movers', 'Railside Auto Salvage', 'Medianville Ice Co.', 'Cutler Seed Warehouse', 'County Salt Barn', 'Midland Cabinets', 'Railside Tool & Die'],
+    tank: ['Railside Fuel Terminal', 'Medianville Feed & Grain Tanks', 'Prairie Propane', 'Mid-America Asphalt', 'Medianville Water Treatment', 'Prairie Ethanol', 'Railside Chemical Supply'],
+    utility: ['Medianville Power & Water'], bank: ['Medianville Savings Bank'], cityhall: ['Medianville City Hall'], clinic: ['Courthouse Square Clinic'], school: ['Millbank Elementary School'], church: ['Millbank Community Church'], bushub: ['Medianville Transit Center'], silo: ['Cutler Grain Co-op'],
   };
   const SECTOR = { cornershop: 'Retail', grocery: 'Grocery', bigbox: 'Retail', diner: 'Food service', gas: 'Fuel', farmstand: 'Farm', tower: 'Offices', office: 'Offices', shed: 'Warehouse and industry', tank: 'Fuel storage', utility: 'Utility', bank: 'Bank', cityhall: 'Local government', clinic: 'Health care', school: 'Public school', church: 'Congregation', bushub: 'Public transit', silo: 'Agriculture' };
   H.SECTOR = SECTOR;
@@ -937,7 +950,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const p = { id: 'ORG-' + pad(oi++, 4), type: 'org', name, kind: t.kind, sector: SECTOR[t.kind], district: t.d, tile: t, anchor: a && a.length ? a[0] : [cx, 0.3, cz] };
     t.org = p; H.orgs.push(p); H.party.set(p.id, p);
   }
-  const transit = { id: 'ORG-T001', type: 'org', name: 'Halvern Transit', kind: 'transit', sector: 'Public transit', district: 'downtown', tile: H.T(12, 11), anchor: null };
+  const transit = { id: 'ORG-T001', type: 'org', name: 'Medianville Transit', kind: 'transit', sector: 'Public transit', district: 'downtown', tile: H.T(12, 11), anchor: null };
   H.orgs.push(transit); H.party.set(transit.id, transit); H.transit = transit;
   H.partyAtTile = (t) => t.org || null;
   H.hhAtTile = (t) => H.households.filter((h) => h.tile === t);
@@ -1117,7 +1130,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   H.placeName = (p) => (p.tile && p.tile.kind === 'road' && H.stops.includes(p.tile) ? `${H.STOP_NAME(p.tile)} bus stop` : p.name);
 })();
 </script>
-<script>// ===== Halvern in Motion v3 · Map view: a printed quadrangle sheet (SVG base + canvas records) =====
+<script>// ===== Medianville in Motion v3 · Map view: a printed quadrangle sheet (SVG base + canvas records) =====
 (function () {
   const SVGNS = 'http://www.w3.org/2000/svg';
   const PAPER = '#F4EFE3', INK = '#141414', BROWN = '#A87A50', BLUE = '#2F6DB0', RED = '#C9402C', ROSE = '#EFD3CB', WOOD = '#CFE2BC', FIELD = '#DFEACB';
@@ -1278,7 +1291,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       watertower: (x, y) => `<circle cx="${x}" cy="${y}" r="0.1" class="ring"/><circle cx="${x}" cy="${y}" r="0.03"/>`,
     };
     function star(x, y, r) { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + f2(x + Math.cos(a) * rr) + ' ' + f2(y + Math.sin(a) * rr); } return `<path d="${d}Z"/>`; }
-    const LBL = { school: 'Millbank Elem. School', church: 'Church', clinic: 'Clinic', cityhall: 'City Hall', bank: 'Halvern Savings', bus: 'Transit Center', watertower: 'Water Tank' };
+    const LBL = { school: 'Millbank Elem. School', church: 'Church', clinic: 'Clinic', cityhall: 'City Hall', bank: 'Medianville Savings', bus: 'Transit Center', watertower: 'Water Tank' };
     let syms = '', lab = '';
     for (const s of P.syms) {
       const x = f2(mx(s.x)), y = f2(my(s.z));
@@ -1321,8 +1334,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     }
     let ticks2 = '';
     for (let i = 1; i < 20; i++) ticks2 += `M${i} -0.6L${i} -0.75M${i} 20.6L${i} 20.75M-0.6 ${i}L-0.75 ${i}M20.6 ${i}L20.75 ${i}`;
-    const top = `<text class="hd" x="-0.6" y="-1.65">HALVERN, MID-AMERICA</text><text class="hd r" x="20.6" y="-1.65">SIMULATED CITY SHEET · 2027</text>`;
-    const title = `<g class="ttl"><text class="t1" x="20.6" y="24.55">HALVERN QUADRANGLE</text><text class="t2" x="20.6" y="25.15">2027 · SIMULATED</text>
+    const top = `<text class="hd" x="-0.6" y="-1.65">MEDIANVILLE, MID-AMERICA</text><text class="hd r" x="20.6" y="-1.65">SIMULATED CITY SHEET · 2027</text>`;
+    const title = `<g class="ttl"><text class="t1" x="20.6" y="24.55">MEDIANVILLE QUADRANGLE</text><text class="t2" x="20.6" y="25.15">2027 · SIMULATED</text>
       <text class="t3" x="20.6" y="25.75">An invented city drawn for study. No real places or people.</text><text class="t3" x="20.6" y="26.15">Grid squares are one block, about 660 feet. Contour interval 10 feet.</text></g>`;
     // bar scale: 1 mile = 8 blocks
     let sb = '<g class="scale">';
@@ -1528,7 +1541,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   };
 })();
 </script>
-<script>// ===== Halvern in Motion v3 · app shell: playback, records, interaction, UI, accessibility =====
+<script>// ===== Medianville in Motion v3 · app shell: playback, records, interaction, UI, accessibility =====
 (function () {
   H.buildDay();
   const $ = (s, r = document) => r.querySelector(s);
@@ -1587,7 +1600,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const mv = views.mini, sampled = Math.random() < Math.min(1, 3 / S.speed);
       if (mv && (S.view === 'mini' || fading)) mv.onRecord(r, sampled);
     }
-    if (window.HalvernSound && S.filters.has(r._vk)) HalvernSound.rec(r._vk);
+    if (window.MedianvilleSound && S.filters.has(r._vk)) MedianvilleSound.rec(r._vk);
     Feed.push(r);
   }
   function seek(t) {
@@ -1620,7 +1633,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const out = r.amount_paid_by_user > 0 ? r.amount_paid_by_user : r.amount_gross;
     return { txt: H.fmtMoney(-out, true), cls: '', sr: `minus ${H.fmtMoney(out)}` };
   }
-  const cpName = (r) => (r._stop ? `Halvern Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
+  const cpName = (r) => (r._stop ? `Medianville Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
   function subLine(r) {
     if (r._vk === 'fail') return `${H.reason(r)} · ${H.fmt(r._t)}`;
     return [H.catLabel(r), H.methodLabel(r), H.fmt(r._t)].filter(Boolean).join(' · ');
@@ -1664,6 +1677,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   // One composite block per district is mapped in systems-lens/blocks.json. The run tags every record made by a block
   // household with block_id, and with block_pattern when it follows one of the block's patterns. The lens draws the block and
   // shows the opened record; this side sends it the record, the block's counts so far today and its latest records.
+  // Every other record opens its district's block in district mode: the circumstances true across the whole district, with
+  // the context bar saying the record is from elsewhere in the district, never on the block.
   const Lens = {
     on: false, ready: false, pending: null, wasPlaying: false, opener: null, frameBlock: null, doc: null, last: null, cur: null,
     async loadDoc() {
@@ -1673,6 +1688,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       return this.doc;
     },
     block(id) { return this.doc && this.doc.blocks.find((b) => b.id === id); },
+    // the mapped block for a district code (D1..D6), when it has a district tier
+    districtBlock(d) { return (d && this.doc && this.doc.blocks.find((b) => b.district === d && b.contexts.some((c) => c.scope === 'district'))) || null; },
     pattern(bid, pid) { const b = this.block(bid); return b && b.patterns.find((p) => p.id === pid); },
     match(r) { return r && r._blk && r._pat ? { block: r._blk, pattern: r._pat } : null; },
     sub(k) { const b = this.block(k.block), p = this.pattern(k.block, k.pattern); return b && p ? `${p.title} · ${b.name}` : 'A pattern mapped in the Systems lens'; },
@@ -1682,7 +1699,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       this.ready = false; this.frameBlock = block;
       this.frame().src = `systems-lens/?embed=1&block=${encodeURIComponent(block)}&rec=`;
     },
-    post(msg) { if (!this.ready) { this.pending = msg; return; } this.frame().contentWindow.postMessage(Object.assign({ source: 'halvern-v3' }, msg), location.origin); },
+    post(msg) { if (!this.ready) { this.pending = msg; return; } this.frame().contentWindow.postMessage(Object.assign({ source: 'medianville-v3' }, msg), location.origin); },
     payload(r) {
       const a = amountOf(r);
       return { id: r.record_id, title: H.catLabel(r), amt: a.txt, fail: r._vk === 'fail', income: r._vk === 'income',
@@ -1700,17 +1717,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       for (const k in recs) recs[k] = recs[k].slice(-5).reverse().map((r) => this.payload(r));
       return { counts, recs, household: hhId ? { id: hhId, recs: mine.slice(-12).reverse().map((r) => this.payload(r)) } : null };
     },
-    async open(block, pattern, fromId, opener, hhId) {
+    // district: open on the block's district tier, for a record or household from elsewhere in its district
+    async open(block, pattern, fromId, opener, hhId, district) {
       await this.loadDoc();
       if (!this.doc) { say('The Systems lens could not load its mapped blocks.'); return; }
-      const b = this.block(block) || this.block(this.last) || this.block('larkin') || this.doc.blocks[0];
-      const r = fromId ? H.recById.get(fromId) : null, p = pattern ? this.pattern(b.id, pattern) : null;
-      this.last = b.id; this.cur = { block: b.id, pattern: p ? p.id : null, fromId: r && p ? r.record_id : null, hhId: hhId || null };
+      const b = this.block(block) || this.districtBlock(block) || this.block(this.last) || this.block('larkin') || this.doc.blocks[0];
+      const dm = !!district && b.contexts.some((c) => c.scope === 'district');
+      const r = fromId ? H.recById.get(fromId) : null, p = !dm && pattern ? this.pattern(b.id, pattern) : null;
+      this.last = b.id; this.cur = { block: b.id, pattern: p ? p.id : null, fromId: r && (p || dm) ? r.record_id : null, hhId: hhId || null, district: dm };
       $('#lens-block').value = b.id;
-      $('#lens-ctx').innerHTML = `${esc(b.district)} ${esc(b.districtName)}` + (p ? ` · <b>${esc(p.title)}</b>` : hhId ? ` · <b>${esc(hhId)}</b>’s records here` : ' · pick a pattern to trace');
+      $('#lens-ctx').innerHTML = dm ? `<b>Opened from ${!r && hhId ? 'a household' : 'a record'} elsewhere in ${esc(b.districtName)}</b> · ${esc(b.name)} is its mapped block`
+        : `${esc(b.district)} ${esc(b.districtName)}` + (p ? ` · <b>${esc(p.title)}</b>` : hhId ? ` · <b>${esc(hhId)}</b>’s records here` : ' · pick a pattern to trace');
+      $('#lens-ctx').title = $('#lens-ctx').textContent;
       this.load(b.id);
-      this.post({ type: 'open', pattern: this.cur.pattern, record: this.cur.fromId ? this.payload(r) : null, live: H.realLoaded ? this.live(b.id, hhId) : null });
-      history.replaceState(null, '', '#lens=' + [b.id, this.cur.pattern || '', this.cur.fromId || ''].join('/').replace(/\/+$/, ''));
+      this.post({ type: 'open', district: dm, pattern: this.cur.pattern, record: this.cur.fromId ? this.payload(r) : null, household: dm && !r ? this.cur.hhId : null,
+        live: H.realLoaded ? this.live(b.id, dm ? null : hhId) : null });
+      history.replaceState(null, '', '#lens=' + [b.id, dm ? 'district' : this.cur.pattern || '', this.cur.fromId || ''].join('/').replace(/\/+$/, ''));
       if (this.on) return;
       this.on = true; this.opener = opener || document.activeElement;
       this.wasPlaying = S.playing; if (S.playing) setPlaying(false);
@@ -1719,9 +1741,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       $('#scene').inert = true; $('#rail').inert = true;
       $('#lens-btn').setAttribute('aria-pressed', 'true');
       setTimeout(() => $('#lens-back').focus({ preventScroll: true }), S.rm ? 0 : 460);
-      say(`Systems lens open on ${b.name}${p ? `, showing ${p.title.toLowerCase()}` : ''}. Escape goes back to the city.`);
+      say(dm ? `Systems lens open on what holds across ${b.districtName}, mapped at ${b.name}. Escape goes back to the city.`
+        : `Systems lens open on ${b.name}${p ? `, showing ${p.title.toLowerCase()}` : ''}. Escape goes back to the city.`);
     },
-    refresh() { if (this.on && this.cur) this.open(this.cur.block, this.cur.pattern, this.cur.fromId, null, this.cur.hhId); },
+    refresh() { if (this.on && this.cur) this.open(this.cur.block, this.cur.pattern, this.cur.fromId, null, this.cur.hhId, this.cur.district); },
     close() {
       if (!this.on) return;
       this.on = false;
@@ -1743,24 +1766,31 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         const r = H.recById.get(top.id), k = this.match(r);
         if (k) return this.open(k.block, k.pattern, r.record_id, opener);
         if (r && r._blk) return this.open(r._blk, null, null, opener, r.household_id);
+        const db = r && this.districtBlock(r.district);
+        if (db) return this.open(db.id, null, r.record_id, opener, null, true);
       }
-      if (top && top.type === 'hhday') { const p = H.party.get(top.id); if (p && p.block) return this.open(p.block, null, null, opener, top.id); }
+      if (top && top.type === 'hhday') {
+        const p = H.party.get(top.id), db = p && !p.block && this.districtBlock(p.dist);
+        if (p && p.block) return this.open(p.block, null, null, opener, top.id);
+        if (db) return this.open(db.id, null, null, opener, top.id, true);
+      }
       this.open(this.last, null, null, opener);
     },
-    // #lens=<block>[/<pattern>[/<record>]] opens the lens; #view=map or #view=mini picks the view
+    // #lens=<block>[/<pattern>[/<record>]] opens the lens, and #lens=<block>/district[/<record>] its district tier;
+    // #view=map or #view=mini picks the view
     fromHash(realReady) {
       const q = new URLSearchParams(location.hash.slice(1)), v = q.get('view'), L = q.get('lens');
       if (!realReady && (v === 'map' || v === 'mini')) setView(v);
       if (!L) return;
-      const [block, pat, rid] = L.split('/');
+      const [block, p0, rid] = L.split('/'), dm = p0 === 'district', pat = dm ? null : p0 || null;
       if (rid) {
         if (!realReady) return; // the record exists once the real day has loaded
-        const r = H.recById.get(rid); if (!r) return this.open(block, pat || null, null);
+        const r = H.recById.get(rid); if (!r) return this.open(block, pat, null, null, null, dm);
         if (r._t > S.t) seek(r._t + .01);
         selectRecord(rid, scene());
-        return this.open(block, pat || null, rid);
+        return this.open(block, pat, rid, null, null, dm);
       }
-      if (!realReady) this.open(block, pat || null, null);
+      if (!realReady) this.open(block, pat, null, null, null, dm);
     },
   };
 
@@ -1806,7 +1836,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function recordHTML(r) {
     const a = amountOf(r), fail = r._vk === 'fail', vk = r._vk;
     const status = fail ? `<span class="pill fail">${H.outcomeWord(r)}</span>` : `<span class="pill ok">${vk === 'unpaid' ? 'Done · unpaid' : 'Completed'}</span>`;
-    const to = r._stop ? `Halvern Transit <span class="dim">· ${esc(H.STOP_NAME(r._stop))} stop</span>` : partyLine(r._to);
+    const to = r._stop ? `Medianville Transit <span class="dim">· ${esc(H.STOP_NAME(r._stop))} stop</span>` : partyLine(r._to);
     const money = (v) => H.fmtMoney(v);
     const bd = vk === 'unpaid' ? kv([['Time spent', `${r.time_minutes} min`], ['Getting there', r.travel_mode ? `${r.travel_mode[0].toUpperCase() + r.travel_mode.slice(1)}${r.travel_miles ? `, ${r.travel_miles} mi` : ''}` : '']])
       : r.record_type === 'failed_attempt' && !r.amount_gross ? kv([['Time waiting', `${r.wait_minutes} min`], ['Time lost in all', `${r.time_minutes} min`]])
@@ -1814,7 +1844,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     return `<p class="eyebrow">${iconSVG(vk, 24)}<span>${REC[vk].label}</span></p>
       <h2 id="sheet-title" tabindex="-1" class="big ${a.cls}">${a.txt}</h2>
       <p class="status">${status}${fail ? `<span class="why">${esc(H.reason(r))}</span>` : ''}</p>
-      ${kv([['From', partyLine(r._from)], ['To', to], ['Method', esc(H.methodLabel(r)) || (vk === 'unpaid' || vk === 'service' ? 'No money moved' : '')], ['Time', `${H.fmt(r._t)}, Wednesday, March 3`], ['Category', esc(H.catLabel(r))], r._real ? ['Record', `${esc(r.record_id)}${r._handWritten ? ' · hand-written' : ''}`] : null])}
+      ${kv([['From', partyLine(r._from)], ['To', to], ['Method', esc(H.methodLabel(r)) || (vk === 'unpaid' || vk === 'service' ? 'No money moved' : '')], ['Time', `${H.fmt(r._t)}, ${App.dayIso ? MedianvilleRuns.dateLabel(App.dayIso, { weekday: 'long', month: 'long', day: 'numeric' }) : 'Wednesday, March 3'}`], ['Category', esc(H.catLabel(r))], r._real ? ['Record', `${esc(r.record_id)}${r._handWritten ? ' · hand-written' : ''}`] : null])}
       <h3>Breakdown</h3>${bd}
       <h3>The job</h3><blockquote class="job">“${esc(r.job_statement)}”</blockquote>
       ${r.narrative ? `<p class="narr">${esc(r.narrative)}</p>` : ''}
@@ -1828,10 +1858,11 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function closerHTML(r) {
     const k = Lens.match(r), day = r.household_id
       ? `<button class="go" data-hhday="${r.household_id}"><span class="gi">${CLOCK_ICON}</span><span><b>This household’s day</b><small>Every record for ${esc(r.household_id)}, in time order</small></span><span class="chev" aria-hidden="true">›</span></button>` : '';
-    let lens;
+    let lens, db;
     if (k) lens = `<button class="go" data-lens="${k.block}/${k.pattern}" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>${esc(Lens.sub(k))}</small></span><span class="chev" aria-hidden="true">›</span></button>`;
     else if (r._blk) { const b = Lens.block(r._blk); lens = `<button class="go" data-lens="${r._blk}/" data-hh="${esc(r.household_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes this household’s block</b><small>${esc(b ? b.name : 'A mapped block')} · this record isn’t one of its patterns</small></span><span class="chev" aria-hidden="true">›</span></button>`; }
-    else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>Not mapped yet. One block in each district is mapped so far.</small></span></div>`;
+    else if ((db = Lens.districtBlock(r.district))) lens = `<button class="go" data-lens="${db.id}/district" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes places like this</b><small>Across ${esc(db.districtName)} · ${esc(db.name)} is its mapped block</small></span><span class="chev" aria-hidden="true">›</span></button>`;
+    else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>This record has no district, so there is no mapped block to open.</small></span></div>`;
     const data = r._real ? explorerGo('record', r.record_id, `${esc(r.record_id)} with every field, as a table`) : '';
     return `<h3>Look closer</h3><div class="closer">${day}${lens}${data}</div>`;
   }
@@ -1859,17 +1890,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const p = H.party.get(id), all = H.records.filter((r) => r.household_id === id), so = all.filter((r) => r._i < S.idx), later = all.filter((r) => r._i >= S.idx);
     const inn = so.filter((r) => r._vk === 'income').reduce((s, r) => s + r.amount_gross, 0), out = so.filter((r) => (r._vk === 'purchase' || r._vk === 'bill')).reduce((s, r) => s + r.amount_paid_by_user, 0);
     const un = so.filter((r) => r._vk === 'unpaid').reduce((s, r) => s + r.time_minutes, 0), fails = so.filter((r) => r._vk === 'fail').length;
+    const db = !p.block && Lens.districtBlock(p.dist);
     return `<p class="eyebrow"><span>Household’s day</span></p><h2 id="sheet-title" tabindex="-1" class="title">${esc(p.name)}</h2>${p.info ? `<p class="dim">${esc(hhInfo(p))}</p>` : ''}<p class="dim">${esc(whereOf(p))} · so far, to ${H.fmt(S.t)}</p>
       <div class="mini-tiles"><div><span class="lbl">Money in</span><span class="v in">${H.fmtMoney(inn, true)}</span></div><div><span class="lbl">Money out</span><span class="v">${H.fmtMoney(-out, true)}</span></div><div><span class="lbl">Unpaid</span><span class="v">${H.fmtHours(un)}</span></div><div><span class="lbl">Failures</span><span class="v">${fails}</span></div></div>
       <p class="dim small">Its paths stay drawn on the city while this is open.</p>
-      ${p.block ? hhLensHTML(p, so) : ''}
-      ${p.info ? `<div class="closer" style="${p.block ? 'border-top:0' : 'margin-top:12px'}">${explorerGo('household', id, `${esc(id)}: its people, money and every record`)}</div>` : ''}
+      ${p.block ? hhLensHTML(p, so) : db ? hhDistrictHTML(p, db) : ''}
+      ${p.info ? `<div class="closer" style="${p.block || db ? 'border-top:0' : 'margin-top:12px'}">${explorerGo('household', id, `${esc(id)}: its people, money and every record`)}</div>` : ''}
       <h3>So far today</h3>${so.length ? `<ul class="feed inline">${so.slice().reverse().map((r) => rowHTML(r)).join('')}</ul>` : '<p class="dim">Nothing yet today.</p>'}
       ${later.length ? `<h3>Later today</h3><ul class="feed inline later">${later.map((r) => rowHTML(r)).join('')}</ul>` : ''}`;
   }
   function hhLensHTML(p, so) {
     const b = Lens.block(p.block), n = so.filter((r) => r._pat).length;
     return `<div class="closer" style="margin-top:12px"><button class="go" data-lens="${p.block}/" data-hh="${esc(p.id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this household’s day</b><small>${esc(b ? b.name : 'A mapped block')} · ${n ? `${n} of its records so far follow mapped patterns` : 'none of its records so far follow mapped patterns'}</small></span><span class="chev" aria-hidden="true">›</span></button></div>`;
+  }
+  // a household off the mapped block opens its district's block on the district tier
+  function hhDistrictHTML(p, db) {
+    return `<div class="closer" style="margin-top:12px"><button class="go" data-lens="${db.id}/district" data-hh="${esc(p.id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this household’s day</b><small>Across ${esc(db.districtName)} · ${esc(db.name)} is its mapped block</small></span><span class="chev" aria-hidden="true">›</span></button></div>`;
   }
   function openHouseholdDay(id) {
     unpinHousehold(); S.hhDay = id; pinHousehold(id);
@@ -2054,14 +2090,17 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     S.hoverId = null; hideChip(); closeChooser();
     updateSceneLabel(true);
   }
-  let miniFailed = false;
+  let miniFailed = false, noGL = false;
+  const miniFail = () => { miniFailed = true; const l = $('#L-mini .loading'); if (l) l.textContent = 'The miniature needs WebGL and could not load here. The map shows the same city.'; if (S.view === 'mini') setView('map'); };
   App.onMiniReady = () => {
-    views.mini = window.MiniView;
-    views.mini.mount($('#L-mini')); views.mini.setBlur(S.blur);
+    if (noGL) return;
+    // the module can load where WebGL can't start: mount throws, and the map stands in as if the module never came
+    try { window.MiniView.mount($('#L-mini')); } catch (e) { noGL = true; miniFail(); return; }
+    views.mini = window.MiniView; views.mini.setBlur(S.blur);
     $('#L-mini .loading')?.remove();
     if (S.view === 'mini') setView('mini', true);
   };
-  setTimeout(() => { if (!views.mini) { miniFailed = true; const l = $('#L-mini .loading'); if (l) l.textContent = 'The miniature needs WebGL and could not load here. The map shows the same city.'; if (S.view === 'mini') setView('map'); } }, 12000);
+  setTimeout(() => { if (!views.mini && !miniFailed) miniFail(); }, 12000);
 
   // ---------- keyboard and controls ----------
   const POINTS = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
@@ -2105,7 +2144,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     $('#lens-city').addEventListener('click', () => Lens.close());
     $('#lens-block').addEventListener('change', (e) => Lens.open(e.target.value, null, null));
     window.addEventListener('message', (e) => {
-      if (e.origin !== location.origin || !e.data || e.data.source !== 'halvern-lens') return;
+      if (e.origin !== location.origin || !e.data || e.data.source !== 'medianville-lens') return;
       if (e.data.type === 'close') Lens.close();
       if (e.data.type === 'ready' && e.data.block === Lens.frameBlock) { Lens.ready = true; if (Lens.pending) { Lens.post(Lens.pending); Lens.pending = null; } }
     });
@@ -2126,7 +2165,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const row = e.target.closest('button.row, #chooser button[data-id]');
       if (row) { closeChooser(); selectRecord(row.dataset.id, row.closest('#chooser') ? scene() : row); return; }
       const hd = e.target.closest('[data-hhday]'); if (hd) { openHouseholdDay(hd.dataset.hhday); return; }
-      const ln = e.target.closest('[data-lens]'); if (ln) { const [bk, pt] = ln.dataset.lens.split('/'); Lens.open(bk, pt || null, ln.dataset.from || null, ln, ln.dataset.hh || null); return; }
+      const ln = e.target.closest('[data-lens]'); if (ln) { const [bk, pt] = ln.dataset.lens.split('/'), dm = pt === 'district'; Lens.open(bk, dm ? null : pt || null, ln.dataset.from || null, ln, ln.dataset.hh || null, dm); return; }
       const lo = e.target.closest('[data-lens-open]'); if (lo) { e.preventDefault(); Lens.open(null, null, lo); return; }
     });
     document.addEventListener('keydown', (e) => {
@@ -2135,7 +2174,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       if (e.key === ' ' && !onControl) { e.preventDefault(); setPlaying(!S.playing); return; }
       if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { Lens.close(); setView(S.view === 'mini' ? 'map' : 'mini'); return; }
       if ((e.key === 'D') && e.shiftKey && !typing) { toggleDebug(); return; }
-      if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing && window.HalvernSound) { HalvernSound.toggle(); return; }
+      if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing && window.MedianvilleSound) { MedianvilleSound.toggle(); return; }
       if ((e.key === 'l' || e.key === 'L') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { Lens.toggle(); return; }
       if (['q', 'Q', 'e', 'E', 'n', 'N'].includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey && !typing && !Lens.on && mini()) {
         e.preventDefault(); if (e.key === 'n' || e.key === 'N') northUp(); else turnBy(e.key === 'q' || e.key === 'Q' ? -15 : 15); return;
@@ -2182,7 +2221,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function updateSceneLabel(force) {
     const m = Math.floor(S.t); if (m === lastLabelMin && !force) return; lastLabelMin = m;
     const inflight = S.flights.filter((F) => !F.steady && progress(F) <= F.stop).length;
-    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Halvern at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
+    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Medianville at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
   }
 
   // ---------- overlay: keyboard focus ring ----------
@@ -2241,7 +2280,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     }
     if (S.flights.some((F) => F.dead)) S.flights = S.flights.filter((F) => !F.dead);
     S.dark = H.dark(S.t);
-    if (window.HalvernSound) HalvernSound.frame(dt);
+    if (window.MedianvilleSound) MedianvilleSound.frame(dt);
     hoverTest();
     const dtA = S.playing ? dt : 0;
     if (S.view === 'map' || fading) views.map.frame(S);
@@ -2270,6 +2309,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     c.textContent = st.state === 'loading' ? `Placeholder day · loading the real one ${Math.round(st.p * 100)}%`
       : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Placeholder day · the real one didn’t load';
     if (st.state !== 'loading') say(c.textContent);
+  };
+  // real-day.js calls this once it knows which run it will load (sel is null without a manifest)
+  App.onRuns = (sel) => {
+    if (!sel || !window.MedianvilleRuns) return;
+    App.dayIso = sel.run.date;
+    MedianvilleRuns.picker($('#runpick'), sel);
+    MedianvilleRuns.carry($('#data-link'), sel);
+    const d = App.runDate(sel.run.date); if (d) $('#intro-date').textContent = d;
+    if (sel.run.records) $('#intro-n').textContent = sel.run.records.toLocaleString('en-US');
+    if (!sel.found) say('That day is not in the list; showing ' + sel.run.label + '.');
   };
   // '2027-03-03' → 'Wednesday, March 3, 2027' (or 'March 3, 2027' without the weekday)
   App.runDate = (iso, weekday = true) => {
@@ -2374,10 +2423,11 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 })();
 </script>
 <script src="fflate.js"></script>
+<script src="runs.js"></script>
 <script src="real-day.js"></script>
 <script src="sound.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
-<script type="module">// ===== Halvern in Motion v3 · Miniature view: photographic light and surface, the city past the board, turns and tilts =====
+<script type="module">// ===== Medianville in Motion v3 · Miniature view: photographic light and surface, the city past the board, turns and tilts =====
 // From the realism lab (Nov 19, 2026): sun and sky through the day, filmic tone, contact shadows, night lights,
 // street detail, materials with grain, haze, and land beyond the board. Focus blur is still the v3 band.
 import * as THREE from 'three';

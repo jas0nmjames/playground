@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Storm and heat weekdays a year for Halvern's places, 2015-2025. Standard library only.
+"""Storm and heat weekdays a year for Medianville's places, 2015-2025. Standard library only.
 
     python3 -I sources/tools/weather_days.py
 
-Halvern's people are national but its places are local (City Design v0.1): each district borrows from real places
+Medianville's people are national but its places are local (City Design v0.1): each district borrows from real places
 within driving distance of Fayetteville, GA. Weather belongs to places, so the counts come from those counties.
 
 Storm weekday: a Monday-Friday on which NOAA Storm Events logs a winter storm, ice storm, winter weather, heavy snow,
-blizzard, tropical storm or hurricane in at least 2 of the Halvern counties below (multi-day events count every day).
+blizzard, tropical storm or hurricane in at least 2 of the Medianville counties below (multi-day events count every day).
 That is the simulator's storm: schools closed, trips cut, power out for some households. Afternoon thunderstorms and
 tornadoes are not counted; they cut power locally but do not close the city, and the simulator has no scenario for them.
 

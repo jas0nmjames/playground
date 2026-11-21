@@ -1,0 +1,50 @@
+R0161129|my sister is short on rent this month|send her money through an app|help without driving out there|A 47-year-old customer service rep sent $211.00 by phone to family outside Medianville.
+R0161408|a tooth has been hurting since January|see a dentist I can afford|fix it before it gets worse|A 24-year-old student put off a filling that would cost about $240; her plan does not cover dental.
+R0162705|my husband cannot bathe on his own|help him wash and dress|keep him comfortable at home|A 33-year-old dental assistant spent nearly two hours helping her 42-year-old husband bathe and dress after work.
+R0164238|someone calls saying my nephew is in jail and needs bail|send the money they ask for|get him out tonight|A 32-year-old lost $17,100.00 after a call about a relative in jail; he sent it from his bank account before anyone in the family could check.
+R0166157|I owe a friend for groceries|send it through the app|settle up today|A 26-year-old's $138.19 app transfer was declined: the linked account did not have enough to cover it.
+R0166454|my relative cannot bathe on her own|drive over and help her|keep her clean and safe at home|A 53-year-old truck driver drove 31.4 miles to help a 70-year-old relative bathe and dress.
+R0166661|the Wednesday evening service begins|give what I can|support my church|A 63-year-old wrote a $10.00 check for the offering at Calvary Presbyterian Church.
+R0166680|my assisted living fee is due|pay it online|stay where I get help every day|An 85-year-old paid Wexford Commons Senior Living $5,214.15 online, drawing on savings from the sale of her house.
+R0168101|the midweek service begins|give what I can|support my church|A 70-year-old veteran wrote a $25.00 check for the offering at Mt. Moriah Missionary Baptist Church.
+R0169966|the Wednesday night service begins|give what I can|support my church|A 59-year-old put $10.00 in cash in the offering at Trinity Pentecostal Tabernacle.
+R0170010|the midweek service begins|give our family's offering|support our church|A 36-year-old teacher put $50.00 in cash in the offering at Mt. Moriah Missionary Baptist Church.
+R0170795|my dog's license is due|renew it online|avoid a fine|A 20-year-old welder renewed the dog's license online with the City of Medianville for $15.00 plus a $1.50 fee.
+R0171548|we go out for dinner as a family|pay with the debit card|treat everyone tonight|A 40-year-old's $102.15 bill at Dufresne's Kitchen was declined: the account did not have enough to cover it.
+R0171845|the car payment is due and the paycheck is a week away|take a small online loan|keep the car|A 34-year-old borrowed $400.00 online from Harborline Card; $112.00 in finance charges are due when she repays it.
+R0171932|a cough has hung on for two weeks|hold off on the doctor until the old bill is smaller|stay out of collections|A 20-year-old customer service rep skipped a visit; the last medical bill is still being paid off at $40 a month.
+R0173190|my Medicaid renewal is due|mail the forms|keep my coverage|A 40-year-old mailed his Medicaid renewal to the state's Medianville office, spending $0.78 on postage.
+R0174988|I have a little SNAP left|use it on staples|save my cash for gas money for my ride|A 51-year-old got a ride 38.3 miles to Penny Pine Dollar – Garfield Park and spent the last $9.13 of her SNAP.
+R0175794|we need groceries for the week|do the main shopping trip|fill the pantry|An 83-year-old drove 22.8 miles to Crossroads General Store and spent $102.30.
+R0176312|my benefits renewal came back|fix the form and send it again|keep my food benefits|A 72-year-old corrected her renewal and mailed it back to the state's Medianville office, spending $0.78 on postage.
+R0177544|our street is permit-only|buy the parking sticker online|park near the house|A 37-year-old mail carrier paid the City of Medianville $35.00 online for a residential parking permit, plus a $1.50 fee.
+R0179307|I borrowed from my brother-in-law|pay him back through the app|keep things even|A 26-year-old sent $93.00 by app to pay back her brother-in-law.
+R0179315|my mother is short this month|send her money through an app|help without a trip|A 33-year-old consultant sent $67.00 by app to his 71-year-old mother.
+R0179915|my father needs his medicine|pick it up for him|keep him stocked without another trip|A 39-year-old deli worker spent $61.65 at Wellspring Pharmacy – Riverfront on his 69-year-old father's medicine.
+R0179952|my taxes are simple this year|file for free online|keep the whole refund|A 65-year-old fast food worker spent 83 minutes filing a free federal return on her phone; there is no internet at home.
+R0181780|my father needs a ride to the store|take him after work|make sure he has what he needs|A 38-year-old consultant spent 42 minutes taking his 66-year-old father on an errand.
+R0183483|I need cash for the week|take $300 from the ATM|pay the corner store and the bus|A 64-year-old's $300.00 withdrawal at Three Forks Credit Union – Midtown was declined: the balance was lower than that.
+R0184862|I owe a friend for groceries|send it through the app|settle up today|A 30-year-old's $130.00 app transfer was declined: the linked account did not have enough to cover it.
+R0186231|something has been wrong for weeks|see a doctor I can afford|get it treated before it gets worse|A 34-year-old accountant without insurance put off seeing a doctor; his account was short for the $160 visit.
+R0186616|my food benefits renewal came back|fix the form and send it again|keep my SNAP|A 64-year-old corrected his renewal and mailed it back to the state's Ashford Mills office, spending $0.78 on postage.
+R0186618|I have been feeling sick for days|see a doctor I can afford|get better without missing work|A 42-year-old home health aide put off seeing a doctor; the $160 visit was more than she had to spare.
+R0188565|my monthly work-hours report is due|file it online|keep my Medicaid|A 30-year-old salesperson filed his monthly Medicaid work-hours report online on the second try.
+R0188947|my refund has not arrived|call the IRS|find out what happened|A 59-year-old college staff member waited 71 minutes on the IRS phone line about a refund that has not arrived.
+R0189539|I am playing a game on my phone|buy a small add-on|keep going|A 41-year-old spent $2.13 on an in-app purchase through PlayOrbit.
+R0189880|the boat loan payment is due|pay it online|keep the boat for summer|A 52-year-old teaching assistant paid $392.00 on his boat loan to Three Forks Credit Union – Midtown.
+R0189958|money from my ex lands in the app|move it to my bank today|buy groceries for the kids|A 35-year-old moved $118.00 from Palmo to her bank account instantly and paid a $2.07 fee.
+R0190210|the mortgage payment is short this month|take a small online loan|pay the lender on time|A 25-year-old deli worker borrowed $300.00 online from Harborline Card; $72.00 in finance charges are due when he repays it.
+R0190458|I need cash for the job site|take it out at the ATM|pay my helper|A 46-year-old contractor withdrew $200.00 at the Corbel National Bank – Riverfront ATM.
+R0190524|a relative needs a few things|pick them up while I am out|keep him stocked without another trip|A 68-year-old spent $26.97 at Penny Pine Dollar – Dunmore on groceries and supplies for a 70-year-old relative she looks after.
+R0190650|a relative needs a few things|pick them up on the way home|keep her stocked without another trip|A 70-year-old veteran paid $13.45 in cash at Marlow's Market – Sycamore Ridge for things a 67-year-old relative he looks after needed.
+R0191895|I owe a friend for concert tickets|send it through the app|settle up today|A 29-year-old's $68.00 app transfer was declined: the linked account did not have enough to cover it.
+R0194846|the kids need new shoes|order them online|have them by the weekend|A 33-year-old spent $168.89 on Bazaaro using a prepaid card; she has no bank account.
+R0195575|our street is permit-only|buy the parking sticker online|park near the apartment|A 47-year-old insurance agent paid the City of Medianville $35.00 for a residential parking permit, plus a $1.50 fee.
+R0196382|the card statement comes due|pay the balance in full|avoid any interest|A 47-year-old airport security officer paid $6,682.29 to Summit Ridge Card Services online.
+R0196899|I finish my delivery shift|cash out today's earnings|pay for gas tomorrow|A 37-year-old driver cashed out $124.01 from Forkly instantly and paid a $0.85 fee.
+R0197700|my brother's visa petition needs a lawyer|pay the retainer|start the paperwork right|A 38-year-old school bus driver paid Castellano Immigration Law a $1,500.00 retainer online for his brother's case.
+R0200804|my nephew at college is short on food money|send it through the app|help him through the week|A 31-year-old assembler sent $58.00 by app to his 19-year-old nephew at college.
+R0200864|the day's card sales settle|have the batch paid out|cover tomorrow's supplies|LubeLane Quick Oil – Ashford East settled 4 card sales worth $335.54; processing fees took $6.52.
+R0201587|the day's card sales settle|have the money deposited|pay the distributor on Friday|Dunmore Square Tobacco Outlet settled $661.97 in card sales; $647.89 was deposited after $14.08 in fees.
+R0201883|the day's card payments settle|have them deposited|keep the practice's books current|Airport Road Internal Medicine Associates settled $140.41 in card payments; $138.99 was deposited after $1.42 in fees.
+R0201900|I fall and cannot get up|have paramedics help me up and check me|know whether I am hurt|County EMS helped a 77-year-old up after a fall at home and checked her over in 36 minutes; the county levy covered the $448.00 cost.

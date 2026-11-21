@@ -1,12 +1,23 @@
-// ===== Halvern in Motion v3 · sound: a quiet city in the background, a pluck for each record =====
-// Ported from the Halvern Sound Lab (Mix A, chosen Nov 20, 2026). Everything is generated with the Web Audio API.
+// ===== Medianville in Motion v3 · sound: a quiet city in the background, a pluck for each record =====
+// Ported from the project's sound lab (Mix A, chosen Nov 20, 2026). Everything is generated with the Web Audio API.
 // Sound is off until the person turns it on (the speaker button or the S key). The mix is remembered in this browser.
 (function () {
   'use strict';
-  const KEY = 'halvern-v3-sound-v1';
+  const KEY = 'medianville-sound-v1';
+  // The mix was saved under this key before the city was renamed (Nov 20, 2026). It's read once, copied to KEY and removed.
+  const OLD_KEY = 'halvern-v3-sound-v1';
   const DEF = { master: 0.7, amb: { on: true, vol: 0.25 }, rec: { on: true, vol: 0.6 } };
   let set = JSON.parse(JSON.stringify(DEF));
-  try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.amb && s.rec) set = { master: +s.master || DEF.master, amb: { on: !!s.amb.on, vol: +s.amb.vol }, rec: { on: !!s.rec.on, vol: +s.rec.vol } }; } catch (e) {}
+  const load = () => {
+    try {
+      const v = localStorage.getItem(KEY);
+      if (v !== null) return v;
+      const old = localStorage.getItem(OLD_KEY);
+      if (old !== null) { try { localStorage.setItem(KEY, old); localStorage.removeItem(OLD_KEY); } catch (e) {} }
+      return old;
+    } catch (e) { return null; }
+  };
+  try { const s = JSON.parse(load() || 'null'); if (s && s.amb && s.rec) set = { master: +s.master || DEF.master, amb: { on: !!s.amb.on, vol: +s.amb.vol }, rec: { on: !!s.rec.on, vol: +s.rec.vol } }; } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(set)); } catch (e) {} };
 
   // pitch by record kind (C major pentatonic); failures get their own low thud
@@ -152,7 +163,7 @@
 
   // ---------- public hooks the app calls ----------
   let acc = 0;
-  const Sound = (window.HalvernSound = {
+  const Sound = (window.MedianvilleSound = {
     rec(vk) { if (!E || !on) return; if (vk === 'fail') E.fails++; else E.cnt[vk] = (E.cnt[vk] || 0) + 1; },
     frame(dt) {
       if (!E) return; acc += dt; if (acc < 0.05) return; // schedule about 20 times a second

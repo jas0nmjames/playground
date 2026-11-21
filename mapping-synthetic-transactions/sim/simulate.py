@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Generate one simulated day (or several) of transactions for Halvern, a synthetic American city.
+"""Generate one simulated day (or several) of transactions for Medianville, a synthetic American city.
 
     python simulate.py                                  # Wednesday, March 3, 2027, full city, seed 20270303
     python simulate.py --date 2027-03-05 --out out_fri  # another day, same residents
     python simulate.py --weather storm                  # shock scenario
-    python simulate.py --days 5 --out week              # move the city forward day by day, carrying balances
+    python simulate.py --days 5 --out week              # move the city forward day by day, carrying balances and chains
+    python simulate.py --date 2027-03-01 --days 31 --out month   # the month run (phase 4): see reference/medianville-2027-03-month-run-record.md
     python simulate.py --households 4000                # 10% sample for quick runs (weights in households.csv)
 """
 import argparse
@@ -14,8 +15,8 @@ import json
 import os
 import time
 
-from halvern_sim import blocks, context, main, output
-from halvern_sim.config import PARAMS
+from medianville_sim import blocks, carry, context, main, output
+from medianville_sim.config import PARAMS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -32,13 +33,19 @@ def load_overrides(path):
 def save_state(sim, path):
     st = {"date": sim.cal["iso"], "wallets": {W.wid: [W.bank, W.cash, W.prepaid, W.cc_bal, W.savings] for W in sim.wallets},
           "benefits": {H.hid: [H.snap_bal, H.wic_bal] for H in sim.households if H.snap or H.wic}}
+    if sim.carry is not None:
+        st["carry"] = sim.carry.to_state()
     with open(path, "w") as f:
         json.dump(st, f)
 
 
-def load_state(sim, path):
+def read_state(path):
     with open(path) as f:
-        st = json.load(f)
+        return json.load(f)
+
+
+def load_state(sim, path):
+    st = read_state(path)
     for W in sim.wallets:
         v = st["wallets"].get(W.wid)
         if v:
@@ -53,12 +60,19 @@ def load_state(sim, path):
     return st["date"]
 
 
-def run_day(cfg, out, state_in=None, state_out=None, overrides=None, blocks_path=None, log=print):
+def run_day(cfg, out, state_in=None, state_out=None, overrides=None, blocks_path=None, log=print, carried=False):
+    """Simulate one day. With state_in, or carried=True on a run's first day, the day is carried: it starts from the
+    balances and unfinished business of the day before (medianville_sim/carry.py). Otherwise it is a one-day run."""
     t0 = time.time()
-    log("Halvern %s (seed %s, %s households, weather %s)" % (cfg["SIM_DATE"], cfg["RANDOM_SEED"], cfg["N_HOUSEHOLDS"], cfg["WEATHER"]))
+    log("Medianville %s (seed %s, %s households, weather %s)" % (cfg["SIM_DATE"], cfg["RANDOM_SEED"], cfg["N_HOUSEHOLDS"], cfg["WEATHER"]))
     sim = main.build(cfg, log=log)
     if state_in:
         log("  carried balances forward from %s" % load_state(sim, state_in))
+        st = read_state(state_in).get("carry")
+        c = carry.Carry.from_state(st) if st else carry.Carry(cfg["RANDOM_SEED"], sim.cal["iso"])
+        c.start_day(sim)
+    elif carried:
+        carry.Carry(cfg["RANDOM_SEED"], sim.cal["iso"]).start_day(sim)
     main.simulate(sim, log=log)
     os.makedirs(out, exist_ok=True)
     tagger = None
@@ -67,9 +81,11 @@ def run_day(cfg, out, state_in=None, state_out=None, overrides=None, blocks_path
         log("  tagged %d households into %d mapped blocks from %s" % (len(tagger.block_of), len(tagger.doc["blocks"]), os.path.relpath(blocks_path)))
     output.write_tables(sim, out, tagger)
     # hand-written text belongs to the baseline day only (same date, seed, size, weather and prices, no carried state)
-    baseline = not state_in and all(cfg.get(k) == PARAMS.get(k) for k in PARAMS)
+    baseline = sim.carry is None and all(cfg.get(k) == PARAMS.get(k) for k in PARAMS)
     ov = load_overrides(overrides) if baseline else {}
     n_ov = sim.write_records(os.path.join(out, "records.csv"), ov, tagger)
+    if sim.carry is not None:
+        sim.carry.after_write(sim, out)
     S = output.summarize(sim)
     context.write_context(sim, os.path.join(out, "public_services_context.csv"))
     context.write_assumptions(sim, os.path.join(out, "assumptions.csv"), S)
@@ -88,13 +104,14 @@ def cli():
     ap.add_argument("--households", type=int, default=PARAMS["N_HOUSEHOLDS"], help="41400 is the full city")
     ap.add_argument("--weather", default=PARAMS["WEATHER"], choices=["ordinary", "storm", "heat"])
     ap.add_argument("--out", default="out")
-    ap.add_argument("--days", type=int, default=1, help="simulate this many consecutive days, carrying balances forward")
-    ap.add_argument("--state-in", help="balances saved by an earlier run (state.json)")
-    ap.add_argument("--state-out", help="where to save end-of-day balances")
+    ap.add_argument("--days", type=int, default=1, help="simulate this many consecutive days, carrying balances and unfinished business forward")
+    ap.add_argument("--state-in", help="balances and carried state saved by an earlier run (state.json); the day is carried")
+    ap.add_argument("--state-out", help="where to save end-of-day balances and carried state")
+    ap.add_argument("--carry", action="store_true", help="carry a single day even without --state-in (the first day of a run continued with --state-in)")
     ap.add_argument("--gas-price", type=float, default=PARAMS["GAS_PRICE"])
     ap.add_argument("--grocery-price-mult", type=float, default=PARAMS["GROCERY_PRICE_MULT"])
     ap.add_argument("--portal-outage", default="640-805", help="state benefits portal outage as START-END minutes after midnight, or 'none'")
-    ap.add_argument("--blocks", default=blocks.find_blocks(HERE + "/halvern_sim/x"), help="the systems lens's mapped blocks (blocks.json); tags records with block_id, block_pattern and context_ids")
+    ap.add_argument("--blocks", default=blocks.find_blocks(HERE + "/medianville_sim/x"), help="the systems lens's mapped blocks (blocks.json); tags records with block_id, block_pattern and context_ids")
     ap.add_argument("--no-blocks", action="store_true", help="leave the block columns out")
     ap.add_argument("--overrides", default=os.path.join(HERE, "detailed_overrides.csv"), help="hand-written text for sampled records")
     a = ap.parse_args()
@@ -109,7 +126,8 @@ def cli():
         st_out = a.state_out if a.days == 1 else os.path.join(a.out, "state_%s.json" % cfg["SIM_DATE"].isoformat())
         if a.days > 1:
             os.makedirs(a.out, exist_ok=True)
-        run_day(cfg, out, state_in=state, state_out=st_out, overrides=a.overrides, blocks_path=None if a.no_blocks else a.blocks)
+        run_day(cfg, out, state_in=state, state_out=st_out, overrides=a.overrides, blocks_path=None if a.no_blocks else a.blocks,
+                carried=a.days > 1 or a.carry)
         state = st_out
 
 

@@ -1,4 +1,4 @@
-"""The validation checks from the v1 build notes (reference/halvern-build-approach.md, step 9), as tests.
+"""The validation checks from the v1 build notes (reference/medianville-build-approach.md, step 9), as tests.
 
 Each test recomputes its check from the output files (and, for time, the simulated shifts)
 rather than trusting the summary the simulator writes about itself.
@@ -13,7 +13,7 @@ import pytest
 
 from conftest import REPO_DIR, SIM_DIR, TEST_HOUSEHOLDS, read_csv
 
-# Controlled vocabularies from reference/halvern-transaction-generator-prompt.md
+# Controlled vocabularies from reference/medianville-transaction-generator-prompt.md
 RECORD_TYPES = {"purchase", "bill_payment", "income", "benefit_issuance", "benefit_redemption", "transfer", "tax", "b2b",
                 "public_service_encounter", "insurance_claim", "non_monetary_job", "failed_attempt"}
 CHANNELS = {"in_person", "online", "app", "phone", "mail", "automatic"}

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Establishments per 100,000 residents for the kinds of organization Halvern has, from County Business Patterns 2023.
+"""Establishments per 100,000 residents for the kinds of organization Medianville has, from County Business Patterns 2023.
 
     python3 -I sources/tools/cbp_outlets.py
 
 Reads sources/raw/cbp/cbp23us.zip (national file, all legal forms; NAICS 2017 codes) and writes
-sources/derived/cbp_establishments_per_100k.csv: Halvern kinds, the NAICS codes summed for them, US establishments,
+sources/derived/cbp_establishments_per_100k.csv: Medianville kinds, the NAICS codes summed for them, US establishments,
 and establishments per 100,000 residents (US population 2023, about 334.9 million, stated here). CBP counts only
 establishments with paid employees, so kinds with many one-person businesses (salons, storefront churches) run low.
 """
@@ -38,13 +38,13 @@ def main():
     rows = []
     for kinds, codes in MAP:
         n = sum(est.get(c, 0) for c in codes.split())
-        rows.append({"halvern_kinds": kinds, "naics_2017": codes, "us_establishments": n, "per_100k": "%.2f" % (n / US_POP_2023 * 1e5)})
+        rows.append({"medianville_kinds": kinds, "naics_2017": codes, "us_establishments": n, "per_100k": "%.2f" % (n / US_POP_2023 * 1e5)})
     with open(OUT, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
     for r in rows:
-        print("%-40s %8d  %6s per 100k" % (r["halvern_kinds"], r["us_establishments"], r["per_100k"]))
+        print("%-40s %8d  %6s per 100k" % (r["medianville_kinds"], r["us_establishments"], r["per_100k"]))
     print("wrote %s" % os.path.relpath(OUT, os.path.dirname(SOURCES)))
 
 

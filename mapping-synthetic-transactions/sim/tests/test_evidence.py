@@ -36,7 +36,7 @@ def test_representatives_sit_in_their_class():
 
 def test_every_target_metric_is_measured(run10):
     sim, out = run10
-    from halvern_sim import output
+    from medianville_sim import output
     m = checks.measure_dir(out, output.summarize(sim))
     day = [dict(date="x", cls="x", weather="ordinary", weight=1.0, m=m)]
     with open(checks.TARGETS, newline="") as f:
