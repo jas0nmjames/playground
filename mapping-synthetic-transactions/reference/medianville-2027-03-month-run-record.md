@@ -16,7 +16,7 @@ Generated 2026-11-20 in Claude Code on Jason's Mac, on branch `medianville-v2-ph
 | SHA-256 of the `SHA256SUMS` inside | `05ff99d77126e88da366027ce283b6a742501165d6339304e24c8f148701e206` |
 | Simulator | `sim/` at commit `71accfe` (unchanged since; the evidence report's T02 note was added after) |
 | Built with | Python 3.11.5 (python.org installer), numpy 2.4.6, zlib 1.2.12, macOS 26.7.3 on arm64; 708 s for the 31 days, under 1 GB of memory |
-| Release download checked | pending: the Release does not exist yet |
+| Release download checked | 2026-11-21: the zip downloaded from the Release is 459,134,321 bytes with SHA-256 `733931531cd7b5a4bb581468e7b555f68cddedea4ba29f672f3aab97ffe1ed58`, and its `SHA256SUMS` hashes to `05ff99d7…e206`, both matching the build (GitHub's own asset digest agrees) |
 
 The zip's SHA-256 depends on the zlib that compresses it. `SHA256SUMS` lists the SHA-256 of every file inside, so two builds whose zips differ can still be compared file by file.
 
