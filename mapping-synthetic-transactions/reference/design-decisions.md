@@ -312,3 +312,8 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 7.4 The board turns while paused
 - **Decided:** Turning, tilting and north-up ease into place even while playback is paused. Only the city's motion (records, vehicles, people) stops.
 - **Who:** Jason.
+
+### 7.5 The map sheet joins the viewer's look
+- **Decided:** The Map keeps its topographic drawing (contours, cased roads, creek, symbols) but takes the viewer's design system: Figtree instead of Barlow Condensed, navy ink (`#0E1B2E`) instead of black, lighter paper (`#FBF9F4`), and the slate page behind the sheet instead of warm grey, with a thin border and soft shadow like the viewer's cards. The italic serif stays only for the creek's name, as on printed maps. Street names use an en space between words, since a plain space nearly vanishes at map sizes.
+- **Decided:** The margin below the frame is laid out in clear columns: the legend on the left, the scale and north arrow on the right, and the title block under them. It starts a clear gap below the outer frame line, which used to run through the LEGEND heading.
+- **Who:** Jason, on a proposal.

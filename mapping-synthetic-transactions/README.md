@@ -57,7 +57,7 @@ Both animated pages link to each other and to the systems lens in their footers.
 
 The Miniature view at 12:19 p.m., playing at five minutes a second. Purple dashed arcs are public services, here children headed to school; pink pins count failures at a place.
 
-![The same moment on the Map view, drawn as a printed map sheet with numbered failure triangles](screenshots/v3-map.jpg)
+![The Map view around Courthouse Square, drawn as a printed map sheet in the viewer's type and navy ink, with numbered failure triangles](screenshots/v3-map.jpg)
 
 The same moment in the Map view, zoomed out to show most of the sheet.
 
@@ -93,7 +93,7 @@ Placeholder records move while the real day downloads (16 MB), and then the cloc
 
 The page is titled **Medianville**, with the subtitle "One day of transactions in a simulated American city". A small built-in sample day plays while the full simulation downloads. The chip in the header shows the progress ("Sample day · loading the full simulation"), then "201,753 records · March 3, 2027". If the download fails, the chip says so and the sample day keeps playing. Playback starts in **Live**: the simulated day runs at your own time of day, one minute a minute. Pick 1, 5 or 20 min/s to speed it up.
 
-- **Views.** **Miniature** is a 3D model of the town, lit by the sun and sky of the hour, with a focus blur (Off, Subtle or Full). **Map** is the same town drawn as a printed map sheet. **M** switches between them. Drag to pan, and scroll or use **+** and **−** to zoom.
+- **Views.** **Miniature** is a 3D model of the town, lit by the sun and sky of the hour, with a focus blur (Off, Subtle or Full). **Map** is the same town drawn as a printed map sheet, set in the viewer's own type (Figtree) and navy ink on light paper, with its legend, scale and title block in the margin below the frame. **M** switches between them. Drag to pan, and scroll or use **+** and **−** to zoom.
 - **Turning the miniature.** The round buttons beside the zoom buttons turn the board 15° at a time, and the compass between them shows north and puts it back up. With a mouse, drag with the right button, or hold Shift, Alt or Ctrl while dragging: sideways turns, up and down tilts, from a low skyline view at 8° to a steep 72°. On a touch screen, two fingers turn, tilt and zoom. Keys: **Q** and **E** turn, **N** puts north up, **Page Up** and **Page Down** tilt. The Map always stays north up.
 - **Records in flight.** Each record arcs from one party to the other. Click a path to open it; where several overlap, a chooser lists them. With the keyboard, **[** and **]** step through the records in flight and **Enter** opens one.
 - **Places.** Click a home or building to see its recent records. Since the real day is folded onto v3's town, each home or building also says how many real households or places it stands for. A pin counts the failures at a place so far today; click it to list them.
