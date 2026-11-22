@@ -294,3 +294,21 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 6.5 Links to the data explorer
 - **Decided:** "Data" goes in the viewer header (not in the view switch, since the explorer is a different page). The overlay carries a secondary button, and each record's Details rail gets an "Open in data explorer" link to that record.
 - **Who:** Jason, on a proposal.
+
+## 7. Polish pass (2026-11-22)
+
+### 7.1 The viewer opens in Live
+- **Decided:** Playback starts at Live: the simulated day plays at the visitor's own time of day, one minute a minute. 1, 5 and 20 min/s are still one tap away. A visit at night opens on a quiet, dark city, and that's accepted.
+- **Who:** Jason.
+
+### 7.2 "Medianville", with a subtitle that says what it is
+- **Decided:** The header reads **Medianville** with the subtitle "One day of transactions in a simulated American city", replacing "Medianville in Motion". Because the subtitle says "simulated", the header drops its "Simulated city · no real people" chip. The chip stays in the intro overlay and on About.
+- **Who:** Jason, choosing from proposals.
+
+### 7.3 "Sample day", not "placeholder" and "the real one"
+- **Decided:** While the run downloads, the chip reads "Sample day · loading the full simulation". "The real one" suggested real data, and nothing on the page is real.
+- **Who:** Jason, on a proposal.
+
+### 7.4 The board turns while paused
+- **Decided:** Turning, tilting and north-up ease into place even while playback is paused. Only the city's motion (records, vehicles, people) stops.
+- **Who:** Jason.
