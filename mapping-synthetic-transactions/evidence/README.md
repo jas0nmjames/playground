@@ -5,9 +5,12 @@ The real-world research read beside Medianville. Nothing here goes into a record
 | File | What it is |
 |---|---|
 | [`report.md`](report.md) | The human-evidence report (first pass, November 17, 2026): the first day scored against 69 real sources, what it was missing (which became v2's new jobs), ten frictions with real voices, project leads and field-visit prompts. Kept as written. |
-| [`sources.csv`](sources.csv) | The report's 69 sources: title, publisher, year, URL, method, sample, population, geography and lens (nonpartisan, government, advocacy, industry, center, right). |
+| [`sources.csv`](sources.csv) | The 69 sources: title, publisher, year, URL, method, sample, population, geography and lens (nonpartisan, government, advocacy, industry, center, right). |
+| [`evidence.csv`](evidence.csv) | The 76 findings, each tied to a source and to Medianville by job category, friction tags, household type and district type, with how it relates to the simulation and a strength grade (A to D). Their `E` ids are the `evidence_ids` in `../systems-lens/blocks.json`. |
+| [`quotes.csv`](quotes.csv) | 25 short quotes (under 15 words, one per source), each with its speaker as the source described them and a "When…, I want…, so I can…" restatement in Medianville's form. |
+| [`research-prompt.md`](research-prompt.md) | The prompt that produced the files above. |
 
-Still in the Claude project, not yet here: the 76 findings (`evidence.csv`, the `E` ids cited in the report and in `systems-lens/blocks.json`), the 25 quotes (`quotes.csv`) and the research prompt. The [data update plan](../reference/medianville-data-update-plan.md), section 2, describes the `evidence_links.csv` that will join findings to records.
+Not built yet: `evidence_links.csv`, which will join findings to records ([data update plan](../reference/medianville-data-update-plan.md), section 2).
 
 The other research:
 

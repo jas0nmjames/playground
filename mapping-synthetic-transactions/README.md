@@ -211,7 +211,7 @@ which writes `data/runs/v2/medianville_<date>.zip` and `data/runs/manifest.json`
 | `sim/evidence/month.py`, `sim/evidence/month_targets.csv` | The month's evidence checks: its targets, the chains across days, and the typed-day targets over the month |
 | `sim/evidence/results/v2_month_2027-03/` | The March 2027 month's `summary.md` and `evidence_checks.md`. The month itself is a Release download (above), not in the repo. |
 | `tools/pack_month.py` | Packs a carried month into one zip, the same bytes every time, with a `SHA256SUMS` file inside |
-| `evidence/` | The real-accounts research that came before the downloads: the human-evidence report (69 sources scored against the first day) and its sources list. Its findings and quotes are still in the Claude project. |
+| `evidence/` | The real-accounts research that came before the downloads: the human-evidence report (the first day scored against 69 real sources), its 69 sources, 76 findings and 25 quotes, and the prompt that produced them. The findings' `E` ids are the `evidence_ids` in `systems-lens/blocks.json`. |
 | `sources/` | The download manifest and log, the tools that build `sources/derived/` from the raw downloads, and the derived tables the simulator reads. Raw files stay out of git. |
 | `screenshots/` | The screenshots above, plus the intro and the About page |
 | `reference/` | The documents behind the project, listed below |
@@ -222,7 +222,7 @@ which writes `data/runs/v2/medianville_<date>.zip` and `data/runs/manifest.json`
 - [Seeing the Margins: What a Representative American Day Reveals](reference/seeing-the-margins.md): the research white paper. Why no real city stands in for the US, and what fragility, payment habits and government look like in an ordinary day.
 - [Synthetic Mid-America: City Design v0.1](reference/synthetic-mid-america-city-design-v0.1.md): the design of the city, covering districts, economy, transaction model, field visits, and the lenses used to read it.
 - [Medianville data update plan](reference/medianville-data-update-plan.md): how the evidence was folded in and the run went past one day, phase by phase, with each phase's status.
-- [Human evidence report](evidence/report.md) and [its sources](evidence/sources.csv): the first day scored against 69 real sources, kept as written.
+- [Human evidence report](evidence/report.md): the first day scored against 69 real sources, kept as written, with its [sources](evidence/sources.csv), [findings](evidence/evidence.csv), [quotes](evidence/quotes.csv) and [research prompt](evidence/research-prompt.md).
 - [Medianville transaction generator prompt](reference/medianville-transaction-generator-prompt.md): the prompt that generated the data.
 - [How the Medianville day was built](reference/medianville-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed.
 - [Medianville run record](reference/medianville-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
@@ -239,7 +239,7 @@ Everything in the data is synthetic. People, businesses and local agencies are i
 The research came in four rounds, and the [About page](about/#sources) lists every source:
 
 1. **Calibration anchors** for the first run: the American Community Survey, Current Employment Statistics, the Diary of Consumer Payment Choice, SHED, United For ALICE, the Consumer Expenditure Survey and 2027 program figures ([run record](reference/medianville-2027-03-03-run-record.md)).
-2. **Real accounts** beside the first day: 69 sources and 76 findings in the [evidence report](evidence/report.md), which named what v2 had to add.
+2. **Real accounts** beside the first day: 69 sources, 76 findings and 25 quotes in [`evidence/`](evidence/), summed up in the [evidence report](evidence/report.md), which named what v2 had to add.
 3. **Downloaded datasets** that set v2's rates: 42 public datasets in [`sources/manifest.csv`](sources/manifest.csv) (10 more listed for later versions), built into `sources/derived/` and named target by target in `sim/evidence_targets.csv`.
 4. **District history** behind the systems lens: each circumstance's `source_note` in `systems-lens/blocks.json`.
 
@@ -341,6 +341,8 @@ The systems lens was one Claude app session (claude-opus-5-5) on November 18, 20
 
 The data explorer was one Claude app session (claude-opus-5-5) on November 19, 2026. It read the run and v3's loader, wrote `explorer/index.html`, checked its counts against the run's summary, tested it in headless Chrome at desktop and phone sizes, took the screenshot, and wrote these README sections. That session couldn't push, so the change came to this repository as a patch. Its row is an estimate of about 70 model requests, counted from the session's tool calls rather than measured.
 
+v2's first three phases were Claude Code sessions (claude-opus-5-5) from November 18 to 20, 2026, recorded here from their commits rather than measured. A cloud session copied the simulator, wrote the evidence targets and the typed-day set with their checks, and fetched the downloads that cloud machines could reach; another tagged records with the systems lens's blocks. A session on Jason's Mac fetched the rest from a home connection, set caregiving from ATUS, and made batches C (calendar and day weights), I (household inputs), J (the missing jobs), P (places and organizations) and R (rates tuned to the targets). Their rows have no figures, so the totals leave them out.
+
 The intro, the About page and the data links were one Claude Code session (claude-opus-5-5) on November 20, 2026, from Jason's handoff and decision log. It checked the repository for the old name, wrote the intro over the viewer and the About page, added the Data and About links and the explorer links in the record and household sheets, added the decision log to `reference/`, tested it all in headless Chrome at desktop and phone sizes (51 checks, covering focus, keys, deep links, blocked storage and reduced motion), ran the simulator's tests, took the screenshots, updated this README and opened the pull request into `development`. Its row counts 56 model requests measured in the session transcript and about 10 more estimated for the README, the commit, the pull request and the reply.
 
 The rename to Medianville was one Claude Code session (claude-opus-5-5) on November 20, 2026, from Jason's brief, between v2's phase 3 and packaging. Before changing anything it ran the v2 simulator over the typed-day set and kept every output outside git. It renamed the simulator package and every invented name, reran the year, and mapped every output back to the old name: all 181 files matched batch R byte for byte. It wrote `tools/rename_run.py` and the renamed copy of v1 with a round-trip test, renamed the pages, the sound setting's key and the reference docs, updated the decision log, the data update plan and this README, ran the simulator's tests, tested the pages in headless Chrome at desktop and phone sizes, retook six screenshots and opened the pull request into `development`. Its row counts 182 model requests measured in the session transcript and about 15 more estimated for the commit, the pull request and the reply; at the time of measuring, the session had used ≈ 50M tokens, about 99% of them cache reads.
@@ -370,6 +372,9 @@ The sources and docs review was one Claude Code session (claude-opus-5-5) on Nov
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 1.008 kWh | 0.389 kg CO₂ | 0.504 L |
 | November 18, 2026 | Claude app (systems lens) | claude-opus-5-5 | 1.620 kWh | 0.625 kg CO₂ | 0.810 L |
 | November 19, 2026 | Claude app (data explorer) | claude-opus-5-5 | 1.260 kWh | 0.486 kg CO₂ | 0.630 L |
+| November 18–19, 2026 | Claude Code, cloud (v2 phases 0–2: simulator copy, targets, typed days, downloads) | claude-opus-5-5 | not measured | — | — |
+| November 19, 2026 | Claude Code, cloud (tagging records with the lens's blocks) | claude-opus-5-5 | not measured | — | — |
+| November 19–20, 2026 | Claude Code, on the Mac (v2 phase 2 home downloads; phase 3 batches C, I, J, P and R) | claude-opus-5-5 | not measured | — | — |
 | November 20, 2026 | Claude Code (intro, About page, data links) | claude-opus-5-5 | 1.188 kWh | 0.459 kg CO₂ | 0.594 L |
 | November 20, 2026 | Claude Code (rename to Medianville) | claude-opus-5-5 | 3.546 kWh | 1.369 kg CO₂ | 1.773 L |
 | November 20, 2026 | Claude Code (phase 4: the month) | claude-opus-5-5 | 3.870 kWh | 1.494 kg CO₂ | 1.935 L |
