@@ -1,6 +1,6 @@
 # Medianville data update plan: fold in the human evidence, then go past one day
 
-Written 2026-11-18. Reads with `claude/halvern-human-evidence-report.md` (the evidence), the [transaction generator prompt](medianville-transaction-generator-prompt.md) (the spec), [how v1 was built](medianville-build-approach.md) and the City Design v0.1 and "Seeing the Margins" docs (the four clocks). The work happens in Claude Code, in `playground/mapping-synthetic-transactions`, on a feature branch merged into `development`.
+Written 2026-11-18. Reads with `claude/halvern-human-evidence-report.md` (the evidence; now in the repo as [`evidence/report.md`](../evidence/report.md)), the [transaction generator prompt](medianville-transaction-generator-prompt.md) (the spec), [how v1 was built](medianville-build-approach.md) and the City Design v0.1 and "Seeing the Margins" docs (the four clocks). The work happens in Claude Code, in `playground/mapping-synthetic-transactions`, on a feature branch merged into `development`.
 
 ## 1. Where things stand
 

@@ -1,10 +1,14 @@
-# Medianville source downloads: instructions for Claude Code
+# Medianville source downloads
 
-Companion to `halvern-download-manifest.csv` (51 datasets) and `medianville-data-update-plan.md` (phase 2). Run in `playground/mapping-synthetic-transactions` on a feature branch; merge into `development`, never `main`.
+The public datasets that set v2's rates. **Status (2026-11-22):** `manifest.csv` has 52 rows. All 42 rows in tiers 1 and 2 are `fetched`; the 10 in tiers 3 and 4 (ACS PUMS, NHTS, SIPP, JPMorgan Chase Institute, CFPB complaints; PSID, HRS, CBO, EIG, NOAA normals) are `to_fetch`, for later versions. `download_log.jsonl` records every file with its URL and SHA-256. Raw files stay out of git (`sources/raw/`); `tools/` builds the tables in `derived/` that the simulator reads, and `../sim/evidence_targets.csv` names the source behind each target. The About page lists them all. The real-accounts research that came before them is in [`../evidence/`](../evidence/). Finishing the downloads on a home connection is in [`MAC-DOWNLOADS.md`](MAC-DOWNLOADS.md).
+
+## Instructions for Claude Code (phase 2, as written)
+
+Companion to the manifest (written as `halvern-download-manifest.csv`, now `manifest.csv`) and [`medianville-data-update-plan.md`](../reference/medianville-data-update-plan.md) (phase 2). Run in `playground/mapping-synthetic-transactions` on a feature branch; merge into `development`, never `main`.
 
 ## Setup
 
-1. Copy `halvern-download-manifest.csv` to `sources/manifest.csv`.
+1. Copy the download manifest to `sources/manifest.csv` (done).
 2. Add `sources/raw/` to `.gitignore`. Commit the manifest and anything in `sources/derived/`, never the raw files.
 
 ## For each row, in tier order (1, then 2; 3 and 4 only when asked)
