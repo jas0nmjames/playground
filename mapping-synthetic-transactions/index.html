@@ -2,24 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Medianville in Motion: Miniature and Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Medianville: a simulated city’s transactions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
 <style>
 :root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797; --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
   --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08); --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; }
-body { font-family:var(--ui); color:var(--ink); background:var(--page); display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100vh; min-height:420px; font-variant-numeric:tabular-nums lining-nums; -webkit-font-smoothing:antialiased; }
+body { font-family:var(--ui); color:var(--ink); background:var(--page); display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100vh; height:100dvh; min-height:420px; font-variant-numeric:tabular-nums lining-nums; -webkit-font-smoothing:antialiased; }
 button, input { font-family:inherit; }
 .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 :focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
 /* header */
-header.top { display:flex; align-items:center; gap:14px 18px; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--line); flex-wrap:wrap; }
-.brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; }
-h1 { font-size:18px; font-weight:700; margin:0; letter-spacing:-.01em; }
+header.top { position:relative; display:flex; align-items:center; gap:8px; padding:10px max(20px, env(safe-area-inset-right)) 10px max(20px, env(safe-area-inset-left)); background:var(--surface); border-bottom:1px solid var(--line); }
+.brand { display:flex; align-items:center; gap:14px; margin-right:auto; padding-right:10px; min-width:0; flex:1 1 auto; }
+.brandname { flex:none; min-width:0; }
+h1 { font-size:18px; line-height:1.2; font-weight:700; margin:0; letter-spacing:-.01em; }
+.brandname .sub { margin:1px 0 0; font-size:13px; line-height:1.3; font-weight:500; color:var(--ink2); }
+#datachip { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+#menu-btn { display:none; flex:none; }
 .chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; }
 fieldset.seg { display:inline-flex; border:1px solid var(--ctrl); border-radius:999px; padding:3px; margin:0; background:var(--surface); gap:2px; }
 fieldset.seg legend { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
@@ -36,7 +40,7 @@ main.body { display:grid; grid-template-columns:minmax(0,1fr) 360px; min-height:
 .layer { position:absolute; inset:0; opacity:0; transition:opacity .3s ease; }
 .layer.on { opacity:1; }
 body.rm .layer, body.rm .sheet, body.rm aside.rail { transition:none !important; }
-#L-map { background:#CBC4B5; }
+#L-map { background:var(--page); }
 #L-map svg, #L-map canvas { position:absolute; inset:0; width:100%; height:100%; }
 #L-mini canvas.gl { position:absolute; inset:0; width:100%; height:100%; display:block; }
 #overlay { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
@@ -123,11 +127,12 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .chip.warn { color:#8E3B6D; border-color:#E7C7DA; background:#FBF1F6; }
 .runpick { font:600 13px var(--ui); color:var(--ink); background:#fff; border:1px solid var(--ctrl); border-radius:999px; min-height:32px; padding:4px 10px; max-width:100%; cursor:pointer; }
 .runpick:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+footer.bar .runpick { min-height:40px; font-size:14px; padding:4px 12px; max-width:240px; }
 .credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
 .credit a { color:var(--ink2); }
 .credit a:hover { color:var(--ink); }
 /* bottom bar */
-footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px 20px 8px; background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap; }
+footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px max(20px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap; }
 #clock { font-size:22px; font-weight:700; min-width:118px; letter-spacing:-.01em; }
 #play { width:44px; height:44px; border-radius:999px; background:var(--ink); color:#fff; border:0; display:grid; place-items:center; cursor:pointer; flex:none; }
 .tlwrap { flex:1; min-width:260px; }
@@ -190,7 +195,8 @@ a.go { text-decoration:none; }
 .hdlinks { display:flex; gap:8px; }
 .hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; }
 .hdlink:hover { background:var(--page); }
-@media (max-width:1639px) { .kbdhint { display:none; } } /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
+@media (max-width:1639px) { .kbdhint { display:none; } }
+@media (min-width:1280px) and (max-width:1439px) { .sndlbl { display:none; } .sndbtn { padding:0 11px; } } /* the button keeps its label for screen readers */ /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
 /* first-visit intro: a dialog over the city, which keeps running behind it */
 .intro { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:24px 16px; }
 .intro[hidden] { display:none; }
@@ -239,65 +245,100 @@ a.go { text-decoration:none; }
   .lens-esc { display:none; }
 }
 @media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
+/* compact layout below 1280 px: a slim bar (title, Activity, a menu), the view switch and lens over the city.
+   The app shell moves the elements; these rules only style them where they land. */
+.scene-ctrls.left { left:12px; right:auto; justify-content:flex-start; }
+.scene-ctrls.left:empty { display:none; }
+.scene-ctrls.left fieldset.seg, .scene-ctrls.left .lensbtn { border-color:var(--line); box-shadow:var(--shadow); }
+.hdmenu { position:absolute; top:calc(100% + 6px); right:max(12px, env(safe-area-inset-right)); z-index:35; width:min(340px, calc(100vw - 24px)); max-height:calc(100dvh - 120px); overflow:auto; overscroll-behavior:contain; background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:12px; display:flex; flex-direction:column; gap:10px; }
+.hdmenu .m-day, .hdmenu .m-more { display:flex; flex-direction:column; gap:8px; }
+.hdmenu .m-day:empty, .hdmenu .m-blur:empty, .hdmenu .m-blur:has(> [hidden]) { display:none; } /* focus blur is for the Miniature only */
+.hdmenu .chip { align-self:flex-start; white-space:normal; }
+.hdmenu .runpick { width:100%; max-width:none; min-height:40px; font-size:14px; }
+.hdmenu #blurset { box-shadow:none; padding:0; justify-content:space-between; }
+.hdmenu #blurset .lbl { padding-left:2px; font-size:13.5px; }
+.hdmenu .sndbtn, .hdmenu .hdlink { width:100%; min-height:44px; justify-content:flex-start; border-radius:10px; }
+.hdmenu .hdlinks { flex-direction:column; }
+.hdmenu .sndpop { position:static; width:auto; max-width:none; box-shadow:none; padding:10px 2px 4px; }
+@media (max-width:1279px) {
+  header.top { padding:8px max(12px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left)); }
+  #menu-btn { display:grid; width:40px; height:40px; }
+  #drawer-btn { flex:none; }
+  .brandname { flex:0 1 auto; } /* the subtitle wraps under the title rather than running under the buttons */
+}
+@media (max-width:600px) {
+  .scene-ctrls.left .lensbtn { padding:0 12px; }
+  /* the zoom and turn buttons stack down the right edge, below the view switch and lens, so "Systems lens" keeps its full name */
+  #scene-right { top:60px; flex-direction:column; align-items:flex-end; }
+  #scene-right .card { flex-direction:column; }
+}
+@media (max-width:760px) {
+  footer.bar { gap:8px; padding-top:8px; padding-left:max(12px, env(safe-area-inset-left)); padding-right:max(12px, env(safe-area-inset-right)); }
+  #clock { font-size:18px; min-width:0; }
+  #play { width:40px; height:40px; }
+  #speedseg label { padding:4px 9px; font-size:13px; min-width:36px; }
+  #speedseg .u { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; } /* "1", "5", "20 min/s" on screen; full names for screen readers */
+  .tlwrap { flex-basis:100%; min-width:0; }
+}
 /* printed map sheet */
-svg.quad text { font-family:"Barlow Condensed", "Arial Narrow", sans-serif; }
+svg.quad text { font-family:var(--ui); }
+svg.quad .paper { stroke:var(--line); stroke-width:1px; vector-effect:non-scaling-stroke; }
+svg.quad .paper-sh { fill:#0E1B2E; opacity:.07; }
 svg.quad .cn { fill:none; stroke:#B08D6A; stroke-width:var(--cn); vector-effect:non-scaling-stroke; }
 svg.quad .ci { fill:none; stroke:#A87A50; stroke-width:var(--ci); vector-effect:non-scaling-stroke; }
 svg.quad .creek { fill:none; stroke:#2F6DB0; stroke-width:var(--cr); vector-effect:non-scaling-stroke; stroke-linecap:round; }
 svg.quad .lo, svg.quad .mc, svg.quad .li, svg.quad .mf { fill:none; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
-svg.quad .lo { stroke:#141414; stroke-width:var(--lo); }
-svg.quad .mc { stroke:#141414; stroke-width:var(--mc); }
-svg.quad .li { stroke:#F4EFE3; stroke-width:var(--li); }
+svg.quad .lo { stroke:#0E1B2E; stroke-width:var(--lo); }
+svg.quad .mc { stroke:#0E1B2E; stroke-width:var(--mc); }
+svg.quad .li { stroke:#FBF9F4; stroke-width:var(--li); }
 svg.quad .mf { stroke:#C9402C; stroke-width:var(--mf); }
-svg.quad .rail { stroke:#141414; stroke-width:1.4px; vector-effect:non-scaling-stroke; fill:none; }
-svg.quad .rt { stroke:#141414; stroke-width:1.1px; vector-effect:non-scaling-stroke; fill:none; }
-svg.quad .houses rect { fill:#141414; }
-svg.quad .bigs rect { fill:#E4DDCD; stroke:#141414; stroke-width:var(--bo); vector-effect:non-scaling-stroke; }
+svg.quad .rail { stroke:#0E1B2E; stroke-width:1.4px; vector-effect:non-scaling-stroke; fill:none; }
+svg.quad .rt { stroke:#0E1B2E; stroke-width:1.1px; vector-effect:non-scaling-stroke; fill:none; }
+svg.quad .houses rect { fill:#0E1B2E; }
+svg.quad .bigs rect { fill:#E4DDCD; stroke:#0E1B2E; stroke-width:var(--bo); vector-effect:non-scaling-stroke; }
 svg.quad .bigs rect.pod { fill:#EDE7DA; stroke-width:.6px; stroke-dasharray:3 2; }
-svg.quad .can rect { fill:none; stroke:#141414; stroke-width:.9px; stroke-dasharray:3 2; vector-effect:non-scaling-stroke; }
-svg.quad .circs circle { fill:#E4DDCD; stroke:#141414; stroke-width:var(--bo); vector-effect:non-scaling-stroke; }
-svg.quad .circs circle.f { fill:#141414; }
+svg.quad .can rect { fill:none; stroke:#0E1B2E; stroke-width:.9px; stroke-dasharray:3 2; vector-effect:non-scaling-stroke; }
+svg.quad .circs circle { fill:#E4DDCD; stroke:#0E1B2E; stroke-width:var(--bo); vector-effect:non-scaling-stroke; }
+svg.quad .circs circle.f { fill:#0E1B2E; }
 svg.quad .circs circle.w { fill:#A9CBE6; stroke:#2F6DB0; }
-svg.quad .syms { fill:#141414; stroke:#F4EFE3; stroke-width:1.6px; paint-order:stroke; }
+svg.quad .syms { fill:#0E1B2E; stroke:#FBF9F4; stroke-width:1.6px; paint-order:stroke; }
 svg.quad .syms * { vector-effect:non-scaling-stroke; }
-svg.quad .syms .pole { fill:none; stroke:#141414; stroke-width:1.4px; }
-svg.quad .syms .ring { fill:#F4EFE3; stroke:#141414; stroke-width:1.3px; }
-svg.quad .lab { paint-order:stroke; stroke:#F4EFE3; stroke-linejoin:round; text-anchor:middle; dominant-baseline:central; }
-svg.quad .dlab text { font-weight:600; letter-spacing:.34em; fill:#141414; }
-svg.quad .mlab text { font-weight:700; letter-spacing:.08em; fill:#141414; }
-svg.quad .slab text { font-weight:500; letter-spacing:.06em; fill:#141414; }
-svg.quad .llab text { font-weight:500; fill:#141414; }
+svg.quad .syms .pole { fill:none; stroke:#0E1B2E; stroke-width:1.4px; }
+svg.quad .syms .ring { fill:#FBF9F4; stroke:#0E1B2E; stroke-width:1.3px; }
+svg.quad .lab { paint-order:stroke; stroke:#FBF9F4; stroke-linejoin:round; text-anchor:middle; dominant-baseline:central; }
+svg.quad .dlab text { font-weight:600; letter-spacing:.24em; fill:#0E1B2E; }
+svg.quad .mlab text { font-weight:700; letter-spacing:.05em; fill:#0E1B2E; }
+svg.quad .slab text { font-weight:500; letter-spacing:.04em; fill:#0E1B2E; }
+svg.quad .llab text { font-weight:500; fill:#0E1B2E; }
 svg.quad .clab text { font-weight:500; fill:#7E5124; }
 svg.quad .wlab { font-family:"Source Serif 4", Georgia, serif !important; font-style:italic; fill:#245C99; text-anchor:start; dominant-baseline:auto; letter-spacing:.04em; }
 svg.quad .wash { fill:#5D7393; fill-opacity:.18; opacity:0; pointer-events:none; }
-svg.quad .nl { fill:none; stroke:#141414; stroke-width:1.4px; vector-effect:non-scaling-stroke; }
-svg.quad .nl2 { fill:none; stroke:#141414; stroke-width:.6px; vector-effect:non-scaling-stroke; }
-svg.quad .tk { stroke:#141414; stroke-width:.8px; vector-effect:non-scaling-stroke; }
-svg.quad .margin text { font-size:.42px; text-anchor:middle; dominant-baseline:central; fill:#141414; font-weight:500; }
-svg.quad .hd { font-size:.34px; font-weight:600; letter-spacing:.14em; fill:#141414; }
+svg.quad .nl { fill:none; stroke:#0E1B2E; stroke-width:1.4px; vector-effect:non-scaling-stroke; }
+svg.quad .nl2 { fill:none; stroke:#0E1B2E; stroke-width:.6px; vector-effect:non-scaling-stroke; }
+svg.quad .tk { stroke:#0E1B2E; stroke-width:.8px; vector-effect:non-scaling-stroke; }
+svg.quad .margin text { font-size:.36px; text-anchor:middle; dominant-baseline:central; fill:#5B6676; font-weight:500; }
+svg.quad .hd { font-size:.3px; font-weight:600; letter-spacing:.12em; fill:#5B6676; }
 svg.quad .hd.r { text-anchor:end; }
-svg.quad .ttl text { text-anchor:end; fill:#141414; }
-svg.quad .t1 { font-size:.66px; font-weight:700; letter-spacing:.22em; }
-svg.quad .t2 { font-size:.34px; font-weight:600; letter-spacing:.24em; }
-svg.quad .t3 { font-family:"Source Serif 4", Georgia, serif !important; font-style:italic; font-size:.27px; }
-svg.quad .scale .b { fill:#141414; }
-svg.quad .scale .w { fill:#F4EFE3; stroke:#141414; stroke-width:.02; }
-svg.quad .scale text { font-size:.28px; text-anchor:middle; fill:#141414; font-weight:600; }
-svg.quad .scale .ln { stroke:#141414; stroke-width:.025; }
-svg.quad .north path { fill:#141414; }
-svg.quad .north text { font-size:.4px; text-anchor:middle; font-weight:700; }
-svg.quad .legend text { font-size:.27px; dominant-baseline:central; fill:#141414; font-weight:500; }
-svg.quad .legend .lh { font-size:.3px; letter-spacing:.24em; font-weight:700; }
+svg.quad .ttl text { text-anchor:end; fill:#0E1B2E; }
+svg.quad .t1 { font-size:.56px; font-weight:700; letter-spacing:.14em; }
+svg.quad .t2 { font-size:.3px; font-weight:600; letter-spacing:.2em; fill:#5B6676; }
+svg.quad .t3 { font-size:.25px; fill:#5B6676; }
+svg.quad .scale .b { fill:#0E1B2E; }
+svg.quad .scale .w { fill:#FBF9F4; stroke:#0E1B2E; stroke-width:.02; }
+svg.quad .scale text { font-size:.25px; text-anchor:middle; fill:#0E1B2E; font-weight:600; }
+svg.quad .scale .ln { stroke:#0E1B2E; stroke-width:.025; }
+svg.quad .north path { fill:#0E1B2E; }
+svg.quad .north text { font-size:.34px; text-anchor:middle; font-weight:700; }
+svg.quad .legend text { font-size:.25px; dominant-baseline:central; fill:#0E1B2E; font-weight:500; }
+svg.quad .legend .lh { font-size:.27px; letter-spacing:.2em; font-weight:700; }
 svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
-    <h1>Medianville in Motion</h1>
-    <span class="chip">Simulated city · no real people</span>
-    <span class="chip" id="datachip" role="status">Placeholder day · loading the real one</span>
-    <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
+    <div class="brandname"><h1>Medianville</h1><p class="sub">One day of transactions in a simulated American city</p></div>
+    <span class="chip" id="datachip" role="status">Sample day · loading the full simulation</span>
   </div>
   <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
@@ -307,7 +348,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L" title="Systems lens (L)"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
   <span class="dim small kbdhint" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens · <b>S</b> sound</span>
   <div class="sndwrap">
-    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Sound</button>
+    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sndlbl">Sound</span></button>
     <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
       <h2>Sound</h2>
       <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
@@ -323,6 +364,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <button type="button" class="hdlink" id="about-btn" aria-haspopup="dialog" aria-controls="intro"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5.4" r="1.05" fill="currentColor"/></svg>About</button>
   </div>
   <button class="btn" id="drawer-btn" aria-controls="rail" aria-expanded="false">Activity</button>
+  <button type="button" class="iconbtn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="hdmenu"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <!-- below 1280 px the day, focus blur, sound, Data and About move in here (see "compact layout" in the app shell) -->
+  <div class="hdmenu" id="hdmenu" hidden role="group" aria-label="Menu"><div class="m-day"></div><div class="m-blur"></div><div class="m-more"></div></div>
 </header>
 <main class="body">
   <section id="scene" tabindex="0" role="application" aria-roledescription="interactive city" aria-label="City view" aria-describedby="scene-help">
@@ -331,7 +375,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <canvas id="overlay" aria-hidden="true"></canvas>
     <div id="hoverchip" hidden aria-hidden="true"></div>
     <div class="chooser" id="chooser" hidden role="dialog" aria-labelledby="ch-h"></div>
-    <div class="scene-ctrls">
+    <div class="scene-ctrls left" id="scene-left"></div>
+    <div class="scene-ctrls" id="scene-right">
       <div class="card" id="blurset">
         <span class="lbl" id="blur-l">Focus blur</span>
         <fieldset class="seg" aria-labelledby="blur-l">
@@ -386,13 +431,14 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   </div>
 </main>
 <footer class="bar">
+  <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   <div id="clock" aria-hidden="true">8:00 a.m.</div>
   <button id="play" aria-label="Pause"><svg class="pi" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/></svg><svg class="pl" hidden width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3l10 6-10 6z" fill="currentColor"/></svg></button>
   <fieldset class="seg" id="speedseg">
     <legend>Playback speed</legend>
-    <input type="radio" name="speed" id="slive" value="live"><label for="slive">Live</label>
-    <input type="radio" name="speed" id="s1" value="1" checked><label for="s1">1 min/s</label>
-    <input type="radio" name="speed" id="s5" value="5"><label for="s5">5 min/s</label>
+    <input type="radio" name="speed" id="slive" value="live" checked><label for="slive">Live</label>
+    <input type="radio" name="speed" id="s1" value="1"><label for="s1">1<span class="u"> min/s</span></label>
+    <input type="radio" name="speed" id="s5" value="5"><label for="s5">5<span class="u"> min/s</span></label>
     <input type="radio" name="speed" id="s20" value="20"><label for="s20">20 min/s</label>
   </fieldset>
   <div class="tlwrap">
@@ -410,8 +456,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <h2 id="intro-h" tabindex="-1">One day in Medianville</h2>
     <p id="intro-d">Medianville is a simulated American city of about 100,000 people, built to match the country as a whole. This is one day there, <span id="intro-date">Wednesday, March 3, 2027</span>: <span id="intro-n">about 200,000</span> transactions. Paychecks, bus fares, autopays, declined cards, hours of unpaid caregiving.</p>
     <p>Each one is a <em>job to be done</em>: something a person was trying to get done. Seen together, they show how jobs collide (a bill that drafts at 2 a.m. declines a card at 5 p.m.) and the systems underneath that decide who they work for. The goal is to find small, practical fixes for daily life at the margins.</p>
-    <p>Households, wages, prices and payment habits are calibrated to federal data from the Census, BLS, the Federal Reserve and SNAP. A simulator settles every dollar and every minute. Federal programs keep their real names. Every person, business and street is invented.</p>
-    <p class="intro-cred">It started with Jason James asking which American town is most like America. No real one is, so he set out to build one. Jason came up with the idea and directs the project. Claude, Anthropic’s AI model, wrote the simulator, generated the day, hand-wrote 500 of the records and built this viewer with him.</p>
+    <p>Households, wages, prices and payment habits are calibrated to federal data from the Census, BLS and the Federal Reserve, and rates such as fees, loans, shutoffs and caregiving hours are set from 42 public datasets. A simulator settles every dollar and every minute. Federal programs keep their real names. Every person, business and street is invented.</p>
+    <p class="intro-cred">It started with Jason James asking which American town is most like America. No real one is, so he set out to build one. Jason came up with the idea and directs the project. Claude, Anthropic’s AI model, wrote the simulator, generated the days, hand-wrote 300 of this day’s records (500 in the first version) and built this viewer with him.</p>
     <div class="intro-acts">
       <button type="button" class="btn primary loading" id="intro-go" data-intro-close><span id="intro-go-l">Loading the day…</span><span class="bar" aria-hidden="true"></span></button>
       <a class="btn" href="explorer/">Explore the data</a>
@@ -1133,7 +1179,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 <script>// ===== Medianville in Motion v3 · Map view: a printed quadrangle sheet (SVG base + canvas records) =====
 (function () {
   const SVGNS = 'http://www.w3.org/2000/svg';
-  const PAPER = '#F4EFE3', INK = '#141414', BROWN = '#A87A50', BLUE = '#2F6DB0', RED = '#C9402C', ROSE = '#EFD3CB', WOOD = '#CFE2BC', FIELD = '#DFEACB';
+  const PAPER = '#FBF9F4', INK = '#0E1B2E', BROWN = '#A87A50', BLUE = '#2F6DB0', RED = '#C9402C', ROSE = '#EFD3CB', WOOD = '#CFE2BC', FIELD = '#DFEACB';
   const NL = [-0.6, 20.6]; // neatline in map units (map unit = one block = 660 ft)
   const SHEET = { x: -2.5, y: -2.3, w: 25.0, h: 29.6 };
   const mx = (x) => x + 10, my = (z) => z + 10;
@@ -1321,7 +1367,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         if (b - a < 2.2) continue;
         const c = (a + b) / 2 + 0.5;
         const x = hz ? c : v + 0.5, y = hz ? v + 0.5 : c;
-        const tx = `<text x="${f2(x)}" y="${f2(y)}" ${hz ? '' : `transform="rotate(-90 ${f2(x)} ${f2(y)})"`}>${name.toUpperCase()}</text>`;
+        const tx = `<text x="${f2(x)}" y="${f2(y)}" ${hz ? '' : `transform="rotate(-90 ${f2(x)} ${f2(y)})"`}>${name.toUpperCase().replace(/ /g, '\u2002')}</text>`; // an en space: at these sizes a plain space nearly vanishes
         if (main) mlab += tx; else slab += tx;
       }
     }
@@ -1335,25 +1381,30 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     let ticks2 = '';
     for (let i = 1; i < 20; i++) ticks2 += `M${i} -0.6L${i} -0.75M${i} 20.6L${i} 20.75M-0.6 ${i}L-0.75 ${i}M20.6 ${i}L20.75 ${i}`;
     const top = `<text class="hd" x="-0.6" y="-1.65">MEDIANVILLE, MID-AMERICA</text><text class="hd r" x="20.6" y="-1.65">SIMULATED CITY SHEET · 2027</text>`;
-    const title = `<g class="ttl"><text class="t1" x="20.6" y="24.55">MEDIANVILLE QUADRANGLE</text><text class="t2" x="20.6" y="25.15">2027 · SIMULATED</text>
-      <text class="t3" x="20.6" y="25.75">An invented city drawn for study. No real places or people.</text><text class="t3" x="20.6" y="26.15">Grid squares are one block, about 660 feet. Contour interval 10 feet.</text></g>`;
-    // bar scale: 1 mile = 8 blocks
+    // the margin below the outer frame: legend on the left, scale and north arrow on the right, title block under them.
+    // Everything starts a clear 0.7 below the frame (OUT[1]) and lines up with its left and right edges.
+    const OUT = [NL[0] - 1.45, NL[1] + 1.45], MY = OUT[1] + 0.7, MR = OUT[1];
+    const title = `<g class="ttl"><text class="t1" x="${MR}" y="${f2(MY + 2.1)}">MEDIANVILLE QUADRANGLE</text><text class="t2" x="${MR}" y="${f2(MY + 2.7)}">2027 · SIMULATED</text>
+      <text class="t3" x="${MR}" y="${f2(MY + 3.3)}">An invented city drawn for study. No real places or people.</text><text class="t3" x="${MR}" y="${f2(MY + 3.7)}">Grid squares are one block, about 660 feet. Contour interval 10 feet.</text></g>`;
+    // bar scale: 1 mile = 8 blocks, ending under the north arrow's left
+    const X0 = MR - 10.05, SY = MY + 0.3;
     let sb = '<g class="scale">';
-    for (let i = 0; i < 4; i++) sb += `<rect x="${7 + i * 1}" y="22.55" width="1" height="0.14" class="${i % 2 ? 'w' : 'b'}"/>`;
-    sb += `<rect x="11" y="22.55" width="4" height="0.14" class="b"/><rect x="6" y="22.55" width="1" height="0.14" class="w"/>`;
-    for (const [x, s] of [[7, '0'], [11, '½'], [15, '1 MILE'], [6, '⅛']]) sb += `<text x="${x}" y="22.38">${s}</text>`;
-    const ft = 1 / 660;
-    sb += `<path class="ln" d="M7 23.05L${f2(7 + 3000 * ft)} 23.05"/>`;
-    for (let f = 0; f <= 3000; f += 1000) sb += `<path class="ln" d="M${f2(7 + f * ft)} 22.95L${f2(7 + f * ft)} 23.15"/><text x="${f2(7 + f * ft)}" y="23.45">${f ? f.toLocaleString('en-US') : '0'}</text>`;
-    sb += `<text x="${f2(7 + 3000 * ft + 0.9)}" y="23.45">FEET</text></g>`;
-    const north = `<g class="north" transform="translate(16.6 22.15)"><path d="M0 -0.05L0.22 0.75L0 0.6L-0.22 0.75Z"/><text x="0" y="1.15">N</text></g>`;
-    // legend
+    for (let i = 0; i < 4; i++) sb += `<rect x="${f2(X0 + i)}" y="${f2(SY)}" width="1" height="0.14" class="${i % 2 ? 'w' : 'b'}"/>`;
+    sb += `<rect x="${f2(X0 + 4)}" y="${f2(SY)}" width="4" height="0.14" class="b"/><rect x="${f2(X0 - 1)}" y="${f2(SY)}" width="1" height="0.14" class="w"/>`;
+    for (const [x, t] of [[X0, '0'], [X0 + 4, '½'], [X0 + 8, '1 MILE'], [X0 - 1, '⅛']]) sb += `<text x="${f2(x)}" y="${f2(SY - 0.17)}">${t}</text>`;
+    const ft = 1 / 660, FY = SY + 0.5;
+    sb += `<path class="ln" d="M${f2(X0)} ${f2(FY)}L${f2(X0 + 3000 * ft)} ${f2(FY)}"/>`;
+    for (let f = 0; f <= 3000; f += 1000) sb += `<path class="ln" d="M${f2(X0 + f * ft)} ${f2(FY - 0.1)}L${f2(X0 + f * ft)} ${f2(FY + 0.1)}"/><text x="${f2(X0 + f * ft)}" y="${f2(FY + 0.42)}">${f ? f.toLocaleString('en-US') : '0'}</text>`;
+    sb += `<text x="${f2(X0 + 3000 * ft + 0.9)}" y="${f2(FY + 0.42)}">FEET</text></g>`;
+    const north = `<g class="north" transform="translate(${f2(MR - 0.6)} ${f2(MY - 0.05)})"><path d="M0 -0.05L0.22 0.75L0 0.6L-0.22 0.75Z"/><text x="0" y="1.15">N</text></g>`;
+    // legend: two columns, the second far enough right that the first column's longest label clears it
+    const LX = OUT[0], LX2 = OUT[0] + 4.6, LY = MY + 0.45;
     const lg = [];
-    let ly = 22.45;
-    const row = (sym, label) => { lg.push(`<g transform="translate(-0.6 ${f2(ly)})">${sym}<text x="1.15" y="0.06">${label}</text></g>`); ly += 0.38; };
+    let ly = LY;
+    const row = (sym, label) => { lg.push(`<g transform="translate(${f2(LX)} ${f2(ly)})">${sym}<text x="1.15" y="0.06">${label}</text></g>`); ly += 0.4; };
     const col2 = [];
-    let ly2 = 22.45;
-    const row2 = (sym, label) => { col2.push(`<g transform="translate(2.6 ${f2(ly2)})">${sym}<text x="1.15" y="0.06">${label}</text></g>`); ly2 += 0.38; };
+    let ly2 = LY;
+    const row2 = (sym, label) => { col2.push(`<g transform="translate(${f2(LX2)} ${f2(ly2)})">${sym}<text x="1.15" y="0.06">${label}</text></g>`); ly2 += 0.4; };
     row(`<path d="M0 0L0.9 0" stroke="${INK}" stroke-width="0.2"/><path d="M0 0L0.9 0" stroke="${RED}" stroke-width="0.12"/>`, 'Main road');
     row(`<path d="M0 0L0.9 0" stroke="${INK}" stroke-width="0.13"/><path d="M0 0L0.9 0" stroke="${PAPER}" stroke-width="0.06"/>`, 'Local street');
     row(`<path d="M0 0L0.9 0" stroke="${INK}" stroke-width="0.04"/><path d="M0.1 -0.07L0.1 0.07M0.3 -0.07L0.3 0.07M0.5 -0.07L0.5 0.07M0.7 -0.07L0.7 0.07" stroke="${INK}" stroke-width="0.03"/>`, 'Railroad');
@@ -1367,13 +1418,14 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       row2(`<path d="M0 0L${k === 'fail' ? 0.5 : 0.8} 0" stroke="${r.map}" stroke-width="${0.04 * r.w}" ${da}/>` + hd(r.head, r.map), r.label);
     }
     row2(`<path d="M0.45 -0.12L0.6 0.12L0.3 0.12Z" fill="#8E3B6D"/><text x="0.72" y="0.1" class="pc">3</text>`, 'Failures at a place');
-    const legend = `<g class="legend"><text class="lh" x="-0.6" y="22.05">LEGEND</text>${lg.join('')}${col2.join('')}</g>`;
+    const legend = `<g class="legend"><text class="lh" x="${f2(LX)}" y="${f2(MY)}">LEGEND</text>${lg.join('')}${col2.join('')}</g>`;
 
     return `
 <svg xmlns="${SVGNS}" class="quad" preserveAspectRatio="none" aria-hidden="true">
 <defs><clipPath id="nlclip"><rect x="${NL[0]}" y="${NL[0]}" width="${NL[1] - NL[0]}" height="${NL[1] - NL[0]}"/></clipPath>
 <path id="creekpath" d="${pathD(creekPts)}"/></defs>
-<rect x="${SHEET.x}" y="${SHEET.y}" width="${SHEET.w}" height="${SHEET.h}" fill="${PAPER}" class="paper"/>
+<rect x="${SHEET.x + 0.04}" y="${SHEET.y + 0.1}" width="${SHEET.w}" height="${SHEET.h}" rx="0.12" class="paper-sh"/>
+<rect x="${SHEET.x}" y="${SHEET.y}" width="${SHEET.w}" height="${SHEET.h}" rx="0.12" fill="${PAPER}" class="paper"/>
 <g clip-path="url(#nlclip)">
   <g class="tints">${tints}</g>
   <path class="cn" d="${cN}"/><path class="ci" d="${cI}"/>
@@ -1423,7 +1475,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       svg.style.setProperty('--cn', `${Math.max(0.6, 0.75 * k)}px`); svg.style.setProperty('--ci', `${Math.max(1, 1.4 * k)}px`);
       svg.style.setProperty('--cr', `${2.4 * k}px`); svg.style.setProperty('--bo', `${Math.max(0.8, 1.1 * k)}px`);
       const fs = (base) => (base * Math.pow(k, 0.9)) / s;
-      const sizes = { '.dlab': 13.5, '.mlab': 9.5, '.slab': 8.8, '.llab': 9, '.clab': 8.5, '.wlab': 12.5 };
+      const sizes = { '.dlab': 12.5, '.mlab': 8.8, '.slab': 8.2, '.llab': 8.5, '.clab': 8, '.wlab': 12.5 }; // Figtree runs wider than the old condensed face
       for (const [sel, b] of Object.entries(sizes)) set(sel, 'font-size', `${fs(b).toFixed(4)}px`);
       for (const [sel, b] of Object.entries(sizes)) set(sel, 'stroke-width', `${(fs(b) * 0.32).toFixed(4)}px`);
     }
@@ -1474,7 +1526,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     c.fillStyle = PAPER; c.beginPath(); c.moveTo(x, y - 11); c.lineTo(x + 9, y + 6); c.lineTo(x - 9, y + 6); c.closePath(); c.fill();
     c.fillStyle = '#8E3B6D'; c.beginPath(); c.moveTo(x, y - 8); c.lineTo(x + 7, y + 4.5); c.lineTo(x - 7, y + 4.5); c.closePath(); c.fill();
     c.fillStyle = PAPER; c.beginPath(); c.arc(x, y + 0.5, 1.6, 0, 7); c.fill();
-    c.font = '700 11px "Barlow Condensed", "Arial Narrow", sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.font = '700 10px Figtree, system-ui, sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle';
     c.lineWidth = 3; c.strokeStyle = PAPER; c.strokeText(String(p.recs.length), x + 9, y - 2); c.fillStyle = '#8E3B6D'; c.fillText(String(p.recs.length), x + 9, y - 2);
     if (S.selPin === p.key) { c.strokeStyle = '#1F5AF0'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 14, 0, 7); c.stroke(); }
   }
@@ -1549,9 +1601,12 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const rmQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   const debugOn = /[?&#]debug\b/.test(location.search + location.hash);
+  // Live: the simulated day runs at the visitor's own time of day, one minute a minute
+  const LIVE = 1 / 60;
+  const nowMinutes = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60; };
 
   const S = {
-    t: 480, playing: !rmQuery.matches, speed: 1, view: 'mini', idx: 0, animNow: 0, rm: rmQuery.matches,
+    t: nowMinutes(), playing: !rmQuery.matches, speed: LIVE, view: 'mini', idx: 0, animNow: 0, rm: rmQuery.matches,
     flights: [], fmap: new Map(), pins: new Map(), hoverId: null, selId: null, focusId: null, selPin: null, hhDay: null,
     filters: new Set(['purchase', 'income', 'bill', 'service', 'unpaid', 'fail']), dark: 0, blur: 'subtle',
   };
@@ -2129,7 +2184,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     $$('input[name="view"]').forEach((i) => { i.addEventListener('change', () => { Lens.close(); setView(i.value); }); i.addEventListener('click', () => Lens.close()); });
     $$('input[name="blur"]').forEach((i) => i.addEventListener('change', () => { S.blur = i.value; views.mini && views.mini.setBlur(i.value); }));
     $$('input[name="speed"]').forEach((i) => i.addEventListener('change', () => {
-      if (i.value === 'live') { const d = new Date(); S.speed = 1 / 60; seek(d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60); say(`Live: playing at real speed from ${H.fmt(S.t)}.`); }
+      if (i.value === 'live') { S.speed = LIVE; seek(nowMinutes()); say(`Live: playing at real speed from ${H.fmt(S.t)}.`); }
       else S.speed = +i.value;
     }));
     $('#play').addEventListener('click', () => setPlaying(!S.playing));
@@ -2284,7 +2339,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     hoverTest();
     const dtA = S.playing ? dt : 0;
     if (S.view === 'map' || fading) views.map.frame(S);
-    if (views.mini && (S.view === 'mini' || fading)) views.mini.frame(S, dtA);
+    if (views.mini && (S.view === 'mini' || fading)) views.mini.frame(S, dtA, dt);
     drawOverlay();
     Feed.flush(); Summary.update(); updateTimeline(); updateSceneLabel(); updateDebug(dt);
     requestAnimationFrame(loop);
@@ -2294,7 +2349,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     views.map.mount($('#L-map'));
     initScene(); initControls();
     if (dbg) $('#debug').hidden = false;
-    $$('input[name="speed"]').forEach((i) => (i.checked = Math.abs(+i.value - S.speed) < 1e-6));
+    $$('input[name="speed"]').forEach((i) => (i.checked = Math.abs((i.value === 'live' ? LIVE : +i.value) - S.speed) < 1e-6));
     setPlaying(S.playing);
     seek(S.t);
     setView(window.MiniView ? 'mini' : 'mini', true);
@@ -2306,8 +2361,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   App.status = (st) => {
     const c = $('#datachip'); if (!c) return;
     c.classList.toggle('warn', st.state === 'failed');
-    c.textContent = st.state === 'loading' ? `Placeholder day · loading the real one ${Math.round(st.p * 100)}%`
-      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Placeholder day · the real one didn’t load';
+    c.textContent = st.state === 'loading' ? `Sample day · loading the full simulation ${Math.round(st.p * 100)}%`
+      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Sample day · the full simulation didn’t load';
     if (st.state !== 'loading') say(c.textContent);
   };
   // real-day.js calls this once it knows which run it will load (sel is null without a manifest)
@@ -2379,7 +2434,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     root.hidden = true; remember();
     for (const el of outside()) if (el) el.inert = false;
     aboutBtn.setAttribute('aria-expanded', 'false');
-    const back = opener && document.contains(opener) ? opener : document.getElementById('scene');
+    // About can live in the compact menu, which is closed by now: go back to the menu button instead
+    const menuBtn = document.getElementById('menu-btn'), shown = (el) => el && document.contains(el) && el.offsetParent !== null;
+    const back = shown(opener) ? opener : shown(menuBtn) ? menuBtn : document.getElementById('scene');
     opener = null;
     back && back.focus({ preventScroll: true });
   }
@@ -2420,6 +2477,46 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
   }
   App.intro = { open, close, isOpen: () => !root.hidden };
+})();
+</script>
+<script>
+// ===== compact layout below 1280 px: a slim header bar with a menu, and the view switch and lens over the city =====
+// Below 1280 px (where Activity becomes a drawer) the header keeps only the title, Activity and a menu button. The menu
+// takes the status chip, the day picker, focus blur, Sound, Data and About; the view switch and the Systems lens button
+// move onto the city's top-left corner. Elements are moved, not copied, so their ids, handlers and state stay as they are.
+// A comment left at each element's home puts it back when the window widens again.
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const menu = $('hdmenu'), btn = $('menu-btn'), q = window.matchMedia('(max-width:1279px)');
+  const slots = { day: menu.querySelector('.m-day'), blur: menu.querySelector('.m-blur'), more: menu.querySelector('.m-more'), left: $('scene-left') };
+  const MOVES = [[$('datachip'), 'day'], [$('runpick'), 'day'], [$('blurset'), 'blur'], [document.querySelector('.sndwrap'), 'more'], [document.querySelector('.hdlinks'), 'more'], [$('viewseg'), 'left'], [$('lens-btn'), 'left']];
+  const homes = new Map();
+  for (const [el] of MOVES) { if (!el) continue; const c = document.createComment('home of #' + (el.id || el.className)); el.before(c); homes.set(el, c); }
+
+  function open(v) {
+    if (v === !menu.hidden) return;
+    menu.hidden = !v; btn.setAttribute('aria-expanded', String(v));
+    if (!v) { const pop = $('snd-pop'); if (pop && !pop.hidden) $('snd-btn').click(); }
+  }
+  function place() {
+    const compact = q.matches;
+    open(false);
+    for (const [el, slot] of MOVES) { if (!el) continue; if (compact) slots[slot].append(el); else homes.get(el).after(el); }
+    document.body.classList.toggle('compact', compact);
+  }
+  btn.addEventListener('click', (e) => { e.stopPropagation(); open(menu.hidden); if (!menu.hidden) { const f = menu.querySelector('select:not([hidden]), button, a[href], input'); f && f.focus(); } });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) open(false); });
+  // leaving for About, the drawer or another page closes the menu
+  for (const id of ['about-btn', 'drawer-btn', 'data-link']) { const el = $(id); el && el.addEventListener('click', () => open(false)); }
+  // Escape closes the sound panel first (it handles that itself), then the menu
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || menu.hidden) return;
+    const pop = $('snd-pop'); if (pop && !pop.hidden && pop.contains(e.target)) return;
+    e.stopImmediatePropagation(); open(false); btn.focus();
+  }, true);
+  menu.addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !menu.contains(e.relatedTarget) && e.relatedTarget !== btn) open(false); });
+  q.addEventListener('change', place);
+  place();
 })();
 </script>
 <script src="fflate.js"></script>
@@ -3150,7 +3247,8 @@ const shortWay = (from, to) => from + Math.atan2(Math.sin(to - from), Math.cos(t
 
 // ---------- frame ----------
 let blurMode = 'subtle', frameNo = 0;
-function frame(S, dtAnim) {
+// dtAnim stops while paused; dtReal keeps running so turns, tilts and north-up still ease into place
+function frame(S, dtAnim, dtReal = dtAnim) {
   clock += dtAnim;
   light(S.t);
   for (const a of agents) {
@@ -3178,7 +3276,7 @@ function frame(S, dtAnim) {
   }
   if (gc) winLit.instanceColor.needsUpdate = true;
   syncFlights(S); syncPins(S);
-  render(S, dtAnim);
+  render(S, dtReal);
 }
 function render(S, dt) {
   renderer.info.reset();

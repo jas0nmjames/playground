@@ -45,6 +45,7 @@ li::marker { color:var(--ink2); }
 .toc ol { columns:2; column-gap:28px; margin:0; }
 .toc li { margin:0 0 6px; font-size:15px; break-inside:avoid; }
 .note { font-size:14.5px; color:var(--ink2); }
+p.group { margin:14px 0 4px; }
 dl.who { margin:0 0 14px; }
 dl.who dt { font-weight:700; margin-top:14px; }
 dl.who dd { margin:4px 0 0; }
@@ -116,14 +117,19 @@ footer a { color:var(--ink2); }
   <ul>
     <li>People, households, employers and bills are generated from a seed. The same seed and options reproduce the files byte for byte.</li>
     <li>The day is settled minute by minute against each household’s money. Every action goes into one queue in time order, so a bill at 2 a.m. can decline a card at 5 p.m.</li>
-    <li>The run was calibrated to published anchors and checked: money reconciles for every household, nobody exceeds 24 hours in a day, and every paycheck has its withholding.</li>
+    <li>The first run was calibrated to published anchors and checked: money reconciles for every household, nobody exceeds 24 hours in a day, and every paycheck has its withholding.</li>
     <li>Then 500 records were read and written by hand as a believability test. Reading them caught what the numeric checks passed, such as union dues paid to a charity and a 91-year-old schoolteacher.</li>
+    <li>The second version (v2) keeps the same people and sets its rates from real evidence: first a pass of real accounts read beside the first day, then 42 downloaded public datasets. Only strong evidence is allowed to move a rate, and the rates are checked against their targets across the year.</li>
+    <li>v2 runs 18 typed days that stand for 2027 (weekends, paydays, benefit days, holidays, tax season, a winter storm, a heat wave) beside the same Wednesday. Before it was frozen, two readers read 200 of its records, and 300 more of the baseline day were written by hand.</li>
   </ul>
-  <p><strong>What’s next.</strong> A second version of the simulator is under way. It keeps the same people and runs 18 typical days that stand for the whole of 2027, with rates set from downloaded evidence: overdraft fees, payday and title loans, utility shutoffs, caregiving hours, scam losses and more. Only strong evidence is allowed to move a rate. It hasn’t been published as a run yet, so the city on this site still plays the first day.</p>
-  <p>The longer account is in <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-build-approach.md">how the day was built</a> and the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-2027-03-03-run-record.md">run record</a>.</p>
+  <p>The city on this site opens on v2’s Wednesday. The day menu holds the 18 other days and the first version of the Wednesday, for comparison. A whole month, March 2027, carried day to day so unpaid bills, shutoffs and loan rollovers chain across days, is a separate download the site doesn’t load.</p>
+  <p><strong>What’s next.</strong> A third version will draw households from Census microdata instead of building them by rule, so they come out at their real size and makeup.</p>
+  <p>The longer account is in <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-build-approach.md">how the first day was built</a>, the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-2027-03-03-run-record.md">first run record</a>, the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-data-update-plan.md">data update plan</a> and the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-v2-run-record.md">v2 run record</a>.</p>
 
   <h2 id="sources">Data sources</h2>
-  <h3>Calibration anchors</h3>
+  <p>The research came in four rounds. Real evidence enters Medianville only as numbers: rates, shares and calendars. No real person’s words or record appear in a record.</p>
+
+  <h3>1. Calibration anchors (the first run)</h3>
   <p>The first run was calibrated to these:</p>
   <ul>
     <li><a href="https://www.census.gov/programs-surveys/acs">American Community Survey</a> (Census Bureau): national shares of household types, income, tenure, language and more</li>
@@ -134,9 +140,69 @@ footer a { color:var(--ink2); }
     <li><a href="https://www.bls.gov/cex/">Consumer Expenditure Survey</a> (BLS): the order of spending, housing first, then transportation, then food</li>
     <li>2027 program figures from <a href="https://www.ssa.gov/cola/">Social Security</a>, <a href="https://www.fns.usda.gov/snap">SNAP</a> and <a href="https://www.medicare.gov/basics/costs/medicare-costs">Medicare</a></li>
   </ul>
-  <h3>Evidence being added in v2</h3>
-  <p>The second version adds dozens of downloaded datasets, from time-use surveys to state payday-lending reports. Each is logged in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sources/manifest.csv">sources manifest</a> with its publisher, vintage and terms, and the simulator is measured against them in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sim/evidence/results/v2_rates_typed_days_2027/evidence_checks.md">latest evidence checks</a>.</p>
-  <p class="note">The first run’s households are built by rule to match national shares. They aren’t drawn from Census microdata. Drawing real household structures from ACS microdata is planned for a later version.</p>
+  <p>The thinking behind the city is in the white paper, <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/seeing-the-margins.md">Seeing the Margins</a>, and the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/synthetic-mid-america-city-design-v0.1.md">city design</a>.</p>
+
+  <h3>2. Real accounts beside the first day</h3>
+  <p>Next, 69 sources were read beside the first day’s records: government reports and data, surveys, investigative and local journalism, and advocacy, industry and think-tank positions from left and right. They gave 76 findings on fees, high-cost loans, shutoffs, benefit paperwork, buses, schedules, caregiving, home care and distance to care. The <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/evidence/report.md">evidence report</a> scores the first day against them and lists what it was missing, which became v2’s new jobs and the district circumstances in the systems lens. The <a href="https://github.com/jas0nmjames/playground/tree/development/mapping-synthetic-transactions/evidence">evidence folder</a> holds every source, finding and quote. The quotes stay there: none is given to a Medianville resident.</p>
+
+  <h3>3. Downloaded datasets that set v2’s rates</h3>
+  <p>Then 42 public datasets were downloaded, each logged in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sources/manifest.csv">sources manifest</a> with its publisher, vintage, files, checksums and terms:</p>
+  <p class="group"><strong>Time and care</strong></p>
+  <ul>
+    <li><a href="https://www.bls.gov/tus/">American Time Use Survey</a> (BLS): annual tables, the eldercare release and the 2003–2025 microdata, for caregiving hours and when in the day errands, care and shopping happen</li>
+    <li><a href="https://www.dol.gov/agencies/wb/topics/featured-childcare">National Database of Childcare Prices</a> (Department of Labor): weekly child care prices</li>
+    <li><a href="https://www.bls.gov/ebs/">National Compensation Survey: Employee Benefits</a> (BLS): paid sick leave by wage level</li>
+  </ul>
+  <p class="group"><strong>Money and payments</strong></p>
+  <ul>
+    <li><a href="https://www.atlantafed.org/research-and-data/surveys/survey-and-diary-of-consumer-payment-choice">Survey and Diary of Consumer Payment Choice</a> (Federal Reserve Bank of Atlanta), 2025: cash use by income, age and rural areas</li>
+    <li><a href="https://www.federalreserve.gov/consumerscommunities/shed_data.htm">Survey of Household Economics and Decisionmaking</a> (Federal Reserve), 2025 microdata: bills unpaid and care skipped, on the same households</li>
+    <li><a href="https://www.federalreserve.gov/econres/scfindex.htm">Survey of Consumer Finances</a> (Federal Reserve), 2025: balances, debts and assets</li>
+    <li><a href="https://www.fdic.gov/household-survey">National Survey of Unbanked and Underbanked Households</a> (FDIC), 2023</li>
+    <li><a href="https://www.bls.gov/cex/pumd.htm">Consumer Expenditure Survey microdata</a> (BLS), 2025: what households buy, how often and for how much</li>
+    <li><a href="https://cdr.ffiec.gov/public/PWS/DownloadBulkData.aspx">Bank call reports</a> (FFIEC): overdraft and NSF revenue</li>
+    <li><a href="https://www.newyorkfed.org/microeconomics/hhdc">Household Debt and Credit Report</a> (Federal Reserve Bank of New York): delinquency by loan type</li>
+  </ul>
+  <p class="group"><strong>High-cost credit and fraud</strong></p>
+  <ul>
+    <li><a href="https://dfpi.ca.gov/publications/payday-lenders-publications">Payday lending annual report</a> (California DFPI), 2025</li>
+    <li><a href="https://occc.texas.gov">Credit Access Business reports</a> (Texas OCCC), 2025: payday and title loans, refinances and repossessions</li>
+    <li><a href="https://www.consumerfinance.gov/data-research/research-reports/cfpb-data-points-payday-lending/">Data Point: Payday Lending</a> (CFPB): loan sequences and rollovers</li>
+    <li><a href="https://www.tn.gov/tdfi.html">Title Pledge Report</a> (Tennessee TDFI), 2026</li>
+    <li><a href="https://www.ftc.gov/data">Consumer Sentinel Network Data Book</a> (FTC), 2024, and the <a href="https://www.ic3.gov/AnnualReport/Reports">Elder Fraud Report</a> (FBI IC3): how large losses run</li>
+  </ul>
+  <p class="group"><strong>Housing and utilities</strong></p>
+  <ul>
+    <li><a href="https://www.census.gov/programs-surveys/ahs/data.html">American Housing Survey</a> (Census Bureau and HUD), 2023: owners’ housing costs by income</li>
+    <li><a href="https://www.eia.gov/consumption/residential/">Residential Energy Consumption Survey</a> (EIA), 2024: disconnect notices</li>
+    <li><a href="https://utilitydisconnections.org/">Utility disconnections</a>: EIA’s 2024 utility-level data and report, with the Energy Justice Lab’s documentation</li>
+    <li><a href="https://evictionlab.org/eviction-tracking/">Eviction Tracking System</a> (Eviction Lab, Princeton)</li>
+  </ul>
+  <p class="group"><strong>Benefits, taxes and the calendar</strong></p>
+  <ul>
+    <li><a href="https://www.ssa.gov/pubs/EN-05-10031-2027.pdf">Schedule of Social Security Benefit Payments 2027</a> (SSA) and <a href="https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/">federal holidays 2027</a> (OPM)</li>
+    <li>SNAP issuance schedules from eight state agencies, and <a href="https://snapqcdata.net/">SNAP Quality Control data</a> (USDA FNS), FY2024</li>
+    <li><a href="https://data.medicaid.gov/">Medicaid renewal and work-reporting data</a> (CMS and Georgia Pathways)</li>
+    <li><a href="https://www.irs.gov/refunds">Refund timing</a> and <a href="https://www.irs.gov/statistics/soi-tax-stats-individual-statistical-tables-by-size-of-adjusted-gross-income">Statistics of Income</a> (IRS): when EITC refunds land and who uses a paid preparer</li>
+  </ul>
+  <p class="group"><strong>Work, places and getting around</strong></p>
+  <ul>
+    <li><a href="https://www.bls.gov/oes/tables.htm">Occupational Employment and Wage Statistics</a> (BLS), May 2025</li>
+    <li><a href="https://www.census.gov/programs-surveys/cbp/data/datasets.html">County Business Patterns</a> (Census Bureau), 2023: how many of each kind of business</li>
+    <li><a href="https://www.dol.gov/agencies/eta/national-agricultural-workers-survey/data">National Agricultural Workers Survey</a> and <a href="https://www.dol.gov/agencies/eta/foreign-labor/performance">H-2A disclosure data</a> (Department of Labor): farmworkers and guest workers</li>
+    <li><a href="https://www.transit.dot.gov/ntd/ntd-data">National Transit Database</a> (FTA), <a href="https://www.ers.usda.gov/data-products/food-access-research-atlas/">Food Access Research Atlas</a> and <a href="https://www.ers.usda.gov/data-products/rural-urban-continuum-codes/">Rural-Urban Continuum Codes</a> (USDA ERS)</li>
+  </ul>
+  <p class="group"><strong>Health, life events and weather</strong></p>
+  <ul>
+    <li><a href="https://meps.ahrq.gov/mepsweb/data_stats/download_data_files.jsp">Medical Expenditure Panel Survey</a> (AHRQ), 2024, and <a href="https://data.cms.gov/provider-data/topics/dialysis-facilities">dialysis facilities</a> (CMS)</li>
+    <li><a href="https://www.cdc.gov/nchs/nvss/marriage-divorce.htm">Births, deaths, marriages and divorces</a> (CDC NCHS) and <a href="https://www.irs.gov/statistics/soi-tax-stats-migration-data">migration data</a> (IRS)</li>
+    <li><a href="https://www.ncei.noaa.gov/stormevents/ftp.jsp">Storm Events Database</a> and <a href="https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily">GHCN-Daily</a> for Atlanta’s airport (NOAA): how often storm and heat days come</li>
+  </ul>
+  <p>v2 is checked against them across the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sim/evidence/results/v2_phase5_typed_days_2027/evidence_checks.md">typed-day year</a> and the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sim/evidence/results/v2_month_2027-03/evidence_checks.md">March month</a>. Ten more are listed for later versions, among them the American Community Survey microdata, the National Household Travel Survey and the Survey of Income and Program Participation.</p>
+
+  <h3>4. History behind the systems lens</h3>
+  <p>Each district’s historical and built circumstances name their own sources: the Housing Act of 1949 and the Federal-Aid Highway Act of 1956; the University of Richmond’s <a href="https://dsl.richmond.edu/panorama/redlining/">Mapping Inequality</a> and <a href="https://dsl.richmond.edu/panorama/renewal/">Renewing Inequality</a>; the EPA on heat islands and brownfields; BLS manufacturing employment; the American Housing Survey and American Community Survey; the USDA Census of Agriculture and farm real estate values; American Farmland Trust; the NCES Digest of Education Statistics; and the UNC Sheps Center’s rural hospital closures. The <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-systems-lens.md">design record</a> lists the figures that were checked and reworded.</p>
+  <p class="note">Households in both versions are built by rule to match national shares. They aren’t drawn from Census microdata yet; that’s planned for the third version.</p>
 
   <h2 id="real">What’s real and what isn’t</h2>
   <ul>
@@ -147,22 +213,25 @@ footer a { color:var(--ink2); }
   </ul>
 
   <h2 id="limits">Limits</h2>
+  <p>v2 keeps the first run’s people so the two can be compared, and some of those households don’t hold up. The <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-v2-close-reading.md">close reading</a> lists them:</p>
   <ul>
-    <li>One day can’t balance a year’s spending. Rent bunches early in the month and few people are paid on a Wednesday the 3rd, so some shares, such as insurance and pensions, run low.</li>
-    <li>Payment calendars are uneven on that date. SSI and VA benefits pay on the 1st, so they don’t appear, and most Social Security pays on later Wednesdays.</li>
-    <li>Trip distances come from a table of district-to-district distances, so some errands are implausibly long.</li>
-    <li>A few employer and job pairs are odd, and no one marries or divorces on the day.</li>
+    <li>Some SSI goes to people whose income or spouse rules it out, and coverage doesn’t always follow eligibility.</li>
+    <li>Every renter with no income pays the same rent, and some refundable credits reach households earning well over the limit.</li>
+    <li>Wages run about 14% high on purpose, to make up for households that are smaller than real ones. Compare households, not occupations.</li>
+    <li>A few jobs are paired with unrelated employers, and a few trips run 60 to 80 miles.</li>
+    <li>Overdraft fees fall on fewer accounts than in life.</li>
+    <li>Each typed day is simulated on its own. Only the March month carries unpaid bills and loans from one day to the next.</li>
     <li>Some 2027 figures, such as the Medicare Part B premium, are projections.</li>
     <li>In the animated city, positions are approximate: the run’s six districts are drawn on a smaller model town.</li>
   </ul>
-  <p>The second version addresses several of these, starting with the single day.</p>
+  <p>The third version, drawn from Census microdata, redraws the households.</p>
 
   <h2 id="credits">Who made it</h2>
   <dl class="who">
     <dt>Jason James</dt>
     <dd>The idea and where it came from, the jobs-to-be-done framing, the systems lens, and every design decision: the visual direction, the views, the sound and the structure.</dd>
     <dt>Claude (Anthropic’s AI model)</dt>
-    <dd>Researched the anchors, wrote the simulator and generated the day (Claude Fable 5.2 for the first run), hand-wrote the 500 detailed records, and built the viewers, the systems lens and the explorer, working in Claude and Claude Code under Jason’s direction.</dd>
+    <dd>Researched the anchors and the real evidence, logged the downloaded datasets, wrote both simulators and generated the days (Claude Fable 5.2 for the first run, Claude Opus 5.5 for v2), hand-wrote the 800 detailed records (500 in the first run, 300 in v2), and built the viewers, the systems lens and the explorer, working in Claude and Claude Code under Jason’s direction.</dd>
   </dl>
   <p>Every design decision, and why, is in the <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/design-decisions.md">decision log</a>.</p>
 
@@ -171,9 +240,12 @@ footer a { color:var(--ink2); }
     <li><a href="https://github.com/jas0nmjames/playground/tree/development/mapping-synthetic-transactions">The repository</a> <span class="dim">· code, data and documents</span></li>
     <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/README.md">README</a> <span class="dim">· the views, how they work, and what Claude did</span></li>
     <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/design-decisions.md">Decision log</a></li>
-    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-2027-03-03-run-record.md">Run record</a> <span class="dim">· the first day’s calibration and checks</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-2027-03-03-run-record.md">First run record</a> <span class="dim">· the first day’s calibration and checks</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-v2-run-record.md">v2 run record</a> <span class="dim">· the 19 published days, their weights and checks</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-data-update-plan.md">Data update plan</a> <span class="dim">· how the evidence moved each rate</span></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/evidence/report.md">Evidence report</a> and <a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/sources/manifest.csv">sources manifest</a> <span class="dim">· the real accounts and the downloaded datasets</span></li>
     <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-v2-close-reading.md">Close reading</a> <span class="dim">· two readers on 200 records before v2 was frozen, and what was fixed</span></li>
-    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-build-approach.md">How the day was built</a></li>
+    <li><a href="https://github.com/jas0nmjames/playground/blob/development/mapping-synthetic-transactions/reference/medianville-build-approach.md">How the first day was built</a></li>
     <li>Frozen versions: <a href="../v1/">the night map (v1)</a> and <a href="../v3/">Miniature and Map as first shipped (v3)</a></li>
   </ul>
 </article>

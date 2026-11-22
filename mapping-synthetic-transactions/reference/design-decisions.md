@@ -294,3 +294,32 @@ New decisions go at the end of their section with a date. A reversed decision st
 ### 6.5 Links to the data explorer
 - **Decided:** "Data" goes in the viewer header (not in the view switch, since the explorer is a different page). The overlay carries a secondary button, and each record's Details rail gets an "Open in data explorer" link to that record.
 - **Who:** Jason, on a proposal.
+
+## 7. Polish pass (2026-11-22)
+
+### 7.1 The viewer opens in Live
+- **Decided:** Playback starts at Live: the simulated day plays at the visitor's own time of day, one minute a minute. 1, 5 and 20 min/s are still one tap away. A visit at night opens on a quiet, dark city, and that's accepted.
+- **Who:** Jason.
+
+### 7.2 "Medianville", with a subtitle that says what it is
+- **Decided:** The header reads **Medianville** with the subtitle "One day of transactions in a simulated American city", replacing "Medianville in Motion". Because the subtitle says "simulated", the header drops its "Simulated city · no real people" chip. The chip stays in the intro overlay and on About.
+- **Who:** Jason, choosing from proposals.
+
+### 7.3 "Sample day", not "placeholder" and "the real one"
+- **Decided:** While the run downloads, the chip reads "Sample day · loading the full simulation". "The real one" suggested real data, and nothing on the page is real.
+- **Who:** Jason, on a proposal.
+
+### 7.4 The board turns while paused
+- **Decided:** Turning, tilting and north-up ease into place even while playback is paused. Only the city's motion (records, vehicles, people) stops.
+- **Who:** Jason.
+
+### 7.5 The map sheet joins the viewer's look
+- **Decided:** The Map keeps its topographic drawing (contours, cased roads, creek, symbols) but takes the viewer's design system: Figtree instead of Barlow Condensed, navy ink (`#0E1B2E`) instead of black, lighter paper (`#FBF9F4`), and the slate page behind the sheet instead of warm grey, with a thin border and soft shadow like the viewer's cards. The italic serif stays only for the creek's name, as on printed maps. Street names use an en space between words, since a plain space nearly vanishes at map sizes.
+- **Decided:** The margin below the frame is laid out in clear columns: the legend on the left, the scale and north arrow on the right, and the title block under them. It starts a clear gap below the outer frame line, which used to run through the LEGEND heading.
+- **Who:** Jason, on a proposal.
+
+### 7.6 A compact header below 1,280 px
+- **Decided:** Below 1,280 px, where Activity already becomes a drawer, the header keeps only the title and subtitle, **Activity** and a menu button. The menu holds the status chip, the day menu, focus blur, **Sound**, **Data** and **About**. The Miniature/Map switch and **Systems lens** sit over the city's top-left corner. On a phone the zoom and turn buttons stack down the right edge below them, so the lens button keeps its full name: a bare "Lens" was unclear. On an iPhone the city gets about 630 px of height instead of about 340.
+- **Decided:** At 1,280 px and wider, the header stays on one row: the subtitle sits under the title, the day menu moves to the footer beside the clock, and **Sound** shows only its icon below 1,440 px.
+- **Decided:** The page sizes to the visible screen (`100dvh`) and keeps clear of the iPhone's home indicator and notch. On a phone the speed buttons read Live, 1, 5 and 20 min/s, so the clock, play button and speeds share one row.
+- **Who:** Jason, choosing from proposals (option A).
