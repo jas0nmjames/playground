@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Medianville: a simulated city’s transactions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,17 +12,18 @@
   --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08); --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; }
-body { font-family:var(--ui); color:var(--ink); background:var(--page); display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100vh; min-height:420px; font-variant-numeric:tabular-nums lining-nums; -webkit-font-smoothing:antialiased; }
+body { font-family:var(--ui); color:var(--ink); background:var(--page); display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100vh; height:100dvh; min-height:420px; font-variant-numeric:tabular-nums lining-nums; -webkit-font-smoothing:antialiased; }
 button, input { font-family:inherit; }
 .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 :focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
 /* header */
-header.top { display:flex; align-items:center; gap:14px 18px; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--line); flex-wrap:wrap; }
-.brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; }
-h1 { font-size:18px; font-weight:700; margin:0; letter-spacing:-.01em; }
-.title { display:flex; align-items:baseline; gap:4px 10px; flex-wrap:wrap; min-width:0; }
-.title .sub { margin:0; font-size:14px; font-weight:500; color:var(--ink2); }
-@media (max-width:760px) { .title { flex-direction:column; gap:2px; } .title .sub { font-size:13px; } }
+header.top { position:relative; display:flex; align-items:center; gap:8px; padding:10px max(20px, env(safe-area-inset-right)) 10px max(20px, env(safe-area-inset-left)); background:var(--surface); border-bottom:1px solid var(--line); }
+.brand { display:flex; align-items:center; gap:14px; margin-right:auto; padding-right:10px; min-width:0; flex:1 1 auto; }
+.brandname { flex:none; min-width:0; }
+h1 { font-size:18px; line-height:1.2; font-weight:700; margin:0; letter-spacing:-.01em; }
+.brandname .sub { margin:1px 0 0; font-size:13px; line-height:1.3; font-weight:500; color:var(--ink2); }
+#datachip { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+#menu-btn { display:none; flex:none; }
 .chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; }
 fieldset.seg { display:inline-flex; border:1px solid var(--ctrl); border-radius:999px; padding:3px; margin:0; background:var(--surface); gap:2px; }
 fieldset.seg legend { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
@@ -126,11 +127,12 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .chip.warn { color:#8E3B6D; border-color:#E7C7DA; background:#FBF1F6; }
 .runpick { font:600 13px var(--ui); color:var(--ink); background:#fff; border:1px solid var(--ctrl); border-radius:999px; min-height:32px; padding:4px 10px; max-width:100%; cursor:pointer; }
 .runpick:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+footer.bar .runpick { min-height:40px; font-size:14px; padding:4px 12px; max-width:240px; }
 .credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
 .credit a { color:var(--ink2); }
 .credit a:hover { color:var(--ink); }
 /* bottom bar */
-footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px 20px 8px; background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap; }
+footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px max(20px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap; }
 #clock { font-size:22px; font-weight:700; min-width:118px; letter-spacing:-.01em; }
 #play { width:44px; height:44px; border-radius:999px; background:var(--ink); color:#fff; border:0; display:grid; place-items:center; cursor:pointer; flex:none; }
 .tlwrap { flex:1; min-width:260px; }
@@ -193,7 +195,8 @@ a.go { text-decoration:none; }
 .hdlinks { display:flex; gap:8px; }
 .hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; }
 .hdlink:hover { background:var(--page); }
-@media (max-width:1639px) { .kbdhint { display:none; } } /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
+@media (max-width:1639px) { .kbdhint { display:none; } }
+@media (min-width:1280px) and (max-width:1439px) { .sndlbl { display:none; } .sndbtn { padding:0 11px; } } /* the button keeps its label for screen readers */ /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
 /* first-visit intro: a dialog over the city, which keeps running behind it */
 .intro { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:24px 16px; }
 .intro[hidden] { display:none; }
@@ -242,6 +245,41 @@ a.go { text-decoration:none; }
   .lens-esc { display:none; }
 }
 @media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
+/* compact layout below 1280 px: a slim bar (title, Activity, a menu), the view switch and lens over the city.
+   The app shell moves the elements; these rules only style them where they land. */
+.scene-ctrls.left { left:12px; right:auto; justify-content:flex-start; }
+.scene-ctrls.left:empty { display:none; }
+.scene-ctrls.left fieldset.seg, .scene-ctrls.left .lensbtn { border-color:var(--line); box-shadow:var(--shadow); }
+.hdmenu { position:absolute; top:calc(100% + 6px); right:max(12px, env(safe-area-inset-right)); z-index:35; width:min(340px, calc(100vw - 24px)); max-height:calc(100dvh - 120px); overflow:auto; overscroll-behavior:contain; background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:12px; display:flex; flex-direction:column; gap:10px; }
+.hdmenu .m-day, .hdmenu .m-more { display:flex; flex-direction:column; gap:8px; }
+.hdmenu .m-day:empty, .hdmenu .m-blur:empty, .hdmenu .m-blur:has(> [hidden]) { display:none; } /* focus blur is for the Miniature only */
+.hdmenu .chip { align-self:flex-start; white-space:normal; }
+.hdmenu .runpick { width:100%; max-width:none; min-height:40px; font-size:14px; }
+.hdmenu #blurset { box-shadow:none; padding:0; justify-content:space-between; }
+.hdmenu #blurset .lbl { padding-left:2px; font-size:13.5px; }
+.hdmenu .sndbtn, .hdmenu .hdlink { width:100%; min-height:44px; justify-content:flex-start; border-radius:10px; }
+.hdmenu .hdlinks { flex-direction:column; }
+.hdmenu .sndpop { position:static; width:auto; max-width:none; box-shadow:none; padding:10px 2px 4px; }
+@media (max-width:1279px) {
+  header.top { padding:8px max(12px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left)); }
+  #menu-btn { display:grid; width:40px; height:40px; }
+  #drawer-btn { flex:none; }
+  .brandname { flex:0 1 auto; } /* the subtitle wraps under the title rather than running under the buttons */
+}
+@media (max-width:600px) {
+  .scene-ctrls.left .lensbtn { padding:0 12px; }
+  /* the zoom and turn buttons stack down the right edge, below the view switch and lens, so "Systems lens" keeps its full name */
+  #scene-right { top:60px; flex-direction:column; align-items:flex-end; }
+  #scene-right .card { flex-direction:column; }
+}
+@media (max-width:760px) {
+  footer.bar { gap:8px; padding-top:8px; padding-left:max(12px, env(safe-area-inset-left)); padding-right:max(12px, env(safe-area-inset-right)); }
+  #clock { font-size:18px; min-width:0; }
+  #play { width:40px; height:40px; }
+  #speedseg label { padding:4px 9px; font-size:13px; min-width:36px; }
+  #speedseg .u { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; } /* "1", "5", "20 min/s" on screen; full names for screen readers */
+  .tlwrap { flex-basis:100%; min-width:0; }
+}
 /* printed map sheet */
 svg.quad text { font-family:var(--ui); }
 svg.quad .paper { stroke:var(--line); stroke-width:1px; vector-effect:non-scaling-stroke; }
@@ -299,9 +337,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 <body>
 <header class="top">
   <div class="brand">
-    <div class="title"><h1>Medianville</h1><p class="sub">One day of transactions in a simulated American city</p></div>
+    <div class="brandname"><h1>Medianville</h1><p class="sub">One day of transactions in a simulated American city</p></div>
     <span class="chip" id="datachip" role="status">Sample day · loading the full simulation</span>
-    <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   </div>
   <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
@@ -311,7 +348,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L" title="Systems lens (L)"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
   <span class="dim small kbdhint" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens · <b>S</b> sound</span>
   <div class="sndwrap">
-    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Sound</button>
+    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sndlbl">Sound</span></button>
     <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
       <h2>Sound</h2>
       <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
@@ -327,6 +364,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <button type="button" class="hdlink" id="about-btn" aria-haspopup="dialog" aria-controls="intro"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5.4" r="1.05" fill="currentColor"/></svg>About</button>
   </div>
   <button class="btn" id="drawer-btn" aria-controls="rail" aria-expanded="false">Activity</button>
+  <button type="button" class="iconbtn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="hdmenu"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <!-- below 1280 px the day, focus blur, sound, Data and About move in here (see "compact layout" in the app shell) -->
+  <div class="hdmenu" id="hdmenu" hidden role="group" aria-label="Menu"><div class="m-day"></div><div class="m-blur"></div><div class="m-more"></div></div>
 </header>
 <main class="body">
   <section id="scene" tabindex="0" role="application" aria-roledescription="interactive city" aria-label="City view" aria-describedby="scene-help">
@@ -335,7 +375,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <canvas id="overlay" aria-hidden="true"></canvas>
     <div id="hoverchip" hidden aria-hidden="true"></div>
     <div class="chooser" id="chooser" hidden role="dialog" aria-labelledby="ch-h"></div>
-    <div class="scene-ctrls">
+    <div class="scene-ctrls left" id="scene-left"></div>
+    <div class="scene-ctrls" id="scene-right">
       <div class="card" id="blurset">
         <span class="lbl" id="blur-l">Focus blur</span>
         <fieldset class="seg" aria-labelledby="blur-l">
@@ -390,13 +431,14 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   </div>
 </main>
 <footer class="bar">
+  <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   <div id="clock" aria-hidden="true">8:00 a.m.</div>
   <button id="play" aria-label="Pause"><svg class="pi" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/></svg><svg class="pl" hidden width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3l10 6-10 6z" fill="currentColor"/></svg></button>
   <fieldset class="seg" id="speedseg">
     <legend>Playback speed</legend>
     <input type="radio" name="speed" id="slive" value="live" checked><label for="slive">Live</label>
-    <input type="radio" name="speed" id="s1" value="1"><label for="s1">1 min/s</label>
-    <input type="radio" name="speed" id="s5" value="5"><label for="s5">5 min/s</label>
+    <input type="radio" name="speed" id="s1" value="1"><label for="s1">1<span class="u"> min/s</span></label>
+    <input type="radio" name="speed" id="s5" value="5"><label for="s5">5<span class="u"> min/s</span></label>
     <input type="radio" name="speed" id="s20" value="20"><label for="s20">20 min/s</label>
   </fieldset>
   <div class="tlwrap">
@@ -2392,7 +2434,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     root.hidden = true; remember();
     for (const el of outside()) if (el) el.inert = false;
     aboutBtn.setAttribute('aria-expanded', 'false');
-    const back = opener && document.contains(opener) ? opener : document.getElementById('scene');
+    // About can live in the compact menu, which is closed by now: go back to the menu button instead
+    const menuBtn = document.getElementById('menu-btn'), shown = (el) => el && document.contains(el) && el.offsetParent !== null;
+    const back = shown(opener) ? opener : shown(menuBtn) ? menuBtn : document.getElementById('scene');
     opener = null;
     back && back.focus({ preventScroll: true });
   }
@@ -2433,6 +2477,46 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
   }
   App.intro = { open, close, isOpen: () => !root.hidden };
+})();
+</script>
+<script>
+// ===== compact layout below 1280 px: a slim header bar with a menu, and the view switch and lens over the city =====
+// Below 1280 px (where Activity becomes a drawer) the header keeps only the title, Activity and a menu button. The menu
+// takes the status chip, the day picker, focus blur, Sound, Data and About; the view switch and the Systems lens button
+// move onto the city's top-left corner. Elements are moved, not copied, so their ids, handlers and state stay as they are.
+// A comment left at each element's home puts it back when the window widens again.
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const menu = $('hdmenu'), btn = $('menu-btn'), q = window.matchMedia('(max-width:1279px)');
+  const slots = { day: menu.querySelector('.m-day'), blur: menu.querySelector('.m-blur'), more: menu.querySelector('.m-more'), left: $('scene-left') };
+  const MOVES = [[$('datachip'), 'day'], [$('runpick'), 'day'], [$('blurset'), 'blur'], [document.querySelector('.sndwrap'), 'more'], [document.querySelector('.hdlinks'), 'more'], [$('viewseg'), 'left'], [$('lens-btn'), 'left']];
+  const homes = new Map();
+  for (const [el] of MOVES) { if (!el) continue; const c = document.createComment('home of #' + (el.id || el.className)); el.before(c); homes.set(el, c); }
+
+  function open(v) {
+    if (v === !menu.hidden) return;
+    menu.hidden = !v; btn.setAttribute('aria-expanded', String(v));
+    if (!v) { const pop = $('snd-pop'); if (pop && !pop.hidden) $('snd-btn').click(); }
+  }
+  function place() {
+    const compact = q.matches;
+    open(false);
+    for (const [el, slot] of MOVES) { if (!el) continue; if (compact) slots[slot].append(el); else homes.get(el).after(el); }
+    document.body.classList.toggle('compact', compact);
+  }
+  btn.addEventListener('click', (e) => { e.stopPropagation(); open(menu.hidden); if (!menu.hidden) { const f = menu.querySelector('select:not([hidden]), button, a[href], input'); f && f.focus(); } });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) open(false); });
+  // leaving for About, the drawer or another page closes the menu
+  for (const id of ['about-btn', 'drawer-btn', 'data-link']) { const el = $(id); el && el.addEventListener('click', () => open(false)); }
+  // Escape closes the sound panel first (it handles that itself), then the menu
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || menu.hidden) return;
+    const pop = $('snd-pop'); if (pop && !pop.hidden && pop.contains(e.target)) return;
+    e.stopImmediatePropagation(); open(false); btn.focus();
+  }, true);
+  menu.addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !menu.contains(e.relatedTarget) && e.relatedTarget !== btn) open(false); });
+  q.addEventListener('change', place);
+  place();
 })();
 </script>
 <script src="fflate.js"></script>

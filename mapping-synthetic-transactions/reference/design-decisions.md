@@ -317,3 +317,9 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Decided:** The Map keeps its topographic drawing (contours, cased roads, creek, symbols) but takes the viewer's design system: Figtree instead of Barlow Condensed, navy ink (`#0E1B2E`) instead of black, lighter paper (`#FBF9F4`), and the slate page behind the sheet instead of warm grey, with a thin border and soft shadow like the viewer's cards. The italic serif stays only for the creek's name, as on printed maps. Street names use an en space between words, since a plain space nearly vanishes at map sizes.
 - **Decided:** The margin below the frame is laid out in clear columns: the legend on the left, the scale and north arrow on the right, and the title block under them. It starts a clear gap below the outer frame line, which used to run through the LEGEND heading.
 - **Who:** Jason, on a proposal.
+
+### 7.6 A compact header below 1,280 px
+- **Decided:** Below 1,280 px, where Activity already becomes a drawer, the header keeps only the title and subtitle, **Activity** and a menu button. The menu holds the status chip, the day menu, focus blur, **Sound**, **Data** and **About**. The Miniature/Map switch and **Systems lens** sit over the city's top-left corner. On a phone the zoom and turn buttons stack down the right edge below them, so the lens button keeps its full name: a bare "Lens" was unclear. On an iPhone the city gets about 630 px of height instead of about 340.
+- **Decided:** At 1,280 px and wider, the header stays on one row: the subtitle sits under the title, the day menu moves to the footer beside the clock, and **Sound** shows only its icon below 1,440 px.
+- **Decided:** The page sizes to the visible screen (`100dvh`) and keeps clear of the iPhone's home indicator and notch. On a phone the speed buttons read Live, 1, 5 and 20 min/s, so the clock, play button and speeds share one row.
+- **Who:** Jason, choosing from proposals (option A).
