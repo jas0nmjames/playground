@@ -3,6 +3,7 @@ published: 2026-03-01
 updated: 2026-03-01
 tags: generative
 nosite: true
+summary: A music maker for adults and kids. Design only, for now.
 ---
 
 # Rock and Bop

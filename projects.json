@@ -1,0 +1,318 @@
+[
+  {
+    "dir": "mapping-synthetic-transactions",
+    "title": "Medianville",
+    "summary": "One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a night map, a 3D miniature town and a printed map sheet.",
+    "published": "2026-11-17",
+    "updated": "2026-11-22",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions",
+    "pinned": 1,
+    "thumbnail": "https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/thumbnail.webp",
+    "preview": [
+      "https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/preview.mp4"
+    ]
+  },
+  {
+    "dir": "liquid-hourglass",
+    "title": "Liquid hourglass",
+    "summary": "A double liquid-motion hourglass driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over.",
+    "published": "2026-11-16",
+    "updated": "2026-11-16",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/liquid-hourglass/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/liquid-hourglass",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/liquid-hourglass/thumbnail.webp",
+    "preview": [
+      "https://jas0nmjames.github.io/playground/liquid-hourglass/preview.mp4"
+    ]
+  },
+  {
+    "dir": "marimba",
+    "title": "Marimba navigator",
+    "summary": "A playable three-octave marimba that lights up a card for each scale degree as you play.",
+    "published": "2026-09-25",
+    "updated": "2026-09-29",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/marimba/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/marimba",
+    "pinned": 3,
+    "thumbnail": "https://jas0nmjames.github.io/playground/marimba/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "strikefleet-omega-recreated",
+    "title": "Strikefleet Omega — Recreated",
+    "summary": "A browser fan tribute to Strikefleet Omega (~2012), the draw-a-flight-path carrier-defense game. Vanilla JavaScript and canvas, no build step.",
+    "published": "2026-07-21",
+    "updated": "2026-07-21",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/strikefleet-omega-recreated",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "dut-dut",
+    "title": "dut dut",
+    "summary": "Write, hear and learn from drumline cadences: paint hits onto a grid, read them as notation, play them on a synthesized drumline and export MIDI, audio or a score.",
+    "published": "2026-07-20",
+    "updated": "2026-07-21",
+    "tags": [],
+    "url": "https://dutdut.netlify.app/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/dut-dut",
+    "pinned": 2,
+    "thumbnail": "https://jas0nmjames.github.io/playground/dut-dut/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "small-as-voyager",
+    "title": "Small as Voyager",
+    "summary": "A one-page portfolio small enough to fit in Voyager's memory: about 5.5 KB of hand-written HTML and CSS, with no scripts, web fonts or images, ending in a line drawing of the spacecraft.",
+    "published": "2026-04-22",
+    "updated": "2026-11-20",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/small-as-voyager/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/small-as-voyager",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/small-as-voyager/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "tech-and-society-course",
+    "title": "Technology & Society: A Primer for Designers",
+    "summary": "A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build.",
+    "published": "2026-04-06",
+    "updated": "2026-04-06",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/tech-and-society-course/tech-society-primer.html",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/tech-and-society-course",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/tech-and-society-course/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "project-scravax",
+    "title": "Scravax Drift Derby (Georgia)",
+    "summary": "A browser drift-racing game: six laps against bots, or against a second player. Made with Claude in about an hour.",
+    "published": "2026-03-10",
+    "updated": "2026-03-12",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://project-scravax.netlify.app/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/project-scravax",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/project-scravax/thumbnail.webp",
+    "preview": [
+      "https://jas0nmjames.github.io/playground/project-scravax/preview.mp4"
+    ]
+  },
+  {
+    "dir": "rock-and-bop",
+    "title": "Rock and Bop",
+    "summary": "A music maker for adults and kids. Design only, for now.",
+    "published": "2026-03-01",
+    "updated": "2026-03-01",
+    "tags": [
+      "generative"
+    ],
+    "url": null,
+    "source": "https://github.com/jas0nmjames/playground/tree/main/rock-and-bop",
+    "pinned": null,
+    "thumbnail": null,
+    "preview": []
+  },
+  {
+    "dir": "terminal-velocity",
+    "title": "Velocity — Textured v1.1.0",
+    "summary": "A three.js game over procedural terrain, with triplanar textures, scattered rocks and enemies. It needs a build step, so there's no live site yet.",
+    "published": "2025-09-03",
+    "updated": "2026-03-10",
+    "tags": [
+      "generative"
+    ],
+    "url": null,
+    "source": "https://github.com/jas0nmjames/playground/tree/main/terminal-velocity",
+    "pinned": null,
+    "thumbnail": null,
+    "preview": []
+  },
+  {
+    "dir": "microwave",
+    "title": "Microwave",
+    "summary": "Concept: upload a photo of a plate of food and get a microwave time that leaves it hot, but not too hot.",
+    "published": "2025-09-02",
+    "updated": "2025-09-02",
+    "tags": [
+      "generative"
+    ],
+    "url": null,
+    "source": "https://github.com/jas0nmjames/playground/tree/main/microwave",
+    "pinned": null,
+    "thumbnail": null,
+    "preview": []
+  },
+  {
+    "dir": "shapes",
+    "title": "Shapes",
+    "summary": "Labeled shapes from a small list of items drop and bounce around the page, with Matter.js physics.",
+    "published": "2025-09-02",
+    "updated": "2025-09-02",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/shapes/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/shapes",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/shapes/thumbnail.webp",
+    "preview": [
+      "https://jas0nmjames.github.io/playground/shapes/preview.mp4"
+    ]
+  },
+  {
+    "dir": "arrival",
+    "title": "Arrival",
+    "summary": "An image generator and decoder for Heptapod B, the logogram language in the film Arrival (2016).",
+    "published": "2025-08-09",
+    "updated": "2025-09-02",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/arrival/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/arrival",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/arrival/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "ephemeral-guidance",
+    "title": "ephemeral guidance",
+    "summary": "Notes on the 'unknown unknowns' of interfaces generated on the fly, through the lens of digital banking.",
+    "published": "2025-08-04",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": null,
+    "source": "https://github.com/jas0nmjames/playground/tree/main/ephemeral-guidance",
+    "pinned": null,
+    "thumbnail": null,
+    "preview": []
+  },
+  {
+    "dir": "forms",
+    "title": "Forms",
+    "summary": "KYC banking form experiments with JSON logic, multi-country support and wizard patterns.",
+    "published": "2025-07-07",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/forms/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/forms",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/forms/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "tiny",
+    "title": "Tiny",
+    "summary": "A tiny scroll-snapping site sized for an Apple Watch screen.",
+    "published": "2025-06-01",
+    "updated": "2025-09-02",
+    "tags": [
+      "generative"
+    ],
+    "url": "https://jas0nmjames.github.io/playground/tiny/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/tiny",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/tiny/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "currency-input",
+    "title": "Currency Input",
+    "summary": "A text field that formats digits as US dollars while you type.",
+    "published": "2024-09-07",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/currency-input/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/currency-input",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/currency-input/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "html-media-best-practices",
+    "title": "HTML Media Best Practices",
+    "summary": "Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video, and YouTube and Vimeo embeds.",
+    "published": "2023-07-12",
+    "updated": "2026-11-17",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/html-media-best-practices/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/html-media-best-practices",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/html-media-best-practices/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "exit-modals",
+    "title": "Exit Modals Demo",
+    "summary": "Three iterations on exit-intent modals and new-tab interstitials.",
+    "published": "2023-04-11",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/exit-modals/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/exit-modals",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/exit-modals/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "chatbots",
+    "title": "playground-chatbots",
+    "summary": "Experiments with chatbots and live chat: traditional dialog bots, NLP and NLU, large language models, live chat widgets and conversation design.",
+    "published": "2023-03-15",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/chatbots/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/chatbots",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/chatbots/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "captions",
+    "title": "captions",
+    "summary": "Experimenting with HTML5's baked in captions.",
+    "published": "2023-01-17",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/captions/",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/captions",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/captions/thumbnail.webp",
+    "preview": []
+  },
+  {
+    "dir": "typography",
+    "title": "typography",
+    "summary": "A playground to explore & experiment in the world of typography.",
+    "published": "2022-11-01",
+    "updated": "2025-09-02",
+    "tags": [],
+    "url": "https://jas0nmjames.github.io/playground/typography/bungee.html",
+    "source": "https://github.com/jas0nmjames/playground/tree/main/typography",
+    "pinned": null,
+    "thumbnail": "https://jas0nmjames.github.io/playground/typography/thumbnail.webp",
+    "preview": []
+  }
+]

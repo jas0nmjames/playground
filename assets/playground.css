@@ -1,0 +1,976 @@
+/* Playground directory styles.
+   Tokens, color modes and components follow jasonjames.works (styles.css there;
+   search it for "claude-color-modes" and "article-summary-card"), so the three
+   sites read as one family. Built with assistance from Claude (Anthropic),
+   November 2026.
+
+   One orange only. The brand orange (#E05B08) is for display type, rules,
+   borders and the current tab. It's 3.6:1 on snow: enough for large type and
+   borders, but not for small text or snow-on-orange button labels (WCAG AA
+   wants 4.5:1). So the current tab's label is black (5.7:1 on the orange), and
+   small text and filled buttons use the text color rather than a second,
+   darker orange that would sit next to the first one and clash. */
+
+:root {
+    --sidebar-width: 15rem; /* the left column, and the colophon under it */
+}
+
+/* ─── Color modes ─────────────────────────────────────────────────────────── */
+
+:root, :root[data-mode="light"] {
+    color-scheme: light;
+    --primary: snow;
+    --secondary: #C4C6E2;
+    --accent: #E05B08;
+    --accent-transparent: #E05B0825;
+    --accent-transparent-light: #E05B0812;
+    --on-accent: #000000;
+    --text: #000000;
+    --text-transparent: #00000025;
+    --ford-mustang-boss-302: #7A2E42;
+    --nissan-fairlady-z: #202A44;
+    --frame-width: 4px;
+
+    /* pinned cards */
+    --card-bg: var(--secondary);
+    --card-frame: var(--primary);
+    --title-fill: var(--primary);
+    --extra-layers: block;
+    --tag-shadow: none;
+}
+
+:root[data-mode="dark"] {
+    color-scheme: dark;
+    --primary: black;
+    --secondary: white;
+    --accent: white;
+    --accent-transparent: #FFFFFF25;
+    --accent-transparent-light: #FFFFFF12;
+    --on-accent: black;
+    --text: white;
+    --text-transparent: #FFFFFF25;
+    --ford-mustang-boss-302: white;
+    --nissan-fairlady-z: white;
+    --frame-width: 2px;
+    --card-bg: var(--primary);
+    --card-frame: var(--secondary);
+    --title-fill: var(--text);
+    --extra-layers: none;
+    --tag-shadow: -2px 2px 0 var(--text);
+}
+
+:root[data-mode="mono"] {
+    color-scheme: light;
+    --primary: snow;
+    --secondary: black;
+    --accent: black;
+    --accent-transparent: #00000025;
+    --accent-transparent-light: #00000012;
+    --on-accent: snow;
+    --text: black;
+    --text-transparent: #00000025;
+    --ford-mustang-boss-302: black;
+    --nissan-fairlady-z: black;
+    --frame-width: 3px;
+    --card-bg: var(--primary);
+    --card-frame: var(--secondary);
+    --title-fill: var(--text);
+    --extra-layers: none;
+    --tag-shadow: -2px 2px 0 var(--text);
+}
+
+:root[data-mode="mono"] img,
+:root[data-mode="mono"] video {
+    filter: grayscale(1);
+}
+
+/* No-JS fallbacks: without the head script there's no data-mode, so follow the
+   system. Contrast comes after dark so it wins when both are set. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-mode]) {
+        color-scheme: dark;
+        --primary: black;
+        --secondary: white;
+        --accent: white;
+        --accent-transparent: #FFFFFF25;
+        --accent-transparent-light: #FFFFFF12;
+        --on-accent: black;
+        --text: white;
+        --text-transparent: #FFFFFF25;
+        --ford-mustang-boss-302: white;
+        --nissan-fairlady-z: white;
+        --frame-width: 2px;
+        --card-bg: var(--primary);
+        --card-frame: var(--secondary);
+        --title-fill: var(--text);
+        --extra-layers: none;
+        --tag-shadow: -2px 2px 0 var(--text);
+    }
+}
+
+@media (prefers-contrast: more), (forced-colors: active) {
+    :root:not([data-mode]) {
+        color-scheme: light;
+        --primary: snow;
+        --secondary: black;
+        --accent: black;
+        --accent-transparent: #00000025;
+        --accent-transparent-light: #00000012;
+        --on-accent: snow;
+        --text: black;
+        --text-transparent: #00000025;
+        --ford-mustang-boss-302: black;
+        --nissan-fairlady-z: black;
+        --frame-width: 3px;
+        --card-bg: var(--primary);
+        --card-frame: var(--secondary);
+        --title-fill: var(--text);
+        --extra-layers: none;
+        --tag-shadow: -2px 2px 0 var(--text);
+    }
+    :root:not([data-mode]) img,
+    :root:not([data-mode]) video {
+        filter: grayscale(1);
+    }
+}
+
+/* ─── Fonts ───────────────────────────────────────────────────────────────── */
+
+/* Bungee Layers: four fonts drawn to stack into one multicolor title */
+@font-face {
+    font-family: "Bungee Layers Regular";
+    src: url("fonts/bungee-layers/BungeeLayers-Regular.woff2") format("woff2");
+    font-display: swap;
+}
+@font-face {
+    font-family: "Bungee Layers Inline";
+    src: url("fonts/bungee-layers/BungeeLayers-Inline.woff2") format("woff2");
+    font-display: swap;
+}
+@font-face {
+    font-family: "Bungee Layers Outline";
+    src: url("fonts/bungee-layers/BungeeLayers-Outline.woff2") format("woff2");
+    font-display: swap;
+}
+@font-face {
+    font-family: "Bungee Layers Shade";
+    src: url("fonts/bungee-layers/BungeeLayers-Shade.woff2") format("woff2");
+    font-display: swap;
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+
+html {
+    background-color: var(--primary);
+    color: var(--text);
+}
+
+body {
+    font-family: "Readex Pro", "Lexend", system-ui, sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 350;
+    line-height: 1.45;
+    margin: 0.5em 1em 2em;
+}
+
+a {
+    color: var(--text);
+}
+
+:focus-visible {
+    outline: 3px solid var(--text);
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.arrow {
+    display: inline-block;
+    margin-left: 0.2em;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.skip-link {
+    position: absolute;
+    left: 1em;
+    top: -10em;
+    z-index: 10;
+    padding: 0.5em 1em;
+    border-radius: 26px;
+    background: var(--text);
+    color: var(--primary);
+}
+
+.skip-link:focus {
+    top: 0.5em;
+}
+
+#watermark {
+    font-family: "Bungee", sans-serif;
+    font-size: 36em;
+    line-height: 1;
+    position: fixed;
+    z-index: -1;
+    right: -0.1em;
+    top: 0;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    color: var(--accent-transparent-light);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ─── Header: the suite's tabs and the color mode buttons ─────────────────── */
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1em;
+    border-bottom: 2px solid var(--accent);
+}
+
+#suite-tabs {
+    display: flex;
+    flex-flow: row wrap-reverse;
+    list-style: none;
+    padding: 0;
+    margin: 0.5em 0 0;
+}
+
+.suite-tab {
+    position: relative;
+    margin: 0 -16px 0 0;
+    border: 2px solid;
+    border-bottom: 0;
+    border-radius: 24px 24px 0 0;
+    background-color: var(--primary);
+    white-space: nowrap;
+}
+
+.suite-tab a {
+    display: block;
+    padding: 6px 24px;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+.suite-tab:hover {
+    transform: scale(1.05) translate(-2px, 2px);
+    z-index: 5;
+}
+
+.suite-tab--works {
+    border-color: var(--ford-mustang-boss-302);
+    z-index: 2;
+}
+.suite-tab--works a {
+    color: var(--ford-mustang-boss-302);
+}
+
+.suite-tab--resume {
+    border-color: var(--nissan-fairlady-z);
+    z-index: 1;
+}
+.suite-tab--resume a {
+    color: var(--nissan-fairlady-z);
+}
+
+.suite-tab--playground {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    z-index: 3;
+    margin-right: 0;
+}
+.suite-tab--playground a {
+    color: var(--on-accent);
+}
+
+/* This page's tab is already in front */
+.suite-tab--playground:hover {
+    transform: none;
+}
+
+/* Phones: color buttons get their own row, so the three tabs fit on one */
+@media (width <= 30em) {
+    .site-header {
+        flex-wrap: wrap;
+    }
+    #theme-controls {
+        order: -1;
+        margin-left: auto;
+    }
+    .site-header > nav {
+        flex: 1 0 100%;
+    }
+    .suite-tab a {
+        padding: 6px 16px;
+    }
+}
+
+#theme-controls {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#theme-controls[hidden] {
+    display: none;
+}
+
+#theme-controls button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px;
+    border: none;
+    border-radius: 26px;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+}
+
+#theme-controls button:hover {
+    background-color: var(--text-transparent);
+}
+
+#theme-controls .icon {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+#theme-controls .icon--brush {
+    color: var(--accent);
+    transform: rotate(7.5deg);
+}
+
+/* The current mode is underlined; aria-pressed drives it, so what you see and
+   what a screen reader announces can't disagree */
+#theme-controls button[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 2px;
+    width: 1em;
+    height: 2px;
+    background: currentColor;
+    border-radius: 999px;
+}
+
+#theme-controls button[data-set-mode="light"]::after {
+    background: var(--accent);
+}
+
+@media (forced-colors: active) {
+    #theme-controls button[aria-pressed="true"]::after {
+        forced-color-adjust: none;
+        background: CanvasText;
+    }
+}
+
+/* ─── Layout ──────────────────────────────────────────────────────────────── */
+
+.wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+    gap: 2em;
+    margin-top: 1.5em;
+}
+
+.intro {
+    flex: 0 0 var(--sidebar-width);
+}
+
+.listing {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5em;
+    padding-top: 0.75em; /* room for the frame labels */
+}
+
+.listing:focus {
+    outline: none;
+}
+
+/* Keep the filters in reach while scrolling, when there's room for them */
+@media (width > 48em) and (height > 40em) {
+    .intro {
+        position: sticky;
+        top: 1em;
+    }
+}
+
+@media (width <= 48em) {
+    .wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5em;
+    }
+    .intro {
+        flex-basis: auto;
+    }
+}
+
+/* ─── Intro column ────────────────────────────────────────────────────────── */
+
+h1 {
+    color: var(--accent);
+    font-family: "Bungee", sans-serif;
+    font-weight: 400;
+    font-size: 3rem;
+    line-height: 1;
+    margin: 0;
+}
+
+.lede {
+    font-weight: 300;
+    font-size: 1.125rem;
+    margin: 1em 0 1.5em;
+}
+
+.lede a,
+.side-links a,
+#colophon a,
+.link-button {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.15em;
+}
+
+.filters {
+    margin-bottom: 1.5em;
+}
+
+.filters[hidden] {
+    display: none;
+}
+
+.filters-label {
+    font-family: "Bungee", sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--text);
+    margin: 0 0 0.5em;
+}
+
+.filter-list,
+.side-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.filter-list {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0.5em;
+}
+
+.filter-list button {
+    min-height: 44px;
+    padding: 6px 16px;
+    border: 2px dotted var(--accent);
+    border-radius: 26px;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    font-weight: 300;
+    cursor: pointer;
+}
+
+.filter-list button:hover {
+    background-color: var(--accent-transparent);
+}
+
+.filter-list button[aria-pressed="true"] {
+    border-style: solid;
+    border-color: var(--text);
+    background-color: var(--text);
+    color: var(--primary);
+}
+
+.filter-list .count {
+    font-family: "Bungee", sans-serif;
+    font-size: 0.75em;
+    margin-left: 0.25em;
+}
+
+.side-links a {
+    display: inline-block;
+    padding: 0.25em 0; /* at least 24px tall to tap */
+}
+
+/* ─── Frames (sections with a label sitting on the border) ────────────────── */
+
+.content-frame {
+    position: relative;
+    border: var(--frame-width) solid var(--secondary);
+    border-radius: 16px;
+    padding: 1.5em 1em 1em;
+}
+
+.typography-label-container {
+    position: absolute;
+    left: 1em;
+    top: 0;
+    transform: translateY(-60%);
+}
+
+.typography-label {
+    font-family: "Readex Pro", sans-serif;
+    font-weight: 300;
+    font-size: 0.875rem;
+    text-transform: lowercase;
+    background-color: var(--primary);
+    padding: 0 0.5em;
+    margin: 0;
+    border-radius: 4px;
+}
+
+/* ─── Project grid and cards ──────────────────────────────────────────────── */
+
+.project-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
+    gap: 1.25em;
+}
+
+.project-grid--pinned {
+    grid-template-columns: repeat(auto-fill, minmax(min(22rem, 100%), 1fr));
+}
+
+.project {
+    display: flex;
+}
+
+.project[hidden] {
+    display: none;
+}
+
+.project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5em;
+    border: 2px solid transparent;
+    border-radius: 16px;
+}
+
+.project-card:hover {
+    background-color: var(--accent-transparent-light);
+    border-color: var(--accent);
+}
+
+.project-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0.75em 0.25em 0.25em;
+}
+
+.project-title {
+    font-family: "Readex Pro", sans-serif;
+    font-weight: 500;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin: 0;
+    overflow-wrap: break-word;
+}
+
+.project-body {
+    min-width: 0;
+}
+
+.project-title a {
+    text-decoration: none;
+}
+
+/* The title link covers the whole card, so anywhere on it opens the project */
+.project-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 16px;
+}
+
+.project-title a:focus-visible {
+    outline: none;
+}
+
+.project-title a:focus-visible::after {
+    outline: 3px solid var(--text);
+    outline-offset: 2px;
+}
+
+.project-card:hover .project-title a {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+}
+
+.project-meta {
+    font-family: "Bungee", sans-serif;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: var(--text);
+    margin: 0.4em 0 0;
+}
+
+.project-summary {
+    font-weight: 300;
+    margin: 0.6em 0 0;
+}
+
+.tag-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75em 0 0;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 6px;
+}
+
+.tag-list li {
+    padding: 2px 6px;
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    box-shadow: var(--tag-shadow);
+    font-family: "Bungee", sans-serif;
+    font-size: 0.75rem;
+}
+
+.project-links {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    margin: auto 0 0;
+    padding-top: 0.75em;
+    font-size: 0.875rem;
+    font-weight: 300;
+}
+
+/* "read me" stays its own link above the card-wide title link */
+.project-links a {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    padding: 0.5em 0;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.15em;
+}
+
+.project-links .hint {
+    padding: 0.5em 0;
+}
+
+/* ─── Media: screenshot, preview video or a type-only tile ────────────────── */
+
+.project-media {
+    order: -1; /* after the text in the source, above it on screen */
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--secondary);
+}
+
+.project-media img,
+.project-media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+.project-media video {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.project-media.is-playing video {
+    opacity: 1;
+}
+
+.preview-toggle {
+    position: absolute;
+    right: 0.5em;
+    bottom: 0.5em;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 2px solid var(--text);
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.preview-toggle[hidden] {
+    display: none;
+}
+
+.preview-toggle:hover {
+    background-color: var(--text);
+    border-color: var(--text);
+    color: var(--primary);
+}
+
+.preview-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.preview-toggle .icon-pause,
+.preview-toggle[aria-pressed="true"] .icon-play {
+    display: none;
+}
+
+.preview-toggle[aria-pressed="true"] .icon-pause {
+    display: block;
+}
+
+.project-media--placeholder {
+    container-type: inline-size;
+    display: grid;
+    place-items: center;
+    padding: 1em;
+    text-align: center;
+    line-height: 1.05;
+}
+
+/* Sized to the tile, so long titles wrap between words rather than inside them */
+.project-media--placeholder .layers {
+    font-size: clamp(1rem, 10cqi, 2.5rem);
+}
+
+/* ─── Layered Bungee titles (pinned cards and placeholder tiles) ──────────── */
+
+.layers {
+    display: grid;
+}
+
+.layers > span {
+    grid-area: 1 / 1;
+    font-weight: 400;
+}
+
+.layer-regular {
+    z-index: 3;
+    font-family: "Bungee Layers Regular", "Bungee", sans-serif;
+    color: var(--title-fill);
+}
+
+.layer-inline {
+    z-index: 4;
+    font-family: "Bungee Layers Inline", "Bungee", sans-serif;
+    color: var(--accent);
+    display: var(--extra-layers);
+}
+
+/* works draws this outline in orange; here it's the text color, because the
+   snow fill alone is only 1.6:1 against lavender and the outline is what
+   gives each letter its edge */
+.layer-outline {
+    z-index: 2;
+    font-family: "Bungee Layers Outline", "Bungee", sans-serif;
+    color: var(--text);
+    display: var(--extra-layers);
+}
+
+.layer-shade {
+    z-index: 1;
+    font-family: "Bungee Layers Shade", "Bungee", sans-serif;
+    color: var(--text);
+    display: var(--extra-layers);
+}
+
+/* In light mode the tile is lavender, so the snow fill reads; in mono and dark
+   it takes the page color and a single solid layer */
+:root[data-mode="mono"] .project-media--placeholder,
+:root[data-mode="dark"] .project-media--placeholder {
+    background-color: var(--primary);
+    border: var(--frame-width) solid var(--secondary);
+}
+
+/* ─── Pinned cards (after the works "article summary card") ───────────────── */
+
+.project-card--pinned {
+    container-type: inline-size; /* titles scale with the card, so one long word can't widen it */
+    padding: 1rem;
+    border: var(--frame-width) solid var(--card-bg);
+    border-radius: 24px;
+    background-color: var(--card-bg);
+}
+
+.project-card--pinned:hover {
+    background-color: var(--card-bg);
+    border-color: var(--accent);
+}
+
+.project-card--pinned .project-title a::after {
+    border-radius: 24px;
+}
+
+.project-card--pinned .project-media {
+    border: var(--frame-width) solid var(--card-frame);
+    border-radius: 16px;
+}
+
+.project-card--pinned .project-title {
+    font-size: clamp(1.25rem, 10cqi, 2rem);
+    line-height: 1.05;
+}
+
+.project-card--pinned:hover .project-title a {
+    text-decoration: none;
+}
+
+/* The orange arrow is too faint on lavender, so it goes black on the card */
+.project-card--pinned .arrow {
+    color: var(--text);
+}
+
+.cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-left: auto;
+    padding: 0.5rem 1.25rem;
+    border-radius: 32px;
+    background-color: var(--text);
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+:root[data-mode="dark"] .project-card--pinned,
+:root[data-mode="mono"] .project-card--pinned {
+    border-color: var(--card-frame);
+}
+
+/* ─── Empty state and footer ──────────────────────────────────────────────── */
+
+.empty-note {
+    margin: 0;
+}
+
+.link-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+footer {
+    margin-top: 3em;
+    max-width: var(--sidebar-width);
+}
+
+/* On phones the side menu is full width, and so is the colophon */
+@media (width <= 48em) {
+    footer {
+        max-width: none;
+    }
+}
+
+#colophon {
+    font-size: 0.875rem;
+    font-weight: 300;
+}
+
+#colophon .updated {
+    margin-top: 0;
+}
+
+details {
+    border-radius: 26px;
+    padding: 6px 12px;
+    margin: 4px -12px;
+}
+
+details:hover {
+    background-color: var(--accent-transparent);
+}
+
+summary {
+    cursor: pointer;
+    min-height: 24px;
+}
+
+summary::marker {
+    color: var(--accent);
+}
+
+code {
+    font-size: 0.95em;
+}
+
+/* ─── Motion ──────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .suite-tab:hover {
+        transform: none;
+    }
+    .project-media video {
+        transition: none;
+    }
+}
+
+/* The new-tab arrow takes each tab's own color */
+.suite-tab .arrow {
+    color: inherit;
+}
+
+/* The narrowest phones: tighter tabs so all three still fit on one row */
+@media (width <= 22em) {
+    .suite-tab {
+        margin-right: -12px;
+    }
+    .suite-tab a {
+        padding: 6px 12px;
+        font-size: 0.9375rem;
+    }
+    .suite-tab .arrow {
+        margin-left: 0.1em;
+    }
+}

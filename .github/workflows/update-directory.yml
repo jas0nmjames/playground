@@ -1,0 +1,47 @@
+name: Update directory
+
+# Regenerates README.md's tables, index.html and projects.json from each
+# project's README frontmatter (node scripts/build.js).
+#
+# main is protected (changes go through pull requests), so the Action can't
+# push there. Instead it commits the regenerated files to development, and they
+# reach main with the next development → main pull request. On main and on pull
+# requests into main it only checks that nothing is out of date.
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: directory-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  directory:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Regenerate and commit (development)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+        run: |
+          node scripts/build.js
+          if git diff --quiet -- README.md index.html projects.json; then
+            echo "Directory already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md index.html projects.json
+          git commit -m "chore: update directory"
+          git pull --rebase origin development
+          git push origin HEAD:development
+
+      - name: Check it's up to date (main and pull requests into main)
+        if: github.ref != 'refs/heads/development'
+        run: node scripts/build.js --check

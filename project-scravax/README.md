@@ -3,6 +3,7 @@ published: 2026-03-10
 updated: 2026-03-12
 tags: generative
 url: https://project-scravax.netlify.app/
+summary: A browser drift-racing game: six laps against bots, or against a second player. Made with Claude in about an hour.
 ---
 
 # Scravax Drift Derby (Georgia)

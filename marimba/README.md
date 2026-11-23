@@ -2,6 +2,8 @@
 published: 2026-09-25
 updated: 2026-09-29
 tags: generative
+summary: A playable three-octave marimba that lights up a card for each scale degree as you play.
+pinned: 3
 ---
 
 # Marimba navigator
