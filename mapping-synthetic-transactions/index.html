@@ -251,7 +251,16 @@ a.go { text-decoration:none; }
   .lens-ctx { flex:1 1 100%; white-space:normal; font-size:13px; line-height:1.35; }
   .lens-esc { display:none; }
 }
-@media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
+/* the key: a strip along the bottom of the city; where that won't fit (phones, short windows), a Key button opens it as
+   a small card above the button */
+.legend-btn { display:none; }
+@media (max-height:620px), (max-width:760px) {
+  .legend-strip { display:none; }
+  .legend-btn { display:inline-flex; position:absolute; left:12px; bottom:12px; z-index:4; border-color:var(--line); box-shadow:var(--shadow); }
+  .legend-btn[aria-expanded="true"] { background:var(--page); border-color:var(--ink); }
+  .legend-strip.open { display:grid; grid-template-columns:repeat(2, max-content); gap:8px 16px; bottom:60px; padding:10px 12px; font-size:13px; max-width:calc(100% - 24px); }
+  .legend-strip.open #lg-flag { grid-column:1 / -1; }
+}
 /* compact layout below 1280 px: a slim bar (title, Activity, a menu), the view switch and lens over the city.
    The app shell moves the elements; these rules only style them where they land. */
 .scene-ctrls.left { left:12px; right:auto; justify-content:flex-start; }
@@ -399,7 +408,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
         <button class="iconbtn" id="turn-r" aria-label="Turn the board right" aria-keyshortcuts="E" title="Turn right (E)"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5A6.5 6.5 0 1 0 16.4 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M11.4 1.6l1.1 2.9-3 1.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
     </div>
-    <div class="legend-strip" aria-hidden="true" id="legendstrip"></div>
+    <div class="scene-key">
+      <button type="button" class="lensbtn legend-btn" id="legend-btn" aria-expanded="false" aria-controls="legendstrip"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 4.5h9M2 9h9M2 13.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="14.5" cy="4.5" r="1.9" fill="#A65300"/><path d="M14.5 7.1l1.9 1.9-1.9 1.9-1.9-1.9z" fill="#145A33"/><path d="M13.1 12.1l2.8 2.8M15.9 12.1l-2.8 2.8" stroke="#BC2F52" stroke-width="1.7" stroke-linecap="round"/></svg>Key</button>
+      <div class="legend-strip" role="group" aria-label="Key" id="legendstrip"></div>
+    </div>
     <div class="debug" id="debug" hidden></div>
     <p id="scene-help" class="sr-only">Arrow keys pan. Plus and minus zoom. In the miniature, Q and E turn the board, N puts north up, and Page Up and Page Down tilt it; with a mouse, drag with the right button or with Shift held to turn and tilt, and on a touch screen use two fingers. Left and right square brackets step through records in flight; Enter opens the one in focus. Escape clears. Space plays or pauses. M switches between the miniature and the map. L opens the Systems lens over the city, and Escape closes it. Every record is also listed in the Activity feed.</p>
   </section>
@@ -2116,9 +2128,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   function twoPts() { const [a, b] = [...ptrs.values()]; return { d: Math.hypot(a[0] - b[0], a[1] - b[1]), ang: Math.atan2(b[1] - a[1], b[0] - a[0]), mx: (a[0] + b[0]) / 2, my: (a[1] + b[1]) / 2 }; }
   function initScene() {
     const sc = scene();
-    sc.addEventListener('contextmenu', (e) => { if (!e.target.closest('.scene-ctrls,.chooser')) e.preventDefault(); });
+    sc.addEventListener('contextmenu', (e) => { if (!e.target.closest('.scene-ctrls,.chooser,.scene-key')) e.preventDefault(); });
     sc.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.scene-ctrls,.chooser')) return;
+      if (e.target.closest('.scene-ctrls,.chooser,.scene-key')) return;
       ptrs.set(e.pointerId, [e.clientX, e.clientY]); sc.setPointerCapture(e.pointerId);
       if (ptrs.size === 1) drag = { x: e.clientX, y: e.clientY, moved: false, id: e.pointerId, turn: !!mini() && (e.button === 2 || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey), right: e.button === 2 };
       else if (ptrs.size === 2) { drag = { moved: true, two: true }; pinch = twoPts(); hideChip(); }
@@ -2151,7 +2163,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
       if (ptrs.size === 1 && drag && drag.two) { const [id, p] = [...ptrs.entries()][0]; drag = { x: p[0], y: p[1], moved: true, id }; pinch = null; return; }
       if (drag && drag.turn) announceAngle();
       const d = drag; drag = null; pinch = null;
-      if (!d || d.moved || d.right || e.target.closest('.scene-ctrls,.chooser')) return;
+      if (!d || d.moved || d.right || e.target.closest('.scene-ctrls,.chooser,.scene-key')) return;
       const [px, py] = pointerPos(e);
       const hits = hitFlights(px, py);
       closeChooser();
@@ -2501,6 +2513,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   // the miniature's failure flag; the map's triangles are in the legend on its sheet
   const flag = `<svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M2.5 1.5v13.5" stroke="#7D8797" stroke-width="1.6" stroke-linecap="round"/><path d="M3.2 2h9.6l-2.3 3.3 2.3 3.3H3.2z" fill="${H.REC.fail.map}"/></svg>`;
   document.getElementById('legendstrip').innerHTML = order.map((k) => `<span>${line(k)}${H.REC[k].label}</span>`).join('') + `<span id="lg-flag"${App.S.view === 'mini' ? '' : ' hidden'}>${flag}Recent failure at a place</span>`;
+  // where the strip doesn't fit, the Key button opens it as a card; the choice is remembered in this browser only
+  const keyBtn = document.getElementById('legend-btn'), strip = document.getElementById('legendstrip'), KEY = 'medianville-key-v1';
+  const setKey = (on, save) => {
+    strip.classList.toggle('open', on); keyBtn.setAttribute('aria-expanded', on);
+    if (save) try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {}
+  };
+  let keyOn = false; try { keyOn = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  setKey(keyOn, false);
+  keyBtn.addEventListener('click', () => setKey(!strip.classList.contains('open'), true));
+  keyBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.stopPropagation(); }); // not the scene's Enter, which opens a record
 })();
 </script>
 <script>

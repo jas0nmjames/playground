@@ -353,3 +353,9 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Decided:** At 1,280 px and wider, the header stays on one row: the subtitle sits under the title, the day menu moves to the footer beside the clock, and **Sound** shows only its icon below 1,440 px.
 - **Decided:** The page sizes to the visible screen (`100dvh`) and keeps clear of the iPhone's home indicator and notch. On a phone the speed buttons read Live, 1, 5 and 20 min/s, so the clock, play button and speeds share one row.
 - **Who:** Jason, choosing from proposals (option A).
+
+### 7.7 A Key button where the legend strip doesn't fit
+- **Decided:** Below 760 px wide or 620 px tall, where the record legend strip along the bottom of the city is hidden, a **Key** button sits in its place at the bottom-left. It opens the same legend as a small two-column card above the button (with "Recent failure at a place" across both columns in the Miniature), and closes it again. It starts closed, and the choice is remembered in the browser (`medianville-key-v1`). The legend is now a labelled group ("Key") for screen readers rather than hidden from them.
+- **Why:** On a phone nothing on screen said what the colours, line patterns, end marks and flags meant; the filter chips that double as a key are inside the Activity drawer. Found in a design critique on 2026-11-23.
+- **Considered:** Putting the key in the header menu, which is easy to miss, and opening it by default on a phone, which covers the city on a first visit, and in landscape takes about half its height.
+- **Who:** Jason, on a proposal. **When:** 2026-11-23.
