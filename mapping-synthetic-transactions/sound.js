@@ -178,10 +178,27 @@
         on = want;
       } catch (err) { on = false; console.error(err); }
       ui(); say(on ? 'Sound on.' : 'Sound off.');
+      watchOutput();
     },
     get on() { return on; },
   });
   function say(msg) { const l = document.getElementById('live'); if (!l) return; l.textContent = ''; setTimeout(() => (l.textContent = msg), 30); }
+  // Some browsers report the audio as running but never start its clock (no output device, such as an embedded
+  // browser), and some keep it suspended; either way nothing plays. A moment after sound is turned on, check that the
+  // clock has moved, and say so in the panel if it hasn't. A hidden tab stops the clock on purpose, so it's not checked.
+  let watchT = 0;
+  function watchOutput() {
+    clearTimeout(watchT);
+    const note = document.getElementById('snd-note'); if (!note) return;
+    if (!on || !ctx) { note.hidden = true; return; }
+    const t0 = ctx.currentTime;
+    watchT = setTimeout(() => {
+      if (document.hidden) return;
+      const stuck = on && ctx && ctx.currentTime - t0 < 0.2;
+      if (stuck && note.hidden) say('No sound is playing: this browser isn’t playing audio from the page.');
+      note.hidden = !stuck;
+    }, 1200);
+  }
   // a hidden tab stops the animation, so stop the sound with it
   document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (on) ctx.resume(); });
 

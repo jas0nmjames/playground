@@ -274,7 +274,19 @@
   }
 
   // ---------- words for real records ----------
-  const nice = (s) => { s = String(s || '').split('.').pop().replace(/_/g, ' '); return s.charAt(0).toUpperCase() + s.slice(1); };
+  // 'grocery_snap_purchase' → 'Grocery SNAP purchase', 'over_the_counter_medicine' → 'Over-the-counter medicine'.
+  // The acronyms match the data explorer's; the joins are the compounds that the run's 383 categories use.
+  const WORD = { snap: 'SNAP', wic: 'WIC', tanf: 'TANF', ssi: 'SSI', ebt: 'EBT', irs: 'IRS', va: 'VA', ach: 'ACH', atm: 'ATM', ev: 'EV', ems: 'EMS', medicare: 'Medicare', medicaid: 'Medicaid', medigap: 'Medigap',
+    p2p: 'P2P', bnpl: 'BNPL', hoa: 'HOA', fica: 'FICA', ssa: 'SSA', dmv: 'DMV', er: 'ER', ged: 'GED', ui: 'UI', id: 'ID', prek: 'pre-K', bhph: 'buy-here-pay-here', wont: 'won’t', dropoff: 'drop-off' };
+  const JOIN = [['over the counter', 'over-the-counter'], ['after school', 'after-school'], ['rent to own', 'rent-to-own'], ['buy here pay here', 'buy-here-pay-here'],
+    ['follow up', 'follow-up'], ['self employed', 'self-employed'], ['self employment', 'self-employment'], ['self pay', 'self-pay'], ['one time', 'one-time'], ['top up', 'top-up'],
+    ['jump start', 'jump-start'], ['sit down', 'sit-down'], ['big box', 'big-box'], ['fill up', 'fill-up'], ['fill in', 'fill-in'], ['move in', 'move-in'], ['buy in', 'buy-in'],
+    ['no show', 'no-show'], ['cash out', 'cash-out'], ['part b', 'Part B'], ['real ID', 'REAL ID'], ['head start', 'Head Start'], ['social security', 'Social Security']];
+  const nice = (s) => {
+    s = String(s || '').split('.').pop().split('_').map((w) => WORD[w] || w).join(' ');
+    for (const [a, b] of JOIN) s = s.replace(new RegExp('\\b' + a + '\\b', 'g'), b);
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  };
   const OUTWORD = { declined: 'Declined', abandoned: 'Abandoned', failed: 'Failed', rescheduled: 'Rescheduled', partial: 'Partly done' };
   function patchWords() {
     const cat = H.catLabel, out = H.outcomeWord, why = H.reason, meth = H.methodLabel;

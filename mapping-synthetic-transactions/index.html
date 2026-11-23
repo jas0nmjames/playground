@@ -62,7 +62,7 @@ body.rm .layer, body.rm .sheet, body.rm aside.rail { transition:none !important;
 .chooser button { display:grid; grid-template-columns:20px 1fr auto; gap:8px; width:100%; align-items:center; border:0; background:none; padding:8px; border-radius:8px; font-size:13.5px; color:var(--ink); cursor:pointer; text-align:left; min-height:36px; }
 .chooser button:hover { background:var(--page); }
 .debug { position:absolute; left:12px; top:12px; z-index:7; background:rgba(14,27,46,.88); color:#fff; font:12px ui-monospace, Menlo, monospace; padding:6px 9px; border-radius:6px; }
-.legend-strip { position:absolute; left:12px; bottom:12px; z-index:4; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:6px 10px; display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; font-weight:600; max-width:calc(100% - 24px); }
+.legend-strip { position:absolute; left:12px; bottom:12px; z-index:4; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:6px 10px; display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; font-weight:600; max-width:calc(100% - 150px); }
 .legend-strip span { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
 .legend-strip span[hidden] { display:none; }
 .legend-strip svg { flex:none; }
@@ -92,9 +92,10 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .row.sel { background:#E8EEFE; box-shadow:inset 3px 0 0 var(--blue); }
 .row .main { min-width:0; }
 .row .cp { display:flex; align-items:center; gap:6px; font-weight:500; font-size:14.5px; min-width:0; }
-.row .cp .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.row .cp .nm { overflow:hidden; min-width:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.3; } /* long place names wrap to a second line */
 .row .sub { display:block; font-size:13px; color:var(--ink2); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.amt { font-weight:600; font-size:14.5px; white-space:nowrap; }
+.amt { font-weight:600; font-size:14.5px; white-space:nowrap; display:flex; flex-direction:column; align-items:flex-end; }
+.amt .tm { font-size:12.5px; font-weight:500; color:var(--ink2); margin-top:2px; }
 .amt.in, .big.in, .v.in { color:var(--green); }
 .amt.muted { color:var(--ink2); }
 .pill { display:inline-block; font-size:12px; font-weight:700; border-radius:999px; padding:2px 8px; line-height:1.35; flex:none; }
@@ -132,9 +133,21 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .mini-tiles .v { font-weight:700; font-size:17px; }
 .feed.inline { padding:0; overflow:visible; margin:0 -12px; }
 .chip.warn { color:var(--fail); border-color:#F0C3CE; background:#FCEFF2; }
-.runpick { font:600 13px var(--ui); color:var(--ink); background:#fff; border:1px solid var(--ctrl); border-radius:999px; min-height:32px; padding:4px 10px; max-width:100%; cursor:pointer; }
-.runpick:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
-footer.bar .runpick { min-height:40px; font-size:14px; padding:4px 12px; max-width:240px; }
+/* the day control: the day on top, its record count (or loading state) under it, a chevron, and the native select
+   stretched invisibly over all of it */
+.daypick { position:relative; display:inline-flex; align-items:center; gap:9px; min-height:44px; padding:4px 10px 4px 10px; border:1px solid var(--ctrl); border-radius:12px; background:var(--surface); color:var(--ink); cursor:pointer; min-width:0; max-width:280px; flex:0 1 auto; }
+.daypick:hover { background:var(--page); }
+.daypick:has(.runpick:focus-visible) { outline:2px solid var(--blue); outline-offset:2px; }
+.dp-face { display:flex; align-items:center; gap:9px; min-width:0; }
+.dp-cal, .dp-chev { flex:none; color:var(--ink2); }
+.dp-text { display:flex; flex-direction:column; min-width:0; line-height:1.25; }
+.dp-day { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dp-sub { font-size:12.5px; font-weight:500; color:var(--ink2); font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dp-sub.warn { color:var(--fail); }
+.runpick { position:absolute; inset:0; width:100%; height:100%; opacity:0; margin:0; border:0; cursor:pointer; font-size:16px; } /* 16px: no zoom on focus in iOS */
+.daypick:has(.runpick[hidden]) { cursor:default; } /* no manifest: nothing to choose */
+.daypick:has(.runpick[hidden]):hover { background:var(--surface); }
+.daypick:has(.runpick[hidden]) .dp-chev { display:none; }
 .credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
 .credit a { color:var(--ink2); }
 .credit a:hover { color:var(--ink); }
@@ -155,15 +168,19 @@ footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px max(2
 /* systems lens: a toggle in the header and an overlay that grows out of the details rail */
 .lensbtn { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:0 14px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font-weight:600; font-size:14px; color:var(--ink); cursor:pointer; }
 .lensbtn:hover { background:var(--page); }
-.sndwrap { position:relative; }
+/* Sound sits on the city, bottom-right (the key holds bottom-left); its panel opens upward, limited to the city's height */
+.sndwrap { position:absolute; right:12px; bottom:12px; z-index:5; }
+.sndwrap .sndbtn { border-color:var(--line); box-shadow:var(--shadow); }
+@media (max-width:760px) { .sndwrap .sndlbl { display:none; } .sndwrap .sndbtn { width:40px; padding:0; justify-content:center; } } /* the button's aria-label still names it */
 .sndbtn { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font-weight:600; font-size:14px; color:var(--ink); cursor:pointer; }
 .sndbtn:hover { background:var(--page); }
 .sndbtn.on { border-color:var(--blue); color:var(--blue); }
-.sndpop { position:absolute; right:0; top:calc(100% + 8px); z-index:30; width:288px; max-width:calc(100vw - 24px); background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:14px; }
+.sndpop { position:absolute; right:0; bottom:calc(100% + 8px); overflow:auto; overscroll-behavior:contain; z-index:30; width:288px; max-width:calc(100vw - 24px); background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:14px; }
 .sndpop h2 { font-size:14px; margin:0 0 4px; }
 .sndpop p { font-size:12.5px; color:var(--ink2); margin:0 0 10px; line-height:1.4; }
 .sndpop .sndmain { width:100%; min-height:40px; border-radius:10px; border:0; background:var(--blue); color:#fff; font:600 14px var(--ui); cursor:pointer; }
 .sndpop .sndmain[aria-pressed="true"] { background:var(--ink); }
+.sndpop .sndnote { margin:10px 0 0; padding:8px 10px; border-radius:8px; background:#FFF4E0; color:#6B4300; font-size:12.5px; line-height:1.4; } /* sound is on but the browser's audio clock never started */
 .sndpop .sndrow { display:grid; grid-template-columns:88px 1fr 52px; align-items:center; gap:8px; margin-top:10px; font-size:13px; font-weight:600; }
 .sndpop input[type=range] { width:100%; accent-color:var(--blue); }
 .sndpop .sndtog { min-height:30px; border-radius:999px; border:1px solid var(--ctrl); background:#fff; font:600 12.5px var(--ui); cursor:pointer; color:var(--ink); }
@@ -199,11 +216,13 @@ body.rm .lens-panel, body.rm .lens-dim, body.rm .lens-city { transition:none !im
 .go.off b { color:var(--ink2); }
 a.go { text-decoration:none; }
 /* Data and About in the header: other pages and the intro, kept apart from the view switch */
-.hdlinks { display:flex; gap:8px; }
-.hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; }
-.hdlink:hover { background:var(--page); }
+/* Data and About take you somewhere (the explorer, the project intro) rather than change the view, so they read as links:
+   no outline, underlined on hover, set apart from the controls by a thin rule */
+.hdlinks { display:flex; gap:2px; padding-left:8px; margin-left:2px; border-left:1px solid var(--line); }
+.hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 8px; border:0; border-radius:8px; background:none; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; text-underline-offset:3px; }
+.hdlink:hover { text-decoration:underline; }
+.hdlink svg { color:var(--ink2); }
 @media (max-width:1639px) { .kbdhint { display:none; } }
-@media (min-width:1280px) and (max-width:1439px) { .sndlbl { display:none; } .sndbtn { padding:0 11px; } } /* the button keeps its label for screen readers */ /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
 /* first-visit intro: a dialog over the city, which keeps running behind it */
 .intro { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:24px 16px; }
 .intro[hidden] { display:none; }
@@ -269,13 +288,17 @@ a.go { text-decoration:none; }
 .hdmenu { position:absolute; top:calc(100% + 6px); right:max(12px, env(safe-area-inset-right)); z-index:35; width:min(340px, calc(100vw - 24px)); max-height:calc(100dvh - 120px); overflow:auto; overscroll-behavior:contain; background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:12px; display:flex; flex-direction:column; gap:10px; }
 .hdmenu .m-day, .hdmenu .m-more { display:flex; flex-direction:column; gap:8px; }
 .hdmenu .m-day:empty, .hdmenu .m-blur:empty, .hdmenu .m-blur:has(> [hidden]) { display:none; } /* focus blur is for the Miniature only */
-.hdmenu .chip { align-self:flex-start; white-space:normal; }
-.hdmenu .runpick { width:100%; max-width:none; min-height:40px; font-size:14px; }
+.hdmenu .daypick { display:flex; width:100%; max-width:none; }
+.hdmenu .daypick .dp-face { flex:1; }
+.hdmenu .dp-day, .hdmenu .dp-sub { white-space:normal; }
 .hdmenu #blurset { box-shadow:none; padding:0; justify-content:space-between; }
 .hdmenu #blurset .lbl { padding-left:2px; font-size:13.5px; }
-.hdmenu .sndbtn, .hdmenu .hdlink { width:100%; min-height:44px; justify-content:flex-start; border-radius:10px; }
-.hdmenu .hdlinks { flex-direction:column; }
-.hdmenu .sndpop { position:static; width:auto; max-width:none; box-shadow:none; padding:10px 2px 4px; }
+.hdmenu .hdlink { width:100%; min-height:44px; justify-content:flex-start; border-radius:10px; }
+/* in the menu the links are rows under a rule, each ending in a chevron, like a list of places to go */
+.hdmenu .hdlinks { flex-direction:column; gap:0; padding:6px 0 0; margin:2px 0 0; border-left:0; border-top:1px solid var(--line); }
+.hdmenu .hdlink { padding:0 6px 0 4px; }
+.hdmenu .hdlink:hover { text-decoration:none; background:var(--page); }
+.hdmenu .hdlink::after { content:''; margin-left:auto; width:7px; height:7px; border-top:1.8px solid var(--ink2); border-right:1.8px solid var(--ink2); transform:rotate(45deg); margin-right:6px; }
 @media (max-width:1279px) {
   header.top { padding:8px max(12px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left)); }
   #menu-btn { display:grid; width:40px; height:40px; }
@@ -348,13 +371,34 @@ svg.quad .north text { font-size:.34px; text-anchor:middle; font-weight:700; }
 svg.quad .legend text { font-size:.25px; dominant-baseline:central; fill:#0E1B2E; font-weight:500; }
 svg.quad .legend .lh { font-size:.27px; letter-spacing:.2em; font-weight:700; }
 svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
+/* touch screens: every control at least 44 px on its shorter side, the size Apple and Google give for a fingertip
+   (mice keep the tighter sizes above). Last in the sheet so it wins over the layout rules. */
+@media (pointer: coarse) {
+  .seg label, .card .seg label { min-height:38px; } /* with the 3 px track the switch is 44 tall, level with the buttons */
+  #speedseg label { min-width:44px; }
+  .iconbtn, .compass { width:44px; height:44px; }
+  .btn, .lensbtn, .sndbtn, .hdlink, #menu-btn, #drawer-btn { min-height:44px; }
+  #menu-btn, #play { width:44px; height:44px; }
+  .filters button { min-height:44px; }
+  .credit a { display:inline-block; padding:8px 0; margin:-6px 0; } /* taller to tap, same line spacing */
+  #snd-btn { min-width:44px; }
+}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
     <div class="brandname"><h1>Medianville</h1><p class="sub">One day of transactions in a simulated American city</p></div>
-    <span class="chip" id="datachip" role="status">Sample day · loading the full simulation</span>
+    <!-- the day: which one is showing, its size or loading state, and the menu to change it, as one control. The native
+         select lies invisibly over the whole box, so a click anywhere opens it and keys and screen readers get a real select. -->
+    <label class="daypick" id="daypick">
+      <span class="dp-face" aria-hidden="true">
+        <svg class="dp-cal" width="18" height="18" viewBox="0 0 18 18"><rect x="2.5" y="3.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7.5h13M6 2v3M12 2v3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="dp-text"><span class="dp-day" id="dp-day">Sample day</span><span class="dp-sub" id="datachip">Loading the full simulation</span></span>
+        <svg class="dp-chev" width="14" height="14" viewBox="0 0 14 14"><path d="M3.5 5.5L7 9l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <select class="runpick" id="runpick" hidden aria-label="Day to show" aria-describedby="datachip" title="Choose a day: each opens as its own link"></select>
+    </label>
   </div>
   <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
@@ -363,18 +407,6 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   </fieldset>
   <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L" title="Systems lens (L)"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
   <span class="dim small kbdhint" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens · <b>S</b> sound</span>
-  <div class="sndwrap">
-    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sndlbl">Sound</span></button>
-    <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
-      <h2>Sound</h2>
-      <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
-      <button type="button" class="sndmain" id="snd-on" aria-pressed="false">Turn sound on</button>
-      <div class="sndrow"><label for="snd-m">Volume</label><input id="snd-m" type="range" min="0" max="1" step="0.01" data-snd-r="master"><span></span></div>
-      <div class="sndrow"><label for="snd-a">Background</label><input id="snd-a" type="range" min="0" max="1" step="0.01" data-snd-r="amb"><button type="button" class="sndtog" data-snd-t="amb" aria-label="Background sound">On</button></div>
-      <div class="sndrow"><label for="snd-r">Records</label><input id="snd-r" type="range" min="0" max="1" step="0.01" data-snd-r="rec"><button type="button" class="sndtog" data-snd-t="rec" aria-label="Record sounds">On</button></div>
-      <button type="button" class="sndreset" id="snd-reset">Reset to the default mix</button>
-    </div>
-  </div>
   <div class="hdlinks">
     <a class="hdlink" href="explorer/" id="data-link"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7h13M2.5 11h13M7 7v8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Data</a>
     <button type="button" class="hdlink" id="about-btn" aria-haspopup="dialog" aria-controls="intro"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5.4" r="1.05" fill="currentColor"/></svg>About</button>
@@ -412,6 +444,20 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
       <button type="button" class="lensbtn legend-btn" id="legend-btn" aria-expanded="false" aria-controls="legendstrip"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 4.5h9M2 9h9M2 13.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="14.5" cy="4.5" r="1.9" fill="#A65300"/><path d="M14.5 7.1l1.9 1.9-1.9 1.9-1.9-1.9z" fill="#145A33"/><path d="M13.1 12.1l2.8 2.8M15.9 12.1l-2.8 2.8" stroke="#BC2F52" stroke-width="1.7" stroke-linecap="round"/></svg>Key</button>
       <div class="legend-strip" role="group" aria-label="Key" id="legendstrip"></div>
     </div>
+    <!-- Sound sits on the city it plays: bottom-right, its panel opening upward -->
+    <div class="sndwrap">
+      <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sndlbl">Sound</span></button>
+      <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
+        <h2>Sound</h2>
+        <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
+        <button type="button" class="sndmain" id="snd-on" aria-pressed="false">Turn sound on</button>
+        <p class="sndnote" id="snd-note" hidden>This browser isn’t playing audio from the page, so you won’t hear anything here. Opening the page in another browser should work.</p>
+        <div class="sndrow"><label for="snd-m">Volume</label><input id="snd-m" type="range" min="0" max="1" step="0.01" data-snd-r="master"><span></span></div>
+        <div class="sndrow"><label for="snd-a">Background</label><input id="snd-a" type="range" min="0" max="1" step="0.01" data-snd-r="amb"><button type="button" class="sndtog" data-snd-t="amb" aria-label="Background sound">On</button></div>
+        <div class="sndrow"><label for="snd-r">Records</label><input id="snd-r" type="range" min="0" max="1" step="0.01" data-snd-r="rec"><button type="button" class="sndtog" data-snd-t="rec" aria-label="Record sounds">On</button></div>
+        <button type="button" class="sndreset" id="snd-reset">Reset to the default mix</button>
+      </div>
+    </div>
     <div class="debug" id="debug" hidden></div>
     <p id="scene-help" class="sr-only">Arrow keys pan. Plus and minus zoom. In the miniature, Q and E turn the board, N puts north up, and Page Up and Page Down tilt it; with a mouse, drag with the right button or with Shift held to turn and tilt, and on a touch screen use two fingers. Left and right square brackets step through records in flight; Enter opens the one in focus. Escape clears. Space plays or pauses. M switches between the miniature and the map. L opens the Systems lens over the city, and Escape closes it. Every record is also listed in the Activity feed.</p>
   </section>
@@ -420,7 +466,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     <div id="feedwrap">
       <div class="tiles" role="group" aria-label="So far today">
         <div class="tile"><span class="lbl">Money moved</span><span class="val">$0</span></div>
-        <div class="tile"><span class="lbl">Records</span><span class="val">0</span></div>
+        <div class="tile"><span class="lbl">Records so far</span><span class="val">0</span></div>
         <div class="tile"><span class="lbl">Failures</span><span class="val">0</span></div>
         <div class="tile"><span class="lbl">Unpaid hours</span><span class="val">0.0</span></div>
       </div>
@@ -452,7 +498,6 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   </div>
 </main>
 <footer class="bar">
-  <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   <div id="clock" aria-hidden="true">8:00 a.m.</div>
   <button id="play" aria-label="Pause"><svg class="pi" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/></svg><svg class="pl" hidden width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3l10 6-10 6z" fill="currentColor"/></svg></button>
   <fieldset class="seg" id="speedseg">
@@ -1363,14 +1408,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     for (const s of P.syms) {
       const x = f2(mx(s.x)), y = f2(my(s.z));
       syms += SYM[s.kind](x, y);
-      lab += `<text x="${x}" y="${f2(y + 0.34)}">${LBL[s.kind]}</text>`;
+      // the water tank sits between two buildings, so its label tucks in closer than the others
+      lab += `<text x="${x}" y="${f2(y + (s.kind === 'watertower' ? 0.24 : 0.34))}">${LBL[s.kind]}</text>`;
     }
     for (const [k, txt, dx, dy] of [['tank', 'Fuel Terminal', 0, 0.55], ['silo', 'Grain Co-op', 0, 0.62], ['utility', 'Power & Water', -0.1, 0.62]]) {
       const t = H.tiles.find((q) => q.kind === k); if (t && k !== 'utility') lab += `<text x="${t.x + 0.5 + dx}" y="${t.y + dy + 0.5}">${txt}</text>`;
-      if (t && k === 'utility') lab += `<text x="${t.x + 0.35}" y="${t.y + 1.0}">${txt}</text>`;
+      // above its building, clear of the water tank's label below
+      if (t && k === 'utility') lab += `<text x="${t.x + 0.35}" y="${t.y + 0.02}">${txt}</text>`;
     }
-    // district names in spaced capitals
-    const DL = [['MILLBANK', 8.6, 1.55], ['COURTHOUSE SQUARE', 9.95, 9.6], ['BROOKFIELD COMMONS', 16.5, 4.4], ['ROUTE 9', 2.9, 9.5], ['RAILSIDE', 16.4, 17.6], ['CUTLER FIELDS', 2.5, 17.3]];
+    // district names in spaced capitals (Route 9's sits above the building it used to cross)
+    const DL = [['MILLBANK', 8.6, 1.55], ['COURTHOUSE SQUARE', 9.95, 9.6], ['BROOKFIELD COMMONS', 16.5, 4.4], ['ROUTE 9', 2.9, 8.8], ['RAILSIDE', 16.4, 17.6], ['CUTLER FIELDS', 2.5, 17.3]];
     let dlab = DL.map(([s, x, y]) => `<text x="${x}" y="${y}">${s}</text>`).join('');
     // street names along the line
     let slab = '', mlab = '';
@@ -1748,14 +1795,17 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     return { txt: H.fmtMoney(-out, true), cls: '', sr: `minus ${H.fmtMoney(out)}` };
   }
   const cpName = (r) => (r._stop ? `Medianville Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
+  // a row's second line: what and how; for a failure, why (its badge already says Declined, Abandoned and so on).
+  // The time sits under the amount, where a long line can't cut it off.
   function subLine(r) {
-    if (r._vk === 'fail') return `${H.reason(r)} · ${H.fmt(r._t)}`;
-    return [H.catLabel(r), H.methodLabel(r), H.fmt(r._t)].filter(Boolean).join(' · ');
+    if (r._vk === 'fail') { const w = H.outcomeWord(r); return H.reason(r).replace(new RegExp('^' + w + ' · '), ''); }
+    return [H.catLabel(r), H.methodLabel(r)].filter(Boolean).join(' · ');
   }
+  const sentence = (s) => (/[.!?]$/.test(s) ? s : s + '.'); // '11:07 a.m.' already ends one
   function rowHTML(r, extra = '') {
     const a = amountOf(r), pill = r._vk === 'fail' ? `<span class="pill fail">${H.outcomeWord(r)}</span>` : '';
-    const label = `${REC[r._vk].label}. ${cpName(r)}. ${a.sr}. ${r._vk === 'fail' ? H.outcomeWord(r) + ': ' + H.reason(r) : H.catLabel(r) + (H.methodLabel(r) ? ', ' + H.methodLabel(r) : '')}. ${H.fmt(r._t)}.`;
-    return `<li><button class="row${extra}" data-id="${r.record_id}" aria-label="${esc(label)}">${iconSVG(r._vk)}<span class="main"><span class="cp"><span class="nm">${esc(cpName(r))}</span>${pill}</span><span class="sub">${esc(subLine(r))}</span></span><span class="amt ${a.cls}">${a.txt}</span></button></li>`;
+    const label = sentence(`${REC[r._vk].label}. ${cpName(r)}. ${a.sr}. ${r._vk === 'fail' ? H.outcomeWord(r) + ': ' + subLine(r) : subLine(r).replace(' · ', ', ')}. ${H.fmt(r._t)}`);
+    return `<li><button class="row${extra}" data-id="${r.record_id}" aria-label="${esc(label)}">${iconSVG(r._vk)}<span class="main"><span class="cp"><span class="nm">${esc(cpName(r))}</span>${pill}</span><span class="sub">${esc(subLine(r))}</span></span><span class="amt ${a.cls}">${a.txt}<span class="tm">${H.fmt(r._t)}</span></span></button></li>`;
   }
 
   // ---------- activity feed ----------
@@ -2128,9 +2178,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   function twoPts() { const [a, b] = [...ptrs.values()]; return { d: Math.hypot(a[0] - b[0], a[1] - b[1]), ang: Math.atan2(b[1] - a[1], b[0] - a[0]), mx: (a[0] + b[0]) / 2, my: (a[1] + b[1]) / 2 }; }
   function initScene() {
     const sc = scene();
-    sc.addEventListener('contextmenu', (e) => { if (!e.target.closest('.scene-ctrls,.chooser,.scene-key')) e.preventDefault(); });
+    sc.addEventListener('contextmenu', (e) => { if (!e.target.closest('.scene-ctrls,.chooser,.scene-key,.sndwrap')) e.preventDefault(); });
     sc.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.scene-ctrls,.chooser,.scene-key')) return;
+      if (e.target.closest('.scene-ctrls,.chooser,.scene-key,.sndwrap')) return;
       ptrs.set(e.pointerId, [e.clientX, e.clientY]); sc.setPointerCapture(e.pointerId);
       if (ptrs.size === 1) drag = { x: e.clientX, y: e.clientY, moved: false, id: e.pointerId, turn: !!mini() && (e.button === 2 || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey), right: e.button === 2 };
       else if (ptrs.size === 2) { drag = { moved: true, two: true }; pinch = twoPts(); hideChip(); }
@@ -2163,7 +2213,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
       if (ptrs.size === 1 && drag && drag.two) { const [id, p] = [...ptrs.entries()][0]; drag = { x: p[0], y: p[1], moved: true, id }; pinch = null; return; }
       if (drag && drag.turn) announceAngle();
       const d = drag; drag = null; pinch = null;
-      if (!d || d.moved || d.right || e.target.closest('.scene-ctrls,.chooser,.scene-key')) return;
+      if (!d || d.moved || d.right || e.target.closest('.scene-ctrls,.chooser,.scene-key,.sndwrap')) return;
       const [px, py] = pointerPos(e);
       const hits = hitFlights(px, py);
       closeChooser();
@@ -2175,6 +2225,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
       if (S.selId || Sheet.stack.length) { clearSelection(); Sheet.close(true); }
     });
     sc.addEventListener('wheel', (e) => {
+      if (e.target.closest('.scene-key,.sndwrap')) return; // the key and the sound panel scroll themselves
       e.preventDefault(); const m = mini();
       if (e.shiftKey && m) { m.turn(-(e.deltaY || e.deltaX) * 0.0025, true); return; }
       const [px, py] = pointerPos(e); active().zoomAt(e.deltaY < 0 ? 1.12 : 1 / 1.12, px, py);
@@ -2285,12 +2336,19 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   function setPlaying(p) {
     S.playing = p; const b = $('#play');
     b.setAttribute('aria-label', p ? 'Pause' : 'Play'); b.querySelector('.pi').toggleAttribute('hidden', !p); b.querySelector('.pl').toggleAttribute('hidden', p); // SVG elements have no .hidden property
-    if (!p) say(`Paused at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, $${Math.round(H.cum.money[S.idx]).toLocaleString('en-US')} moved.`);
+    if (!p) say(`${sentence(`Paused at ${H.fmt(S.t)}`)} ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx].toLocaleString('en-US')} failures, $${Math.round(H.cum.money[S.idx]).toLocaleString('en-US')} moved.`);
   }
   function initControls() {
     Feed.el = $('#feed'); Feed.box = $('#feed-box'); Feed.btn = $('#feed-new');
     Feed.box.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') Feed.touchedAt = performance.now(); });
     Feed.btn.addEventListener('click', () => Feed.showNew());
+    // Sound sits inside the city: its keys (arrows on a volume slider, Enter on a button) stay out of the city's own keys,
+    // and its panel is never taller than the city, which clips it
+    const snd = $('.sndwrap');
+    if (snd) {
+      snd.addEventListener('keydown', (e) => { if (e.key !== 'Escape') e.stopPropagation(); });
+      $('#snd-btn').addEventListener('click', () => { $('#snd-pop').style.maxHeight = Math.max(160, scene().clientHeight - 72) + 'px'; });
+    }
     $$('input[name="view"]').forEach((i) => { i.addEventListener('change', () => { Lens.close(); setView(i.value); }); i.addEventListener('click', () => Lens.close()); });
     $$('input[name="blur"]').forEach((i) => i.addEventListener('change', () => { S.blur = i.value; views.mini && views.mini.setBlur(i.value); }));
     $$('input[name="speed"]').forEach((i) => i.addEventListener('change', () => {
@@ -2386,7 +2444,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   function updateSceneLabel(force) {
     const m = Math.floor(S.t); if (m === lastLabelMin && !force) return; lastLabelMin = m;
     const inflight = S.flights.filter((F) => !F.steady && progress(F) <= F.stop).length;
-    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Medianville at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
+    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Medianville at ${sentence(H.fmt(S.t))} ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx].toLocaleString('en-US')} failures, ${inflight} in flight.`);
   }
 
   // ---------- overlay: keyboard focus ring ----------
@@ -2433,7 +2491,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
         S.t = t1;
       }
       const hr = Math.floor(S.t / 60);
-      if (hr !== lastHour) { lastHour = hr; say(`${H.fmt(hr * 60)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures.`); }
+      if (hr !== lastHour) { lastHour = hr; say(`${sentence(H.fmt(hr * 60))} ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx].toLocaleString('en-US')} failures.`); }
     }
     for (const tm of App.timers) if (tm.at <= S.animNow) { tm.done = true; tm.fn(); }
     App.timers = App.timers.filter((x) => !x.done);
@@ -2469,17 +2527,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     requestAnimationFrame(loop);
   });
   // real-day.js calls these: status while the run loads, then useDay once H.records holds it
+  // the day control: "Sample day" over the loading state while the run downloads, then the day over its record count
   App.status = (st) => {
-    const c = $('#datachip'); if (!c) return;
+    const c = $('#datachip'), d = $('#dp-day'); if (!c) return;
     c.classList.toggle('warn', st.state === 'failed');
-    c.textContent = st.state === 'loading' ? `Sample day · loading the full simulation ${Math.round(st.p * 100)}%`
-      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Sample day · the full simulation didn’t load';
-    if (st.state !== 'loading') say(c.textContent);
+    if (st.state === 'real') d.textContent = App.dayLabel || App.runDate(st.date, false) || 'March 3, 2027';
+    c.textContent = st.state === 'loading' ? `Loading the full simulation ${Math.round(st.p * 100)}%`
+      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records in the day` : 'The full simulation didn’t load';
+    if (st.state !== 'loading') say(`${d.textContent}: ${c.textContent}.`);
   };
   // real-day.js calls this once it knows which run it will load (sel is null without a manifest)
   App.onRuns = (sel) => {
     if (!sel || !window.MedianvilleRuns) return;
     App.dayIso = sel.run.date;
+    // 'Wed, Mar 3, 2027 · baseline', shown once the run is in
+    const kind = MedianvilleRuns.optionLabel(sel.run).split(' · ').slice(1).join(' · ');
+    App.dayLabel = MedianvilleRuns.dateLabel(sel.run.date, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) + (kind ? ' · ' + kind : '');
     MedianvilleRuns.picker($('#runpick'), sel);
     MedianvilleRuns.carry($('#data-link'), sel);
     const d = App.runDate(sel.run.date); if (d) $('#intro-date').textContent = d;
@@ -2494,7 +2557,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   App.useDay = () => {
     if (Sheet.stack.length) Sheet.close(true);
     S.selId = null; S.hhDay = null; S.selPin = null; histDrawnAt = -1;
-    seek(S.t);
+    seek(S.t); updateSceneLabel(true); // the label still counted the sample day until the minute changed
     if (/[#&]lens=[^&/]+\/[^&/]*\/./.test(location.hash)) Lens.fromHash(true); else Lens.refresh();
   };
   App.headPoint = headPoint; App.progress = progress; App.seek = seek; App.select = selectRecord; App.setView = setView; App.setPlaying = setPlaying; App.hitFlights = hitFlights; App.openHouseholdDay = openHouseholdDay;
@@ -2605,21 +2668,20 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
 <script>
 // ===== compact layout below 1280 px: a slim header bar with a menu, and the view switch and lens over the city =====
 // Below 1280 px (where Activity becomes a drawer) the header keeps only the title, Activity and a menu button. The menu
-// takes the status chip, the day picker, focus blur, Sound, Data and About; the view switch and the Systems lens button
+// takes the day control, focus blur, Data and About (Sound lives on the city at every width); the view switch and the Systems lens button
 // move onto the city's top-left corner. Elements are moved, not copied, so their ids, handlers and state stay as they are.
 // A comment left at each element's home puts it back when the window widens again.
 (function () {
   const $ = (id) => document.getElementById(id);
   const menu = $('hdmenu'), btn = $('menu-btn'), q = window.matchMedia('(max-width:1279px)');
   const slots = { day: menu.querySelector('.m-day'), blur: menu.querySelector('.m-blur'), more: menu.querySelector('.m-more'), left: $('scene-left') };
-  const MOVES = [[$('datachip'), 'day'], [$('runpick'), 'day'], [$('blurset'), 'blur'], [document.querySelector('.sndwrap'), 'more'], [document.querySelector('.hdlinks'), 'more'], [$('viewseg'), 'left'], [$('lens-btn'), 'left']];
+  const MOVES = [[$('daypick'), 'day'], [$('blurset'), 'blur'], [document.querySelector('.hdlinks'), 'more'], [$('viewseg'), 'left'], [$('lens-btn'), 'left']];
   const homes = new Map();
   for (const [el] of MOVES) { if (!el) continue; const c = document.createComment('home of #' + (el.id || el.className)); el.before(c); homes.set(el, c); }
 
   function open(v) {
     if (v === !menu.hidden) return;
     menu.hidden = !v; btn.setAttribute('aria-expanded', String(v));
-    if (!v) { const pop = $('snd-pop'); if (pop && !pop.hidden) $('snd-btn').click(); }
   }
   function place() {
     const compact = q.matches;
@@ -2631,10 +2693,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) open(false); });
   // leaving for About, the drawer or another page closes the menu
   for (const id of ['about-btn', 'drawer-btn', 'data-link']) { const el = $(id); el && el.addEventListener('click', () => open(false)); }
-  // Escape closes the sound panel first (it handles that itself), then the menu
+  // Escape closes the menu
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' || menu.hidden) return;
-    const pop = $('snd-pop'); if (pop && !pop.hidden && pop.contains(e.target)) return;
     e.stopImmediatePropagation(); open(false); btn.focus();
   }, true);
   menu.addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !menu.contains(e.relatedTarget) && e.relatedTarget !== btn) open(false); });

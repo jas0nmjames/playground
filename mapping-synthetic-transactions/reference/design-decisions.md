@@ -353,9 +353,31 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Decided:** At 1,280 px and wider, the header stays on one row: the subtitle sits under the title, the day menu moves to the footer beside the clock, and **Sound** shows only its icon below 1,440 px.
 - **Decided:** The page sizes to the visible screen (`100dvh`) and keeps clear of the iPhone's home indicator and notch. On a phone the speed buttons read Live, 1, 5 and 20 min/s, so the clock, play button and speeds share one row.
 - **Who:** Jason, choosing from proposals (option A).
+- *Partly superseded 2026-11-23:* the status chip and the day menu are one control now, in the header at every width (see 7.8).
+- *Partly superseded 2026-11-23:* **Sound** has left the header and the menu for the city's corner (see 7.11).
 
 ### 7.7 A Key button where the legend strip doesn't fit
 - **Decided:** Below 760 px wide or 620 px tall, where the record legend strip along the bottom of the city is hidden, a **Key** button sits in its place at the bottom-left. It opens the same legend as a small two-column card above the button (with "Recent failure at a place" across both columns in the Miniature), and closes it again. It starts closed, and the choice is remembered in the browser (`medianville-key-v1`). The legend is now a labelled group ("Key") for screen readers rather than hidden from them.
 - **Why:** On a phone nothing on screen said what the colours, line patterns, end marks and flags meant; the filter chips that double as a key are inside the Activity drawer. Found in a design critique on 2026-11-23.
 - **Considered:** Putting the key in the header menu, which is easy to miss, and opening it by default on a phone, which covers the city on a first visit, and in landscape takes about half its height.
 - **Who:** Jason, on a proposal. **When:** 2026-11-23.
+
+### 7.8 The day and its size in one control
+- **Decided:** The status chip ("202,402 records · March 3, 2027") and the day menu become one control: the day on top ("Wed, Mar 3, 2027 · baseline"), its record count under it ("202,402 records in the day"), a calendar icon and a chevron. The native select lies invisibly over the whole box, so a click anywhere opens the list of days and keyboards and screen readers get a real select (the count is its description). While the run downloads it reads "Sample day" over "Loading the full simulation 42%". It sits in the header beside the title at 1,280 px and wider, and first in the menu below that; the footer keeps the clock, play, speeds and timeline. The tile above the Activity feed now reads "Records so far", so the two counts don't seem to disagree.
+- **Why:** The chip looked like a control and wasn't one, while the menu that changed the day sat at the other end of the page. The day, its size and the way to change it belong together.
+- **Who:** Jason, on a design critique. **When:** 2026-11-23.
+
+### 7.9 Data and About read as links
+- **Decided:** In the header, **Data** and **About** lose their outlines: text links with their icons, underlined on hover, set apart from the view switch, **Systems lens** and **Sound** by a thin rule. In the menu below 1,280 px they are rows under a rule, each ending in a chevron. **About** still opens the project intro over the city.
+- **Why:** They take you somewhere (the data explorer, the project intro) rather than change the view, and outlined like **Sound** they read as the same kind of control.
+- **Who:** Jason, on a proposal. **When:** 2026-11-23.
+
+### 7.10 Smaller fixes from the design critique
+- **Decided:** Category names keep their acronyms and compounds: "ATM withdrawal", "Grocery SNAP purchase", "Over-the-counter medicine", "Medicare Part B premium" (the same acronyms as the data explorer, plus 23 hyphenated or capitalised compounds from the run's 383 categories). A feed row's time moves under its amount, place names may wrap to a second line, and a failure's second line no longer repeats the word in its badge. The Map's "Power & Water" label moves above its building, clear of "Water Tank", and "ROUTE 9" moves off the building it crossed. Spoken labels lose a doubled full stop after "a.m." and "p.m.", the failure count gets its thousands comma, and the city's label is refreshed as soon as the full day loads rather than a minute later. On touch screens every control is at least 44 px on its shorter side; inline links in the credit line keep text spacing.
+- **Who:** Jason, on a design critique. **When:** 2026-11-23.
+
+### 7.11 Sound on the city
+- **Decided:** **Sound** moves out of the header (and out of the menu below 1,280 px) onto the city's bottom-right corner at every width: icon and label on wider screens, just the speaker icon below 760 px (its accessible name still says whether sound is on). Its panel opens upward from the button and is never taller than the city, scrolling inside in a short landscape window. Keys pressed inside it, such as arrows on a volume slider, stay out of the city's own keys, and pointer presses and the scroll wheel there no longer pan or zoom the map. **S** still toggles it.
+- **Why:** Sound is the city's, a background that follows the hour and a pluck for each record, so it belongs with the city, across from the key. The header keeps only what applies to the whole page: the title, the day, the view, the lens, and the links to the data and the project.
+- **Decided:** A second after sound is turned on, the panel checks that the browser's audio clock has moved. If it hasn't (the browser reports the audio as running but has no output, as in an embedded browser, or keeps it suspended), a note in the panel says the browser isn't playing audio and that another browser should work, and screen readers hear it. A hidden tab, which stops the clock on purpose, isn't checked.
+- **Who:** Jason, with the proposal's details. **When:** 2026-11-23.
