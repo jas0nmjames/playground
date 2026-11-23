@@ -2986,9 +2986,13 @@ function makePost() {
     float ign(vec2 p){ return fract(52.9829189 * fract(dot(p, vec2(0.06711056, 0.00583715)))); }
     vec3 at(vec2 uv){ return vpos(uv, texture2D(tDepth, uv).x); }
     void main(){
-      float d = texture2D(tDepth, vUv).x; if (d >= 0.99999) { gl_FragColor = vec4(1.0); return; }
-      vec3 P = vpos(vUv, d);
-      vec3 pr = at(vUv + vec2(uTexel.x, 0.0)), pl = at(vUv - vec2(uTexel.x, 0.0)), pu = at(vUv + vec2(0.0, uTexel.y)), pd = at(vUv - vec2(0.0, uTexel.y));
+      // a half-resolution pixel's centre falls on the border between full-resolution depth texels, and rounding there picks
+      // the row above on some rows and the row below on others: flat ground then gets a wrong normal on alternate rows and
+      // shows as horizontal stripes. Sampling at a texel's own centre keeps the depth and its neighbours consistent.
+      vec2 uv = (floor(vUv / uTexel) + 0.5) * uTexel;
+      float d = texture2D(tDepth, uv).x; if (d >= 0.99999) { gl_FragColor = vec4(1.0); return; }
+      vec3 P = vpos(uv, d);
+      vec3 pr = at(uv + vec2(uTexel.x, 0.0)), pl = at(uv - vec2(uTexel.x, 0.0)), pu = at(uv + vec2(0.0, uTexel.y)), pd = at(uv - vec2(0.0, uTexel.y));
       vec3 dx = abs(pr.z - P.z) < abs(P.z - pl.z) ? pr - P : P - pl;
       vec3 dy = abs(pu.z - P.z) < abs(P.z - pd.z) ? pu - P : P - pd;
       vec3 n = normalize(cross(dx, dy));
