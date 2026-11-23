@@ -56,11 +56,11 @@ Both animated pages link to each other and to the systems lens in their footers.
 
 ### Miniature and Map (latest)
 
-![The miniature town at 3:24 p.m. in afternoon sun, with street paint, parked cars and the land beyond the board, record paths arcing between homes and buildings, and failure pins on the places where things went wrong](screenshots/v3-miniature.jpg)
+![The miniature town at 12:30 p.m. in midday sun, with street paint, parked cars and the land beyond the board, record paths arcing between homes and buildings, small crimson flags at the places where something just failed, the day control in the header and Sound in the city's corner](screenshots/v3-miniature.jpg)
 
-The Miniature view at 12:19 p.m., playing at five minutes a second. Purple dashed arcs are public services, here children headed to school; pink pins count failures at a place.
+The Miniature view at 12:30 p.m., playing at five minutes a second. Amber arcs are purchases and violet dashed arcs public services, here children headed to school; each small crimson flag marks a place where something failed in the last few minutes.
 
-![The Map view around Courthouse Square, drawn as a printed map sheet in the viewer's type and navy ink, with numbered failure triangles](screenshots/v3-map.jpg)
+![The Map view of most of the sheet, drawn as a printed map in the viewer's type and navy ink, with record paths crossing it and numbered crimson failure triangles](screenshots/v3-map.jpg)
 
 The same moment in the Map view, zoomed out to show most of the sheet.
 
@@ -74,13 +74,13 @@ On a first visit, an intro opens over the city while the day loads, and **About*
 
 The systems lens opens over the city in the latest viewer from a record's **What shaped this**, from a household's day, or from the **Systems lens** button in the header (**L**). It maps one composite block in each district, defined in `systems-lens/blocks.json`, and the run tags the records of those blocks' households, so the lens shows the record you opened. Every other record opens its district's block on the **district tier**: the circumstances true across the whole district, with the bar above the lens saying the record comes from elsewhere in the district. It also runs on its own at [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/), where a menu switches blocks and each pin shows a composite example. The [design record](reference/medianville-systems-lens.md) explains the choices, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
 
-The screenshots were taken from these pages in headless Chromium with software WebGL, at twice the pixel density.
+The screenshots were taken from these pages in headless Chrome, driven over the DevTools protocol so each one shows a set moment (the viewer at 12:30 p.m., playing at five minutes a second), at twice the pixel density; the intro is at 1× and the phone intro at 390 × 844.
 
 ### Data explorer
 
 ![The data explorer: records that didn't work for households in poverty, grouped by job, with filters on the left and totals above](screenshots/explorer.jpg)
 
-[explorer/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/explorer/) is the run as tables: every record, household, person and organization, with filters, search and drill-downs. Here, the 1,732 records that didn't work for households in poverty, grouped by job.
+[explorer/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/explorer/) is the run as tables: every record, household, person and organization, with filters, search and drill-downs. Here, the 1,584 records that didn't work for households in poverty on the baseline day, grouped by job.
 
 ## Watching the night map
 
