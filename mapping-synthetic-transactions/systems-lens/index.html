@@ -11,13 +11,14 @@
 /* Same system as Medianville in Motion: slate page, white surfaces, Figtree with tabular figures, 12px radius, soft shadow. Layout: layers and loops on the left, the exploded stack in the middle, the detail sheet on the right. */
 :root{
   --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797;
-  --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
+  --blue:#1F5AF0; --green:#0A7A4B; --fail:#BC2F52; --r:12px;
   --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08);
   --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --cond:"Barlow Condensed", "Arial Narrow", sans-serif;
   --loop:#1F5AF0;
-  --c-hist:#8C6239; --c-pol:#3457A6; --c-econ:#B7832A; --c-env:#3F8758; --c-soc:#C2556A; --c-cult:#7A5BB0;
-  --r-purchase:#A65300; --r-income:#145A33; --r-bill:#2F5E9E; --r-fail:#8E3B6D; --r-unpaid:#0E1B2E;
+  /* layer colours (design decision 4.7): two lightness tiers, so protan and deutan readers, who keep lightness and blue-yellow, still tell all six and failure crimson apart */
+  --c-hist:#6A3A04; --c-pol:#1F3B83; --c-econ:#A77D1E; --c-env:#38927D; --c-soc:#785D7F; --c-cult:#8D78C0;
+  --r-purchase:#A65300; --r-income:#145A33; --r-bill:#2F5E9E; --r-fail:#BC2F52; --r-unpaid:#0E1B2E;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -79,12 +80,12 @@ aside.rail{background:var(--surface);border-left:1px solid var(--line);display:f
 .eyebrow{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);font-weight:600;margin:10px 0 4px}
 .title{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.2;text-wrap:balance}
 .big{font-size:32px;font-weight:700;margin:6px 0 0;letter-spacing:-.02em}
-.big.fail{color:var(--plum)}
+.big.fail{color:var(--fail)}
 .big.in{color:var(--green)}
 .status{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}
 .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;line-height:1.4}
 .pill.ok{background:#E2F0E8;color:#08663F}
-.pill.fail{background:var(--plum);color:#fff}
+.pill.fail{background:var(--fail);color:#fff}
 .pill.neutral{background:var(--page);color:var(--ink2)}
 .pill.loopp{background:#E8EEFE;color:var(--blue)}
 .pill.type{color:#fff}
@@ -495,7 +496,7 @@ const ICON = {
   },
   cross(g, x, y){
     s("rect", {x:x - 10, y:y - 20, width:20, height:20, rx:4, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);
-    s("path", {d:`M${x} ${y - 16} v12 M${x - 6} ${y - 10} h12`, stroke:"#8E3B6D", "stroke-width":3}, g);
+    s("path", {d:`M${x} ${y - 16} v12 M${x - 6} ${y - 10} h12`, stroke:"#BC2F52", "stroke-width":3}, g);
   },
   car(g, x, y){
     s("path", {d:`M${x - 12} ${y - 3} v-5 l4 -5 h12 l4 5 h4 v5 z`, fill:"#FFFFFF", stroke:"#0E1B2E", "stroke-width":1.1}, g);

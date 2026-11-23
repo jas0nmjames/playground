@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
 <style>
-:root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797; --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
+:root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797; --blue:#1F5AF0; --green:#0A7A4B; --fail:#BC2F52; --r:12px;
   --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08); --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; }
@@ -62,8 +62,9 @@ body.rm .layer, body.rm .sheet, body.rm aside.rail { transition:none !important;
 .chooser button { display:grid; grid-template-columns:20px 1fr auto; gap:8px; width:100%; align-items:center; border:0; background:none; padding:8px; border-radius:8px; font-size:13.5px; color:var(--ink); cursor:pointer; text-align:left; min-height:36px; }
 .chooser button:hover { background:var(--page); }
 .debug { position:absolute; left:12px; top:12px; z-index:7; background:rgba(14,27,46,.88); color:#fff; font:12px ui-monospace, Menlo, monospace; padding:6px 9px; border-radius:6px; }
-.legend-strip { position:absolute; left:12px; bottom:12px; z-index:4; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:6px 10px; display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; font-weight:600; max-width:calc(100% - 24px); }
+.legend-strip { position:absolute; left:12px; bottom:12px; z-index:4; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:6px 10px; display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; font-weight:600; max-width:calc(100% - 150px); }
 .legend-strip span { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.legend-strip span[hidden] { display:none; }
 .legend-strip svg { flex:none; }
 /* rail */
 aside.rail { background:var(--surface); border-left:1px solid var(--line); position:relative; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
@@ -78,20 +79,27 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .filters { display:flex; flex-wrap:wrap; gap:6px; padding:0 20px 10px; }
 .filters button { display:inline-flex; align-items:center; gap:6px; min-height:32px; padding:3px 10px 3px 4px; border-radius:999px; border:1px solid var(--ctrl); background:#fff; font-weight:600; font-size:13px; color:var(--ink); cursor:pointer; }
 .filters button[aria-pressed="false"] { color:var(--ink2); border-style:dashed; background:var(--page); text-decoration:line-through; }
-.feed-h { font-size:13px; font-weight:600; color:var(--ink2); margin:4px 20px 4px; }
+.feed-box { display:flex; flex-direction:column; min-height:0; flex:1; }
+.feed-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:4px 20px 4px; min-height:28px; }
+.feed-h { font-size:13px; font-weight:600; color:var(--ink2); margin:0; }
+/* new records wait behind this while the feed holds still (pointer over it, scrolled, focused, or touched) */
+.feed-new { display:inline-flex; align-items:center; gap:5px; border:0; border-radius:999px; padding:6px 11px; background:var(--blue); color:#fff; font:600 12.5px/1 var(--ui); font-variant-numeric:tabular-nums; cursor:pointer; }
+.feed-new[hidden] { display:none; }
+@media (pointer: coarse) { .feed-new { padding:10px 14px; } }
 .feed { list-style:none; margin:0; padding:0 8px 16px; overflow:auto; flex:1; min-height:0; }
 .row { display:grid; grid-template-columns:32px minmax(0,1fr) auto; gap:12px; align-items:center; width:100%; border:0; background:none; text-align:left; padding:9px 12px; border-radius:10px; color:inherit; cursor:pointer; min-height:56px; }
 .row:hover { background:var(--page); }
 .row.sel { background:#E8EEFE; box-shadow:inset 3px 0 0 var(--blue); }
 .row .main { min-width:0; }
 .row .cp { display:flex; align-items:center; gap:6px; font-weight:500; font-size:14.5px; min-width:0; }
-.row .cp .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.row .cp .nm { overflow:hidden; min-width:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.3; } /* long place names wrap to a second line */
 .row .sub { display:block; font-size:13px; color:var(--ink2); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.amt { font-weight:600; font-size:14.5px; white-space:nowrap; }
+.amt { font-weight:600; font-size:14.5px; white-space:nowrap; display:flex; flex-direction:column; align-items:flex-end; }
+.amt .tm { font-size:12.5px; font-weight:500; color:var(--ink2); margin-top:2px; }
 .amt.in, .big.in, .v.in { color:var(--green); }
 .amt.muted { color:var(--ink2); }
 .pill { display:inline-block; font-size:12px; font-weight:700; border-radius:999px; padding:2px 8px; line-height:1.35; flex:none; }
-.pill.fail { background:var(--plum); color:#fff; }
+.pill.fail { background:var(--fail); color:#fff; }
 .pill.ok { background:#E2F0E8; color:#08663F; }
 .sheet { position:absolute; inset:0; background:var(--surface); transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; z-index:3; }
 .sheet.open { transform:none; }
@@ -124,10 +132,22 @@ aside.rail { background:var(--surface); border-left:1px solid var(--line); posit
 .mini-tiles .lbl { display:block; font-size:12.5px; color:var(--ink2); }
 .mini-tiles .v { font-weight:700; font-size:17px; }
 .feed.inline { padding:0; overflow:visible; margin:0 -12px; }
-.chip.warn { color:#8E3B6D; border-color:#E7C7DA; background:#FBF1F6; }
-.runpick { font:600 13px var(--ui); color:var(--ink); background:#fff; border:1px solid var(--ctrl); border-radius:999px; min-height:32px; padding:4px 10px; max-width:100%; cursor:pointer; }
-.runpick:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
-footer.bar .runpick { min-height:40px; font-size:14px; padding:4px 12px; max-width:240px; }
+.chip.warn { color:var(--fail); border-color:#F0C3CE; background:#FCEFF2; }
+/* the day control: the day on top, its record count (or loading state) under it, a chevron, and the native select
+   stretched invisibly over all of it */
+.daypick { position:relative; display:inline-flex; align-items:center; gap:9px; min-height:44px; padding:4px 10px 4px 10px; border:1px solid var(--ctrl); border-radius:12px; background:var(--surface); color:var(--ink); cursor:pointer; min-width:0; max-width:280px; flex:0 1 auto; }
+.daypick:hover { background:var(--page); }
+.daypick:has(.runpick:focus-visible) { outline:2px solid var(--blue); outline-offset:2px; }
+.dp-face { display:flex; align-items:center; gap:9px; min-width:0; }
+.dp-cal, .dp-chev { flex:none; color:var(--ink2); }
+.dp-text { display:flex; flex-direction:column; min-width:0; line-height:1.25; }
+.dp-day { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dp-sub { font-size:12.5px; font-weight:500; color:var(--ink2); font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dp-sub.warn { color:var(--fail); }
+.runpick { position:absolute; inset:0; width:100%; height:100%; opacity:0; margin:0; border:0; cursor:pointer; font-size:16px; } /* 16px: no zoom on focus in iOS */
+.daypick:has(.runpick[hidden]) { cursor:default; } /* no manifest: nothing to choose */
+.daypick:has(.runpick[hidden]):hover { background:var(--surface); }
+.daypick:has(.runpick[hidden]) .dp-chev { display:none; }
 .credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
 .credit a { color:var(--ink2); }
 .credit a:hover { color:var(--ink); }
@@ -148,15 +168,19 @@ footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px max(2
 /* systems lens: a toggle in the header and an overlay that grows out of the details rail */
 .lensbtn { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:0 14px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font-weight:600; font-size:14px; color:var(--ink); cursor:pointer; }
 .lensbtn:hover { background:var(--page); }
-.sndwrap { position:relative; }
+/* Sound sits on the city, bottom-right (the key holds bottom-left); its panel opens upward, limited to the city's height */
+.sndwrap { position:absolute; right:12px; bottom:12px; z-index:5; }
+.sndwrap .sndbtn { border-color:var(--line); box-shadow:var(--shadow); }
+@media (max-width:760px) { .sndwrap .sndlbl { display:none; } .sndwrap .sndbtn { width:40px; padding:0; justify-content:center; } } /* the button's aria-label still names it */
 .sndbtn { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font-weight:600; font-size:14px; color:var(--ink); cursor:pointer; }
 .sndbtn:hover { background:var(--page); }
 .sndbtn.on { border-color:var(--blue); color:var(--blue); }
-.sndpop { position:absolute; right:0; top:calc(100% + 8px); z-index:30; width:288px; max-width:calc(100vw - 24px); background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:14px; }
+.sndpop { position:absolute; right:0; bottom:calc(100% + 8px); overflow:auto; overscroll-behavior:contain; z-index:30; width:288px; max-width:calc(100vw - 24px); background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:14px; }
 .sndpop h2 { font-size:14px; margin:0 0 4px; }
 .sndpop p { font-size:12.5px; color:var(--ink2); margin:0 0 10px; line-height:1.4; }
 .sndpop .sndmain { width:100%; min-height:40px; border-radius:10px; border:0; background:var(--blue); color:#fff; font:600 14px var(--ui); cursor:pointer; }
 .sndpop .sndmain[aria-pressed="true"] { background:var(--ink); }
+.sndpop .sndnote { margin:10px 0 0; padding:8px 10px; border-radius:8px; background:#FFF4E0; color:#6B4300; font-size:12.5px; line-height:1.4; } /* sound is on but the browser's audio clock never started */
 .sndpop .sndrow { display:grid; grid-template-columns:88px 1fr 52px; align-items:center; gap:8px; margin-top:10px; font-size:13px; font-weight:600; }
 .sndpop input[type=range] { width:100%; accent-color:var(--blue); }
 .sndpop .sndtog { min-height:30px; border-radius:999px; border:1px solid var(--ctrl); background:#fff; font:600 12.5px var(--ui); cursor:pointer; color:var(--ink); }
@@ -192,11 +216,13 @@ body.rm .lens-panel, body.rm .lens-dim, body.rm .lens-city { transition:none !im
 .go.off b { color:var(--ink2); }
 a.go { text-decoration:none; }
 /* Data and About in the header: other pages and the intro, kept apart from the view switch */
-.hdlinks { display:flex; gap:8px; }
-.hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px; border:1px solid var(--ctrl); border-radius:999px; background:#fff; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; }
-.hdlink:hover { background:var(--page); }
+/* Data and About take you somewhere (the explorer, the project intro) rather than change the view, so they read as links:
+   no outline, underlined on hover, set apart from the controls by a thin rule */
+.hdlinks { display:flex; gap:2px; padding-left:8px; margin-left:2px; border-left:1px solid var(--line); }
+.hdlink { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 8px; border:0; border-radius:8px; background:none; font:600 14px var(--ui); color:var(--ink); cursor:pointer; text-decoration:none; text-underline-offset:3px; }
+.hdlink:hover { text-decoration:underline; }
+.hdlink svg { color:var(--ink2); }
 @media (max-width:1639px) { .kbdhint { display:none; } }
-@media (min-width:1280px) and (max-width:1439px) { .sndlbl { display:none; } .sndbtn { padding:0 11px; } } /* the button keeps its label for screen readers */ /* room for Data and About; the shortcuts are also in the buttons' titles and the scene's help */
 /* first-visit intro: a dialog over the city, which keeps running behind it */
 .intro { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:24px 16px; }
 .intro[hidden] { display:none; }
@@ -244,7 +270,16 @@ a.go { text-decoration:none; }
   .lens-ctx { flex:1 1 100%; white-space:normal; font-size:13px; line-height:1.35; }
   .lens-esc { display:none; }
 }
-@media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
+/* the key: a strip along the bottom of the city; where that won't fit (phones, short windows), a Key button opens it as
+   a small card above the button */
+.legend-btn { display:none; }
+@media (max-height:620px), (max-width:760px) {
+  .legend-strip { display:none; }
+  .legend-btn { display:inline-flex; position:absolute; left:12px; bottom:12px; z-index:4; border-color:var(--line); box-shadow:var(--shadow); }
+  .legend-btn[aria-expanded="true"] { background:var(--page); border-color:var(--ink); }
+  .legend-strip.open { display:grid; grid-template-columns:repeat(2, max-content); gap:8px 16px; bottom:60px; padding:10px 12px; font-size:13px; max-width:calc(100% - 24px); }
+  .legend-strip.open #lg-flag { grid-column:1 / -1; }
+}
 /* compact layout below 1280 px: a slim bar (title, Activity, a menu), the view switch and lens over the city.
    The app shell moves the elements; these rules only style them where they land. */
 .scene-ctrls.left { left:12px; right:auto; justify-content:flex-start; }
@@ -253,13 +288,17 @@ a.go { text-decoration:none; }
 .hdmenu { position:absolute; top:calc(100% + 6px); right:max(12px, env(safe-area-inset-right)); z-index:35; width:min(340px, calc(100vw - 24px)); max-height:calc(100dvh - 120px); overflow:auto; overscroll-behavior:contain; background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:12px; display:flex; flex-direction:column; gap:10px; }
 .hdmenu .m-day, .hdmenu .m-more { display:flex; flex-direction:column; gap:8px; }
 .hdmenu .m-day:empty, .hdmenu .m-blur:empty, .hdmenu .m-blur:has(> [hidden]) { display:none; } /* focus blur is for the Miniature only */
-.hdmenu .chip { align-self:flex-start; white-space:normal; }
-.hdmenu .runpick { width:100%; max-width:none; min-height:40px; font-size:14px; }
+.hdmenu .daypick { display:flex; width:100%; max-width:none; }
+.hdmenu .daypick .dp-face { flex:1; }
+.hdmenu .dp-day, .hdmenu .dp-sub { white-space:normal; }
 .hdmenu #blurset { box-shadow:none; padding:0; justify-content:space-between; }
 .hdmenu #blurset .lbl { padding-left:2px; font-size:13.5px; }
-.hdmenu .sndbtn, .hdmenu .hdlink { width:100%; min-height:44px; justify-content:flex-start; border-radius:10px; }
-.hdmenu .hdlinks { flex-direction:column; }
-.hdmenu .sndpop { position:static; width:auto; max-width:none; box-shadow:none; padding:10px 2px 4px; }
+.hdmenu .hdlink { width:100%; min-height:44px; justify-content:flex-start; border-radius:10px; }
+/* in the menu the links are rows under a rule, each ending in a chevron, like a list of places to go */
+.hdmenu .hdlinks { flex-direction:column; gap:0; padding:6px 0 0; margin:2px 0 0; border-left:0; border-top:1px solid var(--line); }
+.hdmenu .hdlink { padding:0 6px 0 4px; }
+.hdmenu .hdlink:hover { text-decoration:none; background:var(--page); }
+.hdmenu .hdlink::after { content:''; margin-left:auto; width:7px; height:7px; border-top:1.8px solid var(--ink2); border-right:1.8px solid var(--ink2); transform:rotate(45deg); margin-right:6px; }
 @media (max-width:1279px) {
   header.top { padding:8px max(12px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left)); }
   #menu-btn { display:grid; width:40px; height:40px; }
@@ -331,14 +370,35 @@ svg.quad .north path { fill:#0E1B2E; }
 svg.quad .north text { font-size:.34px; text-anchor:middle; font-weight:700; }
 svg.quad .legend text { font-size:.25px; dominant-baseline:central; fill:#0E1B2E; font-weight:500; }
 svg.quad .legend .lh { font-size:.27px; letter-spacing:.2em; font-weight:700; }
-svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
+svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
+/* touch screens: every control at least 44 px on its shorter side, the size Apple and Google give for a fingertip
+   (mice keep the tighter sizes above). Last in the sheet so it wins over the layout rules. */
+@media (pointer: coarse) {
+  .seg label, .card .seg label { min-height:38px; } /* with the 3 px track the switch is 44 tall, level with the buttons */
+  #speedseg label { min-width:44px; }
+  .iconbtn, .compass { width:44px; height:44px; }
+  .btn, .lensbtn, .sndbtn, .hdlink, #menu-btn, #drawer-btn { min-height:44px; }
+  #menu-btn, #play { width:44px; height:44px; }
+  .filters button { min-height:44px; }
+  .credit a { display:inline-block; padding:8px 0; margin:-6px 0; } /* taller to tap, same line spacing */
+  #snd-btn { min-width:44px; }
+}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
     <div class="brandname"><h1>Medianville</h1><p class="sub">One day of transactions in a simulated American city</p></div>
-    <span class="chip" id="datachip" role="status">Sample day · loading the full simulation</span>
+    <!-- the day: which one is showing, its size or loading state, and the menu to change it, as one control. The native
+         select lies invisibly over the whole box, so a click anywhere opens it and keys and screen readers get a real select. -->
+    <label class="daypick" id="daypick">
+      <span class="dp-face" aria-hidden="true">
+        <svg class="dp-cal" width="18" height="18" viewBox="0 0 18 18"><rect x="2.5" y="3.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7.5h13M6 2v3M12 2v3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="dp-text"><span class="dp-day" id="dp-day">Sample day</span><span class="dp-sub" id="datachip">Loading the full simulation</span></span>
+        <svg class="dp-chev" width="14" height="14" viewBox="0 0 14 14"><path d="M3.5 5.5L7 9l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <select class="runpick" id="runpick" hidden aria-label="Day to show" aria-describedby="datachip" title="Choose a day: each opens as its own link"></select>
+    </label>
   </div>
   <fieldset class="seg" id="viewseg" title="M switches the view">
     <legend>View</legend>
@@ -347,18 +407,6 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   </fieldset>
   <button type="button" class="lensbtn" id="lens-btn" aria-pressed="false" aria-controls="lens" aria-keyshortcuts="L" title="Systems lens (L)"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Systems lens</button>
   <span class="dim small kbdhint" aria-hidden="true"><b>M</b> switches · <b>L</b> opens the lens · <b>S</b> sound</span>
-  <div class="sndwrap">
-    <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sndlbl">Sound</span></button>
-    <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
-      <h2>Sound</h2>
-      <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
-      <button type="button" class="sndmain" id="snd-on" aria-pressed="false">Turn sound on</button>
-      <div class="sndrow"><label for="snd-m">Volume</label><input id="snd-m" type="range" min="0" max="1" step="0.01" data-snd-r="master"><span></span></div>
-      <div class="sndrow"><label for="snd-a">Background</label><input id="snd-a" type="range" min="0" max="1" step="0.01" data-snd-r="amb"><button type="button" class="sndtog" data-snd-t="amb" aria-label="Background sound">On</button></div>
-      <div class="sndrow"><label for="snd-r">Records</label><input id="snd-r" type="range" min="0" max="1" step="0.01" data-snd-r="rec"><button type="button" class="sndtog" data-snd-t="rec" aria-label="Record sounds">On</button></div>
-      <button type="button" class="sndreset" id="snd-reset">Reset to the default mix</button>
-    </div>
-  </div>
   <div class="hdlinks">
     <a class="hdlink" href="explorer/" id="data-link"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7h13M2.5 11h13M7 7v8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Data</a>
     <button type="button" class="hdlink" id="about-btn" aria-haspopup="dialog" aria-controls="intro"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5.4" r="1.05" fill="currentColor"/></svg>About</button>
@@ -392,7 +440,24 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         <button class="iconbtn" id="turn-r" aria-label="Turn the board right" aria-keyshortcuts="E" title="Turn right (E)"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5A6.5 6.5 0 1 0 16.4 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M11.4 1.6l1.1 2.9-3 1.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
     </div>
-    <div class="legend-strip" aria-hidden="true" id="legendstrip"></div>
+    <div class="scene-key">
+      <button type="button" class="lensbtn legend-btn" id="legend-btn" aria-expanded="false" aria-controls="legendstrip"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 4.5h9M2 9h9M2 13.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="14.5" cy="4.5" r="1.9" fill="#A65300"/><path d="M14.5 7.1l1.9 1.9-1.9 1.9-1.9-1.9z" fill="#145A33"/><path d="M13.1 12.1l2.8 2.8M15.9 12.1l-2.8 2.8" stroke="#BC2F52" stroke-width="1.7" stroke-linecap="round"/></svg>Key</button>
+      <div class="legend-strip" role="group" aria-label="Key" id="legendstrip"></div>
+    </div>
+    <!-- Sound sits on the city it plays: bottom-right, its panel opening upward -->
+    <div class="sndwrap">
+      <button type="button" class="sndbtn" id="snd-btn" aria-pressed="false" aria-expanded="false" aria-controls="snd-pop" aria-keyshortcuts="S" title="Sound (S)" aria-label="Sound off. Open sound settings"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7h3l4-3.5v11L6 11H3z" fill="currentColor"/><path class="snd-w" d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.3a6.8 6.8 0 0 1 0 9.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="display:none"/><path class="snd-x" d="M12.5 7l4 4M16.5 7l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sndlbl">Sound</span></button>
+      <div class="sndpop" id="snd-pop" hidden role="dialog" aria-label="Sound">
+        <h2>Sound</h2>
+        <p>A quiet city in the background, and a pluck for each record, pitched by kind. A low thud means something didn't work. Off until you turn it on; <b>S</b> toggles it.</p>
+        <button type="button" class="sndmain" id="snd-on" aria-pressed="false">Turn sound on</button>
+        <p class="sndnote" id="snd-note" hidden>This browser isn’t playing audio from the page, so you won’t hear anything here. Opening the page in another browser should work.</p>
+        <div class="sndrow"><label for="snd-m">Volume</label><input id="snd-m" type="range" min="0" max="1" step="0.01" data-snd-r="master"><span></span></div>
+        <div class="sndrow"><label for="snd-a">Background</label><input id="snd-a" type="range" min="0" max="1" step="0.01" data-snd-r="amb"><button type="button" class="sndtog" data-snd-t="amb" aria-label="Background sound">On</button></div>
+        <div class="sndrow"><label for="snd-r">Records</label><input id="snd-r" type="range" min="0" max="1" step="0.01" data-snd-r="rec"><button type="button" class="sndtog" data-snd-t="rec" aria-label="Record sounds">On</button></div>
+        <button type="button" class="sndreset" id="snd-reset">Reset to the default mix</button>
+      </div>
+    </div>
     <div class="debug" id="debug" hidden></div>
     <p id="scene-help" class="sr-only">Arrow keys pan. Plus and minus zoom. In the miniature, Q and E turn the board, N puts north up, and Page Up and Page Down tilt it; with a mouse, drag with the right button or with Shift held to turn and tilt, and on a touch screen use two fingers. Left and right square brackets step through records in flight; Enter opens the one in focus. Escape clears. Space plays or pauses. M switches between the miniature and the map. L opens the Systems lens over the city, and Escape closes it. Every record is also listed in the Activity feed.</p>
   </section>
@@ -401,13 +466,15 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     <div id="feedwrap">
       <div class="tiles" role="group" aria-label="So far today">
         <div class="tile"><span class="lbl">Money moved</span><span class="val">$0</span></div>
-        <div class="tile"><span class="lbl">Records</span><span class="val">0</span></div>
+        <div class="tile"><span class="lbl">Records so far</span><span class="val">0</span></div>
         <div class="tile"><span class="lbl">Failures</span><span class="val">0</span></div>
         <div class="tile"><span class="lbl">Unpaid hours</span><span class="val">0.0</span></div>
       </div>
       <div class="filters" role="group" aria-label="Show record types" id="filters"></div>
-      <h3 class="feed-h" id="feed-h">Latest records</h3>
-      <ul id="feed" class="feed" aria-labelledby="feed-h"></ul>
+      <div class="feed-box" id="feed-box">
+        <div class="feed-top"><h3 class="feed-h" id="feed-h">Latest records</h3><button type="button" class="feed-new" id="feed-new" hidden><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></button></div>
+        <ul id="feed" class="feed" aria-labelledby="feed-h"></ul>
+      </div>
       <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="about/">About</a> · <a href="explorer/">Data</a> · <a href="v1/">Night map (v1)</a> · <a href="systems-lens/" data-lens-open>Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
     </div>
     <section id="sheet" class="sheet" hidden aria-labelledby="sheet-title">
@@ -431,7 +498,6 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   </div>
 </main>
 <footer class="bar">
-  <select class="runpick" id="runpick" hidden aria-label="Day to show" title="Choose a day: each opens as its own link"></select>
   <div id="clock" aria-hidden="true">8:00 a.m.</div>
   <button id="play" aria-label="Pause"><svg class="pi" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/></svg><svg class="pl" hidden width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3l10 6-10 6z" fill="currentColor"/></svg></button>
   <fieldset class="seg" id="speedseg">
@@ -444,7 +510,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   <div class="tlwrap">
     <div class="timeline"><canvas id="hist" aria-hidden="true"></canvas><input id="tl" type="range" min="0" max="1439" step="1" value="480" aria-label="Time of day" aria-describedby="tl-help"></div>
     <div class="marks" aria-hidden="true"><span>12 a.m.</span><span>6 a.m.</span><span>Noon</span><span>6 p.m.</span><span>12 a.m.</span></div>
-    <span id="tl-help" class="sr-only">Arrow keys move one minute, Page Up and Page Down move one hour. Bars show record volume; plum marks show ten-minute stretches where failures run well above the day’s usual share.</span>
+    <span id="tl-help" class="sr-only">Arrow keys move one minute, Page Up and Page Down move one hour. Bars show record volume; crimson marks show ten-minute stretches where failures run well above the day’s usual share.</span>
   </div>
 </footer>
 <div id="live" class="sr-only" aria-live="polite"></div>
@@ -1018,7 +1084,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     bill: { label: 'Bill', mini: '#8CC3FF', map: '#1C5C9C', dash: 'long', head: 'square', w: 1 },
     service: { label: 'Public service', mini: '#B79CFF', map: '#5B3FA8', dash: 'long', head: 'ring', w: 1 },
     unpaid: { label: 'Unpaid work', mini: '#FFFFFF', map: '#1A1A1A', dash: 'short', head: 'ring', w: 1 },
-    fail: { label: 'Failure', mini: '#F4A3DA', map: '#8E3B6D', dash: 'solid', head: 'x', w: 1, stop: 0.55 },
+    fail: { label: 'Failure', mini: '#E23E5A', map: '#BC2F52', dash: 'solid', head: 'x', w: 1, stop: 0.55 },
   };
   H.CASING = '#0E1B2E';
   H.vkind = (r) => (r.outcome && r.outcome !== 'completed') || r.record_type === 'failed_attempt' ? 'fail'
@@ -1342,14 +1408,16 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     for (const s of P.syms) {
       const x = f2(mx(s.x)), y = f2(my(s.z));
       syms += SYM[s.kind](x, y);
-      lab += `<text x="${x}" y="${f2(y + 0.34)}">${LBL[s.kind]}</text>`;
+      // the water tank sits between two buildings, so its label tucks in closer than the others
+      lab += `<text x="${x}" y="${f2(y + (s.kind === 'watertower' ? 0.24 : 0.34))}">${LBL[s.kind]}</text>`;
     }
     for (const [k, txt, dx, dy] of [['tank', 'Fuel Terminal', 0, 0.55], ['silo', 'Grain Co-op', 0, 0.62], ['utility', 'Power & Water', -0.1, 0.62]]) {
       const t = H.tiles.find((q) => q.kind === k); if (t && k !== 'utility') lab += `<text x="${t.x + 0.5 + dx}" y="${t.y + dy + 0.5}">${txt}</text>`;
-      if (t && k === 'utility') lab += `<text x="${t.x + 0.35}" y="${t.y + 1.0}">${txt}</text>`;
+      // above its building, clear of the water tank's label below
+      if (t && k === 'utility') lab += `<text x="${t.x + 0.35}" y="${t.y + 0.02}">${txt}</text>`;
     }
-    // district names in spaced capitals
-    const DL = [['MILLBANK', 8.6, 1.55], ['COURTHOUSE SQUARE', 9.95, 9.6], ['BROOKFIELD COMMONS', 16.5, 4.4], ['ROUTE 9', 2.9, 9.5], ['RAILSIDE', 16.4, 17.6], ['CUTLER FIELDS', 2.5, 17.3]];
+    // district names in spaced capitals (Route 9's sits above the building it used to cross)
+    const DL = [['MILLBANK', 8.6, 1.55], ['COURTHOUSE SQUARE', 9.95, 9.6], ['BROOKFIELD COMMONS', 16.5, 4.4], ['ROUTE 9', 2.9, 8.8], ['RAILSIDE', 16.4, 17.6], ['CUTLER FIELDS', 2.5, 17.3]];
     let dlab = DL.map(([s, x, y]) => `<text x="${x}" y="${y}">${s}</text>`).join('');
     // street names along the line
     let slab = '', mlab = '';
@@ -1417,7 +1485,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       const r = REC[k], da = r.dash === 'long' ? 'stroke-dasharray="0.2 0.1"' : r.dash === 'short' ? 'stroke-dasharray="0.06 0.07"' : '';
       row2(`<path d="M0 0L${k === 'fail' ? 0.5 : 0.8} 0" stroke="${r.map}" stroke-width="${0.04 * r.w}" ${da}/>` + hd(r.head, r.map), r.label);
     }
-    row2(`<path d="M0.45 -0.12L0.6 0.12L0.3 0.12Z" fill="#8E3B6D"/><text x="0.72" y="0.1" class="pc">3</text>`, 'Failures at a place');
+    row2(`<path d="M0.45 -0.12L0.6 0.12L0.3 0.12Z" fill="#BC2F52"/><text x="0.72" y="0.1" class="pc">3</text>`, 'Failures at a place');
     const legend = `<g class="legend"><text class="lh" x="${f2(LX)}" y="${f2(MY)}">LEGEND</text>${lg.join('')}${col2.join('')}</g>`;
 
     return `
@@ -1505,11 +1573,14 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const st = H.REC[F.kind], h = F.steady ? 9 : (S.animNow - F.born) / F.dur, stop = F.stop, hh = Math.min(h, stop), L = 0.3;
     const hov = S.hoverId === F.id, dim = S.hoverId && !hov ? 0.35 : 1;
     const w = 2.3 * st.w * (hov ? 1.7 : 1), dash = DASH[st.dash];
-    let fade = 1;
-    if (!F.steady && h > stop) fade = Math.max(0, 1 - (h - stop) / (F.kind === 'fail' ? 0.55 : L * 1.6));
-    if (fade <= 0) return;
+    // fade: the path after it lands; mark: its end mark, which stays and fades (hovering the mark draws the path again)
+    const landed = !F.steady && h > stop;
+    let fade = 1, mark = 0;
+    if (landed) { fade = Math.max(0, 1 - (h - stop) / (F.kind === 'fail' ? 0.55 : L * 1.6)); mark = Math.max(fade, App.linger(F)); }
+    if (landed && mark <= 0) return;
     if (F.steady || S.rm) { strokePart(c, F, 0, stop, st.map, w, dash, 0.95 * dim); }
-    else {
+    else if (landed && hov) strokePart(c, F, 0, stop, st.map, w, dash, 0.75);
+    else if (fade > 0) {
       strokePart(c, F, 0, hh, st.map, w * 0.8, dash, 0.28 * fade * dim);
       const segs = 6;
       for (let i = 0; i < segs; i++) {
@@ -1517,18 +1588,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         if (b > a) strokePart(c, F, a, Math.min(b, hh), st.map, w, dash, ((i + 1) / segs) * fade * dim);
       }
     }
-    if (F.kind === 'fail' && (h >= stop || F.steady || S.rm)) { const [x, y] = pathPoint(F, stop); c.globalAlpha = fade * dim; drawShape(c, 'x', x, y, 5, st.map); c.globalAlpha = 1; }
+    if (F.kind === 'fail' && (h >= stop || F.steady || S.rm)) { const [x, y] = pathPoint(F, stop); c.globalAlpha = (hov ? 1 : Math.max(fade, 0.8 * mark)) * dim; drawShape(c, 'x', x, y, 5, st.map); c.globalAlpha = 1; }
     else if (F.steady || S.rm) { const [x, y] = pathPoint(F, stop); c.globalAlpha = dim; c.fillStyle = PAPER; c.beginPath(); c.arc(x, y, 6.2, 0, 7); c.fill(); drawShape(c, st.head, x, y, 4.3, st.map, PAPER); c.globalAlpha = 1; }
+    else if (landed) { const [x, y] = pathPoint(F, stop), r = hov ? 7.5 : 4.4 + 1.8 * fade; c.globalAlpha = (hov ? 1 : 0.9 * mark) * dim; c.fillStyle = PAPER; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); drawShape(c, st.head, x, y, r * 0.7, st.map, PAPER); c.globalAlpha = 1; }
     else if (h <= stop) { const [x, y] = pathPoint(F, hh); c.globalAlpha = dim; c.fillStyle = PAPER; c.beginPath(); c.arc(x, y, (hov ? 8 : 6.2), 0, 7); c.fill(); drawShape(c, st.head, x, y, hov ? 5.5 : 4.3, st.map, PAPER); c.globalAlpha = 1; }
   }
   function drawPin(c, p, S) {
+    if (!(p.vis > 0)) return;
     const [x, y] = toScreen(p.x, p.z);
+    c.globalAlpha = p.vis;
     c.fillStyle = PAPER; c.beginPath(); c.moveTo(x, y - 11); c.lineTo(x + 9, y + 6); c.lineTo(x - 9, y + 6); c.closePath(); c.fill();
-    c.fillStyle = '#8E3B6D'; c.beginPath(); c.moveTo(x, y - 8); c.lineTo(x + 7, y + 4.5); c.lineTo(x - 7, y + 4.5); c.closePath(); c.fill();
+    c.fillStyle = '#BC2F52'; c.beginPath(); c.moveTo(x, y - 8); c.lineTo(x + 7, y + 4.5); c.lineTo(x - 7, y + 4.5); c.closePath(); c.fill();
     c.fillStyle = PAPER; c.beginPath(); c.arc(x, y + 0.5, 1.6, 0, 7); c.fill();
     c.font = '700 10px Figtree, system-ui, sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle';
-    c.lineWidth = 3; c.strokeStyle = PAPER; c.strokeText(String(p.recs.length), x + 9, y - 2); c.fillStyle = '#8E3B6D'; c.fillText(String(p.recs.length), x + 9, y - 2);
+    c.lineWidth = 3; c.strokeStyle = PAPER; c.strokeText(String(p.recs.length), x + 9, y - 2); c.fillStyle = '#BC2F52'; c.fillText(String(p.recs.length), x + 9, y - 2);
     if (S.selPin === p.key) { c.strokeStyle = '#1F5AF0'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 14, 0, 7); c.stroke(); }
+    c.globalAlpha = 1;
   }
   function frame(S) {
     updateView();
@@ -1552,8 +1627,12 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     for (const F of S.flights) if (S.hoverId !== F.id) drawFlight(ctx, F, S);
     const hf = S.flights.find((F) => F.id === S.hoverId); if (hf) drawFlight(ctx, hf, S);
   }
+  function pickPin(px, py, S) {
+    for (const p of S.pins.values()) { if (!(p.vis > 0.5)) continue; const [x, y] = toScreen(p.x, p.z); if (Math.hypot(px - x, py - y + 1) < 13) return p; }
+    return null;
+  }
   function pickPlace(px, py, S) {
-    for (const p of S.pins.values()) { const [x, y] = toScreen(p.x, p.z); if (Math.hypot(px - x, py - y + 1) < 13) return { type: 'pin', pin: p }; }
+    const pin = pickPin(px, py, S); if (pin) return { type: 'pin', pin };
     const [wx, wz] = toWorld(px, py), s = scale(), pad = 4 / s;
     const P = H.plan;
     for (let i = P.foot.length - 1; i >= 0; i--) {
@@ -1580,7 +1659,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       svg = el.querySelector('svg'); cv = el.querySelector('canvas'); ctx = cv.getContext('2d');
       new ResizeObserver(resize).observe(el); resize();
     },
-    frame, pathPoint, pickPlace,
+    frame, pathPoint, pickPlace, pickPin,
     project: (x, y, z) => toScreen(x, z),
     toWorld,
     panPx(dx, dy) { const s = scale(); App.cam.x -= dx / s; App.cam.z -= dy / s; },
@@ -1604,6 +1683,12 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   // Live: the simulated day runs at the visitor's own time of day, one minute a minute
   const LIVE = 1 / 60;
   const nowMinutes = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60; };
+  // A path fades as it lands, but leaves its end mark (its kind's icon, smaller) where it ended, fading over MARK_MIN
+  // simulated minutes, so Live shows where the last few minutes of the city's activity went; the marks can be clicked,
+  // and hovering one draws its path again. At 5 or 20 min/s a mark is gone in a blink. A failure raises a red flag at
+  // its place, which comes down FAIL_HOLD simulated minutes after the latest failure there, and never sooner than
+  // FAIL_HOLD_SEC real seconds, so flags stay long enough to see and tap at fast speeds.
+  const MARK_MIN = 3, FAIL_HOLD = 8, FAIL_HOLD_SEC = 4, FLAG_DOWN_SEC = 0.7;
 
   const S = {
     t: nowMinutes(), playing: !rmQuery.matches, speed: LIVE, view: 'mini', idx: 0, animNow: 0, rm: rmQuery.matches,
@@ -1612,6 +1697,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   };
   const App = (window.App = { S, cam: { x: -1.2, z: 1.0, zoom: 1.1 }, ZMIN: 30 / 70, ZMAX: 30 / 8, timers: [] });
   App.later = (dt, fn) => App.timers.push({ at: S.animNow + dt, fn });
+  // how much of a path's end mark is left, 1 just landed to 0 gone, by simulated time since the record
+  App.linger = (F) => (S.rm || F.steady ? 0 : Math.max(0, Math.min(1, 1 - (S.t - F.rec._t) / MARK_MIN)));
+  App.MARK_MIN = MARK_MIN;
   const views = { map: window.MapView, mini: null };
   const active = () => views[S.view] || views.map;
 
@@ -1642,9 +1730,19 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     if (!r._place) return;
     const key = r._place.key;
     let p = S.pins.get(key);
-    if (!p) { const [x, z] = pinPos(r); p = { key, tile: r._place, x, z, recs: [], born: live ? S.animNow : -99, stop: !!r._stop, name: r._stop ? `${H.STOP_NAME(r._stop)} bus stop` : r._real ? placeTitle(r._place, r) : r._to.name }; S.pins.set(key, p); }
+    if (!p) { const [x, z] = pinPos(r); p = { key, tile: r._place, x, z, recs: [], born: live ? S.animNow : -99, stop: !!r._stop, name: r._stop ? `${H.STOP_NAME(r._stop)} bus stop` : r._real ? placeTitle(r._place, r) : r._to.name, vis: 0, downAt: null }; S.pins.set(key, p); }
     else if (live) p.born = S.animNow;
-    p.recs.push(r);
+    p.recs.push(r); p.last = r._t;
+  }
+  // A place keeps its failures for the whole day (the count and the list), but its flag is up only while one is recent.
+  // vis is 1 while the flag is up, falls to 0 as it comes down, and stays 0 until the next failure there.
+  const pinHeld = (p) => S.t - p.last < FAIL_HOLD || S.animNow - p.born < FAIL_HOLD_SEC;
+  function updatePins() {
+    for (const p of S.pins.values()) {
+      if (pinHeld(p)) { p.downAt = null; p.vis = 1; continue; }
+      if (p.downAt == null) p.downAt = S.animNow;
+      p.vis = S.rm ? 0 : Math.max(0, 1 - (S.animNow - p.downAt) / FLAG_DOWN_SEC);
+    }
   }
   function emit(r, fly = true) {
     if (r._vk === 'fail') addPin(r, true);
@@ -1664,7 +1762,15 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     for (const F of S.flights) F.dead = true;
     S.flights = []; S.fmap.clear(); S.pins.clear(); S.hoverId = null; S.focusId = null;
     for (let i = 0; i < S.idx; i++) if (H.records[i]._vk === 'fail') addPin(H.records[i], false);
-    if (S.selId) { const r = H.recById.get(S.selId); if (r && r._i < S.idx) makeFlight(r, true, true); }
+    for (const p of S.pins.values()) if (!pinHeld(p)) p.downAt = -1e9;
+    updatePins();
+    // the trails of the last few minutes, thinned to about what playing at this speed would have drawn
+    if (!S.rm) {
+      let i0 = S.idx; while (i0 > 0 && H.records[i0 - 1]._t > S.t - MARK_MIN) i0--;
+      const want = Math.min(900, (FLIGHTS_PER_SEC * MARK_MIN) / S.speed), step = Math.max(1, (S.idx - i0) / want);
+      for (let k = S.idx - 1; k >= i0; k -= step) { const r = H.records[Math.floor(k)]; if (S.filters.has(r._vk)) makeFlight(r, false, true); }
+    }
+    if (S.selId) { const r = H.recById.get(S.selId), F = S.fmap.get(S.selId); if (F) F.steady = true; else if (r && r._i < S.idx) makeFlight(r, true, true); }
     if (S.hhDay) pinHousehold(S.hhDay);
     views.mini && views.mini.reset && views.mini.reset();
     Feed.rebuild(); Summary.update(true); lastHour = Math.floor(S.t / 60);
@@ -1689,29 +1795,63 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     return { txt: H.fmtMoney(-out, true), cls: '', sr: `minus ${H.fmtMoney(out)}` };
   }
   const cpName = (r) => (r._stop ? `Medianville Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
+  // a row's second line: what and how; for a failure, why (its badge already says Declined, Abandoned and so on).
+  // The time sits under the amount, where a long line can't cut it off.
   function subLine(r) {
-    if (r._vk === 'fail') return `${H.reason(r)} · ${H.fmt(r._t)}`;
-    return [H.catLabel(r), H.methodLabel(r), H.fmt(r._t)].filter(Boolean).join(' · ');
+    if (r._vk === 'fail') { const w = H.outcomeWord(r); return H.reason(r).replace(new RegExp('^' + w + ' · '), ''); }
+    return [H.catLabel(r), H.methodLabel(r)].filter(Boolean).join(' · ');
   }
+  const sentence = (s) => (/[.!?]$/.test(s) ? s : s + '.'); // '11:07 a.m.' already ends one
   function rowHTML(r, extra = '') {
     const a = amountOf(r), pill = r._vk === 'fail' ? `<span class="pill fail">${H.outcomeWord(r)}</span>` : '';
-    const label = `${REC[r._vk].label}. ${cpName(r)}. ${a.sr}. ${r._vk === 'fail' ? H.outcomeWord(r) + ': ' + H.reason(r) : H.catLabel(r) + (H.methodLabel(r) ? ', ' + H.methodLabel(r) : '')}. ${H.fmt(r._t)}.`;
-    return `<li><button class="row${extra}" data-id="${r.record_id}" aria-label="${esc(label)}">${iconSVG(r._vk)}<span class="main"><span class="cp"><span class="nm">${esc(cpName(r))}</span>${pill}</span><span class="sub">${esc(subLine(r))}</span></span><span class="amt ${a.cls}">${a.txt}</span></button></li>`;
+    const label = sentence(`${REC[r._vk].label}. ${cpName(r)}. ${a.sr}. ${r._vk === 'fail' ? H.outcomeWord(r) + ': ' + subLine(r) : subLine(r).replace(' · ', ', ')}. ${H.fmt(r._t)}`);
+    return `<li><button class="row${extra}" data-id="${r.record_id}" aria-label="${esc(label)}">${iconSVG(r._vk)}<span class="main"><span class="cp"><span class="nm">${esc(cpName(r))}</span>${pill}</span><span class="sub">${esc(subLine(r))}</span></span><span class="amt ${a.cls}">${a.txt}<span class="tm">${H.fmt(r._t)}</span></span></button></li>`;
   }
 
   // ---------- activity feed ----------
+  // The feed holds still while someone is using it, so a row can't move out from under a click: a mouse over it, the
+  // list scrolled away from the top, focus inside it, a touch in the last few seconds, or, on a touch screen, the
+  // Activity drawer open. New records wait behind the "N new" button beside the heading, which shows them; letting go
+  // of the feed shows them too.
+  const canHover = window.matchMedia('(hover: hover)');
   const Feed = {
-    el: null, max: 60, pending: [],
-    push(r) { if (S.filters.has(r._vk)) this.pending.push(r); },
-    flush() {
+    el: null, box: null, btn: null, max: 60, pending: [], waiting: 0, shown: -1, touchedAt: -1e9,
+    push(r) {
+      if (!S.filters.has(r._vk)) return;
+      this.pending.push(r); this.waiting++;
+      if (this.pending.length > 2 * this.max) this.pending.splice(0, this.pending.length - this.max);
+    },
+    held() {
+      if (!this.box) return false;
+      // keyboard focus only: a mouse click leaves focus on a row, which shouldn't keep the feed held after the mouse leaves
+      if (this.el.scrollTop > 4 || this.box.querySelector(':focus-visible')) return true;
+      if (canHover.matches) return this.box.matches(':hover');
+      return performance.now() - this.touchedAt < 6000 || (smallScreen() && $('#rail').classList.contains('open'));
+    },
+    flush(force) {
+      if (!force && this.held()) { this.showWaiting(); return; }
+      this.waiting = 0; this.showWaiting();
       if (!this.pending.length) return;
       const list = this.pending.slice(-this.max); this.pending = [];
       const html = list.reverse().map((r) => rowHTML(r, S.selId === r.record_id ? ' sel' : '')).join('');
       this.el.insertAdjacentHTML('afterbegin', html);
       while (this.el.children.length > this.max) { const last = this.el.lastElementChild; if (last.contains(document.activeElement)) break; last.remove(); }
     },
+    showWaiting() {
+      const n = this.waiting; if (n === this.shown || !this.btn) return; this.shown = n;
+      this.btn.hidden = n === 0; if (!n) return;
+      const t = n.toLocaleString('en-US');
+      this.btn.querySelector('span').textContent = `${t} new`;
+      this.btn.setAttribute('aria-label', `Show ${t} new ${n === 1 ? 'record' : 'records'}`);
+    },
+    // the button: back to the top with the new records in, keeping keyboard focus in the feed
+    showNew() {
+      const hadFocus = this.btn.matches(':focus-visible');
+      this.el.scrollTop = 0; this.flush(true);
+      if (hadFocus) { const first = this.el.querySelector('button.row'); if (first) first.focus(); }
+    },
     rebuild() {
-      this.pending = []; const out = [];
+      this.pending = []; this.waiting = 0; this.showWaiting(); const out = [];
       for (let i = S.idx - 1; i >= 0 && out.length < this.max; i--) { const r = H.records[i]; if (S.filters.has(r._vk)) out.push(r); }
       this.el.innerHTML = out.map((r) => rowHTML(r, S.selId === r.record_id ? ' sel' : '')).join('');
     },
@@ -2006,7 +2146,13 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       if (!steady && h < 0) continue;
       const end = steady ? F.stop : Math.min(h, F.stop);
       if (end <= 0) continue;
-      if (!steady && h > F.stop + 0.35) continue;
+      // once its path has faded, a record is only its end mark: a hit there, not along the path
+      if (!steady && h > F.stop + 0.35) {
+        if (App.linger(F) < 0.12) continue;
+        const [mx, my] = v.pathPoint(F, F.stop), dm = Math.hypot(px - mx, py - my);
+        if (dm <= 8) out.push({ F, head: true, d: dm });
+        continue;
+      }
       const [hx, hy] = v.pathPoint(F, end), dh = Math.hypot(px - hx, py - hy);
       let dmin = dh, prev = null;
       for (let i = 0; i <= 20; i++) {
@@ -2032,9 +2178,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function twoPts() { const [a, b] = [...ptrs.values()]; return { d: Math.hypot(a[0] - b[0], a[1] - b[1]), ang: Math.atan2(b[1] - a[1], b[0] - a[0]), mx: (a[0] + b[0]) / 2, my: (a[1] + b[1]) / 2 }; }
   function initScene() {
     const sc = scene();
-    sc.addEventListener('contextmenu', (e) => { if (!e.target.closest('.scene-ctrls,.chooser')) e.preventDefault(); });
+    sc.addEventListener('contextmenu', (e) => { if (!e.target.closest('.scene-ctrls,.chooser,.scene-key,.sndwrap')) e.preventDefault(); });
     sc.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.scene-ctrls,.chooser')) return;
+      if (e.target.closest('.scene-ctrls,.chooser,.scene-key,.sndwrap')) return;
       ptrs.set(e.pointerId, [e.clientX, e.clientY]); sc.setPointerCapture(e.pointerId);
       if (ptrs.size === 1) drag = { x: e.clientX, y: e.clientY, moved: false, id: e.pointerId, turn: !!mini() && (e.button === 2 || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey), right: e.button === 2 };
       else if (ptrs.size === 2) { drag = { moved: true, two: true }; pinch = twoPts(); hideChip(); }
@@ -2067,7 +2213,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       if (ptrs.size === 1 && drag && drag.two) { const [id, p] = [...ptrs.entries()][0]; drag = { x: p[0], y: p[1], moved: true, id }; pinch = null; return; }
       if (drag && drag.turn) announceAngle();
       const d = drag; drag = null; pinch = null;
-      if (!d || d.moved || d.right || e.target.closest('.scene-ctrls,.chooser')) return;
+      if (!d || d.moved || d.right || e.target.closest('.scene-ctrls,.chooser,.scene-key,.sndwrap')) return;
       const [px, py] = pointerPos(e);
       const hits = hitFlights(px, py);
       closeChooser();
@@ -2079,6 +2225,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
       if (S.selId || Sheet.stack.length) { clearSelection(); Sheet.close(true); }
     });
     sc.addEventListener('wheel', (e) => {
+      if (e.target.closest('.scene-key,.sndwrap')) return; // the key and the sound panel scroll themselves
       e.preventDefault(); const m = mini();
       if (e.shiftKey && m) { m.turn(-(e.deltaY || e.deltaX) * 0.0025, true); return; }
       const [px, py] = pointerPos(e); active().zoomAt(e.deltaY < 0 ? 1.12 : 1 / 1.12, px, py);
@@ -2092,18 +2239,29 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     const id = hits.length ? hits[0].F.id : null;
     S.hoverId = id;
     let cursor = id ? 'pointer' : 'grab';
-    if (!id && S.view === 'map') { const p = active().pickPlace(px, py, S); if (p) cursor = 'pointer'; }
+    const pin = !id && active().pickPin ? active().pickPin(px, py, S) : null;
+    if (pin) cursor = 'pointer';
+    else if (!id && S.view === 'map') { const p = active().pickPlace(px, py, S); if (p) cursor = 'pointer'; }
     scene().style.cursor = cursor;
     const choose = hits.length > 1 && !(hits[0].head && !hits[1].head);
-    if (id) showChip(hits[0].F.rec, px, py, choose ? hits.length : 1); else hideChip();
+    if (id) showChip(hits[0].F.rec, px, py, choose ? hits.length : 1); else if (pin) showPinChip(pin, px, py); else hideChip();
+  }
+  function placeChip(c, px, py) {
+    c.hidden = false;
+    const [w, h] = active().size(), cw = c.offsetWidth, ch = c.offsetHeight;
+    c.style.left = Math.min(w - cw - 8, px + 14) + 'px'; c.style.top = Math.max(8, Math.min(h - ch - 8, py + 14)) + 'px';
   }
   function showChip(r, px, py, n) {
     const c = $('#hoverchip'), a = amountOf(r);
     const fromN = r._from.type === 'household' ? r._from.name : r._from.name, toN = r._stop ? `${H.STOP_NAME(r._stop)} stop` : r._to.name;
     c.innerHTML = `${iconSVG(r._vk, 20)}<span><b>${REC[r._vk].label}</b> · <span class="${a.cls}">${a.txt}</span>${r._vk === 'fail' ? ` · ${H.outcomeWord(r)}` : ''}<br><span class="dim">${esc(fromN)} → ${esc(toN)}</span>${n > 1 ? `<br><span class="dim">${n} records here · click to choose</span>` : ''}</span>`;
-    c.hidden = false;
-    const [w, h] = active().size(), cw = c.offsetWidth, ch = c.offsetHeight;
-    c.style.left = Math.min(w - cw - 8, px + 14) + 'px'; c.style.top = Math.max(8, Math.min(h - ch - 8, py + 14)) + 'px';
+    placeChip(c, px, py);
+  }
+  // a failure flag: the place, its count so far today and the latest one (the flag itself carries no number until zoomed in)
+  function showPinChip(p, px, py) {
+    const c = $('#hoverchip'), n = p.recs.length, last = p.recs[n - 1];
+    c.innerHTML = `${iconSVG('fail', 20)}<span><b>${esc(p.name)}</b><br><span class="dim">${n.toLocaleString('en-US')} ${n === 1 ? 'failure' : 'failures'} here today · latest ${H.fmt(last._t)}</span></span>`;
+    placeChip(c, px, py);
   }
   function hideChip() { $('#hoverchip').hidden = true; }
   function openChooser(hits, px, py) {
@@ -2141,6 +2299,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     $$('input[name="view"]').forEach((i) => (i.checked = i.value === v));
     $('#L-mini').classList.toggle('on', v === 'mini'); $('#L-map').classList.toggle('on', v === 'map');
     $('#blurset').hidden = v !== 'mini'; $('#turnset').hidden = v !== 'mini';
+    const lf = document.getElementById('lg-flag'); if (lf) lf.hidden = v !== 'mini';
     fading = !S.rm; clearTimeout(fadeTimer); fadeTimer = setTimeout(() => (fading = false), 340);
     S.hoverId = null; hideChip(); closeChooser();
     updateSceneLabel(true);
@@ -2177,10 +2336,19 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function setPlaying(p) {
     S.playing = p; const b = $('#play');
     b.setAttribute('aria-label', p ? 'Pause' : 'Play'); b.querySelector('.pi').toggleAttribute('hidden', !p); b.querySelector('.pl').toggleAttribute('hidden', p); // SVG elements have no .hidden property
-    if (!p) say(`Paused at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, $${Math.round(H.cum.money[S.idx]).toLocaleString('en-US')} moved.`);
+    if (!p) say(`${sentence(`Paused at ${H.fmt(S.t)}`)} ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx].toLocaleString('en-US')} failures, $${Math.round(H.cum.money[S.idx]).toLocaleString('en-US')} moved.`);
   }
   function initControls() {
-    Feed.el = $('#feed');
+    Feed.el = $('#feed'); Feed.box = $('#feed-box'); Feed.btn = $('#feed-new');
+    Feed.box.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') Feed.touchedAt = performance.now(); });
+    Feed.btn.addEventListener('click', () => Feed.showNew());
+    // Sound sits inside the city: its keys (arrows on a volume slider, Enter on a button) stay out of the city's own keys,
+    // and its panel is never taller than the city, which clips it
+    const snd = $('.sndwrap');
+    if (snd) {
+      snd.addEventListener('keydown', (e) => { if (e.key !== 'Escape') e.stopPropagation(); });
+      $('#snd-btn').addEventListener('click', () => { $('#snd-pop').style.maxHeight = Math.max(160, scene().clientHeight - 72) + 'px'; });
+    }
     $$('input[name="view"]').forEach((i) => { i.addEventListener('change', () => { Lens.close(); setView(i.value); }); i.addEventListener('click', () => Lens.close()); });
     $$('input[name="blur"]').forEach((i) => i.addEventListener('change', () => { S.blur = i.value; views.mini && views.mini.setBlur(i.value); }));
     $$('input[name="speed"]').forEach((i) => i.addEventListener('change', () => {
@@ -2258,9 +2426,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     for (const rec of H.records) { const b = Math.min(143, Math.floor(rec._t / 10)); bins[b]++; if (rec._vk === 'fail') fb[b]++; }
     const mx = Math.max(...bins), bw = r.width / 144, ht = r.height - 9, now = Math.floor(S.t / 10);
     for (let i = 0; i < 144; i++) { const h = Math.max(1, (bins[i] / mx) * (ht - 4)); c.fillStyle = i <= now ? '#7D8797' : '#C9D0DA'; c.fillRect(i * bw + 0.5, ht - h, Math.max(1, bw - 1), h); }
-    // plum marks: ten minutes where failures run well above the day's usual share
+    // crimson marks: ten minutes where failures run well above the day's usual share
     const share = fb.reduce((a, b) => a + b, 0) / Math.max(1, bins.reduce((a, b) => a + b, 0));
-    c.fillStyle = '#8E3B6D';
+    c.fillStyle = '#BC2F52';
     for (let i = 0; i < 144; i++) if (fb[i] >= 2 && fb[i] / bins[i] >= 1.5 * share) c.fillRect(i * bw + 0.5, r.height - 5, Math.max(2, bw - 0.5), 5);
     histDrawnAt = now;
   }
@@ -2276,7 +2444,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   function updateSceneLabel(force) {
     const m = Math.floor(S.t); if (m === lastLabelMin && !force) return; lastLabelMin = m;
     const inflight = S.flights.filter((F) => !F.steady && progress(F) <= F.stop).length;
-    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Medianville at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
+    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Medianville at ${sentence(H.fmt(S.t))} ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx].toLocaleString('en-US')} failures, ${inflight} in flight.`);
   }
 
   // ---------- overlay: keyboard focus ring ----------
@@ -2323,7 +2491,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
         S.t = t1;
       }
       const hr = Math.floor(S.t / 60);
-      if (hr !== lastHour) { lastHour = hr; say(`${H.fmt(hr * 60)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures.`); }
+      if (hr !== lastHour) { lastHour = hr; say(`${sentence(H.fmt(hr * 60))} ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx].toLocaleString('en-US')} failures.`); }
     }
     for (const tm of App.timers) if (tm.at <= S.animNow) { tm.done = true; tm.fn(); }
     App.timers = App.timers.filter((x) => !x.done);
@@ -2331,9 +2499,10 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     for (const F of S.flights) {
       if (F.steady) continue;
       if (S.rm) { if (S.t > F.rmUntil || S.t < F.rec._t) dropFlight(F); continue; }
-      if (progress(F) > F.stop + (F.kind === 'fail' ? 0.6 : 0.55)) dropFlight(F);
+      if (progress(F) > F.stop + (F.kind === 'fail' ? 0.6 : 0.55) && App.linger(F) <= 0) dropFlight(F);
     }
     if (S.flights.some((F) => F.dead)) S.flights = S.flights.filter((F) => !F.dead);
+    updatePins();
     S.dark = H.dark(S.t);
     if (window.MedianvilleSound) MedianvilleSound.frame(dt);
     hoverTest();
@@ -2358,17 +2527,22 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     requestAnimationFrame(loop);
   });
   // real-day.js calls these: status while the run loads, then useDay once H.records holds it
+  // the day control: "Sample day" over the loading state while the run downloads, then the day over its record count
   App.status = (st) => {
-    const c = $('#datachip'); if (!c) return;
+    const c = $('#datachip'), d = $('#dp-day'); if (!c) return;
     c.classList.toggle('warn', st.state === 'failed');
-    c.textContent = st.state === 'loading' ? `Sample day · loading the full simulation ${Math.round(st.p * 100)}%`
-      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · ${App.runDate(st.date, false) || 'March 3, 2027'}` : 'Sample day · the full simulation didn’t load';
-    if (st.state !== 'loading') say(c.textContent);
+    if (st.state === 'real') d.textContent = App.dayLabel || App.runDate(st.date, false) || 'March 3, 2027';
+    c.textContent = st.state === 'loading' ? `Loading the full simulation ${Math.round(st.p * 100)}%`
+      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records in the day` : 'The full simulation didn’t load';
+    if (st.state !== 'loading') say(`${d.textContent}: ${c.textContent}.`);
   };
   // real-day.js calls this once it knows which run it will load (sel is null without a manifest)
   App.onRuns = (sel) => {
     if (!sel || !window.MedianvilleRuns) return;
     App.dayIso = sel.run.date;
+    // 'Wed, Mar 3, 2027 · baseline', shown once the run is in
+    const kind = MedianvilleRuns.optionLabel(sel.run).split(' · ').slice(1).join(' · ');
+    App.dayLabel = MedianvilleRuns.dateLabel(sel.run.date, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) + (kind ? ' · ' + kind : '');
     MedianvilleRuns.picker($('#runpick'), sel);
     MedianvilleRuns.carry($('#data-link'), sel);
     const d = App.runDate(sel.run.date); if (d) $('#intro-date').textContent = d;
@@ -2383,7 +2557,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   App.useDay = () => {
     if (Sheet.stack.length) Sheet.close(true);
     S.selId = null; S.hhDay = null; S.selPin = null; histDrawnAt = -1;
-    seek(S.t);
+    seek(S.t); updateSceneLabel(true); // the label still counted the sample day until the minute changed
     if (/[#&]lens=[^&/]+\/[^&/]*\/./.test(location.hash)) Lens.fromHash(true); else Lens.refresh();
   };
   App.headPoint = headPoint; App.progress = progress; App.seek = seek; App.select = selectRecord; App.setView = setView; App.setPlaying = setPlaying; App.hitFlights = hitFlights; App.openHouseholdDay = openHouseholdDay;
@@ -2399,7 +2573,19 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   const line = (k) => { const st = H.REC[k], da = st.dash === 'long' ? '6 3' : st.dash === 'short' ? '2 3' : ''; return `<svg width="26" height="10" viewBox="0 0 26 10" aria-hidden="true"><path d="M1 5H${k === 'fail' ? 13 : 19}" stroke="${st.map}" stroke-width="${2 * st.w}" ${da ? `stroke-dasharray="${da}"` : ''}/>${k === 'fail' ? `<path d="M15 2l6 6M21 2l-6 6" stroke="${st.map}" stroke-width="2"/>` : st.head === 'circle' ? `<circle cx="22" cy="5" r="3.3" fill="${st.map}"/>` : st.head === 'diamond' ? `<path d="M22 1l4 4-4 4-4-4z" fill="${st.map}"/>` : st.head === 'square' ? `<rect x="19" y="2" width="6" height="6" fill="${st.map}"/>` : `<circle cx="22" cy="5" r="3" fill="none" stroke="${st.map}" stroke-width="1.6"/>`}</svg>`; };
   const NAMES = { purchase: 'Purchases', income: 'Income', bill: 'Bills', service: 'Public services', unpaid: 'Unpaid work', fail: 'Failures' };
   document.getElementById('filters').innerHTML = order.map((k) => `<button type="button" data-k="${k}" aria-pressed="true">${svg(k, 24)}${NAMES[k]}</button>`).join('');
-  document.getElementById('legendstrip').innerHTML = order.map((k) => `<span>${line(k)}${H.REC[k].label}</span>`).join('');
+  // the miniature's failure flag; the map's triangles are in the legend on its sheet
+  const flag = `<svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M2.5 1.5v13.5" stroke="#7D8797" stroke-width="1.6" stroke-linecap="round"/><path d="M3.2 2h9.6l-2.3 3.3 2.3 3.3H3.2z" fill="${H.REC.fail.map}"/></svg>`;
+  document.getElementById('legendstrip').innerHTML = order.map((k) => `<span>${line(k)}${H.REC[k].label}</span>`).join('') + `<span id="lg-flag"${App.S.view === 'mini' ? '' : ' hidden'}>${flag}Recent failure at a place</span>`;
+  // where the strip doesn't fit, the Key button opens it as a card; the choice is remembered in this browser only
+  const keyBtn = document.getElementById('legend-btn'), strip = document.getElementById('legendstrip'), KEY = 'medianville-key-v1';
+  const setKey = (on, save) => {
+    strip.classList.toggle('open', on); keyBtn.setAttribute('aria-expanded', on);
+    if (save) try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {}
+  };
+  let keyOn = false; try { keyOn = localStorage.getItem(KEY) === '1'; } catch (e) {}
+  setKey(keyOn, false);
+  keyBtn.addEventListener('click', () => setKey(!strip.classList.contains('open'), true));
+  keyBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.stopPropagation(); }); // not the scene's Enter, which opens a record
 })();
 </script>
 <script>
@@ -2482,21 +2668,20 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
 <script>
 // ===== compact layout below 1280 px: a slim header bar with a menu, and the view switch and lens over the city =====
 // Below 1280 px (where Activity becomes a drawer) the header keeps only the title, Activity and a menu button. The menu
-// takes the status chip, the day picker, focus blur, Sound, Data and About; the view switch and the Systems lens button
+// takes the day control, focus blur, Data and About (Sound lives on the city at every width); the view switch and the Systems lens button
 // move onto the city's top-left corner. Elements are moved, not copied, so their ids, handlers and state stay as they are.
 // A comment left at each element's home puts it back when the window widens again.
 (function () {
   const $ = (id) => document.getElementById(id);
   const menu = $('hdmenu'), btn = $('menu-btn'), q = window.matchMedia('(max-width:1279px)');
   const slots = { day: menu.querySelector('.m-day'), blur: menu.querySelector('.m-blur'), more: menu.querySelector('.m-more'), left: $('scene-left') };
-  const MOVES = [[$('datachip'), 'day'], [$('runpick'), 'day'], [$('blurset'), 'blur'], [document.querySelector('.sndwrap'), 'more'], [document.querySelector('.hdlinks'), 'more'], [$('viewseg'), 'left'], [$('lens-btn'), 'left']];
+  const MOVES = [[$('daypick'), 'day'], [$('blurset'), 'blur'], [document.querySelector('.hdlinks'), 'more'], [$('viewseg'), 'left'], [$('lens-btn'), 'left']];
   const homes = new Map();
   for (const [el] of MOVES) { if (!el) continue; const c = document.createComment('home of #' + (el.id || el.className)); el.before(c); homes.set(el, c); }
 
   function open(v) {
     if (v === !menu.hidden) return;
     menu.hidden = !v; btn.setAttribute('aria-expanded', String(v));
-    if (!v) { const pop = $('snd-pop'); if (pop && !pop.hidden) $('snd-btn').click(); }
   }
   function place() {
     const compact = q.matches;
@@ -2508,10 +2693,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
   document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) open(false); });
   // leaving for About, the drawer or another page closes the menu
   for (const id of ['about-btn', 'drawer-btn', 'data-link']) { const el = $(id); el && el.addEventListener('click', () => open(false)); }
-  // Escape closes the sound panel first (it handles that itself), then the menu
+  // Escape closes the menu
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' || menu.hidden) return;
-    const pop = $('snd-pop'); if (pop && !pop.hidden && pop.contains(e.target)) return;
     e.stopImmediatePropagation(); open(false); btn.focus();
   }, true);
   menu.addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !menu.contains(e.relatedTarget) && e.relatedTarget !== btn) open(false); });
@@ -2814,13 +2998,17 @@ let WIN_BY_TILE = new Map();
 // ---------- flight paths: instanced ribbons and heads, animated on the GPU ----------
 const ARC_N = 56, MAX = 4096;
 const COMMON = `
-attribute vec3 iStart; attribute vec3 iEnd; attribute vec4 iColor; attribute vec4 iTime; attribute vec4 iStyle; attribute float iId;
-uniform float uNow; uniform float uHover; uniform float uDim; uniform float uRM;
-vec3 arcAt(float t){ vec3 p = mix(iStart, iEnd, t); p.y += iTime.z * 4.0 * t * (1.0 - t); return p; }`;
+attribute vec3 iStart; attribute vec3 iEnd; attribute vec4 iColor; attribute vec4 iTime; attribute vec4 iStyle; attribute float iId; attribute float iRec;
+uniform float uNow; uniform float uHover; uniform float uDim; uniform float uRM; uniform float uSimT; uniform float uMark;
+vec3 arcAt(float t){ vec3 p = mix(iStart, iEnd, t); p.y += iTime.z * 4.0 * t * (1.0 - t); return p; }
+// how much of the end mark is left after landing, by simulated minutes since the record (iRec is its time of day)
+float markOf(){ return uRM > 0.5 ? 0.0 : clamp(1.0 - (uSimT - iRec) / uMark, 0.0, 1.0); }
+bool isHover(){ return abs(iId - uHover) < 0.5; }`;
 const arcVS = COMMON + `
 attribute float aT; attribute float aSide; uniform float uWidth;
-varying float vT; varying float vH; varying vec4 vColor; varying vec4 vStyle; varying float vKind; varying float vSide; varying float vLen; varying float vA;
+varying float vT; varying float vH; varying vec4 vColor; varying vec4 vStyle; varying float vKind; varying float vSide; varying float vLen; varying float vA; varying float vMark;
 void main(){
+  vMark = isHover() ? markOf() : 0.0; // a landed path shows again only while its mark is hovered
   float h = (uNow - iTime.x) / iTime.y;
   float steady = max(iStyle.w, uRM);
   float stop = iStyle.z;
@@ -2839,7 +3027,7 @@ void main(){
 }`;
 const arcFS = `
 uniform float uRM;
-varying float vT; varying float vH; varying vec4 vColor; varying vec4 vStyle; varying float vKind; varying float vSide; varying float vLen; varying float vA;
+varying float vT; varying float vH; varying vec4 vColor; varying vec4 vStyle; varying float vKind; varying float vSide; varying float vLen; varying float vA; varying float vMark;
 void main(){
   float t = vT, h = vH, stop = vStyle.z, L = 0.3, a;
   if (t > stop + 0.002) discard;
@@ -2849,7 +3037,7 @@ void main(){
   else {
     float trail = smoothstep(hh - L, hh, t) * step(t, hh);
     a = max(trail, 0.25 * step(t, hh));
-    if (h > stop) a *= 1.0 - smoothstep(stop, stop + (vKind > 1.5 ? 0.55 : L * 1.6), h);
+    if (h > stop) a *= vMark > 0.0 ? 2.8 : 1.0 - smoothstep(stop, stop + (vKind > 1.5 ? 0.55 : L * 1.6), h);
   }
   float on = 1.0;
   if (vStyle.x > 0.5 && vStyle.x < 1.5) on = step(0.35, fract(t * vLen / 0.32));
@@ -2869,17 +3057,25 @@ varying vec2 vUv; varying vec4 vColor; varying float vShape; varying float vA;
 void main(){
   float h = (uNow - iTime.x) / iTime.y, stop = iStyle.z;
   float steady = max(iStyle.w, uRM);
-  float s; float a = 1.0;
+  float s; float a = 1.0; float k = 1.0;
   if (steady > 0.5) s = stop;
-  else if (iTime.w > 1.5) { s = min(h, stop); if (h > stop) a = 1.0 - smoothstep(stop, stop + 0.55, h); }
-  else { s = min(h, stop); if (h > stop || h < 0.0) a = 0.0; }
+  else {
+    s = min(h, stop);
+    // after landing the head stays where the record ended, as a smaller mark fading over uMark simulated minutes
+    if (h > stop) {
+      float f = 1.0 - smoothstep(stop, stop + 0.55, h);
+      a = max(f, (iTime.w > 1.5 ? 0.8 : 0.9) * markOf());
+      if (iTime.w < 1.5) k = 0.62 + 0.38 * f;
+      if (isHover() && a > 0.02) { a = 1.0; k = 1.0; }
+    }
+  }
   if (h < 0.0 && steady < 0.5) a = 0.0;
   float shape = iStyle.y;
   if (iTime.w > 1.5 && (h >= stop || steady > 0.5)) shape = 4.0;
   else if (iTime.w > 1.5) shape = 0.0;
   vec4 c = projectionMatrix * viewMatrix * vec4(arcAt(s), 1.0);
   float hov = abs(iId - uHover) < 0.5 ? 1.35 : 1.0;
-  c.xy += aCorner * (uPx * hov * (a > 0.0 ? 1.0 : 0.0)) * 2.0 / uRes * c.w;
+  c.xy += aCorner * (uPx * hov * k * (a > 0.0 ? 1.0 : 0.0)) * 2.0 / uRes * c.w;
   vUv = aCorner; vColor = iColor; vShape = shape;
   vA = a * ((uHover > -0.5 && abs(iId - uHover) > 0.5) ? uDim : 1.0);
   gl_Position = c;
@@ -2904,10 +3100,10 @@ const DASHC = { solid: 0, long: 1, short: 2 }, HEADC = { circle: 0, diamond: 1, 
 let attrs = {};
 function makeArcs() {
   const inst = {};
-  for (const [name, n] of [['iStart', 3], ['iEnd', 3], ['iColor', 4], ['iTime', 4], ['iStyle', 4], ['iId', 1]]) {
+  for (const [name, n] of [['iStart', 3], ['iEnd', 3], ['iColor', 4], ['iTime', 4], ['iStyle', 4], ['iId', 1], ['iRec', 1]]) {
     const a = new THREE.InstancedBufferAttribute(new Float32Array(MAX * n), n); a.setUsage(THREE.DynamicDrawUsage); inst[name] = a;
   }
-  for (let i = 0; i < MAX; i++) { inst.iId.setX(i, i); inst.iTime.setXYZW(i, -1e6, 1, 0, 0); }
+  for (let i = 0; i < MAX; i++) { inst.iId.setX(i, i); inst.iTime.setXYZW(i, -1e6, 1, 0, 0); inst.iRec.setX(i, -1e6); }
   attrs = inst;
   arcGeo = new THREE.InstancedBufferGeometry();
   const aT = [], aS = [], pos = [], idx = [];
@@ -2923,13 +3119,13 @@ function makeArcs() {
   headGeo.setAttribute('aCorner', new THREE.Float32BufferAttribute([-1, -1, 1, -1, 1, 1, -1, 1], 2));
   for (const [k, a] of Object.entries(inst)) { arcGeo.setAttribute(k, a); headGeo.setAttribute(k, a); }
   arcGeo.instanceCount = headGeo.instanceCount = MAX;
-  const uni = { uNow: { value: 0 }, uHover: { value: -1 }, uDim: { value: 0.35 }, uRM: { value: 0 }, uWidth: { value: 0.05 }, uRes: { value: new THREE.Vector2(1, 1) }, uPx: { value: 7.5 } };
+  const uni = { uNow: { value: 0 }, uHover: { value: -1 }, uDim: { value: 0.35 }, uRM: { value: 0 }, uWidth: { value: 0.05 }, uRes: { value: new THREE.Vector2(1, 1) }, uPx: { value: 7.5 }, uSimT: { value: 0 }, uMark: { value: App.MARK_MIN || 3 } };
   arcMesh = new THREE.Mesh(arcGeo, new THREE.ShaderMaterial({ uniforms: uni, vertexShader: arcVS, fragmentShader: arcFS, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
   headMesh = new THREE.Mesh(headGeo, new THREE.ShaderMaterial({ uniforms: uni, vertexShader: headVS, fragmentShader: headFS, transparent: true, depthWrite: false, depthTest: false }));
   for (const mm of [arcMesh, headMesh]) { mm.frustumCulled = false; mm.layers.set(1); scene.add(mm); }
   arcMesh.renderOrder = 5; headMesh.renderOrder = 6;
 }
-const slotOf = new Map(), slotId = new Array(MAX).fill(null), free = [];
+const slotOf = new Map(), slotId = new Array(MAX).fill(null), slotF = new Array(MAX).fill(null), free = [];
 for (let i = MAX - 1; i >= 0; i--) free.push(i);
 const heightOf = (F) => Math.min(3, 0.35 + Math.hypot(F.b[0] - F.a[0], F.b[2] - F.a[2]) * 0.2);
 function writeSlot(i, F) {
@@ -2938,6 +3134,8 @@ function writeSlot(i, F) {
   attrs.iColor.setXYZW(i, c.r, c.g, c.b, st.w * (0.75 + 0.18 * Math.log10((F.rec.amount_gross || 10) + 1)));
   attrs.iTime.setXYZW(i, F.born, F.dur, heightOf(F), KIND[F.kind]);
   attrs.iStyle.setXYZW(i, DASHC[st.dash], HEADC[st.head], F.stop, F.steady ? 1 : 0);
+  attrs.iRec.setX(i, F.rec._t);
+  slotF[i] = F; F._mst = F.steady;
 }
 function syncFlights(S) {
   let dirty = false;
@@ -2945,13 +3143,15 @@ function syncFlights(S) {
   for (const F of S.flights) {
     live.add(F.id);
     let i = slotOf.get(F.id);
-    if (i == null) { if (!free.length) continue; i = free.pop(); slotOf.set(F.id, i); slotId[i] = F.id; writeSlot(i, F); F._mst = F.steady; dirty = true; }
+    if (i == null) { if (!free.length) continue; i = free.pop(); slotOf.set(F.id, i); slotId[i] = F.id; writeSlot(i, F); dirty = true; }
+    // a seek remakes the paths it keeps: same record id, new flight, so the slot is written again
+    else if (slotF[i] !== F) { writeSlot(i, F); dirty = true; }
     else if (F._mst !== F.steady) { attrs.iStyle.setW(i, F.steady ? 1 : 0); F._mst = F.steady; dirty = true; }
   }
-  for (const [id, i] of slotOf) if (!live.has(id)) { attrs.iTime.setXYZW(i, -1e6, 1, 0, 0); attrs.iStyle.setW(i, 0); slotOf.delete(id); slotId[i] = null; free.push(i); dirty = true; }
+  for (const [id, i] of slotOf) if (!live.has(id)) { attrs.iTime.setXYZW(i, -1e6, 1, 0, 0); attrs.iStyle.setW(i, 0); attrs.iRec.setX(i, -1e6); slotOf.delete(id); slotId[i] = null; slotF[i] = null; free.push(i); dirty = true; }
   if (dirty) for (const a of Object.values(attrs)) a.needsUpdate = true;
   const u = arcMesh.material.uniforms;
-  u.uNow.value = S.animNow; u.uRM.value = S.rm ? 1 : 0;
+  u.uNow.value = S.animNow; u.uRM.value = S.rm ? 1 : 0; u.uSimT.value = S.t;
   u.uHover.value = S.hoverId && slotOf.has(S.hoverId) ? slotOf.get(S.hoverId) : -1;
   u.uRes.value.set(W, Hh);
 }
@@ -3143,31 +3343,86 @@ function ambient(dt, t) {
   }
 }
 
-// ---------- pins: one per place, count on the flag ----------
-function pinMesh(p) {
-  const g = new THREE.Group();
-  const needle = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.3, 6), new THREE.MeshBasicMaterial({ color: col('#9a9a9a'), toneMapped: false })); needle.position.y = 0.15;
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.042, 18, 12), new THREE.MeshStandardMaterial({ color: col('#B04A88'), emissive: col('#8E3B6D'), emissiveIntensity: 0.55, roughness: 0.3 })); head.position.y = 0.3;
-  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 40;
-  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
-  const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.15, 0.094), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, toneMapped: false })); flag.position.set(0.08, 0.22, 0); flag.rotation.y = -0.5;
-  g.add(needle, head, flag); g.position.set(p.x, Y0, p.z); g.traverse((o) => o.layers.set(1)); scene.add(g);
-  return { g, head, cv, tex, n: -1 };
+// ---------- failure flags: one per place, up while a failure there is recent ----------
+// A small crimson flag rises out of the ground when something fails at its place, runs its cloth back up the pole at
+// each further failure, and sinks once the place has gone FAIL_HOLD simulated minutes without one (the timing lives in
+// App: p.vis). It marks without shouting: no number until you zoom in far enough to read one (hovering a flag gives the
+// count), and no flutter. The cloth is the failure paths' own colour, exactly, so flag, path and × read as one kind.
+// It turns to face the camera so the cloth never goes edge-on.
+const FLAG = { pole: 0.3, w: 0.24, h: 0.16, red: H.REC.fail.mini, numPx: 26 };
+let flagKit = null;
+function flagParts() {
+  if (flagKit) return flagKit;
+  const pole = new THREE.CylinderGeometry(0.007, 0.007, 1, 8); pole.translate(0, 0.5, 0);
+  const cloth = new THREE.PlaneGeometry(1, 1); cloth.translate(0.5, -0.5, 0); // origin at the cloth's top corner on the pole
+  const foot = new THREE.CircleGeometry(1, 20); foot.rotateX(-Math.PI / 2);
+  return (flagKit = {
+    pole, cloth, foot, knob: new THREE.SphereGeometry(0.013, 12, 8),
+    poleM: new THREE.MeshBasicMaterial({ color: col('#cfd2d6') }),
+    knobM: new THREE.MeshBasicMaterial({ color: col('#b8984a') }),
+    footM: new THREE.MeshBasicMaterial({ color: 0x0e1b2e, transparent: true, opacity: 0.22, depthWrite: false }),
+  });
 }
+function pinMesh(p) {
+  const K = flagParts(), g = new THREE.Group(), lift = new THREE.Group();
+  const pole = new THREE.Mesh(K.pole, K.poleM); pole.scale.y = FLAG.pole;
+  const knob = new THREE.Mesh(K.knob, K.knobM); knob.position.y = FLAG.pole + 0.009;
+  const cv = document.createElement('canvas'); cv.width = 192; cv.height = 128;
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  const cloth = new THREE.Mesh(K.cloth, new THREE.MeshBasicMaterial({ map: tex, alphaTest: 0.5, side: THREE.DoubleSide, toneMapped: false }));
+  cloth.scale.set(FLAG.w, FLAG.h, 1);
+  lift.add(pole, knob, cloth);
+  const foot = new THREE.Mesh(K.foot, K.footM); foot.position.y = 0.004;
+  g.add(lift, foot); g.position.set(p.x, Y0, p.z); g.traverse((o) => o.layers.set(1)); scene.add(g);
+  return { g, lift, cloth, foot, cv, tex, n: -1, num: false, shown: false, riseAt: null, hoistAt: null, born: p.born };
+}
+function paintFlag(o) {
+  const c = o.cv.getContext('2d'), w = o.cv.width, h = o.cv.height, notch = w * 0.17, s = String(o.n);
+  c.clearRect(0, 0, w, h);
+  c.fillStyle = FLAG.red; c.beginPath(); c.moveTo(0, 0); c.lineTo(w, 0); c.lineTo(w - notch, h / 2); c.lineTo(w, h); c.lineTo(0, h); c.closePath(); c.fill();
+  c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(0, 0, 12, h); // the sleeve round the pole
+  if (o.num) { c.fillStyle = '#fff'; c.font = `700 ${s.length < 3 ? 76 : s.length < 4 ? 60 : 46}px Figtree, system-ui, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(s, 6 + (w - notch - 6) / 2, h / 2 + 5); }
+  o.tex.needsUpdate = true;
+}
+if (document.fonts) document.fonts.ready.then(() => { for (const o of pinObjs.values()) o.n = -1; });
+const easeOut = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
 function syncPins(S) {
-  for (const [k, o] of pinObjs) if (!S.pins.has(k)) { scene.remove(o.g); pinObjs.delete(k); }
+  for (const [k, o] of pinObjs) if (!S.pins.has(k)) { scene.remove(o.g); o.tex.dispose(); o.cloth.material.dispose(); pinObjs.delete(k); }
+  // a little bigger zoomed out, a little smaller zoomed in, so they stay findable without crowding the close view
+  const zk = Math.max(0.8, Math.min(1.3, Math.pow(1.1 / App.cam.zoom, 0.35)));
+  const clothPx = (FLAG.w * zk * Hh) / (2 * dist() * Math.tan((camera.fov * DEG) / 2));
   for (const [k, p] of S.pins) {
-    let o = pinObjs.get(k); if (!o) { o = pinMesh(p); pinObjs.set(k, o); }
-    if (o.n !== p.recs.length) {
-      o.n = p.recs.length;
-      const c = o.cv.getContext('2d');
-      c.fillStyle = '#F6F1DF'; c.fillRect(0, 0, 64, 40); c.fillStyle = '#8E3B6D'; c.fillRect(0, 0, 6, 40);
-      c.fillStyle = '#2b2622'; c.font = '700 26px Figtree, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(o.n), 35, 22);
-      o.tex.needsUpdate = true; o.head.scale.setScalar(1 + Math.min(1.2, 0.15 * (o.n - 1)));
-    }
-    const age = S.animNow - (p.born ?? -9);
-    o.g.position.y = age >= 0 && age < 0.5 && !S.rm ? 0.6 - (age / 0.5) * (0.6 - Y0) : Y0;
+    let o = pinObjs.get(k);
+    if (!(p.vis > 0)) { if (o && o.shown) { o.g.visible = false; o.shown = false; } continue; }
+    if (!o) { o = pinMesh(p); pinObjs.set(k, o); }
+    const num = clothPx >= (o.num ? FLAG.numPx - 3 : FLAG.numPx); // the count, once the cloth is big enough to carry it
+    if (o.n !== p.recs.length || o.num !== num) { o.n = p.recs.length; o.num = num; paintFlag(o); }
+    if (!o.shown) { o.shown = true; o.g.visible = true; o.riseAt = S.animNow - p.born < 0.5 && !S.rm ? p.born : null; o.hoistAt = null; o.born = p.born; }
+    else if (o.born !== p.born) { o.born = p.born; if (!S.rm) o.hoistAt = p.born; } // another failure here: the cloth runs back up
+    const drop = (FLAG.pole + 0.03) * zk;
+    const rise = o.riseAt == null ? 1 : easeOut((S.animNow - o.riseAt) / 0.5);
+    const hoist = o.hoistAt == null ? 1 : easeOut((S.animNow - o.hoistAt) / 0.45);
+    o.lift.scale.setScalar(zk);
+    o.lift.position.y = -drop * Math.min(1, 1 - rise + Math.pow(1 - p.vis, 1.6));
+    o.lift.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z);
+    o.cloth.position.y = FLAG.pole - 0.006 - (1 - hoist) * FLAG.pole * 0.45;
+    o.foot.visible = p.vis > 0.5 && rise > 0.5; o.foot.scale.setScalar(0.032 * zk);
   }
+}
+// the flag under a screen point: the box round its cloth and pole, nearest the camera first
+const flagV = new THREE.Vector3();
+function flagAt(px, py, S) {
+  let best = null, bd = Infinity;
+  for (const [k, p] of S.pins) {
+    const o = pinObjs.get(k); if (!o || !o.shown || !(p.vis > 0.5)) continue;
+    o.g.updateMatrixWorld(true);
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const [u, v] of [[0, 0], [1, 0], [0, -1], [1, -1]]) { const q = project(flagV.set(u, v, 0).applyMatrix4(o.cloth.matrixWorld)); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
+    const b = project(flagV.set(p.x, Y0, p.z)); x0 = Math.min(x0, b[0] - 4); y1 = Math.max(y1, b[1]);
+    if (px < x0 - 5 || px > x1 + 5 || py < y0 - 5 || py > y1 + 5) continue;
+    if (b[2] < bd) { bd = b[2]; best = p; }
+  }
+  return best;
 }
 
 // ---------- light: a solar path for 3 March near 39° N; north is up on the Map (-z), east is +x ----------
@@ -3364,7 +3619,7 @@ function resize() {
 }
 const ray = new THREE.Raycaster();
 function pickPlace(px, py, S) {
-  for (const [k, p] of S.pins) { const [x, y] = project(new THREE.Vector3(p.x, 0.3, p.z)); if (Math.hypot(px - x, py - y) < 14) return { type: 'pin', pin: p }; }
+  const fp = flagAt(px, py, S); if (fp) return { type: 'pin', pin: fp };
   ray.setFromCamera(new THREE.Vector2((px / W) * 2 - 1, -(py / Hh) * 2 + 1), camera);
   const hits = ray.intersectObjects([...kitMeshes, groundIM], false);
   for (const hit of hits) {
@@ -3380,7 +3635,7 @@ function pickPlace(px, py, S) {
 window.MiniView = {
   name: 'mini', ready: true,
   mount(container) { if (!built) build(); el = container; el.appendChild(canvas); new ResizeObserver(resize).observe(el); resize(); },
-  frame, onRecord, pickPlace,
+  frame, onRecord, pickPlace, pickPin: flagAt,
   pathPoint(F, s) { const [x, y] = project(pathPointWorld(F, s)); return [x, y]; },
   project(x, y, z) { const [a, b] = project(new THREE.Vector3(x, y, z)); return [a, b]; },
   panPx(dx, dy) {
