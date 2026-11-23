@@ -2300,7 +2300,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
     fpsE = frameTimes.length > 1 ? ((frameTimes.length - 1) * 1000) / (nowT - frameTimes[0]) : 0;
     if (!dbg) return;
     const info = S.view === 'mini' && views.mini && views.mini.info();
-    $('#debug').textContent = `${S.view} · ${fpsE.toFixed(0)} fps · ${S.flights.length} paths · ${S.pins.size} pins${info ? ` · ${info.calls} draws · ${(info.triangles / 1000).toFixed(0)}k tris` : ''} · ${S.idx}/${H.records.length} records`;
+    $('#debug').textContent = `${S.view} · ${fpsE.toFixed(0)} fps · ${S.flights.length} paths · ${S.pins.size} pins${info ? ` · ${info.calls} draws · ${(info.triangles / 1000).toFixed(0)}k tris · ${info.pr}× res` : ''} · ${S.idx}/${H.records.length} records`;
   }
   App.fps = () => fpsE;
 
@@ -3247,6 +3247,25 @@ const shortWay = (from, to) => from + Math.atan2(Math.sin(to - from), Math.cos(t
 
 // ---------- frame ----------
 let blurMode = 'subtle', frameNo = 0;
+// the sun's 4096 px shadow map is a whole extra pass over the city: redraw it only when the sun has moved or something
+// that casts a shadow has (people, cars, trains), and then at most every other frame
+const shadowSun = new THREE.Vector3(1e9, 0, 0);
+let shadowAge = 0, castersMoved = true;
+// resolution steps down when frames run long (a big window, a slower GPU, Firefox) and, after a while, tries the step above again
+// once more; a step that has been too slow twice is not tried again
+const PR_STEPS = [1.5, 1.25, 1, 0.85];
+let prStep = 0, prFrames = 0, prAvg = 1 / 60, prSince = 0;
+const prSlow = PR_STEPS.map(() => 0);
+const prList = () => [...new Set(PR_STEPS.map((s) => Math.min(s, window.devicePixelRatio || 1)))];
+function setPrStep(s) { prStep = s; prFrames = 0; prAvg = 1 / 60; prSince = performance.now(); resize(); }
+function adaptResolution(dt) {
+  if (!(dt > 0) || dt >= 0.099 || document.hidden) return; // a stall while loading or in a hidden tab says nothing about drawing
+  prAvg += (dt - prAvg) * 0.05; prFrames++;
+  const steps = prList().length;
+  if (prStep >= steps) { setPrStep(steps - 1); return; }
+  if (prFrames >= 90 && prAvg > 1 / 48 && prStep < steps - 1) { prSlow[prStep]++; setPrStep(prStep + 1); }
+  else if (prStep > 0 && prSlow[prStep - 1] < 2 && performance.now() - prSince > 20000 && prAvg < 1 / 55) setPrStep(prStep - 1);
+}
 // dtAnim stops while paused; dtReal keeps running so turns, tilts and north-up still ease into place
 function frame(S, dtAnim, dtReal = dtAnim) {
   clock += dtAnim;
@@ -3264,7 +3283,7 @@ function frame(S, dtAnim, dtReal = dtAnim) {
     a.obj.position.set(x, Y0 + (a.kind === 'peg' ? Math.abs(Math.sin(clock * 11 + a.side * 9)) * 0.012 : 0), z);
   }
   agents = agents.filter((a) => !a.dead);
-  if (dtAnim > 0) ambient(dtAnim, S.t);
+  if (dtAnim > 0) { ambient(dtAnim, S.t); castersMoved = true; }
   // a paycheck lands: the employer's windows flash
   let gc = false;
   for (const [t2, until] of glowTiles) {
@@ -3280,6 +3299,7 @@ function frame(S, dtAnim, dtReal = dtAnim) {
 }
 function render(S, dt) {
   renderer.info.reset();
+  adaptResolution(dt);
   const w = renderer.domElement.width, h = renderer.domElement.height;
   sizeTargets(w, h);
   updateCamera(dt);
@@ -3289,7 +3309,8 @@ function render(S, dt) {
   renderer.setRenderTarget(RT.depth); renderer.setClearColor(0x000000, 1); renderer.clear(); renderer.render(scene, camera);
   scene.overrideMaterial = null;
   // 2. colour (layers 0 and 2: the sky, light pools and headlight beams), with shadows
-  camera.layers.enable(2); renderer.shadowMap.needsUpdate = true;
+  camera.layers.enable(2); shadowAge++;
+  if (sun.position.distanceToSquared(shadowSun) > 0.0025 || (castersMoved && shadowAge >= 2)) { renderer.shadowMap.needsUpdate = true; shadowSun.copy(sun.position); shadowAge = 0; castersMoved = false; }
   renderer.setRenderTarget(RT.scene); renderer.render(scene, camera);
   camera.layers.set(0);
   // 3. contact shadows
@@ -3334,7 +3355,7 @@ function render(S, dt) {
 
 function resize() {
   const r = el.getBoundingClientRect(); W = r.width; Hh = r.height;
-  renderer.setPixelRatio(Math.min(1.5, window.devicePixelRatio || 1));
+  const steps = prList(); renderer.setPixelRatio(steps[Math.min(prStep, steps.length - 1)]);
   renderer.setSize(W, Hh, false);
 }
 const ray = new THREE.Raycaster();
@@ -3371,8 +3392,8 @@ window.MiniView = {
   resetAngle() { VIEW.headingT = shortWay(VIEW.heading, HOME_HEADING); VIEW.pitchT = PITCH_HOME; },
   angle: () => ({ heading: VIEW.headingT, pitch: VIEW.pitchT }),
   setBlur(m) { blurMode = m; },
-  reset() { for (const a of agents) scene.remove(a.obj); agents = []; glowTiles.clear(); lastWinKey = ''; },
-  info: () => renderer && renderer.info.render,
+  reset() { for (const a of agents) scene.remove(a.obj); agents = []; glowTiles.clear(); lastWinKey = ''; castersMoved = true; },
+  info: () => renderer && { ...renderer.info.render, pr: renderer.getPixelRatio() },
   size: () => [W, Hh],
 };
 if (window.App && App.onMiniReady) App.onMiniReady();
