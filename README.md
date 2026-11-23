@@ -3,7 +3,7 @@
 Welcome to my playground.
 
 > [!NOTE]
-> This repository is a collection of experimental projects and demos.
+> This repository is a collection of experimental projects and demos. Browse them with screenshots and previews at [jas0nmjames.github.io/playground](https://jas0nmjames.github.io/playground/).
 
 ## Directory
 
@@ -12,26 +12,26 @@ Welcome to my playground.
 |---|---|---|---|---|---|
 | [typography](./typography/) | [↗](https://jas0nmjames.github.io/playground/typography/bungee.html) | A playground to explore &amp; experiment in the world of typography. |  | Nov 2022 | Sep 2025 |
 | [captions](./captions/) | [↗](https://jas0nmjames.github.io/playground/captions/) | Experimenting with HTML5's baked in captions. |  | Jan 2023 | Sep 2025 |
-| [playground-chatbots](./chatbots/) | [↗](https://jas0nmjames.github.io/playground/chatbots/) | This is a playground to experiment with chatbots and live chat: traditional dialog chatbots, natural language processing and understanding (NLPs &amp; NLUs), large language models (LLMs), live chat integration and conversation design best practices in general. |  | Mar 2023 | Sep 2025 |
-| [Exit Modals Demo](./exit-modals/) | [↗](https://jas0nmjames.github.io/playground/exit-modals/) |  |  | Apr 2023 | Sep 2025 |
-| [HTML Media Best Practices](./html-media-best-practices/) | [↗](https://jas0nmjames.github.io/playground/html-media-best-practices/) | Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video with and without posters and WebM, and YouTube and Vimeo embeds. [Browse the demos](https://jas0nmjames.github.io/playground/html-media-best-practices/). |  | Jul 2023 | Nov 2026 |
-| [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) |  |  | Sep 2024 | Sep 2025 |
-| [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
-| [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) |  |  | Jul 2025 | Sep 2025 |
-| [ephemeral guidance](./ephemeral-guidance/) | — | ~~Exploring digital banking experience information architecture and artificial intelligence opportunities~~ |  | Aug 2025 | Sep 2025 |
-| [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
-| [Microwave](./microwave/) | — | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
-| [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
-| [Velocity — Textured v1.1.0](./terminal-velocity/) | — | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
-| [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
-| [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
+| [playground-chatbots](./chatbots/) | [↗](https://jas0nmjames.github.io/playground/chatbots/) | Experiments with chatbots and live chat: traditional dialog bots, NLP and NLU, large language models, live chat widgets and conversation design. |  | Mar 2023 | Sep 2025 |
+| [Exit Modals Demo](./exit-modals/) | [↗](https://jas0nmjames.github.io/playground/exit-modals/) | Three iterations on exit-intent modals and new-tab interstitials. |  | Apr 2023 | Sep 2025 |
+| [HTML Media Best Practices](./html-media-best-practices/) | [↗](https://jas0nmjames.github.io/playground/html-media-best-practices/) | Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video, and YouTube and Vimeo embeds. |  | Jul 2023 | Nov 2026 |
+| [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) | A text field that formats digits as US dollars while you type. |  | Sep 2024 | Sep 2025 |
+| [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) | A tiny scroll-snapping site sized for an Apple Watch screen. | `generative` | Jun 2025 | Sep 2025 |
+| [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) | KYC banking form experiments with JSON logic, multi-country support and wizard patterns. |  | Jul 2025 | Sep 2025 |
+| [ephemeral guidance](./ephemeral-guidance/) | — | Notes on the 'unknown unknowns' of interfaces generated on the fly, through the lens of digital banking. |  | Aug 2025 | Sep 2025 |
+| [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for Heptapod B, the logogram language in the film Arrival (2016). | `generative` | Aug 2025 | Sep 2025 |
+| [Microwave](./microwave/) | — | Concept: upload a photo of a plate of food and get a microwave time that leaves it hot, but not too hot. | `generative` | Sep 2025 | Sep 2025 |
+| [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Labeled shapes from a small list of items drop and bounce around the page, with Matter.js physics. | `generative` | Sep 2025 | Sep 2025 |
+| [Velocity — Textured v1.1.0](./terminal-velocity/) | — | A three.js game over procedural terrain, with triplanar textures, scattered rocks and enemies. It needs a build step, so there's no live site yet. | `generative` | Sep 2025 | Mar 2026 |
+| [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. Design only, for now. | `generative` | Mar 2026 | Mar 2026 |
+| [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) | A browser drift-racing game: six laps against bots, or against a second player. Made with Claude in about an hour. | `generative` | Mar 2026 | Mar 2026 |
 | [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/tech-society-primer.html) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
 | [Small as Voyager](./small-as-voyager/) | [↗](https://jas0nmjames.github.io/playground/small-as-voyager/) | A one-page portfolio small enough to fit in Voyager's memory: about 5.5 KB of hand-written HTML and CSS, with no scripts, web fonts or images, ending in a line drawing of the spacecraft. |  | Apr 2026 | Nov 2026 |
-| [dut dut](./dut-dut/) | [↗](https://dutdut.netlify.app/) | A web-based app to annotate, create, preview, and learn from drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. An Insights panel analyzes what you've written — rudiments, syncopation, backbeats, hemiolas, call-and-response, and more — with hover-to-highlight on the score and links to learn each concept. Work autosaves in the browser and can be saved/loaded as a JSON project file. |  | Jul 2026 | Jul 2026 |
-| [Strikefleet Omega — Recreated](./strikefleet-omega-recreated/) | [↗](https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/) | A browser-based fan tribute to **Strikefleet Omega** (Zynga/Kabam, ~2012), the draw-a-flight-path carrier-defense game that was delisted from Google Play. Vanilla JavaScript + HTML5 Canvas. No build step, no dependencies. |  | Jul 2026 | Jul 2026 |
-| [Marimba navigator](./marimba/) | [↗](https://jas0nmjames.github.io/playground/marimba/) | A playable three-octave marimba (C3–C6) that lights up cards as you play: bars colored by scale degree in the key you pick, one octave in view at a time, a synthesized marimba note on every hit, and cards for the tonic, mediant, dominant and leading tone that pulse when you play their degree. | `generative` | Sep 2026 | Sep 2026 |
-| [Liquid hourglass](./liquid-hourglass/) | [↗](https://jas0nmjames.github.io/playground/liquid-hourglass/) | A double liquid-motion hourglass in the browser: two sealed chambers of magenta and cyan liquid dripping through clear oil, driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over. | `generative` | Nov 2026 | Nov 2026 |
-| [Transactions are Jobs to be Done: Synthetic Market Animation](./mapping-synthetic-transactions/) | [↗](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | Two animated views of Medianville, an invented American city of about 100,000 people, that play back every record of one simulated day: Wednesday, March 3, 2027 by default (202,402 records in v2), or any of 18 other days that together stand for 2027. The records are purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. The latest viewer replays the same day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation. A menu in the header of both switches days. | `generative` | Nov 2026 | Nov 2026 |
+| [dut dut](./dut-dut/) | [↗](https://dutdut.netlify.app/) | Write, hear and learn from drumline cadences: paint hits onto a grid, read them as notation, play them on a synthesized drumline and export MIDI, audio or a score. |  | Jul 2026 | Jul 2026 |
+| [Strikefleet Omega — Recreated](./strikefleet-omega-recreated/) | [↗](https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/) | A browser fan tribute to Strikefleet Omega (~2012), the draw-a-flight-path carrier-defense game. Vanilla JavaScript and canvas, no build step. |  | Jul 2026 | Jul 2026 |
+| [Marimba navigator](./marimba/) | [↗](https://jas0nmjames.github.io/playground/marimba/) | A playable three-octave marimba that lights up a card for each scale degree as you play. | `generative` | Sep 2026 | Sep 2026 |
+| [Liquid hourglass](./liquid-hourglass/) | [↗](https://jas0nmjames.github.io/playground/liquid-hourglass/) | A double liquid-motion hourglass driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over. | `generative` | Nov 2026 | Nov 2026 |
+| [Medianville](./mapping-synthetic-transactions/) | [↗](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a night map, a 3D miniature town and a printed map sheet. | `generative` | Nov 2026 | Nov 2026 |
 <!-- END DIRECTORY -->
 
 ## Generative Experiments
@@ -41,22 +41,28 @@ Building things I couldn't before, [at great expense](https://www.youtube.com/wa
 <!-- BEGIN GENERATIVE -->
 | Project | Site | Description | Tags | Published | Updated |
 |---|---|---|---|---|---|
-| [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) |  | `generative` | Jun 2025 | Sep 2025 |
-| [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for '[Heptapod B](https://www.youtube.com/watch?v=me9uliPVqeU)', the logogram alien language in the film [Arrival](https://www.youtube.com/watch?v=oGI9hSl0q-w) (2016) | `generative` | Aug 2025 | Sep 2025 |
-| [Microwave](./microwave/) | — | **Concept**: Upload a picture of a plate of food and calculate how long you should microwave the food to acheive perfectly hot, but not too hot, food. | `generative` | Sep 2025 | Sep 2025 |
-| [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Generative shape experiments. | `generative` | Sep 2025 | Sep 2025 |
-| [Velocity — Textured v1.1.0](./terminal-velocity/) | — | **What's new** (for richer land texture): | `generative` | Sep 2025 | Mar 2026 |
-| [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. This folder is design-only for now; implementation can land here later when you are ready. | `generative` | Mar 2026 | Mar 2026 |
-| [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) |  | `generative` | Mar 2026 | Mar 2026 |
+| [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) | A tiny scroll-snapping site sized for an Apple Watch screen. | `generative` | Jun 2025 | Sep 2025 |
+| [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for Heptapod B, the logogram language in the film Arrival (2016). | `generative` | Aug 2025 | Sep 2025 |
+| [Microwave](./microwave/) | — | Concept: upload a photo of a plate of food and get a microwave time that leaves it hot, but not too hot. | `generative` | Sep 2025 | Sep 2025 |
+| [Shapes](./shapes/) | [↗](https://jas0nmjames.github.io/playground/shapes/) | Labeled shapes from a small list of items drop and bounce around the page, with Matter.js physics. | `generative` | Sep 2025 | Sep 2025 |
+| [Velocity — Textured v1.1.0](./terminal-velocity/) | — | A three.js game over procedural terrain, with triplanar textures, scattered rocks and enemies. It needs a build step, so there's no live site yet. | `generative` | Sep 2025 | Mar 2026 |
+| [Rock and Bop](./rock-and-bop/) | — | A music maker for adults and kids. Design only, for now. | `generative` | Mar 2026 | Mar 2026 |
+| [Scravax Drift Derby (Georgia)](./project-scravax/) | [↗](https://project-scravax.netlify.app/) | A browser drift-racing game: six laps against bots, or against a second player. Made with Claude in about an hour. | `generative` | Mar 2026 | Mar 2026 |
 | [Technology & Society: A Primer for Designers](./tech-and-society-course/) | [↗](https://jas0nmjames.github.io/playground/tech-and-society-course/tech-society-primer.html) | A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build. | `generative` | Apr 2026 | Apr 2026 |
-| [Marimba navigator](./marimba/) | [↗](https://jas0nmjames.github.io/playground/marimba/) | A playable three-octave marimba (C3–C6) that lights up cards as you play: bars colored by scale degree in the key you pick, one octave in view at a time, a synthesized marimba note on every hit, and cards for the tonic, mediant, dominant and leading tone that pulse when you play their degree. | `generative` | Sep 2026 | Sep 2026 |
-| [Liquid hourglass](./liquid-hourglass/) | [↗](https://jas0nmjames.github.io/playground/liquid-hourglass/) | A double liquid-motion hourglass in the browser: two sealed chambers of magenta and cyan liquid dripping through clear oil, driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over. | `generative` | Nov 2026 | Nov 2026 |
-| [Transactions are Jobs to be Done: Synthetic Market Animation](./mapping-synthetic-transactions/) | [↗](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | Two animated views of Medianville, an invented American city of about 100,000 people, that play back every record of one simulated day: Wednesday, March 3, 2027 by default (202,402 records in v2), or any of 18 other days that together stand for 2027. The records are purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. The latest viewer replays the same day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation. A menu in the header of both switches days. | `generative` | Nov 2026 | Nov 2026 |
+| [Marimba navigator](./marimba/) | [↗](https://jas0nmjames.github.io/playground/marimba/) | A playable three-octave marimba that lights up a card for each scale degree as you play. | `generative` | Sep 2026 | Sep 2026 |
+| [Liquid hourglass](./liquid-hourglass/) | [↗](https://jas0nmjames.github.io/playground/liquid-hourglass/) | A double liquid-motion hourglass driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over. | `generative` | Nov 2026 | Nov 2026 |
+| [Medianville](./mapping-synthetic-transactions/) | [↗](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a night map, a 3D miniature town and a printed map sheet. | `generative` | Nov 2026 | Nov 2026 |
 <!-- END GENERATIVE -->
 
 ## Maintaining the Directory
 
-The Directory and Generative Experiments tables are auto-generated by `scripts/build-readme.js` and should not be edited by hand between the `<!-- BEGIN ... -->` and `<!-- END ... -->` markers.
+Three things are generated from each project folder's `README.md` frontmatter by `scripts/build.js`:
+
+- the Directory and Generative Experiments tables above (oldest first)
+- the [directory website](https://jas0nmjames.github.io/playground/), `index.html` (newest first, pinned projects on top)
+- `projects.json`, the same list as data, for other sites to read
+
+Don't edit them by hand between the `<!-- BEGIN ... -->` and `<!-- END ... -->` markers, in this README or in `index.html`. Everything outside the markers is hand-written. The page's styles and script are in `assets/`, and follow [jasonjames.works](https://jasonjames.works/).
 
 ### Adding a new project
 
@@ -67,33 +73,58 @@ The Directory and Generative Experiments tables are auto-generated by `scripts/b
 ---
 published: YYYY-MM-DD
 updated: YYYY-MM-DD
-tags: generative        # optional — omit if not a generative experiment
-url: https://example.com  # optional — only needed if deployed somewhere other than GitHub Pages
-nosite: true            # optional — no live site (design-only, or needs a build step Pages can't run)
+tags: generative           # optional: comma-separated, each one becomes a filter on the page
+url: https://example.com   # optional: only if it's deployed somewhere other than GitHub Pages
+nosite: true               # optional: no live site (design-only, or needs a build step Pages can't run)
+title: Display name        # optional: otherwise the README's # heading
+summary: One or two sentences for the page and the tables.  # optional: otherwise the first paragraph
+pinned: 1                  # optional: pin to the top of the page; lower numbers first
+thumbnail: shots/home.webp # optional: otherwise thumbnail.webp/.jpg/.png in the folder
+thumbnail_alt: What it shows  # optional: otherwise the thumbnail is treated as decorative
+preview: shots/loop.mp4    # optional: otherwise preview.mp4/.webm in the folder
 ---
 ```
 
-By default the **Site** link in the directory table points to `https://jas0nmjames.github.io/playground/<folder>/`. Set `url` only if the project is deployed elsewhere (e.g. Netlify) or the entry page isn't `index.html`. Set `nosite: true` to show — instead. Vite projects (`npm run build`) won't run from GitHub Pages as committed, so give them a Netlify `url` or `nosite`.
+By default the **Site** link points to `https://jas0nmjames.github.io/playground/<folder>/`. Set `url` only if the project is deployed elsewhere (e.g. Netlify) or the entry page isn't `index.html`. Set `nosite: true` to show — instead. Vite projects (`npm run build`) won't run from GitHub Pages as committed, so give them a Netlify `url` or `nosite`.
 
-3. Run the build script locally to update this README before committing:
+3. Take its screenshot (and, for something that moves, a 5-second preview video). This uses the Google Chrome on your Mac, with no npm packages:
 
 ```bash
-node scripts/build-readme.js
+node scripts/capture-media.mjs my-project
 ```
 
-The GitHub Actions workflow (`.github/workflows/update-readme.yml`) will also run it automatically on every push to `main` that touches a `README.md`, and commit any changes.
+```bash
+node scripts/capture-media.mjs --preview my-project
+```
+
+Without a screenshot, the card shows the title set in Bungee instead.
+
+4. Rebuild before committing:
+
+```bash
+node scripts/build.js
+```
+
+### How it updates itself
+
+The GitHub Actions workflow (`.github/workflows/update-directory.yml`) runs on every push to `development` and commits the regenerated files there if anything changed, so they reach `main` with the next pull request. `main` only accepts pull requests, so the workflow can't push to it; on `main` and on pull requests into `main` it runs `node scripts/build.js --check` instead, which fails if anything is out of date. GitHub Pages publishes `main`, so the website updates when that pull request merges.
+
+### Pinning
+
+Add `pinned: 1` (or 2, 3…) to a project's frontmatter to put it in the pinned row at the top of the website, in that order; `pinned: true` pins it after the numbered ones. Remove the line to unpin it. Pinned projects don't repeat in the list below.
 
 ### Updating an existing project
 
-- **Change a date**: edit the `published` or `updated` field in the subfolder's frontmatter, then run `node scripts/build-readme.js`
+- **Change a date**: edit the `published` or `updated` field in the subfolder's frontmatter, then run `node scripts/build.js`
 - **Add/remove a tag**: edit the `tags` field — comma-separated values are supported (e.g. `tags: generative, interactive`)
-- **Change a description**: edit the first paragraph of the subfolder README body (after the `# Title` line) — the script pulls this automatically, joining hard-wrapped lines
+- **Change a description**: edit `summary`, or the first paragraph of the subfolder README body (after the `# Title` line), which is used when there's no `summary`
+- **Retake a screenshot**: `node scripts/capture-media.mjs my-project`, then `node scripts/build.js`. Per-project capture settings (a different page, a longer wait) are at the top of the script.
 
 ### What the script ignores
 
 - Hidden directories (`.github`, `.claude`, etc.)
-- Subfolders with no `README.md`
-- Any content in this README outside the `<!-- BEGIN ... -->` / `<!-- END ... -->` markers
+- Subfolders with no `README.md`, such as `assets/` and `scripts/`
+- Any content in this README or `index.html` outside the `<!-- BEGIN ... -->` / `<!-- END ... -->` markers
 
 ## Claude
 
@@ -111,9 +142,13 @@ Directory automation built with [Claude](https://claude.ai) (claude-sonnet-4-6) 
 | March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.54 kWh | 0.208 kg CO₂ | 0.27 L |
 | March 26, 2026 | Claude Code | claude-sonnet-4-6 | 0.09 kWh | 0.035 kg CO₂ | 0.045 L |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 0.54 kWh | 0.208 kg CO₂ | 0.27 L |
-| **Total** | | | **1.17 kWh** | **0.451 kg CO₂** | **0.585 L** |
+| November 23, 2026 | Claude Code | claude-opus-5-5 | 1.800 kWh | 0.695 kg CO₂ | 0.900 L |
+| November 23, 2026 | Claude Code (web-fetch subagent) | claude-haiku-5-5 | 0.036 kWh | 0.014 kg CO₂ | 0.018 L |
+| **Total** | | | **3.006 kWh** | **1.160 kg CO₂** | **1.503 L** |
 
 November 17, 2026 maintenance session: merged the Dependabot vite 7.3.7 bumps and deleted merged branches; fixed broken Site links (dut-dut → Netlify, Technology & Society → its primer page, terminal-velocity → no site, since it needs a build step); restored the HTML Media Best Practices hub page and frontmatter; added frontmatter to Strikefleet Omega; taught `build-readme.js` to read hard-wrapped description paragraphs; added the usage rollup below.
+
+November 23, 2026 directory website session: built the [directory website](https://jas0nmjames.github.io/playground/) (`index.html`, `assets/`) in the style of jasonjames.works, with pinned projects, tag filters, light, black-and-white and dark modes, and screenshots and hover previews; replaced `build-readme.js` with `scripts/build.js` (README tables, `index.html`, `projects.json`, and a `--check` mode) and `scripts/projects.js`; added `scripts/capture-media.mjs`, which takes the screenshots and preview videos with the local Chrome; added `title`, `summary`, `pinned`, `thumbnail`, `thumbnail_alt` and `preview` frontmatter, with summaries for 18 projects; replaced `update-readme.yml`, which failed whenever it had a change to push to the protected `main`, with `update-directory.yml`. Its rows count model API requests (about 100 Opus and 2 Haiku), at 18 Wh each.
 
 ### Usage estimates across the playground
 
@@ -140,7 +175,7 @@ Totals from the Generative Consumption table in each project's README, plus the 
 | [Marimba navigator](./marimba/) | 9 | Claude Code | 3.168 kWh | 1.222 kg CO₂ | 1.584 L |
 | [Transactions are Jobs to be Done](./mapping-synthetic-transactions/) | 12 counted | Claude Code, Claude app | 24.930 kWh | 9.624 kg CO₂ | 12.465 L |
 | [Small as Voyager](./small-as-voyager/) | 1 counted | Claude Code | 0.594 kWh | 0.229 kg CO₂ | 0.297 L |
-| Repo-level (directory automation and maintenance, above) | 3 | Claude Code | 1.170 kWh | 0.451 kg CO₂ | 0.585 L |
-| **Total** | **45** | | **38.700 kWh** | **14.957 kg CO₂** | **27.990 L** |
+| Repo-level (directory automation, website and maintenance, above) | 4 | Claude Code | 3.006 kWh | 1.160 kg CO₂ | 1.503 L |
+| **Total** | **46** | | **40.536 kWh** | **15.666 kg CO₂** | **28.908 L** |
 
 [^claude]: assuming 18 Wh per prompt; carbon at about 0.386 kg CO₂ per kWh and water at 0.5 L per kWh; does not include estimate for foundation model training. Arrival's ChatGPT session uses its own water figure (2.5 L per kWh), which is why its water total is high.

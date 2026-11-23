@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html
+    lang="en-US"
+    dir="ltr"
+    translate="yes">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jason James's playground</title>
+    <meta name="description" content="Experimental projects and demos by Jason James, a UX and conversational AI designer: hand-written web experiments and generative ones, newest first.">
+    <meta name="author" content="Jason James">
+    <link rel="canonical" href="https://jas0nmjames.github.io/playground/">
+
+    <!-- Color mode head script, adapted from jasonjames.works (search that repo for
+         "claude-color-modes"). Sets <html data-mode="light|mono|dark"> before the stylesheet
+         loads, so the page never flashes the wrong colors. Keep it inline, blocking and above
+         the stylesheet. -->
+    <script>
+    (function () {
+      var MODES = ['light', 'mono', 'dark'], KEY = 'theme-mode';
+      function saved() {
+        try { var m = localStorage.getItem(KEY); return MODES.indexOf(m) > -1 ? m : null; }
+        catch (e) { return null; }
+      }
+      function system() {
+        var is = function (q) { return window.matchMedia(q).matches; };
+        if (is('(prefers-contrast: more)') || is('(forced-colors: active)')) return 'mono';
+        if (is('(prefers-color-scheme: dark)')) return 'dark';
+        return 'light';
+      }
+      window.themeModes = { KEY: KEY, saved: saved, system: system };
+      document.documentElement.dataset.mode = saved() || system();
+    })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Readex+Pro:wght@160..700&display=swap" rel="stylesheet">
+    <link rel="preload" href="assets/fonts/bungee-layers/BungeeLayers-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="assets/playground.css">
+    <script src="assets/playground.js" defer></script>
+
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <meta name="theme-color" content="#E05B08">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Jason James's playground">
+    <meta property="og:description" content="Experimental projects and demos, newest first.">
+    <meta property="og:url" content="https://jas0nmjames.github.io/playground/">
+</head>
+<body>
+    <a class="skip-link" href="#projects">Skip to the projects</a>
+    <div id="watermark" aria-hidden="true">play</div>
+
+    <header class="site-header">
+        <nav aria-label="Jason's sites">
+            <ul id="suite-tabs">
+                <li class="suite-tab suite-tab--works"><a href="https://jasonjames.works/" target="_blank" rel="noopener">portfolio<span class="visually-hidden"> (opens in a new tab)</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+                <li class="suite-tab suite-tab--resume"><a href="https://jasonjames.design/" target="_blank" rel="noopener">résumé<span class="visually-hidden"> (opens in a new tab)</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+                <li class="suite-tab suite-tab--playground"><a href="./" aria-current="page">playground</a></li>
+            </ul>
+        </nav>
+        <!-- Hidden until the script runs; without JavaScript the page follows the system's mode -->
+        <div id="theme-controls" data-theme-modes role="group" aria-label="Color mode" hidden>
+            <button type="button" data-set-mode="light" aria-label="Light">
+                <svg class="icon icon--brush" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 2.3a1.6 1.6 0 0 0-2.2 0l-8.3 8.4 3.1 3.1 8.4-8.3a1.6 1.6 0 0 0 0-2.3zM8.9 12.2c-2 0-3.6 1.6-3.6 3.6 0 1.4-.9 2.5-2.3 2.9.9 1.4 2.6 2.3 4.6 2.3 3 0 5-2.2 5-5z" fill="currentColor"/></svg>
+            </button>
+            <button type="button" data-set-mode="mono" aria-label="Black &amp; white">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.8 1.8M17.4 17.4l1.8 1.8M4.8 19.2l1.8-1.8M17.4 6.6l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" data-set-mode="dark" aria-label="Dark">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.6 2.4a9.8 9.8 0 1 0 7 13.4A8 8 0 0 1 14.6 2.4z" fill="currentColor"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="wrapper">
+        <div class="intro">
+            <h1>jason<br>james<br>.play<wbr>ground</h1>
+            <p class="lede">Experiments and demos, newest first. Some are hand-written; the <span class="nowrap">generative</span> ones are me building things I couldn't before, <a href="https://www.youtube.com/watch?v=8enXRDlWguU">at great expense</a>.</p>
+
+            <div class="filters" hidden>
+                <h2 class="filters-label" id="filters-label">show</h2>
+                <ul class="filter-list" aria-labelledby="filters-label">
+                    <!-- BEGIN FILTERS -->
+                    <li><button type="button" data-filter="all" aria-pressed="true">everything <span class="count">22<span class="visually-hidden"> projects</span></span></button></li>
+                    <li><button type="button" data-filter="generative" aria-pressed="false">generative <span class="count">11<span class="visually-hidden"> projects</span></span></button></li>
+                    <!-- END FILTERS -->
+                </ul>
+                <p id="filter-status" class="visually-hidden" role="status"></p>
+            </div>
+
+            <ul class="side-links">
+                <li><a href="https://github.com/jas0nmjames/playground">source on GitHub<span class="arrow" aria-hidden="true">↗</span></a></li>
+                <li><a href="https://github.com/jas0nmjames/playground#usage-estimates-across-the-playground">AI usage estimates<span class="arrow" aria-hidden="true">↗</span></a></li>
+            </ul>
+        </div>
+
+        <div class="listing" id="projects" tabindex="-1">
+            <section class="content-frame" id="pinned" aria-labelledby="pinned-label">
+                <div class="typography-label-container">
+                    <h2 class="typography-label" id="pinned-label">pinned</h2>
+                </div>
+                <ul class="project-grid project-grid--pinned" role="list">
+                    <!-- BEGIN PINNED -->
+                    <li class="project" data-tags="generative">
+                      <article class="project-card project-card--pinned" aria-labelledby="mapping-synthetic-transactions">
+                        <div class="project-body">
+                          <h3 class="project-title" id="mapping-synthetic-transactions"><a href="mapping-synthetic-transactions/"><span class="layers"><span class="layer-regular">Medianville</span><span class="layer-inline" aria-hidden="true">Medianville</span><span class="layer-outline" aria-hidden="true">Medianville</span><span class="layer-shade" aria-hidden="true">Medianville</span></span></a></h3>
+                          <p class="project-meta"><time datetime="2026-11-17">Nov 2026</time></p>
+                          <p class="project-summary">One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a night map, a 3D miniature town and a printed map sheet.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">read me<span class="visually-hidden">: Medianville on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a><span class="cta" aria-hidden="true">open ›</span></p>
+                        </div>
+                        <div class="project-media has-preview"><img src="mapping-synthetic-transactions/thumbnail.webp" alt="" width="800" height="500" decoding="async"><video muted loop playsinline preload="none" width="800" height="500" aria-hidden="true" tabindex="-1"><source src="mapping-synthetic-transactions/preview.mp4" type="video/mp4"></video><button type="button" class="preview-toggle" aria-pressed="false" hidden><svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg><svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg><span class="visually-hidden">Play preview of Medianville</span></button></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card project-card--pinned is-external" aria-labelledby="dut-dut">
+                        <div class="project-body">
+                          <h3 class="project-title" id="dut-dut"><a href="https://dutdut.netlify.app/"><span class="layers"><span class="layer-regular">dut dut</span><span class="layer-inline" aria-hidden="true">dut dut</span><span class="layer-outline" aria-hidden="true">dut dut</span><span class="layer-shade" aria-hidden="true">dut dut</span></span></a></h3>
+                          <p class="project-meta"><time datetime="2026-07-20">Jul 2026</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>on dutdut.netlify.app</p>
+                          <p class="project-summary">Write, hear and learn from drumline cadences: paint hits onto a grid, read them as notation, play them on a synthesized drumline and export MIDI, audio or a score.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/dut-dut">read me<span class="visually-hidden">: dut dut on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a><span class="cta" aria-hidden="true">open ›</span></p>
+                        </div>
+                        <div class="project-media"><img src="dut-dut/thumbnail.webp" alt="" width="800" height="500" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card project-card--pinned" aria-labelledby="marimba">
+                        <div class="project-body">
+                          <h3 class="project-title" id="marimba"><a href="marimba/"><span class="layers"><span class="layer-regular">Marimba navigator</span><span class="layer-inline" aria-hidden="true">Marimba navigator</span><span class="layer-outline" aria-hidden="true">Marimba navigator</span><span class="layer-shade" aria-hidden="true">Marimba navigator</span></span></a></h3>
+                          <p class="project-meta"><time datetime="2026-09-25">Sep 2026</time></p>
+                          <p class="project-summary">A playable three-octave marimba that lights up a card for each scale degree as you play.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/marimba">read me<span class="visually-hidden">: Marimba navigator on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a><span class="cta" aria-hidden="true">open ›</span></p>
+                        </div>
+                        <div class="project-media"><img src="marimba/thumbnail.webp" alt="" width="800" height="500" decoding="async"></div>
+                      </article>
+                    </li>
+                    <!-- END PINNED -->
+                </ul>
+            </section>
+
+            <section class="content-frame" id="everything" aria-labelledby="everything-label">
+                <div class="typography-label-container">
+                    <h2 class="typography-label" id="everything-label">everything else, newest first</h2>
+                </div>
+                <ol class="project-grid" role="list">
+                    <!-- BEGIN PROJECTS -->
+                    <li class="project" data-tags="generative">
+                      <article class="project-card" aria-labelledby="liquid-hourglass">
+                        <div class="project-body">
+                          <h3 class="project-title" id="liquid-hourglass"><a href="liquid-hourglass/">Liquid hourglass</a></h3>
+                          <p class="project-meta"><time datetime="2026-11-16">Nov 2026</time></p>
+                          <p class="project-summary">A double liquid-motion hourglass driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/liquid-hourglass">read me<span class="visually-hidden">: Liquid hourglass on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media has-preview"><img src="liquid-hourglass/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"><video muted loop playsinline preload="none" width="800" height="500" aria-hidden="true" tabindex="-1"><source src="liquid-hourglass/preview.mp4" type="video/mp4"></video><button type="button" class="preview-toggle" aria-pressed="false" hidden><svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg><svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg><span class="visually-hidden">Play preview of Liquid hourglass</span></button></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="strikefleet-omega-recreated">
+                        <div class="project-body">
+                          <h3 class="project-title" id="strikefleet-omega-recreated"><a href="strikefleet-omega-recreated/">Strikefleet Omega — Recreated</a></h3>
+                          <p class="project-meta"><time datetime="2026-07-21">Jul 2026</time></p>
+                          <p class="project-summary">A browser fan tribute to Strikefleet Omega (~2012), the draw-a-flight-path carrier-defense game. Vanilla JavaScript and canvas, no build step.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/strikefleet-omega-recreated">read me<span class="visually-hidden">: Strikefleet Omega — Recreated on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="strikefleet-omega-recreated/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="small-as-voyager">
+                        <div class="project-body">
+                          <h3 class="project-title" id="small-as-voyager"><a href="small-as-voyager/">Small as Voyager</a></h3>
+                          <p class="project-meta"><time datetime="2026-04-22">Apr 2026</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2026-11-20">Nov 2026</time></p>
+                          <p class="project-summary">A one-page portfolio small enough to fit in Voyager's memory: about 5.5 KB of hand-written HTML and CSS, with no scripts, web fonts or images, ending in a line drawing of the spacecraft.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/small-as-voyager">read me<span class="visually-hidden">: Small as Voyager on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="small-as-voyager/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card" aria-labelledby="tech-and-society-course">
+                        <div class="project-body">
+                          <h3 class="project-title" id="tech-and-society-course"><a href="tech-and-society-course/tech-society-primer.html">Technology &amp; Society: A Primer for Designers</a></h3>
+                          <p class="project-meta"><time datetime="2026-04-06">Apr 2026</time></p>
+                          <p class="project-summary">A single-page HTML primer exploring how technology shapes human experience — written for designers who want a rigorous intellectual foundation before they build.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/tech-and-society-course">read me<span class="visually-hidden">: Technology &amp; Society: A Primer for Designers on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="tech-and-society-course/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card is-external" aria-labelledby="project-scravax">
+                        <div class="project-body">
+                          <h3 class="project-title" id="project-scravax"><a href="https://project-scravax.netlify.app/">Scravax Drift Derby (Georgia)</a></h3>
+                          <p class="project-meta"><time datetime="2026-03-10">Mar 2026</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>on project-scravax.netlify.app</p>
+                          <p class="project-summary">A browser drift-racing game: six laps against bots, or against a second player. Made with Claude in about an hour.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/project-scravax">read me<span class="visually-hidden">: Scravax Drift Derby (Georgia) on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media has-preview"><img src="project-scravax/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"><video muted loop playsinline preload="none" width="800" height="500" aria-hidden="true" tabindex="-1"><source src="project-scravax/preview.mp4" type="video/mp4"></video><button type="button" class="preview-toggle" aria-pressed="false" hidden><svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg><svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg><span class="visually-hidden">Play preview of Scravax Drift Derby (Georgia)</span></button></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card is-external" aria-labelledby="rock-and-bop">
+                        <div class="project-body">
+                          <h3 class="project-title" id="rock-and-bop"><a href="https://github.com/jas0nmjames/playground/tree/main/rock-and-bop">Rock and Bop</a></h3>
+                          <p class="project-meta"><time datetime="2026-03-01">Mar 2026</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>no live site</p>
+                          <p class="project-summary">A music maker for adults and kids. Design only, for now.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><span class="hint">opens the read me on GitHub<span class="arrow" aria-hidden="true">↗</span></span></p>
+                        </div>
+                        <div class="project-media project-media--placeholder" aria-hidden="true"><span class="layers"><span class="layer-regular">Rock and Bop</span><span class="layer-inline" aria-hidden="true">Rock and Bop</span><span class="layer-outline" aria-hidden="true">Rock and Bop</span><span class="layer-shade" aria-hidden="true">Rock and Bop</span></span></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card is-external" aria-labelledby="terminal-velocity">
+                        <div class="project-body">
+                          <h3 class="project-title" id="terminal-velocity"><a href="https://github.com/jas0nmjames/playground/tree/main/terminal-velocity">Velocity — Textured v1.1.0</a></h3>
+                          <p class="project-meta"><time datetime="2025-09-03">Sep 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2026-03-10">Mar 2026</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>no live site</p>
+                          <p class="project-summary">A three.js game over procedural terrain, with triplanar textures, scattered rocks and enemies. It needs a build step, so there's no live site yet.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><span class="hint">opens the read me on GitHub<span class="arrow" aria-hidden="true">↗</span></span></p>
+                        </div>
+                        <div class="project-media project-media--placeholder" aria-hidden="true"><span class="layers"><span class="layer-regular">Velocity — Textured v1.1.0</span><span class="layer-inline" aria-hidden="true">Velocity — Textured v1.1.0</span><span class="layer-outline" aria-hidden="true">Velocity — Textured v1.1.0</span><span class="layer-shade" aria-hidden="true">Velocity — Textured v1.1.0</span></span></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card is-external" aria-labelledby="microwave">
+                        <div class="project-body">
+                          <h3 class="project-title" id="microwave"><a href="https://github.com/jas0nmjames/playground/tree/main/microwave">Microwave</a></h3>
+                          <p class="project-meta"><time datetime="2025-09-02">Sep 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>no live site</p>
+                          <p class="project-summary">Concept: upload a photo of a plate of food and get a microwave time that leaves it hot, but not too hot.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><span class="hint">opens the read me on GitHub<span class="arrow" aria-hidden="true">↗</span></span></p>
+                        </div>
+                        <div class="project-media project-media--placeholder" aria-hidden="true"><span class="layers"><span class="layer-regular">Microwave</span><span class="layer-inline" aria-hidden="true">Microwave</span><span class="layer-outline" aria-hidden="true">Microwave</span><span class="layer-shade" aria-hidden="true">Microwave</span></span></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card" aria-labelledby="shapes">
+                        <div class="project-body">
+                          <h3 class="project-title" id="shapes"><a href="shapes/">Shapes</a></h3>
+                          <p class="project-meta"><time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">Labeled shapes from a small list of items drop and bounce around the page, with Matter.js physics.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/shapes">read me<span class="visually-hidden">: Shapes on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media has-preview"><img src="shapes/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"><video muted loop playsinline preload="none" width="800" height="500" aria-hidden="true" tabindex="-1"><source src="shapes/preview.mp4" type="video/mp4"></video><button type="button" class="preview-toggle" aria-pressed="false" hidden><svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg><svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg><span class="visually-hidden">Play preview of Shapes</span></button></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card" aria-labelledby="arrival">
+                        <div class="project-body">
+                          <h3 class="project-title" id="arrival"><a href="arrival/">Arrival</a></h3>
+                          <p class="project-meta"><time datetime="2025-08-09">Aug 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">An image generator and decoder for Heptapod B, the logogram language in the film Arrival (2016).</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/arrival">read me<span class="visually-hidden">: Arrival on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="arrival/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card is-external" aria-labelledby="ephemeral-guidance">
+                        <div class="project-body">
+                          <h3 class="project-title" id="ephemeral-guidance"><a href="https://github.com/jas0nmjames/playground/tree/main/ephemeral-guidance">ephemeral guidance</a></h3>
+                          <p class="project-meta"><time datetime="2025-08-04">Aug 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>no live site</p>
+                          <p class="project-summary">Notes on the 'unknown unknowns' of interfaces generated on the fly, through the lens of digital banking.</p>
+                          <p class="project-links"><span class="hint">opens the read me on GitHub<span class="arrow" aria-hidden="true">↗</span></span></p>
+                        </div>
+                        <div class="project-media project-media--placeholder" aria-hidden="true"><span class="layers"><span class="layer-regular">ephemeral guidance</span><span class="layer-inline" aria-hidden="true">ephemeral guidance</span><span class="layer-outline" aria-hidden="true">ephemeral guidance</span><span class="layer-shade" aria-hidden="true">ephemeral guidance</span></span></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="forms">
+                        <div class="project-body">
+                          <h3 class="project-title" id="forms"><a href="forms/">Forms</a></h3>
+                          <p class="project-meta"><time datetime="2025-07-07">Jul 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">KYC banking form experiments with JSON logic, multi-country support and wizard patterns.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/forms">read me<span class="visually-hidden">: Forms on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="forms/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="generative">
+                      <article class="project-card" aria-labelledby="tiny">
+                        <div class="project-body">
+                          <h3 class="project-title" id="tiny"><a href="tiny/">Tiny</a></h3>
+                          <p class="project-meta"><time datetime="2025-06-01">Jun 2025</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">A tiny scroll-snapping site sized for an Apple Watch screen.</p>
+                          <ul class="tag-list" aria-label="Tags"><li>generative</li></ul>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/tiny">read me<span class="visually-hidden">: Tiny on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="tiny/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="currency-input">
+                        <div class="project-body">
+                          <h3 class="project-title" id="currency-input"><a href="currency-input/">Currency Input</a></h3>
+                          <p class="project-meta"><time datetime="2024-09-07">Sep 2024</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">A text field that formats digits as US dollars while you type.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/currency-input">read me<span class="visually-hidden">: Currency Input on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="currency-input/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="html-media-best-practices">
+                        <div class="project-body">
+                          <h3 class="project-title" id="html-media-best-practices"><a href="html-media-best-practices/">HTML Media Best Practices</a></h3>
+                          <p class="project-meta"><time datetime="2023-07-12">Jul 2023</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2026-11-17">Nov 2026</time></p>
+                          <p class="project-summary">Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video, and YouTube and Vimeo embeds.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/html-media-best-practices">read me<span class="visually-hidden">: HTML Media Best Practices on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="html-media-best-practices/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="exit-modals">
+                        <div class="project-body">
+                          <h3 class="project-title" id="exit-modals"><a href="exit-modals/">Exit Modals Demo</a></h3>
+                          <p class="project-meta"><time datetime="2023-04-11">Apr 2023</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">Three iterations on exit-intent modals and new-tab interstitials.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/exit-modals">read me<span class="visually-hidden">: Exit Modals Demo on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="exit-modals/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="chatbots">
+                        <div class="project-body">
+                          <h3 class="project-title" id="chatbots"><a href="chatbots/">playground-chatbots</a></h3>
+                          <p class="project-meta"><time datetime="2023-03-15">Mar 2023</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">Experiments with chatbots and live chat: traditional dialog bots, NLP and NLU, large language models, live chat widgets and conversation design.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/chatbots">read me<span class="visually-hidden">: playground-chatbots on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="chatbots/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="captions">
+                        <div class="project-body">
+                          <h3 class="project-title" id="captions"><a href="captions/">captions</a></h3>
+                          <p class="project-meta"><time datetime="2023-01-17">Jan 2023</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">Experimenting with HTML5's baked in captions.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/captions">read me<span class="visually-hidden">: captions on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="captions/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <li class="project" data-tags="">
+                      <article class="project-card" aria-labelledby="typography">
+                        <div class="project-body">
+                          <h3 class="project-title" id="typography"><a href="typography/bungee.html">typography</a></h3>
+                          <p class="project-meta"><time datetime="2022-11-01">Nov 2022</time><span aria-hidden="true"> · </span><span class="visually-hidden">, </span>updated <time datetime="2025-09-02">Sep 2025</time></p>
+                          <p class="project-summary">A playground to explore &amp; experiment in the world of typography.</p>
+                          <p class="project-links"><a href="https://github.com/jas0nmjames/playground/tree/main/typography">read me<span class="visually-hidden">: typography on GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></p>
+                        </div>
+                        <div class="project-media"><img src="typography/thumbnail.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></div>
+                      </article>
+                    </li>
+                    <!-- END PROJECTS -->
+                </ol>
+                <p class="empty-note" hidden>Nothing else here matches. Try <button type="button" class="link-button" data-filter="all">everything</button>.</p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <section class="content-frame" id="colophon" aria-labelledby="colophon-label">
+            <div class="typography-label-container">
+                <h2 class="typography-label" id="colophon-label">colophon</h2>
+            </div>
+            <p class="updated">
+                <!-- BEGIN UPDATED -->
+                Latest project update: <time datetime="2026-11-22">November 22, 2026</time>.
+                <!-- END UPDATED -->
+            </p>
+            <details>
+                <summary>How this page stays up to date</summary>
+                <p>Each project folder's <code>README.md</code> starts with a few lines of frontmatter: when it was published, its tags, where it lives and whether it's pinned. <code>scripts/build.js</code> turns those into this page and the tables in the <a href="https://github.com/jas0nmjames/playground#directory">repository's README</a>, and a GitHub Action runs it on every push.</p>
+            </details>
+            <details>
+                <summary>Credits</summary>
+                <p>Bungee by <a href="https://djr.com/bungee">David Jonathan Ross</a>, under the <a href="assets/fonts/bungee-layers/OFL.txt">SIL Open Font License</a>. <a href="https://fonts.google.com/specimen/Readex+Pro">Readex Pro</a>, the Arabic-compatible version of <a href="https://www.lexend.com/">Lexend</a>, for everything else.</p>
+                <p>Page built with assistance from Claude (Anthropic), November 2026. The styles follow <a href="https://jasonjames.works/" target="_blank" rel="noopener">jasonjames.works<span class="visually-hidden"> (opens in a new tab)</span><span class="arrow" aria-hidden="true">↗</span></a>.</p>
+            </details>
+        </section>
+    </footer>
+</body>
+</html>

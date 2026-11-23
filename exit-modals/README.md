@@ -1,6 +1,7 @@
 ---
 published: 2023-04-11
 updated: 2025-09-02
+summary: Three iterations on exit-intent modals and new-tab interstitials.
 ---
 
 # Exit Modals Demo

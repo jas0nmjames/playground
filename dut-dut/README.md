@@ -2,6 +2,8 @@
 published: 2026-07-20
 updated: 2026-07-21
 url: https://dutdut.netlify.app/
+summary: Write, hear and learn from drumline cadences: paint hits onto a grid, read them as notation, play them on a synthesized drumline and export MIDI, audio or a score.
+pinned: 2
 ---
 
 # dut dut
