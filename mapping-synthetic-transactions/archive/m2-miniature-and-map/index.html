@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halvern in Motion: Miniature and Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
+<style>
+:root { --page:#F3F5F8; --surface:#FFFFFF; --ink:#0E1B2E; --ink2:#5B6676; --line:#DDE2EA; --ctrl:#7D8797; --blue:#1F5AF0; --green:#0A7A4B; --plum:#8E3B6D; --r:12px;
+  --shadow:0 1px 2px rgba(14,27,46,.06), 0 6px 20px rgba(14,27,46,.08); --ui: Figtree, "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; }
+body { font-family:var(--ui); color:var(--ink); background:var(--page); display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100vh; min-height:420px; font-variant-numeric:tabular-nums lining-nums; -webkit-font-smoothing:antialiased; }
+button, input { font-family:inherit; }
+.sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+/* header */
+header.top { display:flex; align-items:center; gap:14px 18px; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; }
+h1 { font-size:18px; font-weight:700; margin:0; letter-spacing:-.01em; }
+.chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; }
+fieldset.seg { display:inline-flex; border:1px solid var(--ctrl); border-radius:999px; padding:3px; margin:0; background:var(--surface); gap:2px; }
+fieldset.seg legend { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+.seg input { position:absolute; opacity:0; width:1px; height:1px; margin:0; }
+.seg label { min-height:32px; min-width:44px; padding:5px 14px; border-radius:999px; font-weight:600; font-size:14px; cursor:pointer; color:var(--ink2); display:flex; align-items:center; justify-content:center; gap:6px; }
+.seg input:checked + label { background:var(--ink); color:#fff; }
+.seg input:focus-visible + label { outline:2px solid var(--blue); outline-offset:2px; }
+.seg kbd { font:600 11px var(--ui); border:1px solid currentColor; border-radius:4px; padding:0 4px; opacity:.8; }
+#drawer-btn { min-height:40px; }
+/* body */
+main.body { display:grid; grid-template-columns:minmax(0,1fr) 360px; min-height:0; }
+#scene { position:relative; overflow:hidden; background:#2B2622; touch-action:none; cursor:grab; }
+#scene:focus-visible { outline:3px solid var(--blue); outline-offset:-3px; }
+.layer { position:absolute; inset:0; opacity:0; transition:opacity .3s ease; }
+.layer.on { opacity:1; }
+body.rm .layer, body.rm .sheet, body.rm aside.rail { transition:none !important; }
+#L-map { background:#CBC4B5; }
+#L-map svg, #L-map canvas { position:absolute; inset:0; width:100%; height:100%; }
+#L-mini canvas.gl { position:absolute; inset:0; width:100%; height:100%; display:block; }
+#overlay { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.loading { position:absolute; inset:0; display:grid; place-items:center; color:#EEE8DC; font-size:15px; padding:24px; text-align:center; }
+.scene-ctrls { position:absolute; top:12px; right:12px; display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; justify-content:flex-end; z-index:4; }
+.card { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:4px; display:flex; gap:4px; align-items:center; }
+.card .lbl { font-size:12.5px; font-weight:600; color:var(--ink2); padding:0 4px 0 8px; }
+.card fieldset.seg { border:0; padding:0; }
+.card .seg label { min-height:30px; padding:4px 11px; font-size:13px; }
+.iconbtn { width:36px; height:36px; border-radius:10px; border:1px solid var(--ctrl); background:#fff; font:600 20px var(--ui); color:var(--ink); cursor:pointer; display:grid; place-items:center; line-height:1; }
+#hoverchip { position:absolute; z-index:5; background:var(--surface); border-radius:10px; box-shadow:var(--shadow); padding:8px 10px; font-size:13px; display:flex; gap:8px; align-items:flex-start; pointer-events:none; max-width:320px; line-height:1.4; }
+[hidden] { display:none !important; }
+.chooser { position:absolute; z-index:6; background:var(--surface); border-radius:var(--r); box-shadow:0 10px 30px rgba(14,27,46,.22); padding:6px; min-width:280px; }
+.chooser .ch-h { margin:6px 8px 4px; font-size:13px; font-weight:700; color:var(--ink2); }
+.chooser ul { list-style:none; margin:0; padding:0; }
+.chooser button { display:grid; grid-template-columns:20px 1fr auto; gap:8px; width:100%; align-items:center; border:0; background:none; padding:8px; border-radius:8px; font-size:13.5px; color:var(--ink); cursor:pointer; text-align:left; min-height:36px; }
+.chooser button:hover { background:var(--page); }
+.debug { position:absolute; left:12px; top:12px; z-index:7; background:rgba(14,27,46,.88); color:#fff; font:12px ui-monospace, Menlo, monospace; padding:6px 9px; border-radius:6px; }
+.legend-strip { position:absolute; left:12px; bottom:12px; z-index:4; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:6px 10px; display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; font-weight:600; max-width:calc(100% - 24px); }
+.legend-strip span { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.legend-strip svg { flex:none; }
+/* rail */
+aside.rail { background:var(--surface); border-left:1px solid var(--line); position:relative; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+.rail-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 10px; }
+.rail-head h2 { font-size:20px; font-weight:700; margin:0; }
+#drawer-close { display:none; }
+#feedwrap { display:flex; flex-direction:column; min-height:0; flex:1; }
+.tiles { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 20px 12px; }
+.tile { background:var(--page); border-radius:var(--r); padding:11px 14px; }
+.tile .val { display:block; font-size:22px; font-weight:700; letter-spacing:-.01em; margin-top:2px; }
+.tile .lbl { font-size:13px; color:var(--ink2); font-weight:500; }
+.filters { display:flex; flex-wrap:wrap; gap:6px; padding:0 20px 10px; }
+.filters button { display:inline-flex; align-items:center; gap:6px; min-height:32px; padding:3px 10px 3px 4px; border-radius:999px; border:1px solid var(--ctrl); background:#fff; font-weight:600; font-size:13px; color:var(--ink); cursor:pointer; }
+.filters button[aria-pressed="false"] { color:var(--ink2); border-style:dashed; background:var(--page); text-decoration:line-through; }
+.feed-h { font-size:13px; font-weight:600; color:var(--ink2); margin:4px 20px 4px; }
+.feed { list-style:none; margin:0; padding:0 8px 16px; overflow:auto; flex:1; min-height:0; }
+.row { display:grid; grid-template-columns:32px minmax(0,1fr) auto; gap:12px; align-items:center; width:100%; border:0; background:none; text-align:left; padding:9px 12px; border-radius:10px; color:inherit; cursor:pointer; min-height:56px; }
+.row:hover { background:var(--page); }
+.row.sel { background:#E8EEFE; box-shadow:inset 3px 0 0 var(--blue); }
+.row .main { min-width:0; }
+.row .cp { display:flex; align-items:center; gap:6px; font-weight:500; font-size:14.5px; min-width:0; }
+.row .cp .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.row .sub { display:block; font-size:13px; color:var(--ink2); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.amt { font-weight:600; font-size:14.5px; white-space:nowrap; }
+.amt.in, .big.in, .v.in { color:var(--green); }
+.amt.muted { color:var(--ink2); }
+.pill { display:inline-block; font-size:12px; font-weight:700; border-radius:999px; padding:2px 8px; line-height:1.35; flex:none; }
+.pill.fail { background:var(--plum); color:#fff; }
+.pill.ok { background:#E2F0E8; color:#08663F; }
+.sheet { position:absolute; inset:0; background:var(--surface); transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; z-index:3; }
+.sheet.open { transform:none; }
+.sheet-top { display:flex; align-items:center; gap:8px; padding:12px 12px 0; }
+#sheet-body { overflow:auto; padding:6px 20px 28px; }
+#sheet-title:focus { outline:none; }
+#sheet-title:focus-visible { outline:2px solid var(--blue); }
+.eyebrow { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink2); font-weight:600; margin:8px 0 4px; }
+.big { font-size:36px; font-weight:700; margin:0; letter-spacing:-.02em; }
+.big.muted { color:var(--ink); }
+.title { font-size:24px; font-weight:700; margin:0; letter-spacing:-.01em; }
+.status { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0 14px; }
+.why { font-size:14px; }
+.kv { margin:0 0 6px; border-top:1px solid var(--line); }
+.kv div { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px; }
+.kv dt { color:var(--ink2); }
+.kv dd { margin:0; text-align:right; font-weight:500; }
+#sheet h3 { font-size:13px; font-weight:700; color:var(--ink2); margin:18px 0 6px; }
+.job { margin:0 0 10px; padding:12px 14px; background:var(--page); border-left:3px solid var(--ctrl); border-radius:0 10px 10px 0; font-size:15px; line-height:1.45; }
+.narr { color:var(--ink2); font-size:13.5px; line-height:1.45; }
+.btn { min-height:40px; border-radius:10px; font-weight:600; font-size:14px; padding:8px 14px; cursor:pointer; border:1px solid var(--ctrl); background:#fff; color:var(--ink); }
+.btn.primary { background:var(--blue); border-color:var(--blue); color:#fff; }
+.btn.ghost { border-color:transparent; background:transparent; display:inline-flex; align-items:center; gap:6px; padding:8px 10px; }
+.btn.ghost:hover { background:var(--page); }
+.wide { width:100%; margin-top:14px; }
+.dim { color:var(--ink2); }
+.small { font-size:12.5px; }
+.mini-tiles { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0 4px; }
+.mini-tiles div { background:var(--page); border-radius:10px; padding:10px 12px; }
+.mini-tiles .lbl { display:block; font-size:12.5px; color:var(--ink2); }
+.mini-tiles .v { font-weight:700; font-size:17px; }
+.feed.inline { padding:0; overflow:visible; margin:0 -12px; }
+.chip.warn { color:#8E3B6D; border-color:#E7C7DA; background:#FBF1F6; }
+.credit { margin:0; padding:10px 20px 12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2); line-height:1.45; }
+.credit a { color:var(--ink2); }
+.credit a:hover { color:var(--ink); }
+/* bottom bar */
+footer.bar { display:flex; align-items:center; gap:12px 18px; padding:10px 20px 8px; background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap; }
+#clock { font-size:22px; font-weight:700; min-width:118px; letter-spacing:-.01em; }
+#play { width:44px; height:44px; border-radius:999px; background:var(--ink); color:#fff; border:0; display:grid; place-items:center; cursor:pointer; flex:none; }
+.tlwrap { flex:1; min-width:260px; }
+.timeline { position:relative; height:42px; }
+#hist { position:absolute; inset:0; width:100%; height:100%; }
+#tl { position:absolute; inset:0; width:100%; height:100%; margin:0; background:transparent; -webkit-appearance:none; appearance:none; cursor:pointer; }
+#tl::-webkit-slider-runnable-track { height:42px; background:transparent; }
+#tl::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:42px; border-radius:6px; background:var(--blue); border:3px solid #fff; box-shadow:0 0 0 1px var(--blue); }
+#tl::-moz-range-track { background:transparent; height:42px; }
+#tl::-moz-range-thumb { width:8px; height:38px; border-radius:6px; background:var(--blue); border:3px solid #fff; box-shadow:0 0 0 1px var(--blue); }
+#tl:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+.marks { display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink2); margin-top:3px; }
+/* drawer below 1280 px */
+@media (max-width:1279px) {
+  main.body { grid-template-columns:minmax(0,1fr); }
+  aside.rail { position:fixed; top:0; right:0; bottom:0; width:min(380px, 100vw); transform:translateX(100%); transition:transform .25s ease; box-shadow:-10px 0 40px rgba(14,27,46,.25); z-index:30; border-left:0; }
+  aside.rail.open { transform:none; }
+  #drawer-close { display:inline-flex; }
+}
+@media (min-width:1280px) { #drawer-btn { display:none; } }
+@media (max-height:620px), (max-width:760px) { .legend-strip { display:none; } }
+/* printed map sheet */
+svg.quad text { font-family:"Barlow Condensed", "Arial Narrow", sans-serif; }
+svg.quad .cn { fill:none; stroke:#B08D6A; stroke-width:var(--cn); vector-effect:non-scaling-stroke; }
+svg.quad .ci { fill:none; stroke:#A87A50; stroke-width:var(--ci); vector-effect:non-scaling-stroke; }
+svg.quad .creek { fill:none; stroke:#2F6DB0; stroke-width:var(--cr); vector-effect:non-scaling-stroke; stroke-linecap:round; }
+svg.quad .lo, svg.quad .mc, svg.quad .li, svg.quad .mf { fill:none; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+svg.quad .lo { stroke:#141414; stroke-width:var(--lo); }
+svg.quad .mc { stroke:#141414; stroke-width:var(--mc); }
+svg.quad .li { stroke:#F4EFE3; stroke-width:var(--li); }
+svg.quad .mf { stroke:#C9402C; stroke-width:var(--mf); }
+svg.quad .rail { stroke:#141414; stroke-width:1.4px; vector-effect:non-scaling-stroke; fill:none; }
+svg.quad .rt { stroke:#141414; stroke-width:1.1px; vector-effect:non-scaling-stroke; fill:none; }
+svg.quad .houses rect { fill:#141414; }
+svg.quad .bigs rect { fill:#E4DDCD; stroke:#141414; stroke-width:var(--bo); vector-effect:non-scaling-stroke; }
+svg.quad .bigs rect.pod { fill:#EDE7DA; stroke-width:.6px; stroke-dasharray:3 2; }
+svg.quad .can rect { fill:none; stroke:#141414; stroke-width:.9px; stroke-dasharray:3 2; vector-effect:non-scaling-stroke; }
+svg.quad .circs circle { fill:#E4DDCD; stroke:#141414; stroke-width:var(--bo); vector-effect:non-scaling-stroke; }
+svg.quad .circs circle.f { fill:#141414; }
+svg.quad .circs circle.w { fill:#A9CBE6; stroke:#2F6DB0; }
+svg.quad .syms { fill:#141414; stroke:#F4EFE3; stroke-width:1.6px; paint-order:stroke; }
+svg.quad .syms * { vector-effect:non-scaling-stroke; }
+svg.quad .syms .pole { fill:none; stroke:#141414; stroke-width:1.4px; }
+svg.quad .syms .ring { fill:#F4EFE3; stroke:#141414; stroke-width:1.3px; }
+svg.quad .lab { paint-order:stroke; stroke:#F4EFE3; stroke-linejoin:round; text-anchor:middle; dominant-baseline:central; }
+svg.quad .dlab text { font-weight:600; letter-spacing:.34em; fill:#141414; }
+svg.quad .mlab text { font-weight:700; letter-spacing:.08em; fill:#141414; }
+svg.quad .slab text { font-weight:500; letter-spacing:.06em; fill:#141414; }
+svg.quad .llab text { font-weight:500; fill:#141414; }
+svg.quad .clab text { font-weight:500; fill:#7E5124; }
+svg.quad .wlab { font-family:"Source Serif 4", Georgia, serif !important; font-style:italic; fill:#245C99; text-anchor:start; dominant-baseline:auto; letter-spacing:.04em; }
+svg.quad .wash { fill:#5D7393; fill-opacity:.18; opacity:0; pointer-events:none; }
+svg.quad .nl { fill:none; stroke:#141414; stroke-width:1.4px; vector-effect:non-scaling-stroke; }
+svg.quad .nl2 { fill:none; stroke:#141414; stroke-width:.6px; vector-effect:non-scaling-stroke; }
+svg.quad .tk { stroke:#141414; stroke-width:.8px; vector-effect:non-scaling-stroke; }
+svg.quad .margin text { font-size:.42px; text-anchor:middle; dominant-baseline:central; fill:#141414; font-weight:500; }
+svg.quad .hd { font-size:.34px; font-weight:600; letter-spacing:.14em; fill:#141414; }
+svg.quad .hd.r { text-anchor:end; }
+svg.quad .ttl text { text-anchor:end; fill:#141414; }
+svg.quad .t1 { font-size:.66px; font-weight:700; letter-spacing:.22em; }
+svg.quad .t2 { font-size:.34px; font-weight:600; letter-spacing:.24em; }
+svg.quad .t3 { font-family:"Source Serif 4", Georgia, serif !important; font-style:italic; font-size:.27px; }
+svg.quad .scale .b { fill:#141414; }
+svg.quad .scale .w { fill:#F4EFE3; stroke:#141414; stroke-width:.02; }
+svg.quad .scale text { font-size:.28px; text-anchor:middle; fill:#141414; font-weight:600; }
+svg.quad .scale .ln { stroke:#141414; stroke-width:.025; }
+svg.quad .north path { fill:#141414; }
+svg.quad .north text { font-size:.4px; text-anchor:middle; font-weight:700; }
+svg.quad .legend text { font-size:.27px; dominant-baseline:central; fill:#141414; font-weight:500; }
+svg.quad .legend .lh { font-size:.3px; letter-spacing:.24em; font-weight:700; }
+svg.quad .legend .pc { font-size:.26px; fill:#8E3B6D; font-weight:700; }
+</style>
+</head>
+<body>
+<!-- archived version: frozen as shipped; only paths and this banner changed in the viewer reorganization (Nov 2026) -->
+<a href="../../" class="archived-banner" style="position:fixed;left:12px;bottom:12px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(14,27,46,.88);color:#fff;font:600 12.5px/1.3 system-ui,-apple-system,sans-serif;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.25)">Archived version (v3, Miniature and Map) · See the latest →</a>
+
+<header class="top">
+  <div class="brand">
+    <h1>Halvern in Motion</h1>
+    <span class="chip">Simulated city · no real people</span>
+    <span class="chip" id="datachip" role="status">Placeholder day · loading the real one</span>
+  </div>
+  <fieldset class="seg" id="viewseg">
+    <legend>View</legend>
+    <input type="radio" name="view" id="v-mini" value="mini" checked><label for="v-mini">Miniature</label>
+    <input type="radio" name="view" id="v-map" value="map"><label for="v-map">Map</label>
+  </fieldset>
+  <span class="dim small" aria-hidden="true">Press <b>M</b> to switch</span>
+  <button class="btn" id="drawer-btn" aria-controls="rail" aria-expanded="false">Activity</button>
+</header>
+<main class="body">
+  <section id="scene" tabindex="0" role="application" aria-roledescription="interactive city" aria-label="City view" aria-describedby="scene-help">
+    <div class="layer on" id="L-mini"><div class="loading">Loading the miniature…</div></div>
+    <div class="layer" id="L-map"></div>
+    <canvas id="overlay" aria-hidden="true"></canvas>
+    <div id="hoverchip" hidden aria-hidden="true"></div>
+    <div class="chooser" id="chooser" hidden role="dialog" aria-labelledby="ch-h"></div>
+    <div class="scene-ctrls">
+      <div class="card" id="blurset">
+        <span class="lbl" id="blur-l">Focus blur</span>
+        <fieldset class="seg" aria-labelledby="blur-l">
+          <input type="radio" name="blur" id="b-off" value="off"><label for="b-off">Off</label>
+          <input type="radio" name="blur" id="b-sub" value="subtle" checked><label for="b-sub">Subtle</label>
+          <input type="radio" name="blur" id="b-full" value="full"><label for="b-full">Full</label>
+        </fieldset>
+      </div>
+      <div class="card"><button class="iconbtn" id="zout" aria-label="Zoom out">−</button><button class="iconbtn" id="zin" aria-label="Zoom in">+</button></div>
+    </div>
+    <div class="legend-strip" aria-hidden="true" id="legendstrip"></div>
+    <div class="debug" id="debug" hidden></div>
+    <p id="scene-help" class="sr-only">Arrow keys pan. Plus and minus zoom. Left and right square brackets step through records in flight; Enter opens the one in focus. Escape clears. Space plays or pauses. M switches between the miniature and the map. Every record is also listed in the Activity feed.</p>
+  </section>
+  <aside id="rail" class="rail" aria-labelledby="rail-h">
+    <div class="rail-head"><h2 id="rail-h" tabindex="-1">Activity</h2><button class="btn ghost" id="drawer-close" aria-label="Close activity">Close</button></div>
+    <div id="feedwrap">
+      <div class="tiles" role="group" aria-label="So far today">
+        <div class="tile"><span class="lbl">Money moved</span><span class="val">$0</span></div>
+        <div class="tile"><span class="lbl">Records</span><span class="val">0</span></div>
+        <div class="tile"><span class="lbl">Failures</span><span class="val">0</span></div>
+        <div class="tile"><span class="lbl">Unpaid hours</span><span class="val">0.0</span></div>
+      </div>
+      <div class="filters" role="group" aria-label="Show record types" id="filters"></div>
+      <h3 class="feed-h" id="feed-h">Latest records</h3>
+      <ul id="feed" class="feed" aria-labelledby="feed-h"></ul>
+      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="../../">Latest version</a> · <a href="../m1-night-map/">Night map (v1)</a> · <a href="../../systems-lens/">Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
+    </div>
+    <section id="sheet" class="sheet" hidden aria-labelledby="sheet-title">
+      <div class="sheet-top"><button class="btn ghost" id="sheet-back"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button></div>
+      <div id="sheet-body"></div>
+    </section>
+  </aside>
+</main>
+<footer class="bar">
+  <div id="clock" aria-hidden="true">8:00 a.m.</div>
+  <button id="play" aria-label="Pause"><svg class="pi" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/></svg><svg class="pl" hidden width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3l10 6-10 6z" fill="currentColor"/></svg></button>
+  <fieldset class="seg" id="speedseg">
+    <legend>Playback speed</legend>
+    <input type="radio" name="speed" id="slive" value="live"><label for="slive">Live</label>
+    <input type="radio" name="speed" id="s1" value="1" checked><label for="s1">1 min/s</label>
+    <input type="radio" name="speed" id="s5" value="5"><label for="s5">5 min/s</label>
+    <input type="radio" name="speed" id="s20" value="20"><label for="s20">20 min/s</label>
+  </fieldset>
+  <div class="tlwrap">
+    <div class="timeline"><canvas id="hist" aria-hidden="true"></canvas><input id="tl" type="range" min="0" max="1439" step="1" value="480" aria-label="Time of day" aria-describedby="tl-help"></div>
+    <div class="marks" aria-hidden="true"><span>12 a.m.</span><span>6 a.m.</span><span>Noon</span><span>6 p.m.</span><span>12 a.m.</span></div>
+    <span id="tl-help" class="sr-only">Arrow keys move one minute, Page Up and Page Down move one hour. Bars show record volume; plum marks show ten-minute stretches where failures run well above the day’s usual share.</span>
+  </div>
+</footer>
+<div id="live" class="sr-only" aria-live="polite"></div>
+<script>// ===== Halvern in Motion v3 · shared city plan, parties, placeholder day, record language =====
+// Everything here is deterministic, so the Miniature and the Map draw the same city.
+(function () {
+  const H = (window.H = {});
+  H.mulberry = function (seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+  const pad = (n, w) => String(n).padStart(w, '0');
+
+  // ---------- districts and grid ----------
+  H.DISTRICTS = { downtown: 'Courthouse Square', older: 'Millbank', subdivision: 'Brookfield Commons', commercial: 'Route 9', industrial: 'Railside', rural: 'Cutler Fields' };
+  const N = (H.N = 20);
+  const isMain = (x, y) => x === 6 || x === 13 || y === 6 || y === 13;
+  function isLocal(x, y) {
+    if (y === 3 && x <= 12) return true;
+    if (x === 3 && y <= 12) return true;
+    if (x === 16 && y <= 12) return true;
+    if (x === 10 && y >= 7 && y <= 12) return true;
+    if (y === 16 && x >= 14 && x <= 18) return true;
+    if (y === 17 && x >= 7 && x <= 12) return true;
+    return false;
+  }
+  function districtOf(x, y) {
+    const bx = x < 6 ? 0 : x < 13 ? 1 : 2, by = y < 6 ? 0 : y < 13 ? 1 : 2;
+    return [['older', 'older', 'subdivision'], ['commercial', 'downtown', 'subdivision'], ['rural', 'commercial', 'industrial']][by][bx];
+  }
+  const RL = H.mulberry(20270303);
+  const tiles = (H.tiles = []);
+  H.T = (x, y) => (x >= 0 && y >= 0 && x < N && y < N ? tiles[y * N + x] : null);
+  const fixed = { '4,1': 'church', '9,4': 'school', '8,8': 'bank', '11,8': 'cityhall', '8,11': 'plaza', '8,12': 'plaza', '12,11': 'bushub', '11,12': 'clinic', '14,14': 'utility', '2,16': 'farmhouse', '4,16': 'silo', '3,18': 'barn', '5,14': 'farmstand', '7,14': 'grocery', '5,8': 'grocery', '7,15': 'gas', '11,14': 'diner', '0,7': 'gas' };
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const d = districtOf(x, y), t = { x, y, d, kind: 'grass', seed: RL(), key: x + ',' + y };
+    if (isMain(x, y)) (t.kind = 'road'), (t.main = true);
+    else if (isLocal(x, y)) t.kind = 'road';
+    else if (d === 'industrial' && x === 19) t.kind = 'rail';
+    else if (fixed[x + ',' + y]) t.kind = fixed[x + ',' + y];
+    tiles.push(t);
+  }
+  const nearRoad = (x, y) => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const n = H.T(x + dx, y + dy); return n && n.kind === 'road'; });
+  for (const t of tiles) {
+    if (t.kind !== 'grass') continue;
+    const r = t.seed, nr = nearRoad(t.x, t.y);
+    switch (t.d) {
+      case 'older': t.kind = nr && r < 0.12 ? 'cornershop' : r < 0.08 ? 'tree' : 'rowhouse'; break;
+      case 'subdivision': t.kind = (t.x + t.y) % 2 === 0 ? 'house' : r < 0.35 ? 'tree' : 'lawn'; break;
+      case 'downtown': t.kind = r < 0.55 ? 'tower' : 'office'; break;
+      case 'commercial': t.kind = nr ? (r < 0.6 ? 'bigbox' : r < 0.8 ? 'diner' : 'parking') : 'parking'; break;
+      case 'industrial': t.kind = r < 0.25 ? 'tank' : 'shed'; break;
+      case 'rural': t.kind = r < 0.1 ? 'tree' : 'field'; break;
+    }
+  }
+  H.roads = tiles.filter((t) => t.kind === 'road');
+  for (const t of tiles) {
+    if (t.kind === 'road') { t.door = t; continue; }
+    let best = null, bd = 1e9;
+    for (const r of H.roads) { const d = Math.abs(r.x - t.x) + Math.abs(r.y - t.y); if (d < bd) (bd = d), (best = r); }
+    t.door = best;
+  }
+  H.path = function (a, b) {
+    a = a.door; b = b.door;
+    const prev = new Map([[a, null]]), q = [a];
+    while (q.length) {
+      const c = q.shift(); if (c === b) break;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const n = H.T(c.x + dx, c.y + dy); if (n && n.kind === 'road' && !prev.has(n)) prev.set(n, c), q.push(n); }
+    }
+    const out = []; for (let c = b; c; c = prev.get(c)) out.push(c);
+    return out.reverse();
+  };
+  H.randomRoad = () => H.roads[Math.floor(Math.random() * H.roads.length)];
+  H.stops = [[6, 4], [13, 8], [6, 10], [9, 13], [16, 13], [3, 6]].map(([x, y]) => H.T(x, y));
+  H.STREETS = { 'h6': 'Court Street', 'h13': 'Route 9', 'v6': 'Mill Road', 'v13': 'Brook Avenue', 'h3': 'Spring Street', 'v3': 'Weaver Street', 'v16': 'Commons Loop', 'v10': 'Bank Street', 'h16': 'Yard Road', 'h17': 'Service Road' };
+
+  // ---------- clock and light ----------
+  H.fmt = function (m) {
+    m = ((Math.floor(m) % 1440) + 1440) % 1440;
+    const h = Math.floor(m / 60), mm = m % 60;
+    return `${h % 12 === 0 ? 12 : h % 12}:${pad(mm, 2)} ${h < 12 ? 'a.m.' : 'p.m.'}`;
+  };
+  const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  H.dark = (m) => { const h = m / 60; return h < 12 ? 1 - sm(5.6, 7.4, h) : sm(17.6, 19.4, h); };
+  H.warm = (m) => { const h = m / 60; return Math.max(0, 1 - Math.abs(h - 7.6) / 1.6) + Math.max(0, 1 - Math.abs(h - 17.8) / 1.6); };
+  H.sunAngle = (m) => ((m / 60 - 6) / 12) * Math.PI;
+  const litTbl = [.2, .12, .07, .06, .08, .2, .45, .4, .2, .1, .1, .1, .1, .1, .1, .1, .2, .45, .62, .66, .62, .55, .42, .3];
+  H.litFrac = (m) => { const h = (m / 60) % 24, i = Math.floor(h), f = h - i; return litTbl[i] * (1 - f) + litTbl[(i + 1) % 24] * f; };
+  H.workLit = (m) => { const hr = m / 60; return hr >= 7 && hr < 18 ? 0.6 : hr >= 18 && hr < 20 ? 0.6 - (hr - 18) * 0.22 : hr >= 6 && hr < 7 ? 0.25 : 0.1; };
+  H.winLit = (w, m) => w.seed < (w.work ? H.workLit(m) : H.litFrac(m));
+
+  // ---------- the plan: one list of parts, footprints and anchors ----------
+  const W2 = (H.W2 = (t) => [t.x - 9.5, t.y - 9.5]);
+  const Y0 = (H.Y0 = 0.04);
+  const PLAN = (H.plan = { parts: [], foot: [], circ: [], lamps: [], wins: [], anch: new Map(), dwell: [], syms: [] });
+  let R = Math.random, cur = null;
+  const pick = (a) => a[Math.floor(R() * a.length)];
+  function put(k, x, y, z, sx, sy, sz, c, r = 0) { PLAN.parts.push({ k, x, y, z, sx, sy, sz, c, r, tile: cur }); }
+  function frameOf(t) {
+    const [cx, cz] = W2(t);
+    let f = [0, 1];
+    for (const [dx, dz] of [[0, 1], [-1, 0], [1, 0], [0, -1]]) { const n = H.T(t.x + dx, t.y + dz); if (n && n.kind === 'road') { f = [dx, dz]; break; } }
+    return { t, cx, cz, f, rot: Math.atan2(f[0], f[1]), P: (u, v) => [cx + f[1] * u + f[0] * v, cz - f[0] * u + f[1] * v] };
+  }
+  H.frameOf = frameOf;
+  function anchor(t, x, y, z) { (PLAN.anch.get(t) || PLAN.anch.set(t, []).get(t)).push([x, y, z]); }
+  function windows(x, z, wx, wz, y0, h, floors, tile, fi, o = {}) {
+    const fh = h / floors, ws = o.ww || 0.03, wh = Math.min(fh * 0.48, 0.05);
+    for (const face of [0, 1]) {
+      const span = face === 0 ? wx : wz, cols = Math.max(1, Math.floor((span - 0.05) / (o.pitch || 0.075)));
+      for (let f = o.skipGround ? 1 : 0; f < floors; f++) for (let c = 0; c < cols; c++) {
+        const u = ((c + 0.5) / cols - 0.5) * (span - 0.06), yy = y0 + f * fh + fh * 0.32;
+        PLAN.wins.push({ m: face === 0 ? [x + u, yy, z + wz / 2 + 0.003, ws, wh, 0.006] : [x - wx / 2 - 0.003, yy, z + u, 0.006, wh, ws], tile, fi, seed: R(), work: !!o.work, glass: o.glass || '#56606e', refl: R() < 0.25 });
+      }
+    }
+  }
+  const DWELL = ['rowhouse', 'house', 'lawn', 'farmhouse'];
+  function blk(F, u, v, su, sv, h, color, o = {}) {
+    const [x, z] = F.P(u, v), [wx, wz] = F.f[0] ? [sv, su] : [su, sv], y0 = o.y0 ?? Y0;
+    put(o.key || 'box', x, y0, z, su, h, sv, color, F.rot);
+    let fi = -1;
+    if (!o.noFoot) { fi = PLAN.foot.length; PLAN.foot.push({ x, z, wx, wz, tile: F.t, cls: o.cls || (DWELL.includes(F.t.kind) ? 'house' : 'big'), dw: o.dw ?? -1 }); }
+    if (o.floors) windows(x, z, wx, wz, y0, h, o.floors, F.t, fi, o);
+    let top = y0 + h;
+    if (o.parapet) { put('box', x, top - 0.004, z, su + 0.012, 0.02, sv + 0.012, o.parapet, F.rot); top += 0.016; }
+    if (o.roof === 'gable') {
+      const rh = o.rh || h * 0.5;
+      if (o.ridgeV) put('gable', x, top, z, sv * 1.1, rh, su * 1.1, o.roofC, F.rot + Math.PI / 2);
+      else put('gable', x, top, z, su * 1.08, rh, sv * 1.14, o.roofC, F.rot);
+      top += rh * 0.65;
+    }
+    if (!o.noAnchor) anchor(F.t, x, top, z);
+    return { x, z, wx, wz, top, fi };
+  }
+  function dwelling(F, b) { const i = PLAN.dwell.length; PLAN.dwell.push({ tile: F.t, x: b.x, z: b.z, top: b.top, fi: b.fi }); if (b.fi >= 0) PLAN.foot[b.fi].dw = i; return i; }
+  function tree(x, z, s = 1, kind) {
+    const conifer = kind === 'conifer' || (kind == null && R() < 0.28);
+    put('cyl', x, Y0, z, 0.011 * s, 0.07 * s, 0.011 * s, '#6b4a32');
+    if (conifer) put('cone', x, Y0 + 0.04 * s, z, 0.055 * s, 0.2 * s, 0.055 * s, pick(['#2f5d34', '#3a6b3c', '#2c5530']));
+    else {
+      const g = pick(['#4f8f3a', '#5fa043', '#467f35', '#6aa84a', '#7aad4a']);
+      put('ball', x, Y0 + 0.13 * s, z, 0.08 * s, 0.085 * s, 0.08 * s, g);
+      if (R() < 0.6) put('ball', x + 0.035 * s, Y0 + 0.1 * s, z + 0.025 * s, 0.055 * s, 0.055 * s, 0.055 * s, g);
+    }
+  }
+  const CARC = ['#e63946', '#457b9d', '#f1faee', '#1d3557', '#e9c46a', '#2a9d8f', '#9aa5b1', '#2b2d42', '#c9ada7'];
+  H.CARC = CARC;
+  function parkedCar(x, z, rot, c) {
+    put('box', x, Y0 + 0.012, z, 0.16, 0.048, 0.082, c || pick(CARC), rot);
+    put('box', x - Math.cos(rot) * 0.012, Y0 + 0.056, z + Math.sin(rot) * 0.012, 0.085, 0.036, 0.072, '#cfdbe4', rot);
+  }
+  function lamp(x, z) { put('cyl', x, Y0, z, 0.006, 0.2, 0.006, '#4a4f57'); PLAN.lamps.push([x, Y0 + 0.205, z]); }
+  function sym(t, kind, x, z) { PLAN.syms.push({ tile: t, kind, x, z }); }
+  const BRICK = ['#c9573b', '#b84e33', '#d46848', '#a9503b', '#c66a4a'];
+  const PASTEL = ['#F6D9A8', '#cfe3ef', '#f2c9c2', '#d6e8c4', '#fbe7b0', '#e9e4d8', '#d8d2ee'];
+
+  function buildTile(t) {
+    const F = frameOf(t), P2 = F.P;
+    let x, z;
+    switch (t.kind) {
+      case 'rowhouse':
+        for (let i = 0; i < 4; i++) {
+          const u = -0.33 + i * 0.22, h = 0.17 + R() * 0.07;
+          const b = blk(F, u, 0.15, 0.205, 0.36, h, pick(BRICK), { floors: 2, roof: 'gable', rh: 0.1, roofC: pick(['#4a3b3b', '#5b4542', '#3f3a3a', '#5a5048']), pitch: 0.08, glass: '#4a5260', noAnchor: true });
+          dwelling(F, b);
+          [x, z] = P2(u + 0.05, 0.08); put('box', x, b.top - 0.04, z, 0.03, 0.08, 0.03, '#7a3a2a', F.rot);
+          [x, z] = P2(u - 0.05, 0.36); put('box', x, Y0, z, 0.06, 0.025, 0.04, '#b8b0a0', F.rot);
+        }
+        for (let k = 0; k < 2; k++) { [x, z] = P2(-0.35 + R() * 0.7, -0.32 + R() * 0.1); tree(x, z, 0.8 + R() * 0.4); }
+        if (R() < 0.4) blk(F, 0.3, -0.36, 0.1, 0.08, 0.05, '#8a7a6a', { noAnchor: true, noFoot: true });
+        break;
+      case 'cornershop': {
+        const b = blk(F, 0, 0.1, 0.62, 0.5, 0.24, '#d99a5b', { floors: 2, skipGround: true, parapet: '#8a5a3a', glass: '#4a5260' });
+        const aw = pick(['#c0392b', '#2f6e9c', '#2a7a4a']);
+        [x, z] = P2(0, 0.38); put('box', x, Y0 + 0.07, z, 0.6, 0.012, 0.08, aw, F.rot);
+        [x, z] = P2(0, 0.352); put('flat', x, Y0 + 0.01, z, 0.5, 0.055, 0.01, '#3a3f48', F.rot);
+        [x, z] = P2(0.3, -0.3); tree(x, z, 0.9);
+        break;
+      }
+      case 'church': {
+        const b = blk(F, -0.08, -0.02, 0.3, 0.62, 0.2, '#efe6d2', { roof: 'gable', ridgeV: true, rh: 0.17, roofC: '#4f5560' });
+        const tw = blk(F, 0.15, 0.24, 0.14, 0.14, 0.42, '#efe6d2', { noAnchor: true });
+        put('hip', tw.x, tw.top, tw.z, 0.16, 0.26, 0.16, '#4f5560', F.rot);
+        sym(t, 'church', b.x, b.z);
+        [x, z] = P2(0.32, -0.25); tree(x, z, 1.1); [x, z] = P2(-0.36, 0.38); tree(x, z, 0.9);
+        break;
+      }
+      case 'school': {
+        const b = blk(F, 0, 0.18, 0.84, 0.3, 0.22, '#c9573b', { floors: 2, parapet: '#8f3b28', work: true, glass: '#4a5866' });
+        blk(F, -0.28, -0.16, 0.28, 0.38, 0.2, '#c9573b', { floors: 2, parapet: '#8f3b28', work: true, noAnchor: true, glass: '#4a5866' });
+        sym(t, 'school', b.x, b.z);
+        [x, z] = P2(0.36, 0.42); put('cyl', x, Y0, z, 0.006, 0.34, 0.006, '#9aa0a6'); put('flat', x + 0.04, Y0 + 0.28, z, 0.08, 0.05, 0.004, '#3E6FB0');
+        [x, z] = P2(0.18, -0.24); put('flat', x, Y0, z, 0.42, 0.004, 0.32, '#5f9e64', F.rot);
+        for (const [du, dv, c] of [[0.05, -0.05, '#e63946'], [-0.06, 0.04, '#e9c46a'], [0.08, 0.07, '#457b9d']]) { const [a, b2] = P2(0.18 + du, -0.24 + dv); put('box', a, Y0, b2, 0.05, 0.05, 0.05, c, F.rot); }
+        break;
+      }
+      case 'house': case 'lawn': {
+        if (t.kind === 'lawn' && R() < 0.22) {
+          t.park = true;
+          for (let k = 0; k < 4; k++) { [x, z] = P2(-0.35 + R() * 0.7, -0.35 + R() * 0.7); tree(x, z, 0.9 + R() * 0.5); }
+          [x, z] = P2(0, 0); put('box', x, Y0, z, 0.08, 0.06, 0.08, pick(['#e63946', '#e9c46a']), F.rot);
+          break;
+        }
+        const wall = pick(PASTEL), roofC = pick(['#3d4655', '#4a4f5a', '#5b4a44', '#2f3a48']);
+        const b = blk(F, -0.08, 0.04, 0.32, 0.24, 0.16, wall, { floors: 2, roof: 'gable', rh: 0.11, roofC, pitch: 0.09, glass: '#4f5a68', noAnchor: true });
+        const di = dwelling(F, b);
+        blk(F, 0.21, 0.07, 0.16, 0.2, 0.11, wall, { roof: 'gable', rh: 0.07, roofC, noAnchor: true, dw: di });
+        [x, z] = P2(0.21, 0.172); put('flat', x, Y0 + 0.01, z, 0.11, 0.075, 0.006, '#f2efe6', F.rot);
+        [x, z] = P2(0.21, 0.34); put('flat', x, Y0, z, 0.13, 0.004, 0.26, '#b9b6ae', F.rot);
+        if (R() < 0.55) parkedCar(x, z, F.rot + Math.PI / 2);
+        [x, z] = P2(-0.32, 0.34); tree(x, z, 0.75);
+        if (R() < 0.35) { [x, z] = P2(-0.1, -0.3); put('flat', x, Y0, z, 0.22, 0.005, 0.13, '#f2efe6', F.rot); put('flat', x, Y0 + 0.001, z, 0.18, 0.006, 0.1, '#4fb3d9', F.rot); }
+        if (R() < 0.5) for (const [u, v, su, sv] of [[0, -0.47, 0.94, 0.008], [-0.47, -0.2, 0.008, 0.54], [0.47, -0.2, 0.008, 0.54]]) { const [a, c] = P2(u, v); put('flat', a, Y0, c, su, 0.03, sv, '#f2efe6', F.rot); }
+        if (R() < 0.5) { [x, z] = P2(0.3, -0.3); tree(x, z, 1.1); }
+        break;
+      }
+      case 'farmhouse': {
+        const b = blk(F, 0, 0.08, 0.3, 0.22, 0.17, '#f6f1e6', { floors: 2, roof: 'gable', rh: 0.1, roofC: '#7d3a32', glass: '#4f5a68', noAnchor: true });
+        dwelling(F, b);
+        [x, z] = P2(0, 0.22); put('box', x, Y0 + 0.07, z, 0.3, 0.012, 0.07, '#7d3a32', F.rot);
+        for (const u of [-0.13, 0.13]) { const [a, c] = P2(u, 0.25); put('cyl', a, Y0, c, 0.006, 0.07, 0.006, '#f6f1e6'); }
+        for (let k = 0; k < 3; k++) { [x, z] = P2(-0.4 + R() * 0.8, -0.3 - R() * 0.15); tree(x, z, 1 + R() * 0.4); }
+        break;
+      }
+      case 'barn': {
+        blk(F, 0, 0, 0.36, 0.5, 0.2, '#b23a2c', { roof: 'gable', ridgeV: true, rh: 0.17, roofC: '#4a4a4a' });
+        [x, z] = P2(0, 0.252); put('flat', x, Y0, z, 0.15, 0.14, 0.006, '#f2efe6', F.rot); put('flat', x, Y0 + 0.01, z + 0.0005, 0.12, 0.12, 0.007, '#8e2a20', F.rot);
+        for (let k = 0; k < 4; k++) { [x, z] = P2(0.3 + R() * 0.12, -0.3 + k * 0.12); put('cyl', x, Y0, z, 0.03, 0.04, 0.03, '#d9b45a'); }
+        break;
+      }
+      case 'silo': {
+        [x, z] = P2(-0.08, -0.05);
+        put('cyl', x, Y0, z, 0.1, 0.62, 0.1, '#c9ced3'); put('dome', x, Y0 + 0.62, z, 0.1, 0.08, 0.1, '#dfe3e6'); anchor(t, x, Y0 + 0.7, z); PLAN.circ.push({ x, z, r: 0.1, tile: t, fill: true });
+        [x, z] = P2(0.16, -0.12); put('cyl', x, Y0, z, 0.07, 0.45, 0.07, '#b8bdc2'); put('dome', x, Y0 + 0.45, z, 0.07, 0.06, 0.07, '#d4d8db'); PLAN.circ.push({ x, z, r: 0.07, tile: t, fill: true });
+        blk(F, 0.1, 0.25, 0.3, 0.18, 0.1, '#9aa0a6', { roof: 'gable', rh: 0.05, roofC: '#7d848a', noAnchor: true });
+        break;
+      }
+      case 'field': {
+        const crop = pick(['#6aa84a', '#d1b154', '#7fb342', '#b9a04a']);
+        for (let k = 0; k < 11; k++) { [x, z] = P2(0, -0.45 + k * 0.09); put('flat', x, Y0, z, 0.94, 0.028, 0.048, crop, F.rot); }
+        if (R() < 0.3) { [x, z] = P2(-0.47, 0); tree(x, z, 1.1); }
+        break;
+      }
+      case 'farmstand': {
+        blk(F, 0, 0.2, 0.22, 0.12, 0.06, '#c9a46a', {});
+        for (let k = 0; k < 4; k++) { [x, z] = P2(-0.09 + k * 0.06, 0.24); put('box', x, Y0 + 0.08, z, 0.06, 0.012, 0.16, k % 2 ? '#f2efe6' : '#c0392b', F.rot); }
+        for (let k = 0; k < 6; k++) { [x, z] = P2(-0.35 + R() * 0.7, -0.3 + R() * 0.5); tree(x, z, 0.8); }
+        break;
+      }
+      case 'tree': for (let k = 0; k < 5; k++) { [x, z] = P2(-0.38 + R() * 0.76, -0.38 + R() * 0.76); tree(x, z, 0.9 + R() * 0.6); } break;
+      case 'tower': {
+        blk(F, 0, 0, 0.86, 0.86, 0.12, '#d9d2c3', { floors: 1, work: true, glass: '#3d4f63', noAnchor: true, ww: 0.05, noFoot: true });
+        const h = 1.0 + t.seed * 1.4, gc = pick(['#8ea7bd', '#a9b6c4', '#7f98a8', '#c4ccd6', '#9fb3a8']);
+        const b = blk(F, 0, 0, 0.6, 0.6, h, gc, { y0: Y0 + 0.12, floors: Math.round(h / 0.075), work: true, pitch: 0.068, glass: '#34475c' });
+        PLAN.foot[b.fi].podium = 0.86;
+        put('box', b.x, b.top, b.z, 0.5, 0.05, 0.5, '#c9ced6', F.rot);
+        put('box', b.x + 0.1, b.top + 0.05, b.z - 0.08, 0.14, 0.05, 0.12, '#9aa0a6', F.rot);
+        if (t.seed > 0.65) put('cyl', b.x, b.top + 0.05, b.z, 0.008, 0.3, 0.008, '#b0b5ba');
+        break;
+      }
+      case 'office': {
+        const h = 0.5 + t.seed * 0.3;
+        const b = blk(F, 0, 0, 0.76, 0.66, h, pick(['#e6dcc8', '#d9cfb8', '#cfc6b4', '#e3d3c0']), { floors: Math.round(h / 0.085), work: true, pitch: 0.08, glass: '#465668' });
+        put('box', b.x, b.top - 0.025, b.z, 0.8, 0.03, 0.7, '#bfb5a2', F.rot);
+        put('box', b.x - 0.12, b.top, b.z + 0.05, 0.14, 0.06, 0.12, '#9aa0a6', F.rot); put('box', b.x + 0.14, b.top, b.z - 0.1, 0.1, 0.04, 0.1, '#a7adb2', F.rot);
+        break;
+      }
+      case 'bank': case 'cityhall': {
+        const ch = t.kind === 'cityhall';
+        [x, z] = P2(0, 0.29); put('flat', x, Y0, z, 0.7, 0.02, 0.16, '#d9d0bd', F.rot);
+        const b = blk(F, 0, -0.06, ch ? 0.84 : 0.72, 0.5, ch ? 0.32 : 0.28, ch ? '#f1eadb' : '#efe6d4', { floors: ch ? 3 : 2, work: true, parapet: '#e2d8c3', glass: '#4a5868', noAnchor: ch });
+        sym(t, t.kind, b.x, b.z);
+        for (let k = 0; k < 6; k++) { const [a, c] = P2(-0.25 + k * 0.1, 0.28); put('cyl', a, Y0 + 0.02, c, 0.017, 0.22, 0.017, '#fbf6ea'); }
+        [x, z] = P2(0, 0.28); put('box', x, Y0 + 0.24, z, 0.62, 0.03, 0.14, '#e8dfcc', F.rot); put('gable', x, Y0 + 0.27, z, 0.64, 0.08, 0.15, '#e8dfcc', F.rot);
+        if (ch) {
+          put('cyl', b.x, b.top, b.z, 0.15, 0.1, 0.15, '#efe6d4'); put('dome', b.x, b.top + 0.1, b.z, 0.15, 0.15, 0.15, '#7aa39a');
+          put('cyl', b.x, b.top + 0.24, b.z, 0.025, 0.06, 0.025, '#efe6d4'); put('cone', b.x, b.top + 0.3, b.z, 0.03, 0.05, 0.03, '#7aa39a');
+          anchor(t, b.x, b.top + 0.35, b.z);
+          [x, z] = P2(0.38, 0.42); put('cyl', x, Y0, z, 0.006, 0.36, 0.006, '#9aa0a6'); put('flat', x + 0.04, Y0 + 0.3, z, 0.08, 0.05, 0.004, '#3E6FB0');
+        }
+        break;
+      }
+      case 'clinic': {
+        const b = blk(F, 0, -0.02, 0.72, 0.56, 0.3, '#f7f7f4', { floors: 3, work: true, pitch: 0.08, glass: '#5a6e80' });
+        sym(t, 'clinic', b.x, b.z);
+        [x, z] = P2(0.18, 0.34); put('box', x, Y0 + 0.08, z, 0.22, 0.015, 0.12, '#c9d2dc', F.rot);
+        [x, z] = P2(-0.2, 0.263); put('flat', x, Y0 + 0.2, z, 0.08, 0.022, 0.008, '#d63a3a', F.rot); put('flat', x, Y0 + 0.171, z, 0.022, 0.08, 0.008, '#d63a3a', F.rot);
+        [x, z] = P2(0.18, 0.42); parkedCar(x, z, F.rot, '#ffffff');
+        break;
+      }
+      case 'bushub': {
+        [x, z] = P2(0, 0.05); put('box', x, Y0 + 0.14, z, 0.88, 0.02, 0.4, '#d9d4c6', F.rot); anchor(t, x, Y0 + 0.16, z);
+        const [wx, wz] = F.f[0] ? [0.4, 0.88] : [0.88, 0.4];
+        PLAN.foot.push({ x, z, wx, wz, tile: t, cls: 'canopy', dw: -1 }); sym(t, 'bus', x, z);
+        for (const u of [-0.4, 0, 0.4]) for (const v of [-0.12, 0.22]) { const [a, c] = P2(u, v); put('cyl', a, Y0, c, 0.008, 0.14, 0.008, '#6d737a'); }
+        for (const u of [-0.2, 0.22]) { const [a, c] = P2(u, 0.05); put('box', a, Y0 + 0.01, c, 0.4, 0.11, 0.12, '#f2c14e', F.rot); put('flat', a, Y0 + 0.07, c, 0.36, 0.035, 0.124, '#2b2f38', F.rot); }
+        break;
+      }
+      case 'plaza': {
+        [x, z] = P2(0, 0); put('cyl', x, Y0, z, 0.17, 0.035, 0.17, '#cfc8b8'); put('cyl', x, Y0 + 0.001, z, 0.15, 0.036, 0.15, '#5fb4d8'); put('cyl', x, Y0, z, 0.02, 0.09, 0.02, '#e8e1d0');
+        PLAN.circ.push({ x, z, r: 0.17, tile: t, water: true });
+        for (const [u, v] of [[-0.35, -0.35], [0.35, -0.35], [-0.35, 0.35], [0.35, 0.35]]) { const [a, c] = P2(u, v); tree(a, c, 0.9); }
+        for (const [u, v] of [[0, 0.3], [0, -0.3]]) { const [a, c] = P2(u, v); put('box', a, Y0, c, 0.12, 0.02, 0.03, '#7a5a46', F.rot); }
+        break;
+      }
+      case 'bigbox': case 'grocery': {
+        const g = t.kind === 'grocery';
+        blk(F, 0, -0.2, 0.88, 0.5, g ? 0.18 : 0.16, g ? '#f1ece0' : '#e3ded3', { parapet: g ? '#d8d2c2' : '#c9c4b8' });
+        [x, z] = P2(0, 0.055); put('flat', x, Y0 + 0.1, z, 0.4, 0.04, 0.01, g ? '#2f8a4a' : pick(['#c0392b', '#2f6e9c', '#e08a2b']), F.rot);
+        [x, z] = P2(0, 0.08); put('box', x, Y0 + 0.055, z, 0.22, 0.012, 0.07, '#d9d4c6', F.rot);
+        for (const v of [0.2, 0.37]) for (let u = -0.38; u <= 0.39; u += 0.1) if (R() < 0.6) { const [a, c] = P2(u, v); parkedCar(a, c, F.rot + Math.PI / 2); }
+        [x, z] = P2(-0.44, 0.28); lamp(x, z); [x, z] = P2(0.44, 0.28); lamp(x, z);
+        break;
+      }
+      case 'diner': {
+        blk(F, -0.1, 0.02, 0.5, 0.28, 0.12, '#dfe3e6', { floors: 1, glass: '#3a4450', ww: 0.05, pitch: 0.07, work: true });
+        [x, z] = P2(-0.1, 0.02); put('flat', x, Y0 + 0.085, z, 0.505, 0.02, 0.285, '#c0392b', F.rot);
+        [x, z] = P2(0.36, 0.38); put('cyl', x, Y0, z, 0.008, 0.24, 0.008, '#6d737a'); put('box', x, Y0 + 0.22, z, 0.12, 0.06, 0.02, '#c0392b', F.rot);
+        for (const u of [-0.3, -0.1, 0.1]) if (R() < 0.75) { const [a, c] = P2(u, 0.36); parkedCar(a, c, F.rot + Math.PI / 2); }
+        break;
+      }
+      case 'gas': {
+        [x, z] = P2(0, 0.14);
+        put('box', x, Y0 + 0.16, z, 0.56, 0.03, 0.38, '#f4f4f0', F.rot); put('flat', x, Y0 + 0.17, z, 0.565, 0.014, 0.385, '#c0392b', F.rot); anchor(t, x, Y0 + 0.2, z);
+        const [wx, wz] = F.f[0] ? [0.38, 0.56] : [0.56, 0.38];
+        PLAN.foot.push({ x, z, wx, wz, tile: t, cls: 'canopy', dw: -1 });
+        for (const [u, v] of [[-0.22, 0], [0.22, 0], [-0.22, 0.28], [0.22, 0.28]]) { const [a, c] = P2(u, v); put('cyl', a, Y0, c, 0.012, 0.16, 0.012, '#d9d9d9'); }
+        for (const u of [-0.12, 0, 0.12]) { const [a, c] = P2(u, 0.14); put('box', a, Y0, c, 0.035, 0.07, 0.03, '#3a3f48', F.rot); }
+        blk(F, 0, -0.3, 0.4, 0.22, 0.12, '#efe8d6', { parapet: '#c0392b', noAnchor: true });
+        [x, z] = P2(0.43, 0.43); put('cyl', x, Y0, z, 0.007, 0.25, 0.007, '#6d737a'); put('box', x, Y0 + 0.2, z, 0.09, 0.08, 0.015, '#f4f4f0', F.rot);
+        break;
+      }
+      case 'parking': {
+        for (let u = -0.4; u <= 0.41; u += 0.1) for (const v of [0.2, -0.2]) { const [a, c] = P2(u, v); put('flat', a, Y0, c, 0.006, 0.003, 0.17, '#f2efe6', F.rot); }
+        for (let u = -0.35; u <= 0.36; u += 0.1) for (const v of [0.2, -0.2]) if (R() < 0.5) { const [a, c] = P2(u, v); parkedCar(a, c, F.rot + Math.PI / 2); }
+        const [a, c] = P2(0, 0); lamp(a, c);
+        break;
+      }
+      case 'shed': {
+        const b = blk(F, 0, -0.04, 0.88, 0.7, 0.2, pick(['#a9aeb3', '#b7bcc0', '#9fa7ad']), { noAnchor: true });
+        for (let k = 0; k < 4; k++) { [x, z] = P2(0, -0.39 + 0.0875 + k * 0.175); put('gable', x, b.top, z, 0.88, 0.07, 0.175, '#c3c8cc', F.rot); }
+        anchor(t, b.x, b.top + 0.07, b.z);
+        for (const u of [-0.28, 0, 0.28]) { [x, z] = P2(u, 0.312); put('flat', x, Y0, z, 0.12, 0.12, 0.006, '#4a4f57', F.rot); }
+        for (const u of [-0.28, 0.0]) if (R() < 0.7) { [x, z] = P2(u, 0.39); put('box', x, Y0 + 0.012, z, 0.09, 0.08, 0.17, '#f2f2ee', F.rot); }
+        break;
+      }
+      case 'tank': {
+        [x, z] = P2(-0.16, -0.05); put('cyl', x, Y0, z, 0.21, 0.26, 0.21, '#e6e4de'); put('dome', x, Y0 + 0.26, z, 0.21, 0.05, 0.21, '#f2f0ea'); anchor(t, x, Y0 + 0.31, z); PLAN.circ.push({ x, z, r: 0.21, tile: t });
+        [x, z] = P2(0.22, 0.18); put('cyl', x, Y0, z, 0.14, 0.2, 0.14, '#d6d4cc'); put('dome', x, Y0 + 0.2, z, 0.14, 0.04, 0.14, '#e6e4de'); PLAN.circ.push({ x, z, r: 0.14, tile: t });
+        [x, z] = P2(0.05, 0.05); put('flat', x, Y0 + 0.05, z, 0.3, 0.02, 0.02, '#8a8f95', F.rot + 0.7);
+        break;
+      }
+      case 'utility': {
+        blk(F, -0.15, 0.12, 0.5, 0.4, 0.36, '#c3c0b6', { floors: 4, work: true, parapet: '#a8a49a', glass: '#4a5868' });
+        [x, z] = P2(0.28, -0.25);
+        for (const [dx, dz] of [[-0.06, -0.06], [0.06, -0.06], [-0.06, 0.06], [0.06, 0.06]]) put('cyl', x + dx, Y0, z + dz, 0.008, 0.32, 0.008, '#7d848a');
+        put('cyl', x, Y0 + 0.32, z, 0.1, 0.1, 0.1, '#9fb0bd'); put('cone', x, Y0 + 0.42, z, 0.1, 0.05, 0.1, '#8a9ba8');
+        sym(t, 'watertower', x, z);
+        [x, z] = P2(-0.22, -0.3); put('flat', x, Y0, z, 0.36, 0.006, 0.26, '#a8a49a', F.rot);
+        for (const u of [-0.32, -0.22, -0.12]) { const [a, c] = P2(u, -0.3); put('box', a, Y0, c, 0.06, 0.07, 0.06, '#4c6a52', F.rot); }
+        break;
+      }
+    }
+  }
+  function buildStreets() {
+    const isRoad = (x, y) => { const n = H.T(x, y); return n && n.kind === 'road'; };
+    for (const t of tiles) {
+      if (t.kind !== 'road') continue;
+      cur = t; R = H.mulberry(t.x * 7919 + t.y * 104729 + 3);
+      const [cx, cz] = W2(t);
+      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { if (isRoad(t.x + dx, t.y + dz)) continue; put('flat', cx + dx * 0.46, Y0, cz + dz * 0.46, dx ? 0.08 : 1, 0.022, dx ? 1 : 0.08, '#cfcac0'); }
+      if (t.main) {
+        const ex = isRoad(t.x - 1, t.y) && isRoad(t.x + 1, t.y), ey = isRoad(t.x, t.y - 1) && isRoad(t.x, t.y + 1);
+        const inter = (t.x === 6 || t.x === 13) && (t.y === 6 || t.y === 13);
+        if (!inter) { if (ex && !ey) put('flat', cx, Y0, cz, 0.24, 0.003, 0.025, '#f2ead2'); else if (ey && !ex) put('flat', cx, Y0, cz, 0.025, 0.003, 0.24, '#f2ead2'); }
+        if (inter) for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (isRoad(t.x + dx, t.y + dz)) for (let k = -0.32; k <= 0.33; k += 0.08) put('flat', cx + dx * 0.62 + (dz ? k : 0), Y0, cz + dz * 0.62 + (dx ? k : 0), dx ? 0.12 : 0.04, 0.003, dx ? 0.04 : 0.12, '#f4f1e6');
+        if ((t.x + t.y) % 2 === 0 && !inter) for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!isRoad(t.x + dx, t.y + dz)) { lamp(cx + dx * 0.45, cz + dz * 0.45); break; }
+      }
+    }
+    for (const s of H.stops) {
+      cur = s;
+      const [cx, cz] = W2(s);
+      for (const [dx, dz] of [[0, 1], [-1, 0], [1, 0], [0, -1]]) if (!isRoad(s.x + dx, s.y + dz)) {
+        const x = cx + dx * 0.43 + dz * 0.2, z = cz + dz * 0.43 + dx * 0.2, rot = Math.atan2(dx, dz);
+        put('flat', x, Y0, z, 0.2, 0.09, 0.04, '#9fc6d8', rot); put('box', x, Y0 + 0.09, z, 0.23, 0.012, 0.07, '#d9d4c6', rot);
+        put('cyl', x + dz * 0.15, Y0, z + dx * 0.15, 0.005, 0.15, 0.005, '#555'); put('flat', x + dz * 0.15, Y0 + 0.13, z + dx * 0.15, 0.04, 0.04, 0.004, '#2F6E9C', rot);
+        anchor(s, x, Y0 + 0.12, z); s.stopPos = [x, z];
+        break;
+      }
+    }
+    for (const t of tiles) if (t.kind === 'rail') {
+      cur = t; const [cx, cz] = W2(t);
+      for (let k = -0.45; k < 0.5; k += 0.1) put('flat', cx, Y0, cz + k, 0.3, 0.012, 0.04, '#6b5a48');
+      for (const dx of [-0.08, 0.08]) put('flat', cx + dx, Y0 + 0.012, cz, 0.014, 0.014, 1, '#5d6066');
+    }
+  }
+  for (const t of tiles) { cur = t; R = H.mulberry(t.x * 7919 + t.y * 104729 + 17); buildTile(t); }
+  buildStreets();
+  R = Math.random;
+
+  // ---------- parties ----------
+  H.households = []; H.orgs = []; H.party = new Map();
+  PLAN.dwell.forEach((d, i) => {
+    const id = 'HH-' + pad(i + 1, 4);
+    const p = { id, type: 'household', name: 'Household ' + pad(i + 1, 4), district: d.tile.d, tile: d.tile, anchor: [d.x, d.top, d.z], dwell: i };
+    d.hh = p; H.households.push(p); H.party.set(id, p);
+  });
+  const NAMES = {
+    cornershop: ['Millbank Corner Market', 'Weaver Street Grocery', 'Spring Street Mart', 'Lucky Seven Market', 'Hilltop Corner Store', 'Two Sisters Deli', 'Brickrow Bodega', 'Sunrise Mini Mart'],
+    grocery: ['Halvern Fresh Market', 'Route 9 Grocery Outlet'],
+    bigbox: ['Bargain Depot', 'Route 9 Home & Garden', 'Thrift Hall', 'Prairie Pharmacy & Goods', 'Cutler Supply Co.', 'Midway Furniture', 'Allday Dollar Store', 'Valley Farm & Fleet', 'Halvern Tire & Auto', 'Kidstuff Outlet', 'Plainsview Appliance', 'Second Chance Thrift', 'Route 9 Pet Supply', 'Halvern Hardware', 'Sunflower Craft & Fabric', 'Mid-America Mattress', 'Corner Cellular Repair', 'Prairie Sporting Goods', 'County Line Liquor', 'Halvern Rent-to-Own', 'Big Sky Paint', 'Cutler Feed Store', 'Sunrise Furniture Outlet', 'Halvern Office Supply', 'Prairie Thrift & Toys'],
+    diner: ['Courthouse Diner', 'Blue Plate Diner', 'Route 9 Grill', 'Station Coffee', 'Mill Street Café', 'Lucky Wok', 'Prairie Taqueria'],
+    gas: ['Route 9 Gas & Go', 'Millbank Fuel'],
+    farmstand: ['Cutler Farm Stand'],
+    tower: ['Halvern Mutual Insurance', 'Prairie Health Billing', 'First Halvern Title', 'Courthouse Legal Center', 'Mid-America Call Center', 'Halvern Regional Bank Operations', 'Granary Tower Offices', 'Plainsview Logistics HQ', 'Halvern Daily Ledger', 'Northfield Software', 'County Courthouse Annex', 'Heartland Payroll Services', 'Prairie Wireless', 'Halvern Hospital Admin', 'Union Hall Tower', 'Halvern Health Partners', 'Riverbend Insurance Agency', 'Courthouse Square Apartments Office'],
+    office: ['Halvern Tax & Accounting', 'County Workforce Office', 'Courthouse Square Dental', 'Halvern Public Library', 'County Records Office', 'Main Street Realty', 'Halvern Chamber of Commerce', 'Legal Aid of Halvern', 'Halvern Community College Annex', 'Square Physical Therapy', 'Halvern Credit Union'],
+    shed: ['Railside Distribution', 'Halvern Box & Freight', 'Prairie Cold Storage', 'Midland Parts Supply', 'Railside Metal Works', 'Halvern Bottling', 'Plainsview Packaging', 'County Road Department', 'Railside Lumber', 'Halvern Printing', 'Mid-America Recycling', 'Halvern Bakery Plant', 'Plainsview Movers', 'Railside Auto Salvage', 'Halvern Ice Co.', 'Cutler Seed Warehouse', 'County Salt Barn', 'Midland Cabinets', 'Railside Tool & Die'],
+    tank: ['Railside Fuel Terminal', 'Halvern Feed & Grain Tanks', 'Prairie Propane', 'Mid-America Asphalt', 'Halvern Water Treatment', 'Prairie Ethanol', 'Railside Chemical Supply'],
+    utility: ['Halvern Power & Water'], bank: ['Halvern Savings Bank'], cityhall: ['Halvern City Hall'], clinic: ['Courthouse Square Clinic'], school: ['Millbank Elementary School'], church: ['Millbank Community Church'], bushub: ['Halvern Transit Center'], silo: ['Cutler Grain Co-op'],
+  };
+  const SECTOR = { cornershop: 'Retail', grocery: 'Grocery', bigbox: 'Retail', diner: 'Food service', gas: 'Fuel', farmstand: 'Farm', tower: 'Offices', office: 'Offices', shed: 'Warehouse and industry', tank: 'Fuel storage', utility: 'Utility', bank: 'Bank', cityhall: 'Local government', clinic: 'Health care', school: 'Public school', church: 'Congregation', bushub: 'Public transit', silo: 'Agriculture' };
+  H.SECTOR = SECTOR;
+  const used = {};
+  let oi = 1;
+  for (const t of tiles) {
+    if (!NAMES[t.kind]) continue;
+    const list = NAMES[t.kind], k = used[t.kind] = (used[t.kind] || 0) + 1;
+    const name = k <= list.length ? list[k - 1] : `${list[(k - 1) % list.length]} ${Math.ceil(k / list.length)}`;
+    const a = PLAN.anch.get(t), [cx, cz] = W2(t);
+    const p = { id: 'ORG-' + pad(oi++, 4), type: 'org', name, kind: t.kind, sector: SECTOR[t.kind], district: t.d, tile: t, anchor: a && a.length ? a[0] : [cx, 0.3, cz] };
+    t.org = p; H.orgs.push(p); H.party.set(p.id, p);
+  }
+  const transit = { id: 'ORG-T001', type: 'org', name: 'Halvern Transit', kind: 'transit', sector: 'Public transit', district: 'downtown', tile: H.T(12, 11), anchor: null };
+  H.orgs.push(transit); H.party.set(transit.id, transit); H.transit = transit;
+  H.partyAtTile = (t) => t.org || null;
+  H.hhAtTile = (t) => H.households.filter((h) => h.tile === t);
+  H.anchorOf = (p, id = 0, place) => {
+    if (place && place.anchor) return place.anchor;
+    if (p.anchor) return p.anchor;
+    const a = PLAN.anch.get(p.tile); if (a && a.length) return a[id % a.length];
+    const [x, z] = W2(p.tile); return [x, 0.3, z];
+  };
+  H.STOP_NAME = (s) => {
+    const hz = H.T(s.x - 1, s.y) && H.T(s.x - 1, s.y).kind === 'road' && H.T(s.x + 1, s.y) && H.T(s.x + 1, s.y).kind === 'road';
+    return (hz ? H.STREETS['h' + s.y] : H.STREETS['v' + s.x]) || 'Mill Road';
+  };
+
+  // ---------- record language: one colour, line and head per type ----------
+  H.REC = {
+    purchase: { label: 'Purchase', mini: '#FFC83D', map: '#A65300', dash: 'solid', head: 'circle', w: 1 },
+    income: { label: 'Income', mini: '#3EE08F', map: '#145A33', dash: 'solid', head: 'diamond', w: 1.6 },
+    bill: { label: 'Bill', mini: '#8CC3FF', map: '#1C5C9C', dash: 'long', head: 'square', w: 1 },
+    service: { label: 'Public service', mini: '#B79CFF', map: '#5B3FA8', dash: 'long', head: 'ring', w: 1 },
+    unpaid: { label: 'Unpaid work', mini: '#FFFFFF', map: '#1A1A1A', dash: 'short', head: 'ring', w: 1 },
+    fail: { label: 'Failure', mini: '#F4A3DA', map: '#8E3B6D', dash: 'solid', head: 'x', w: 1, stop: 0.55 },
+  };
+  H.CASING = '#0E1B2E';
+  H.vkind = (r) => (r.outcome && r.outcome !== 'completed') || r.record_type === 'failed_attempt' ? 'fail'
+    : r.record_type === 'non_monetary_job' ? 'unpaid'
+    : ['income', 'benefit_issuance'].includes(r.record_type) ? 'income'
+    : ['bill_payment', 'tax', 'insurance_claim'].includes(r.record_type) ? 'bill' : 'purchase';
+
+  // ---------- placeholder day in the 31-column records shape ----------
+  const lerpTable = (tbl) => (m) => { const h = (m / 60) % 24, i = Math.floor(h), f = h - i; return tbl[i] * (1 - f) + tbl[(i + 1) % 24] * f; };
+  const RATE = H.RATE = {
+    purchase: lerpTable([.15, .1, .05, .05, .08, .3, 1.0, 2.6, 3.2, 2.2, 2.0, 2.6, 3.6, 3.0, 2.2, 2.4, 3.2, 4.0, 3.6, 2.6, 1.8, 1.1, .6, .3]),
+    income: lerpTable([.4, .7, .9, .9, .7, .5, .3, .2, .2, .15, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .2, .3]),
+    bill: lerpTable([.5, .9, 1.1, 1.1, .9, .6, .3, .2, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .2, .3]),
+    unpaid: lerpTable([0, 0, 0, 0, 0, 0, .2, 1.4, 1.5, .4, .3, .3, .4, .3, .5, 1.3, 1.0, .6, .5, .4, .3, .2, .1, 0]),
+    missedbus: lerpTable([0, 0, 0, 0, 0, .02, .08, .25, .25, .08, .04, .04, .05, .04, .05, .1, .2, .22, .1, .05, .03, .02, 0, 0]),
+  };
+  H.buildDay = function (seed = 20270303) {
+    const r = H.mulberry(seed ^ 0x5bd1e995);
+    const pk = (a) => a[Math.floor(r() * a.length)];
+    const wpick = (pairs) => { let s = 0; for (const p of pairs) s += p[1]; let x = r() * s; for (const p of pairs) if ((x -= p[1]) < 0) return p[0]; return pairs[0][0]; };
+    const poisson = (l) => { const L = Math.exp(-l); let k = 0, p = 1; do { k++; p *= r(); } while (p > L); return k - 1; };
+    const money = (lo, hi) => Math.round((lo + r() * (hi - lo)) * 100) / 100;
+    const shops = H.orgs.filter((o) => ['cornershop', 'grocery', 'bigbox', 'diner', 'gas', 'farmstand'].includes(o.kind));
+    const employers = H.orgs.filter((o) => ['tower', 'office', 'shed', 'bigbox', 'grocery', 'clinic', 'cityhall', 'school', 'utility', 'diner', 'tank'].includes(o.kind));
+    const bank = H.orgs.find((o) => o.kind === 'bank'), util = H.orgs.find((o) => o.kind === 'utility'), school = H.orgs.find((o) => o.kind === 'school'), clinic = H.orgs.find((o) => o.kind === 'clinic');
+    const HH = H.households;
+    const near = (hh, list) => { const same = list.filter((o) => o.district === hh.district); return same.length && r() < 0.45 ? pk(same) : pk(list); };
+    const CAT = { cornershop: 'snacks_and_essentials', grocery: 'groceries', bigbox: 'household_goods', diner: 'meal_out', gas: 'fuel', farmstand: 'fresh_produce' };
+    const JOB = {
+      groceries: ['When the fridge is nearly empty, I want to restock for the week, so I can feed everyone without extra trips.', 'When I get off work, I want to pick up what we need for dinner, so I can cook at home tonight.'],
+      snacks_and_essentials: ['When we run out of milk and diapers, I want to grab them close to home, so I can get back before the baby wakes.', 'When I am on my way to the bus, I want to get something quick to eat, so I can make it to my shift.'],
+      household_goods: ['When the washer hose split, I want to replace it today, so I can do laundry before the weekend.', 'When my kid outgrows her shoes, I want to find a cheap pair that fits, so she can walk to school comfortably.'],
+      meal_out: ['When I have a short lunch break, I want to eat something hot nearby, so I can get back on time.', 'When I finish a double shift, I want someone else to cook, so I can rest.'],
+      fuel: ['When the gas light comes on, I want to fill up on my way, so I can get to work without worrying.'],
+      fresh_produce: ['When the farm stand is open, I want to buy fresh vegetables, so I can stretch our food budget.'],
+      health_copay: ['When my cough will not go away, I want to see a doctor nearby, so I can get back to work this week.'],
+      paycheck: ['When payday comes, I want my pay to land on time, so I can cover rent and groceries.'],
+      utilities: ['When the power bill comes due, I want it paid automatically, so I can keep the lights on without thinking about it.'],
+      loan_payment: ['When my car loan is due, I want the payment to go through on time, so I can avoid a late fee.'],
+      school_dropoff: ['When school starts at eight, I want to get my kids there on time, so I can still make my shift.'],
+      school_pickup: ['When school lets out, I want to pick up my kids safely, so they are not waiting outside alone.'],
+      care_ride: ['When my mother has an appointment, I want to drive her there and wait, so she is not alone with the doctor.'],
+      bus_trip: ['When my car is in the shop, I want to catch the bus to work, so I can keep my hours.'],
+    };
+    const out = [];
+    const base = (t, type, cat, hh, from, to) => ({
+      record_id: '', timestamp_local: '', record_type: type, job_category: cat, job_statement: pk(JOB[cat] || JOB.groceries),
+      actor_person_id: hh.id.replace('HH', 'P') + '-1', household_id: hh.id, from_party_id: from.id, to_party_id: to.id, beneficiary_person_id: '',
+      district: hh.district, channel: 'in_person', payment_method: 'none', amount_gross: 0, amount_paid_by_user: 0, amount_paid_by_third_party: 0, third_party_payer: '', funding_level: '',
+      imputed_public_cost: 0, sales_tax: 0, fee_type: '', fee_amount: 0, time_minutes: 0, wait_minutes: 0, travel_miles: 0, travel_mode: '', outcome: 'completed', friction_tags: '', lens_tags: '', related_record_id: '', narrative: '',
+      _t: t, _from: from, _to: to, _hh: hh,
+    });
+    for (let m = 0; m < 1440; m++) {
+      const mid = m + 0.5;
+      for (let n = poisson(RATE.purchase(mid)); n > 0; n--) {
+        const t = m + r(), hh = pk(HH);
+        if (r() < 0.04) {
+          const rec = base(t, 'purchase', 'health_copay', hh, hh, clinic);
+          const g = money(140, 380), cp = pk([25, 30, 35, 40]), medicaid = r() < 0.45;
+          Object.assign(rec, { payment_method: pk(['debit', 'credit']), amount_gross: g, amount_paid_by_user: cp, amount_paid_by_third_party: Math.round((g - cp) * 100) / 100, third_party_payer: medicaid ? 'Medicaid' : 'Employer health plan', imputed_public_cost: medicaid ? Math.round((g - cp) * 100) / 100 : 0, funding_level: medicaid ? 'federal_state' : '', time_minutes: 50 + Math.floor(r() * 40), wait_minutes: 10 + Math.floor(r() * 35), travel_mode: pk(['car', 'bus', 'walk']), lens_tags: 'health_cost', narrative: 'Checked in at the front desk and paid the copay before the visit.' });
+          out.push(rec); continue;
+        }
+        const shop = near(hh, shops), cat = CAT[shop.kind];
+        const rec = base(t, 'purchase', cat, hh, hh, shop);
+        const g = shop.kind === 'grocery' || shop.kind === 'bigbox' ? money(12, 180) : shop.kind === 'gas' ? money(22, 68) : shop.kind === 'diner' ? money(7, 38) : money(3, 32);
+        const food = ['grocery', 'cornershop', 'farmstand'].includes(shop.kind);
+        const method = wpick([['debit', 45], ['credit', 30], ['cash', 14], ['prepaid', 3], ['p2p_app', 3], ...(food ? [['ebt_snap', 7]] : [])]);
+        const tax = food ? 0 : Math.round(g * 0.07 * 100) / 100;
+        Object.assign(rec, { payment_method: method, amount_gross: g, sales_tax: tax, amount_paid_by_user: g, time_minutes: 5 + Math.floor(r() * 30), travel_mode: wpick([['car', 55], ['walk', 30], ['bus', 15]]), travel_miles: Math.round(r() * 40) / 10, lens_tags: 'consumer_finance' });
+        if (method === 'ebt_snap') Object.assign(rec, { amount_paid_by_user: 0, amount_paid_by_third_party: g, third_party_payer: 'SNAP (USDA)', imputed_public_cost: g, funding_level: 'federal' });
+        if (method === 'debit' && r() < 0.02) Object.assign(rec, { fee_type: 'overdraft', fee_amount: 35, amount_paid_by_user: g + 35, friction_tags: 'fee' });
+        if (['debit', 'credit', 'prepaid', 'ebt_snap'].includes(method) && r() < 0.06) {
+          const why = wpick([['insufficient_funds', 70], ['pending_hold', 18], ['other', 12]]);
+          Object.assign(rec, { outcome: 'declined', friction_tags: why, amount_paid_by_user: 0, amount_paid_by_third_party: 0, imputed_public_cost: 0, fee_type: '', fee_amount: 0, narrative: why === 'other' ? 'The card was locked after a fraud alert from a gas station charge.' : 'Tried the card twice at the register, then put the items back.' });
+          rec._place = shop.tile;
+        }
+        out.push(rec);
+      }
+      for (let n = poisson(RATE.income(mid)); n > 0; n--) {
+        const hh = pk(HH), emp = pk(employers), rec = base(m + r(), 'income', 'paycheck', hh, emp, hh);
+        const g = money(380, 1900);
+        Object.assign(rec, { payment_method: 'ach', channel: 'automatic', amount_gross: g, amount_paid_by_user: 0, lens_tags: 'labor', narrative: 'Direct deposit from the employer’s payroll run.' });
+        out.push(rec);
+      }
+      for (let n = poisson(RATE.bill(mid)); n > 0; n--) {
+        const hh = pk(HH), loan = r() < 0.35, to = loan ? bank : util, rec = base(m + r(), 'bill_payment', loan ? 'loan_payment' : 'utilities', hh, hh, to);
+        const g = loan ? money(140, 420) : money(38, 260), online = r() < 0.25;
+        Object.assign(rec, { payment_method: online ? 'debit' : 'ach', channel: online ? 'online' : 'automatic', amount_gross: g, amount_paid_by_user: g, lens_tags: 'consumer_finance' });
+        if (online) Object.assign(rec, { fee_type: 'convenience', fee_amount: 1.95, amount_paid_by_user: g + 1.95, friction_tags: 'fee' });
+        if (!online && r() < 0.03) { Object.assign(rec, { outcome: 'failed', friction_tags: 'insufficient_funds', fee_type: 'returned_payment', fee_amount: 35, amount_paid_by_user: 35, narrative: 'Autopay bounced because the paycheck had not posted yet.' }); rec._place = to.tile; }
+        out.push(rec);
+      }
+      for (let n = poisson(RATE.unpaid(mid)); n > 0; n--) {
+        const hh = pk(HH), care = m > 540 && m < 900 && r() < 0.4, to = care ? clinic : school;
+        const cat = care ? 'care_ride' : m < 720 ? 'school_dropoff' : 'school_pickup';
+        const rec = base(m + r(), 'non_monetary_job', cat, hh, hh, to);
+        Object.assign(rec, { time_minutes: care ? 60 + Math.floor(r() * 90) : 15 + Math.floor(r() * 30), travel_mode: wpick([['car', 65], ['walk', 30], ['bus', 5]]), travel_miles: Math.round(r() * 30) / 10, beneficiary_person_id: hh.id.replace('HH', 'P') + (care ? '-4' : '-3'), lens_tags: care ? 'family_care;aging' : 'family_care;education' });
+        out.push(rec);
+      }
+      for (let n = poisson(RATE.missedbus(mid)); n > 0; n--) {
+        const hh = pk(HH), stop = pk(H.stops), rec = base(m + r(), 'failed_attempt', 'bus_trip', hh, hh, transit);
+        const why = wpick([['early', 40], ['late_connection', 35], ['full', 25]]);
+        Object.assign(rec, { outcome: 'failed', channel: 'in_person', travel_mode: 'bus', wait_minutes: 15 + Math.floor(r() * 35), time_minutes: 20 + Math.floor(r() * 40), friction_tags: why === 'full' ? 'no_transit;wait' : 'schedule_volatility;wait', lens_tags: 'labor', narrative: why === 'early' ? 'The bus left the stop two minutes ahead of schedule.' : why === 'full' ? 'The bus was full and passed the stop.' : 'The connecting bus was late, so the transfer was missed.' });
+        rec._why = why; rec._place = stop; rec._stop = stop;
+        out.push(rec);
+      }
+    }
+    out.sort((a, b) => a._t - b._t);
+    out.forEach((rec, i) => {
+      rec.record_id = 'R-' + pad(i + 1, 6);
+      const s = Math.floor(rec._t * 60);
+      rec.timestamp_local = `2027-03-03T${pad(Math.floor(s / 3600), 2)}:${pad(Math.floor(s / 60) % 60, 2)}:${pad(s % 60, 2)}`;
+      rec._vk = H.vkind(rec); rec._i = i;
+    });
+    // prefix sums and minute index for seeking
+    const n = out.length, cm = new Float64Array(n + 1), cf = new Int32Array(n + 1), cu = new Float64Array(n + 1);
+    out.forEach((rec, i) => {
+      cm[i + 1] = cm[i] + (rec.outcome === 'completed' && rec._vk !== 'unpaid' ? rec.amount_gross : 0);
+      cf[i + 1] = cf[i] + (rec._vk === 'fail' ? 1 : 0);
+      cu[i + 1] = cu[i] + (rec._vk === 'unpaid' ? rec.time_minutes : 0);
+    });
+    const minute = new Int32Array(1442); let j = 0;
+    for (let m = 0; m <= 1441; m++) { while (j < n && out[j]._t < m) j++; minute[m] = j; }
+    H.records = out; H.cum = { money: cm, fails: cf, unpaid: cu }; H.minuteIdx = minute;
+    H.recById = new Map(out.map((x) => [x.record_id, x]));
+    return out;
+  };
+  H.indexAt = (t) => { const m = Math.min(1440, Math.max(0, Math.floor(t))); let i = H.minuteIdx[m]; while (i < H.records.length && H.records[i]._t <= t) i++; return i; };
+  H.placeOf = (r) => (r._place ? r._place : null);
+
+  // ---------- words ----------
+  const CAT_LABEL = { groceries: 'Groceries', snacks_and_essentials: 'Essentials', household_goods: 'Household goods', meal_out: 'Dining out', fuel: 'Fuel', fresh_produce: 'Fresh produce', health_copay: 'Doctor visit', paycheck: 'Paycheck', utilities: 'Utilities', loan_payment: 'Loan payment', school_dropoff: 'School drop-off', school_pickup: 'School pickup', care_ride: 'Ride to a doctor’s visit', bus_trip: 'Bus to work' };
+  H.catLabel = (r) => CAT_LABEL[r.job_category] || r.job_category.replace(/_/g, ' ');
+  H.methodLabel = (r) => {
+    if (r.record_type === 'income' && r.payment_method === 'ach') return 'Direct deposit';
+    if (r.payment_method === 'ach' && r.channel === 'automatic') return 'Autopay';
+    return { debit: 'Debit card', credit: 'Credit card', cash: 'Cash', prepaid: 'Prepaid card', p2p_app: 'Payment app', ebt_snap: 'SNAP EBT card', ach: 'Bank transfer', none: '' }[r.payment_method] ?? r.payment_method;
+  };
+  H.outcomeWord = (r) => (r._vk !== 'fail' ? 'Completed' : r.record_type === 'failed_attempt' ? 'Missed' : r.outcome === 'declined' ? 'Declined' : 'Returned');
+  H.reason = (r) => {
+    if (r._vk !== 'fail') return '';
+    if (r.record_type === 'failed_attempt') return r._why === 'early' ? 'Missed the bus · it left two minutes early' : r._why === 'full' ? 'Missed the bus · it was full and passed the stop' : 'Missed the bus · the connecting bus was late';
+    if (r.record_type === 'bill_payment') return 'Autopay returned · not enough in checking';
+    const tag = r.friction_tags;
+    if (tag.includes('pending_hold')) return 'Card declined · paycheck still on hold';
+    if (tag.includes('other')) return 'Card declined · card locked after a fraud alert';
+    return 'Card declined · not enough in checking';
+  };
+  H.counterparty = (r) => (r._vk === 'income' ? r._from : r._to);
+  H.fmtMoney = (v, sign) => {
+    const s = '$' + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return sign && v < 0 ? '−' + s : sign && v > 0 ? '+' + s : s;
+  };
+  H.fmtHours = (min) => (min / 60).toLocaleString('en-US', { maximumFractionDigits: 1, minimumFractionDigits: 1 }) + ' hr';
+  H.placeName = (p) => (p.tile && p.tile.kind === 'road' && H.stops.includes(p.tile) ? `${H.STOP_NAME(p.tile)} bus stop` : p.name);
+})();
+</script>
+<script>// ===== Halvern in Motion v3 · Map view: a printed quadrangle sheet (SVG base + canvas records) =====
+(function () {
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const PAPER = '#F4EFE3', INK = '#141414', BROWN = '#A87A50', BLUE = '#2F6DB0', RED = '#C9402C', ROSE = '#EFD3CB', WOOD = '#CFE2BC', FIELD = '#DFEACB';
+  const NL = [-0.6, 20.6]; // neatline in map units (map unit = one block = 660 ft)
+  const SHEET = { x: -2.5, y: -2.3, w: 25.0, h: 29.6 };
+  const mx = (x) => x + 10, my = (z) => z + 10;
+  const f2 = (v) => +v.toFixed(3);
+
+  // ---------- terrain (map only) ----------
+  const CREEK = [[-0.7, 14.25], [0.9, 14.55], [1.9, 15.35], [2.9, 15.45], [3.7, 15.05], [4.6, 15.4], [5.35, 16.2], [5.45, 17.4], [5.25, 18.5], [5.55, 19.6], [5.4, 20.7]];
+  function catmull(pts, seg = 10) {
+    const out = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+      for (let k = 0; k < seg; k++) {
+        const t = k / seg, t2 = t * t, t3 = t2 * t;
+        out.push([0, 1].map((j) => 0.5 * (2 * p1[j] + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2 + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3)));
+      }
+    }
+    out.push(pts[pts.length - 1]);
+    return out;
+  }
+  const creekPts = catmull(CREEK, 12);
+  function distCreek(x, y) {
+    let d = 1e9;
+    for (let i = 0; i < creekPts.length - 1; i++) {
+      const [ax, ay] = creekPts[i], [bx, by] = creekPts[i + 1], dx = bx - ax, dy = by - ay;
+      const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)));
+      d = Math.min(d, Math.hypot(x - ax - t * dx, y - ay - t * dy));
+    }
+    return d;
+  }
+  const elev = (x, y) => 846 + 20 * Math.sin(x * 0.31 + 0.4) * Math.cos(y * 0.23 - 0.8) + 12 * Math.sin((x + y) * 0.17) + 2.4 * (10 - y)
+    + 28 * Math.exp(-((x - 16) ** 2 + (y - 3.5) ** 2) / 16) - 26 * Math.exp(-(distCreek(x, y) ** 2) / 2.4);
+
+  function contours() {
+    const step = 0.12, x0 = NL[0], n = Math.ceil((NL[1] - NL[0]) / step) + 1;
+    const G = new Float32Array(n * n);
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) G[j * n + i] = elev(x0 + i * step, x0 + j * step);
+    let lo = 1e9, hi = -1e9; for (const v of G) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    const levels = []; for (let L = Math.ceil(lo / 10) * 10; L <= hi; L += 10) levels.push(L);
+    const res = [];
+    for (const L of levels) {
+      const segs = [];
+      const P = (i, j, a, b, ai, aj, bi, bj) => { const t = (L - a) / (b - a); return [x0 + (ai + (bi - ai) * t) * step, x0 + (aj + (bj - aj) * t) * step]; };
+      for (let j = 0; j < n - 1; j++) for (let i = 0; i < n - 1; i++) {
+        const a = G[j * n + i], b = G[j * n + i + 1], c = G[(j + 1) * n + i + 1], d = G[(j + 1) * n + i];
+        const e = [];
+        if ((a < L) !== (b < L)) e.push(P(i, j, a, b, i, j, i + 1, j));
+        if ((b < L) !== (c < L)) e.push(P(i, j, b, c, i + 1, j, i + 1, j + 1));
+        if ((c < L) !== (d < L)) e.push(P(i, j, c, d, i + 1, j + 1, i, j + 1));
+        if ((d < L) !== (a < L)) e.push(P(i, j, d, a, i, j + 1, i, j));
+        if (e.length === 2) segs.push(e);
+        else if (e.length === 4) { segs.push([e[0], e[1]]); segs.push([e[2], e[3]]); }
+      }
+      // join segments into polylines
+      const key = (p) => Math.round(p[0] * 1e4) + ',' + Math.round(p[1] * 1e4);
+      const adj = new Map();
+      segs.forEach((s, i) => { for (const p of s) { const k = key(p); (adj.get(k) || adj.set(k, []).get(k)).push(i); } });
+      const used = new Uint8Array(segs.length), lines = [];
+      for (let i = 0; i < segs.length; i++) {
+        if (used[i]) continue; used[i] = 1;
+        const line = [segs[i][0], segs[i][1]];
+        for (const dir of [1, 0]) {
+          for (;;) {
+            const end = dir ? line[line.length - 1] : line[0];
+            const next = (adj.get(key(end)) || []).find((k) => !used[k]);
+            if (next == null) break;
+            used[next] = 1;
+            const s = segs[next], p = key(s[0]) === key(end) ? s[1] : s[0];
+            dir ? line.push(p) : line.unshift(p);
+          }
+        }
+        lines.push(line);
+      }
+      res.push({ L, index: L % 50 === 0, lines });
+    }
+    return res;
+  }
+  const pathD = (pts) => 'M' + pts.map((p) => f2(p[0]) + ' ' + f2(p[1])).join('L');
+
+  // ---------- build the sheet ----------
+  function buildSVG() {
+    const P = H.plan, out = [];
+    const tileRect = (t, c) => `<rect x="${t.x}" y="${t.y}" width="1.01" height="1.01" fill="${c}"/>`;
+    // tints
+    let tints = '';
+    for (const t of H.tiles) {
+      if (t.d === 'downtown' && t.kind !== 'road') tints += tileRect(t, ROSE);
+      else if (t.kind === 'tree' || t.park || t.kind === 'plaza') tints += tileRect(t, WOOD);
+      else if (t.kind === 'field' || t.kind === 'farmstand' || t.kind === 'silo' || t.kind === 'barn' || t.kind === 'farmhouse') tints += tileRect(t, FIELD);
+    }
+    // contours
+    const cs = contours();
+    let cN = '', cI = '', cLab = '';
+    for (const c of cs) {
+      for (const line of c.lines) {
+        if (line.length < 3) continue;
+        const d = pathD(line);
+        if (c.index) cI += d; else cN += d;
+        if (c.index && line.length > 30) {
+          let acc = 0;
+          for (let i = 1; i < line.length; i++) {
+            acc += Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]);
+            if (acc > 6.5 && i < line.length - 3) {
+              acc = 0;
+              const [a, b] = [line[i - 1], line[i + 1]];
+              let ang = (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
+              if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+              const [x, y] = line[i];
+              if (x > 0 && x < 20 && y > 0 && y < 20) cLab += `<text x="${f2(x)}" y="${f2(y)}" transform="rotate(${ang.toFixed(1)} ${f2(x)} ${f2(y)})">${c.L}</text>`;
+            }
+          }
+        }
+      }
+    }
+    // roads
+    const isRoad = (x, y) => { const n = H.T(x, y); return n && n.kind === 'road'; };
+    let mainD = '', localD = '';
+    for (const t of H.roads) {
+      const cx = t.x + 0.5, cy = t.y + 0.5;
+      for (const [dx, dy] of [[1, 0], [0, 1]]) {
+        if (!isRoad(t.x + dx, t.y + dy)) continue;
+        const n = H.T(t.x + dx, t.y + dy), main = t.main && n.main && (dx ? t.y === 6 || t.y === 13 : t.x === 6 || t.x === 13);
+        const d = `M${cx} ${cy}L${cx + dx} ${cy + dy}`;
+        if (main) mainD += d; else localD += d;
+      }
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = t.x + dx, ny = t.y + dy;
+        if (nx < 0 || ny < 0 || nx >= H.N || ny >= H.N) {
+          const d = `M${cx} ${cy}L${cx + dx * 1.2} ${cy + dy * 1.2}`;
+          if (t.main && (dx ? t.y === 6 || t.y === 13 : t.x === 6 || t.x === 13)) mainD += d; else localD += d;
+        }
+      }
+    }
+    let railD = 'M19.5 13.5L19.5 20.8', ticks = '';
+    for (let y = 13.7; y < 20.7; y += 0.22) ticks += `M19.38 ${f2(y)}L19.62 ${f2(y)}`;
+    // buildings
+    let houses = '', bigs = '', canopies = '', circs = '';
+    P.foot.forEach((f, i) => {
+      const x = mx(f.x) - f.wx / 2, y = my(f.z) - f.wz / 2;
+      if (f.cls === 'house') houses += `<rect x="${f2(x)}" y="${f2(y)}" width="${f2(f.wx)}" height="${f2(f.wz)}"/>`;
+      else if (f.cls === 'canopy') canopies += `<rect x="${f2(x)}" y="${f2(y)}" width="${f2(f.wx)}" height="${f2(f.wz)}"/>`;
+      else {
+        if (f.podium) { const p = f.podium; bigs += `<rect class="pod" x="${f2(mx(f.x) - p / 2)}" y="${f2(my(f.z) - p / 2)}" width="${p}" height="${p}"/>`; }
+        bigs += `<rect x="${f2(x)}" y="${f2(y)}" width="${f2(f.wx)}" height="${f2(f.wz)}"/>`;
+      }
+    });
+    for (const c of P.circ) circs += c.water ? `<circle class="w" cx="${f2(mx(c.x))}" cy="${f2(my(c.z))}" r="${c.r}"/>` : `<circle class="${c.fill ? 'f' : ''}" cx="${f2(mx(c.x))}" cy="${f2(my(c.z))}" r="${c.r}"/>`;
+    // point symbols and their labels
+    const SYM = {
+      school: (x, y) => `<rect x="${x - 0.07}" y="${y - 0.07}" width="0.14" height="0.14"/><path d="M${x} ${y - 0.07}L${x} ${y - 0.3}" class="pole"/><path d="M${x} ${y - 0.3}L${x + 0.15} ${y - 0.255}L${x} ${y - 0.21}Z"/>`,
+      church: (x, y) => `<rect x="${x - 0.07}" y="${y - 0.07}" width="0.14" height="0.14"/><path class="pole" d="M${x} ${y - 0.07}L${x} ${y - 0.3}M${x - 0.07} ${y - 0.22}L${x + 0.07} ${y - 0.22}"/>`,
+      clinic: (x, y) => `<circle cx="${x}" cy="${y}" r="0.12" class="ring"/><path class="pole" d="M${x - 0.07} ${y}L${x + 0.07} ${y}M${x} ${y - 0.07}L${x} ${y + 0.07}"/>`,
+      cityhall: (x, y) => `<circle cx="${x}" cy="${y}" r="0.14" class="ring"/>` + star(x, y, 0.1),
+      bank: (x, y) => `<path d="M${x} ${y - 0.11}L${x + 0.11} ${y}L${x} ${y + 0.11}L${x - 0.11} ${y}Z"/>`,
+      bus: (x, y) => `<rect x="${x - 0.13}" y="${y - 0.08}" width="0.26" height="0.16" rx="0.04"/><circle cx="${x - 0.07}" cy="${y + 0.1}" r="0.03"/><circle cx="${x + 0.07}" cy="${y + 0.1}" r="0.03"/>`,
+      watertower: (x, y) => `<circle cx="${x}" cy="${y}" r="0.1" class="ring"/><circle cx="${x}" cy="${y}" r="0.03"/>`,
+    };
+    function star(x, y, r) { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + f2(x + Math.cos(a) * rr) + ' ' + f2(y + Math.sin(a) * rr); } return `<path d="${d}Z"/>`; }
+    const LBL = { school: 'Millbank Elem. School', church: 'Church', clinic: 'Clinic', cityhall: 'City Hall', bank: 'Halvern Savings', bus: 'Transit Center', watertower: 'Water Tank' };
+    let syms = '', lab = '';
+    for (const s of P.syms) {
+      const x = f2(mx(s.x)), y = f2(my(s.z));
+      syms += SYM[s.kind](x, y);
+      lab += `<text x="${x}" y="${f2(y + 0.34)}">${LBL[s.kind]}</text>`;
+    }
+    for (const [k, txt, dx, dy] of [['tank', 'Fuel Terminal', 0, 0.55], ['silo', 'Grain Co-op', 0, 0.62], ['utility', 'Power & Water', -0.1, 0.62]]) {
+      const t = H.tiles.find((q) => q.kind === k); if (t && k !== 'utility') lab += `<text x="${t.x + 0.5 + dx}" y="${t.y + dy + 0.5}">${txt}</text>`;
+      if (t && k === 'utility') lab += `<text x="${t.x + 0.35}" y="${t.y + 1.0}">${txt}</text>`;
+    }
+    // district names in spaced capitals
+    const DL = [['MILLBANK', 8.6, 1.55], ['COURTHOUSE SQUARE', 9.95, 9.6], ['BROOKFIELD COMMONS', 16.5, 4.4], ['ROUTE 9', 2.9, 9.5], ['RAILSIDE', 16.4, 17.6], ['CUTLER FIELDS', 2.5, 17.3]];
+    let dlab = DL.map(([s, x, y]) => `<text x="${x}" y="${y}">${s}</text>`).join('');
+    // street names along the line
+    let slab = '', mlab = '';
+    const streets = [];
+    for (const [k, name] of Object.entries(H.STREETS)) {
+      const hz = k[0] === 'h', v = +k.slice(1);
+      const run = []; for (let i = 0; i < H.N; i++) { const t = hz ? H.T(i, v) : H.T(v, i); if (t && t.kind === 'road') run.push(i); }
+      // stretches between cross streets
+      const cross = run.filter((i) => { const a = hz ? H.T(i, v - 1) : H.T(v - 1, i), b = hz ? H.T(i, v + 1) : H.T(v + 1, i); return (a && a.kind === 'road') || (b && b.kind === 'road'); });
+      const stops = [run[0] - 0.5, ...cross, run[run.length - 1] + 1.5];
+      const spans = []; for (let i = 0; i < stops.length - 1; i++) spans.push([stops[i], stops[i + 1]]);
+      spans.sort((a, b) => b[1] - b[0] - (a[1] - a[0]));
+      const main = v === 6 || v === 13;
+      for (const [a, b] of spans.slice(0, main ? 2 : 1)) {
+        if (b - a < 2.2) continue;
+        const c = (a + b) / 2 + 0.5;
+        const x = hz ? c : v + 0.5, y = hz ? v + 0.5 : c;
+        const tx = `<text x="${f2(x)}" y="${f2(y)}" ${hz ? '' : `transform="rotate(-90 ${f2(x)} ${f2(y)})"`}>${name.toUpperCase()}</text>`;
+        if (main) mlab += tx; else slab += tx;
+      }
+    }
+    // margin: index letters and numbers, title block, scale, north arrow, legend
+    let mar = '';
+    for (let i = 0; i < 20; i++) {
+      const L = String.fromCharCode(65 + i);
+      mar += `<text x="${i + 0.5}" y="-0.95">${L}</text><text x="${i + 0.5}" y="21.25">${L}</text>`;
+      mar += `<text x="-1.05" y="${i + 0.5}">${i + 1}</text><text x="21.05" y="${i + 0.5}">${i + 1}</text>`;
+    }
+    let ticks2 = '';
+    for (let i = 1; i < 20; i++) ticks2 += `M${i} -0.6L${i} -0.75M${i} 20.6L${i} 20.75M-0.6 ${i}L-0.75 ${i}M20.6 ${i}L20.75 ${i}`;
+    const top = `<text class="hd" x="-0.6" y="-1.65">HALVERN, MID-AMERICA</text><text class="hd r" x="20.6" y="-1.65">SIMULATED CITY SHEET · 2027</text>`;
+    const title = `<g class="ttl"><text class="t1" x="20.6" y="24.55">HALVERN QUADRANGLE</text><text class="t2" x="20.6" y="25.15">2027 · SIMULATED</text>
+      <text class="t3" x="20.6" y="25.75">An invented city drawn for study. No real places or people.</text><text class="t3" x="20.6" y="26.15">Grid squares are one block, about 660 feet. Contour interval 10 feet.</text></g>`;
+    // bar scale: 1 mile = 8 blocks
+    let sb = '<g class="scale">';
+    for (let i = 0; i < 4; i++) sb += `<rect x="${7 + i * 1}" y="22.55" width="1" height="0.14" class="${i % 2 ? 'w' : 'b'}"/>`;
+    sb += `<rect x="11" y="22.55" width="4" height="0.14" class="b"/><rect x="6" y="22.55" width="1" height="0.14" class="w"/>`;
+    for (const [x, s] of [[7, '0'], [11, '½'], [15, '1 MILE'], [6, '⅛']]) sb += `<text x="${x}" y="22.38">${s}</text>`;
+    const ft = 1 / 660;
+    sb += `<path class="ln" d="M7 23.05L${f2(7 + 3000 * ft)} 23.05"/>`;
+    for (let f = 0; f <= 3000; f += 1000) sb += `<path class="ln" d="M${f2(7 + f * ft)} 22.95L${f2(7 + f * ft)} 23.15"/><text x="${f2(7 + f * ft)}" y="23.45">${f ? f.toLocaleString('en-US') : '0'}</text>`;
+    sb += `<text x="${f2(7 + 3000 * ft + 0.9)}" y="23.45">FEET</text></g>`;
+    const north = `<g class="north" transform="translate(16.6 22.15)"><path d="M0 -0.05L0.22 0.75L0 0.6L-0.22 0.75Z"/><text x="0" y="1.15">N</text></g>`;
+    // legend
+    const lg = [];
+    let ly = 22.45;
+    const row = (sym, label) => { lg.push(`<g transform="translate(-0.6 ${f2(ly)})">${sym}<text x="1.15" y="0.06">${label}</text></g>`); ly += 0.38; };
+    const col2 = [];
+    let ly2 = 22.45;
+    const row2 = (sym, label) => { col2.push(`<g transform="translate(2.6 ${f2(ly2)})">${sym}<text x="1.15" y="0.06">${label}</text></g>`); ly2 += 0.38; };
+    row(`<path d="M0 0L0.9 0" stroke="${INK}" stroke-width="0.2"/><path d="M0 0L0.9 0" stroke="${RED}" stroke-width="0.12"/>`, 'Main road');
+    row(`<path d="M0 0L0.9 0" stroke="${INK}" stroke-width="0.13"/><path d="M0 0L0.9 0" stroke="${PAPER}" stroke-width="0.06"/>`, 'Local street');
+    row(`<path d="M0 0L0.9 0" stroke="${INK}" stroke-width="0.04"/><path d="M0.1 -0.07L0.1 0.07M0.3 -0.07L0.3 0.07M0.5 -0.07L0.5 0.07M0.7 -0.07L0.7 0.07" stroke="${INK}" stroke-width="0.03"/>`, 'Railroad');
+    row(`<rect x="0.1" y="-0.08" width="0.16" height="0.16" fill="${INK}"/><rect x="0.42" y="-0.12" width="0.4" height="0.24" fill="#E4DDCD" stroke="${INK}" stroke-width="0.03"/>`, 'Homes · larger buildings');
+    row(`<path d="M0 0.05Q0.45 -0.15 0.9 0.05" stroke="${BROWN}" stroke-width="0.035" fill="none"/>`, 'Contour, 10 ft');
+    row(`<path d="M0 0.05Q0.45 -0.12 0.9 0.05" stroke="${BLUE}" stroke-width="0.05" fill="none"/>`, 'Creek');
+    const REC = H.REC;
+    const hd = (shape, c) => shape === 'circle' ? `<circle cx="0.9" cy="0" r="0.08" fill="${c}"/>` : shape === 'diamond' ? `<path d="M0.9 -0.1L1 0L0.9 0.1L0.8 0Z" fill="${c}"/>` : shape === 'square' ? `<rect x="0.82" y="-0.08" width="0.16" height="0.16" fill="${c}"/>` : shape === 'ring' ? `<circle cx="0.9" cy="0" r="0.07" fill="none" stroke="${c}" stroke-width="0.035"/>` : `<path d="M0.82 -0.08L0.98 0.08M0.98 -0.08L0.82 0.08" stroke="${c}" stroke-width="0.04"/>`;
+    for (const k of ['purchase', 'income', 'bill', 'service', 'unpaid', 'fail']) {
+      const r = REC[k], da = r.dash === 'long' ? 'stroke-dasharray="0.2 0.1"' : r.dash === 'short' ? 'stroke-dasharray="0.06 0.07"' : '';
+      row2(`<path d="M0 0L${k === 'fail' ? 0.5 : 0.8} 0" stroke="${r.map}" stroke-width="${0.04 * r.w}" ${da}/>` + hd(r.head, r.map), r.label);
+    }
+    row2(`<path d="M0.45 -0.12L0.6 0.12L0.3 0.12Z" fill="#8E3B6D"/><text x="0.72" y="0.1" class="pc">3</text>`, 'Failures at a place');
+    const legend = `<g class="legend"><text class="lh" x="-0.6" y="22.05">LEGEND</text>${lg.join('')}${col2.join('')}</g>`;
+
+    return `
+<svg xmlns="${SVGNS}" class="quad" preserveAspectRatio="none" aria-hidden="true">
+<defs><clipPath id="nlclip"><rect x="${NL[0]}" y="${NL[0]}" width="${NL[1] - NL[0]}" height="${NL[1] - NL[0]}"/></clipPath>
+<path id="creekpath" d="${pathD(creekPts)}"/></defs>
+<rect x="${SHEET.x}" y="${SHEET.y}" width="${SHEET.w}" height="${SHEET.h}" fill="${PAPER}" class="paper"/>
+<g clip-path="url(#nlclip)">
+  <g class="tints">${tints}</g>
+  <path class="cn" d="${cN}"/><path class="ci" d="${cI}"/>
+  <path class="creek" d="${pathD(creekPts)}"/>
+  <path class="lo" d="${localD}"/><path class="mc" d="${mainD}"/><path class="li" d="${localD}"/><path class="mf" d="${mainD}"/>
+  <path class="rail" d="${railD}"/><path class="rt" d="${ticks}"/>
+  <g class="houses">${houses}</g><g class="bigs">${bigs}</g><g class="can">${canopies}</g><g class="circs">${circs}</g>
+  <g class="syms">${syms}</g>
+  <g class="lab clab">${cLab}</g>
+  <text class="lab wlab"><textPath href="#creekpath" startOffset="22%">Cutler Run</textPath></text>
+  <g class="lab mlab">${mlab}</g><g class="lab slab">${slab}</g><g class="lab llab">${lab}</g><g class="lab dlab">${dlab}</g>
+  <rect class="wash" x="${NL[0]}" y="${NL[0]}" width="${NL[1] - NL[0]}" height="${NL[1] - NL[0]}"/>
+</g>
+<rect class="nl" x="${NL[0]}" y="${NL[0]}" width="${NL[1] - NL[0]}" height="${NL[1] - NL[0]}"/>
+<rect class="nl2" x="${NL[0] - 1.45}" y="${NL[0] - 1.45}" width="${NL[1] - NL[0] + 2.9}" height="${NL[1] - NL[0] + 2.9}"/>
+<path class="tk" d="${ticks2}"/>
+<g class="margin">${mar}</g>${top}${title}${sb}${north}${legend}
+</svg>`;
+  }
+
+  // ---------- view ----------
+  let el, svg, cv, ctx, W = 0, Hh = 0, dpr = 1, lastVB = '', lastK = -1, washOn = -1, occMinute = -1;
+  let occ = new Uint8Array(0), winsByFoot = null;
+  const S0 = 75; // px per block at zoom 1 on a 1200 px wide view
+  const scale = () => (W / 16) * App.cam.zoom;
+  const camM = () => [mx(App.cam.x), my(App.cam.z)];
+  function toScreen(x, z) { const s = scale(), [cx, cy] = camM(); return [(mx(x) - cx) * s + W / 2, (my(z) - cy) * s + Hh / 2]; }
+  function toWorld(px, py) { const s = scale(), [cx, cy] = camM(); return [(px - W / 2) / s + cx - 10, (py - Hh / 2) / s + cy - 10]; }
+  // records fly as flat curves bowed to the left of travel
+  function ctrl(F) {
+    const [ax, az] = F.a, [bx, bz] = F.b, dx = bx - ax, dz = bz - az, L = Math.hypot(dx, dz) || 1, k = 0.22 * L;
+    return [(ax + bx) / 2 + (-dz / L) * k, (az + bz) / 2 + (dx / L) * k];
+  }
+  function ptWorld(F, s) { const c = ctrl(F), u = 1 - s; return [u * u * F.a[0] + 2 * u * s * c[0] + s * s * F.b[0], u * u * F.a[2] + 2 * u * s * c[1] + s * s * F.b[2]]; }
+  function pathPoint(F, s) { const [x, z] = ptWorld(F, s); return toScreen(x, z); }
+
+  function updateView() {
+    const s = scale(), [cx, cy] = camM();
+    const vb = `${f2(cx - W / 2 / s)} ${f2(cy - Hh / 2 / s)} ${f2(W / s)} ${f2(Hh / s)}`;
+    if (vb !== lastVB) { svg.setAttribute('viewBox', vb); lastVB = vb; }
+    const k = Math.max(0.55, Math.min(2.4, Math.sqrt(s / S0)));
+    if (Math.abs(k - lastK) > 0.01) {
+      lastK = k;
+      const set = (sel, prop, v) => svg.querySelectorAll(sel).forEach((n) => n.style.setProperty(prop, v));
+      svg.style.setProperty('--mc', `${7 * k}px`); svg.style.setProperty('--mf', `${4.4 * k}px`);
+      svg.style.setProperty('--lo', `${3.8 * k}px`); svg.style.setProperty('--li', `${1.7 * k}px`);
+      svg.style.setProperty('--cn', `${Math.max(0.6, 0.75 * k)}px`); svg.style.setProperty('--ci', `${Math.max(1, 1.4 * k)}px`);
+      svg.style.setProperty('--cr', `${2.4 * k}px`); svg.style.setProperty('--bo', `${Math.max(0.8, 1.1 * k)}px`);
+      const fs = (base) => (base * Math.pow(k, 0.9)) / s;
+      const sizes = { '.dlab': 13.5, '.mlab': 9.5, '.slab': 8.8, '.llab': 9, '.clab': 8.5, '.wlab': 12.5 };
+      for (const [sel, b] of Object.entries(sizes)) set(sel, 'font-size', `${fs(b).toFixed(4)}px`);
+      for (const [sel, b] of Object.entries(sizes)) set(sel, 'stroke-width', `${(fs(b) * 0.32).toFixed(4)}px`);
+    }
+  }
+
+  function drawShape(c, shape, x, y, r, col, hollowBg) {
+    c.fillStyle = col; c.strokeStyle = col;
+    c.beginPath();
+    if (shape === 'circle') { c.arc(x, y, r, 0, 7); c.fill(); }
+    else if (shape === 'diamond') { c.moveTo(x, y - r * 1.25); c.lineTo(x + r * 1.25, y); c.lineTo(x, y + r * 1.25); c.lineTo(x - r * 1.25, y); c.closePath(); c.fill(); }
+    else if (shape === 'square') { c.rect(x - r, y - r, r * 2, r * 2); c.fill(); }
+    else if (shape === 'ring') { c.lineWidth = 2; c.arc(x, y, r, 0, 7); if (hollowBg) { c.fillStyle = hollowBg; c.fill(); } c.stroke(); }
+    else if (shape === 'x') { c.lineWidth = 2.4; c.lineCap = 'round'; c.moveTo(x - r, y - r); c.lineTo(x + r, y + r); c.moveTo(x + r, y - r); c.lineTo(x - r, y + r); c.stroke(); }
+  }
+  function strokePart(c, F, s0, s1, col, w, dash, alpha) {
+    if (s1 <= s0) return;
+    const n = Math.max(2, Math.ceil((s1 - s0) * 40));
+    c.beginPath();
+    for (let i = 0; i <= n; i++) { const [x, y] = pathPoint(F, s0 + ((s1 - s0) * i) / n); i ? c.lineTo(x, y) : c.moveTo(x, y); }
+    c.globalAlpha = alpha;
+    c.setLineDash([]); c.strokeStyle = PAPER; c.lineWidth = w + 2.4; c.stroke();
+    c.setLineDash(dash); c.strokeStyle = col; c.lineWidth = w; c.stroke();
+    c.setLineDash([]); c.globalAlpha = 1;
+  }
+  const DASH = { solid: [], long: [9, 5], short: [3, 4] };
+  function drawFlight(c, F, S) {
+    const st = H.REC[F.kind], h = F.steady ? 9 : (S.animNow - F.born) / F.dur, stop = F.stop, hh = Math.min(h, stop), L = 0.3;
+    const hov = S.hoverId === F.id, dim = S.hoverId && !hov ? 0.35 : 1;
+    const w = 2.3 * st.w * (hov ? 1.7 : 1), dash = DASH[st.dash];
+    let fade = 1;
+    if (!F.steady && h > stop) fade = Math.max(0, 1 - (h - stop) / (F.kind === 'fail' ? 0.55 : L * 1.6));
+    if (fade <= 0) return;
+    if (F.steady || S.rm) { strokePart(c, F, 0, stop, st.map, w, dash, 0.95 * dim); }
+    else {
+      strokePart(c, F, 0, hh, st.map, w * 0.8, dash, 0.28 * fade * dim);
+      const segs = 6;
+      for (let i = 0; i < segs; i++) {
+        const a = Math.max(0, hh - L + (L * i) / segs), b = Math.max(0, hh - L + (L * (i + 1)) / segs);
+        if (b > a) strokePart(c, F, a, Math.min(b, hh), st.map, w, dash, ((i + 1) / segs) * fade * dim);
+      }
+    }
+    if (F.kind === 'fail' && (h >= stop || F.steady || S.rm)) { const [x, y] = pathPoint(F, stop); c.globalAlpha = fade * dim; drawShape(c, 'x', x, y, 5, st.map); c.globalAlpha = 1; }
+    else if (F.steady || S.rm) { const [x, y] = pathPoint(F, stop); c.globalAlpha = dim; c.fillStyle = PAPER; c.beginPath(); c.arc(x, y, 6.2, 0, 7); c.fill(); drawShape(c, st.head, x, y, 4.3, st.map, PAPER); c.globalAlpha = 1; }
+    else if (h <= stop) { const [x, y] = pathPoint(F, hh); c.globalAlpha = dim; c.fillStyle = PAPER; c.beginPath(); c.arc(x, y, (hov ? 8 : 6.2), 0, 7); c.fill(); drawShape(c, st.head, x, y, hov ? 5.5 : 4.3, st.map, PAPER); c.globalAlpha = 1; }
+  }
+  function drawPin(c, p, S) {
+    const [x, y] = toScreen(p.x, p.z);
+    c.fillStyle = PAPER; c.beginPath(); c.moveTo(x, y - 11); c.lineTo(x + 9, y + 6); c.lineTo(x - 9, y + 6); c.closePath(); c.fill();
+    c.fillStyle = '#8E3B6D'; c.beginPath(); c.moveTo(x, y - 8); c.lineTo(x + 7, y + 4.5); c.lineTo(x - 7, y + 4.5); c.closePath(); c.fill();
+    c.fillStyle = PAPER; c.beginPath(); c.arc(x, y + 0.5, 1.6, 0, 7); c.fill();
+    c.font = '700 11px "Barlow Condensed", "Arial Narrow", sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.lineWidth = 3; c.strokeStyle = PAPER; c.strokeText(String(p.recs.length), x + 9, y - 2); c.fillStyle = '#8E3B6D'; c.fillText(String(p.recs.length), x + 9, y - 2);
+    if (S.selPin === p.key) { c.strokeStyle = '#1F5AF0'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 14, 0, 7); c.stroke(); }
+  }
+  function frame(S) {
+    updateView();
+    // night: pale wash on the sheet, a yellow dot on occupied buildings
+    const wash = S.dark > 0.25 ? 0.18 * Math.min(1, (S.dark - 0.25) / 0.5) : 0;
+    if (Math.abs(wash - washOn) > 0.005) { svg.querySelector('.wash').style.opacity = wash / 0.18; washOn = wash; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, Hh);
+    if (wash > 0) {
+      const m = Math.floor(S.t);
+      if (m !== occMinute) {
+        occMinute = m;
+        if (!winsByFoot) { winsByFoot = H.plan.foot.map(() => []); H.plan.wins.forEach((w) => w.fi >= 0 && winsByFoot[w.fi].push(w)); }
+        occ = new Uint8Array(H.plan.foot.length);
+        H.plan.foot.forEach((f, i) => { const ws = winsByFoot[i]; if (!ws.length) return; const lit = ws.filter((w) => H.winLit(w, S.t)).length; occ[i] = f.cls === 'house' ? (lit > 0 ? 1 : 0) : (lit / ws.length >= 0.25 ? 1 : 0); });
+      }
+      const rr = Math.max(1.8, Math.min(3.4, scale() / 30));
+      ctx.fillStyle = '#F2C230'; ctx.strokeStyle = '#4A3A00'; ctx.lineWidth = 0.8;
+      H.plan.foot.forEach((f, i) => { if (!occ[i]) return; const [x, y] = toScreen(f.x, f.z); if (x < -5 || y < -5 || x > W + 5 || y > Hh + 5) return; ctx.beginPath(); ctx.arc(x, y, rr, 0, 7); ctx.fill(); ctx.stroke(); });
+    }
+    for (const p of S.pins.values()) drawPin(ctx, p, S);
+    for (const F of S.flights) if (S.hoverId !== F.id) drawFlight(ctx, F, S);
+    const hf = S.flights.find((F) => F.id === S.hoverId); if (hf) drawFlight(ctx, hf, S);
+  }
+  function pickPlace(px, py, S) {
+    for (const p of S.pins.values()) { const [x, y] = toScreen(p.x, p.z); if (Math.hypot(px - x, py - y + 1) < 13) return { type: 'pin', pin: p }; }
+    const [wx, wz] = toWorld(px, py), s = scale(), pad = 4 / s;
+    const P = H.plan;
+    for (let i = P.foot.length - 1; i >= 0; i--) {
+      const f = P.foot[i];
+      if (Math.abs(wx - f.x) <= f.wx / 2 + pad && Math.abs(wz - f.z) <= f.wz / 2 + pad) {
+        if (f.dw >= 0) return { type: 'party', party: P.dwell[f.dw].hh };
+        if (f.tile.org) return { type: 'party', party: f.tile.org };
+      }
+    }
+    const t = H.T(Math.floor(wx + 10), Math.floor(wz + 10));
+    if (t && t.org) return { type: 'party', party: t.org };
+    return null;
+  }
+  function resize() {
+    const r = el.getBoundingClientRect(); dpr = window.devicePixelRatio || 1;
+    W = r.width; Hh = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr);
+    svg.setAttribute('width', W); svg.setAttribute('height', Hh); lastVB = ''; lastK = -1;
+  }
+  window.MapView = {
+    name: 'map', ready: true,
+    mount(container) {
+      el = container;
+      el.innerHTML = buildSVG() + '<canvas class="rec"></canvas>';
+      svg = el.querySelector('svg'); cv = el.querySelector('canvas'); ctx = cv.getContext('2d');
+      new ResizeObserver(resize).observe(el); resize();
+    },
+    frame, pathPoint, pickPlace,
+    project: (x, y, z) => toScreen(x, z),
+    toWorld,
+    panPx(dx, dy) { const s = scale(); App.cam.x -= dx / s; App.cam.z -= dy / s; },
+    zoomAt(f, px, py) {
+      const [wx, wz] = px == null ? [App.cam.x, App.cam.z] : toWorld(px, py);
+      App.cam.zoom = Math.max(App.ZMIN, Math.min(App.ZMAX, App.cam.zoom * f));
+      if (px != null) { const [nx, nz] = toWorld(px, py); App.cam.x += wx - nx; App.cam.z += wz - nz; }
+    },
+    size: () => [W, Hh],
+  };
+})();
+</script>
+<script>// ===== Halvern in Motion v3 · app shell: playback, records, interaction, UI, accessibility =====
+(function () {
+  H.buildDay();
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const rmQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const debugOn = /[?&#]debug\b/.test(location.search + location.hash);
+
+  const S = {
+    t: 480, playing: !rmQuery.matches, speed: 1, view: 'mini', idx: 0, animNow: 0, rm: rmQuery.matches,
+    flights: [], fmap: new Map(), pins: new Map(), hoverId: null, selId: null, focusId: null, selPin: null, hhDay: null,
+    filters: new Set(['purchase', 'income', 'bill', 'service', 'unpaid', 'fail']), dark: 0, blur: 'subtle',
+  };
+  const App = (window.App = { S, cam: { x: -1.2, z: 1.0, zoom: 1.1 }, ZMIN: 30 / 70, ZMAX: 30 / 8, timers: [] });
+  App.later = (dt, fn) => App.timers.push({ at: S.animNow + dt, fn });
+  const views = { map: window.MapView, mini: null };
+  const active = () => views[S.view] || views.map;
+
+  // ---------- records → flights and pins ----------
+  const REC = H.REC;
+  function anchors(r) {
+    const a = H.anchorOf(r._from, r._i), place = r._stop ? { anchor: H.plan.anch.get(r._stop)?.[0] } : null;
+    const b = H.anchorOf(r._to, r._i, place);
+    return [a, b];
+  }
+  function makeFlight(r, steady, done) {
+    const [a, b] = anchors(r), d = Math.hypot(b[0] - a[0], b[2] - a[2]);
+    const F = { id: r.record_id, rec: r, kind: r._vk, a, b, stop: r._vk === 'fail' ? REC.fail.stop : 1, dur: Math.min(4, Math.max(1.5, 1.4 + d * 0.12)), steady: !!steady, born: S.animNow };
+    if (done) F.born = S.animNow - F.dur * 3;
+    if (S.rm) F.rmUntil = r._t + 4;
+    S.flights.push(F); S.fmap.set(F.id, F);
+    return F;
+  }
+  function dropFlight(F) { S.fmap.delete(F.id); F.dead = true; }
+  const progress = (F) => (S.animNow - F.born) / F.dur;
+  function pinPos(r) {
+    const t = r._place;
+    if (r._stop) { const p = t.stopPos || H.W2(t); return [p[0] + 0.12, p[1] + 0.1]; }
+    const F = H.frameOf(t), [x, z] = F.P(0.32, 0.5); return [x, z];
+  }
+  function placeTitle(t, r) { return t.org ? t.org.name : t === H.T(19, 13) ? 'Route 9, out of town' : r._to.type === 'org' ? r._to.name : `${H.DISTRICTS[t.d]} homes`; }
+  function addPin(r, live) {
+    if (!r._place) return;
+    const key = r._place.key;
+    let p = S.pins.get(key);
+    if (!p) { const [x, z] = pinPos(r); p = { key, tile: r._place, x, z, recs: [], born: live ? S.animNow : -99, stop: !!r._stop, name: r._stop ? `${H.STOP_NAME(r._stop)} bus stop` : r._real ? placeTitle(r._place, r) : r._to.name }; S.pins.set(key, p); }
+    else if (live) p.born = S.animNow;
+    p.recs.push(r);
+  }
+  function emit(r, fly = true) {
+    if (r._vk === 'fail') addPin(r, true);
+    const pinned = S.hhDay && r.household_id === S.hhDay;
+    const show = S.filters.has(r._vk) && (fly || pinned);
+    if (show) {
+      makeFlight(r, pinned);
+      const mv = views.mini, sampled = Math.random() < Math.min(1, 3 / S.speed);
+      if (mv && (S.view === 'mini' || fading)) mv.onRecord(r, sampled);
+    }
+    Feed.push(r);
+  }
+  function seek(t) {
+    S.t = Math.max(0, Math.min(1439.99, t));
+    S.idx = H.indexAt(S.t);
+    for (const F of S.flights) F.dead = true;
+    S.flights = []; S.fmap.clear(); S.pins.clear(); S.hoverId = null; S.focusId = null;
+    for (let i = 0; i < S.idx; i++) if (H.records[i]._vk === 'fail') addPin(H.records[i], false);
+    if (S.selId) { const r = H.recById.get(S.selId); if (r && r._i < S.idx) makeFlight(r, true, true); }
+    if (S.hhDay) pinHousehold(S.hhDay);
+    views.mini && views.mini.reset && views.mini.reset();
+    Feed.rebuild(); Summary.update(true); lastHour = Math.floor(S.t / 60);
+  }
+  function pinHousehold(id) {
+    for (let i = 0; i < S.idx; i++) { const r = H.records[i]; if (r.household_id !== id || !S.filters.has(r._vk)) continue; const F = S.fmap.get(r.record_id); if (F) F.steady = true; else makeFlight(r, true, true); }
+  }
+
+  // ---------- money and words ----------
+  const UI = { purchase: REC.purchase.map, income: REC.income.map, bill: REC.bill.map, service: REC.service.map, unpaid: REC.unpaid.map, fail: REC.fail.map };
+  function iconSVG(vk, size = 32) {
+    const c = UI[vk], h = REC[vk].head, s = size / 2;
+    const shape = h === 'circle' ? `<circle cx="${s}" cy="${s}" r="${s * 0.3}" fill="${c}"/>` : h === 'diamond' ? `<path d="M${s} ${s * 0.6}L${s * 1.4} ${s}L${s} ${s * 1.4}L${s * 0.6} ${s}Z" fill="${c}"/>` : h === 'square' ? `<rect x="${s * 0.7}" y="${s * 0.7}" width="${s * 0.6}" height="${s * 0.6}" fill="${c}"/>` : h === 'ring' ? `<circle cx="${s}" cy="${s}" r="${s * 0.3}" fill="none" stroke="${c}" stroke-width="2.2"/>` : `<path d="M${s * 0.7} ${s * 0.7}L${s * 1.3} ${s * 1.3}M${s * 1.3} ${s * 0.7}L${s * 0.7} ${s * 1.3}" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`;
+    return `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${s}" cy="${s}" r="${s}" fill="${c}" fill-opacity=".12"/><circle cx="${s}" cy="${s}" r="${s - 0.75}" fill="none" stroke="${c}" stroke-opacity=".55" stroke-width="1.5"/>${shape}</svg>`;
+  }
+  function amountOf(r) {
+    if (r._vk === 'unpaid') return { txt: H.fmtHours(r.time_minutes), cls: '', sr: `${H.fmtHours(r.time_minutes).replace('hr', 'hours')} unpaid` };
+    if (r._vk === 'fail') { const lost = r.wait_minutes || r.time_minutes; return r.record_type === 'failed_attempt' && !r.amount_gross ? { txt: `${lost} min`, cls: 'muted', sr: `${lost} minutes lost` } : { txt: H.fmtMoney(r.amount_gross), cls: 'muted', sr: `${H.fmtMoney(r.amount_gross)} not paid` }; }
+    if (r._vk === 'service' && !(r.amount_paid_by_user > 0)) return { txt: 'No charge', cls: 'muted', sr: 'no charge to the household' };
+    if (r._vk === 'income') return { txt: H.fmtMoney(r.amount_gross, true), cls: 'in', sr: `plus ${H.fmtMoney(r.amount_gross)}` };
+    const out = r.amount_paid_by_user > 0 ? r.amount_paid_by_user : r.amount_gross;
+    return { txt: H.fmtMoney(-out, true), cls: '', sr: `minus ${H.fmtMoney(out)}` };
+  }
+  const cpName = (r) => (r._stop ? `Halvern Transit · ${H.STOP_NAME(r._stop)}` : H.counterparty(r).name);
+  function subLine(r) {
+    if (r._vk === 'fail') return `${H.reason(r)} · ${H.fmt(r._t)}`;
+    return [H.catLabel(r), H.methodLabel(r), H.fmt(r._t)].filter(Boolean).join(' · ');
+  }
+  function rowHTML(r, extra = '') {
+    const a = amountOf(r), pill = r._vk === 'fail' ? `<span class="pill fail">${H.outcomeWord(r)}</span>` : '';
+    const label = `${REC[r._vk].label}. ${cpName(r)}. ${a.sr}. ${r._vk === 'fail' ? H.outcomeWord(r) + ': ' + H.reason(r) : H.catLabel(r) + (H.methodLabel(r) ? ', ' + H.methodLabel(r) : '')}. ${H.fmt(r._t)}.`;
+    return `<li><button class="row${extra}" data-id="${r.record_id}" aria-label="${esc(label)}">${iconSVG(r._vk)}<span class="main"><span class="cp"><span class="nm">${esc(cpName(r))}</span>${pill}</span><span class="sub">${esc(subLine(r))}</span></span><span class="amt ${a.cls}">${a.txt}</span></button></li>`;
+  }
+
+  // ---------- activity feed ----------
+  const Feed = {
+    el: null, max: 60, pending: [],
+    push(r) { if (S.filters.has(r._vk)) this.pending.push(r); },
+    flush() {
+      if (!this.pending.length) return;
+      const list = this.pending.slice(-this.max); this.pending = [];
+      const html = list.reverse().map((r) => rowHTML(r, S.selId === r.record_id ? ' sel' : '')).join('');
+      this.el.insertAdjacentHTML('afterbegin', html);
+      while (this.el.children.length > this.max) { const last = this.el.lastElementChild; if (last.contains(document.activeElement)) break; last.remove(); }
+    },
+    rebuild() {
+      this.pending = []; const out = [];
+      for (let i = S.idx - 1; i >= 0 && out.length < this.max; i--) { const r = H.records[i]; if (S.filters.has(r._vk)) out.push(r); }
+      this.el.innerHTML = out.map((r) => rowHTML(r, S.selId === r.record_id ? ' sel' : '')).join('');
+    },
+    mark() { $$('.row', this.el).forEach((b) => { const on = b.dataset.id === S.selId; b.classList.toggle('sel', on); on ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'); }); },
+  };
+  // ---------- summary tiles ----------
+  const Summary = {
+    last: '',
+    update(force) {
+      const i = S.idx, money = H.cum.money[i], fails = H.cum.fails[i], un = H.cum.unpaid[i] / 60;
+      const vals = ['$' + Math.round(money).toLocaleString('en-US'), i.toLocaleString('en-US'), fails.toLocaleString('en-US'), un.toLocaleString('en-US', { maximumFractionDigits: 1, minimumFractionDigits: 1 })];
+      const key = vals.join('|'); if (key === this.last && !force) return; this.last = key;
+      $$('.tile .val').forEach((n, k) => (n.textContent = vals[k]));
+    },
+  };
+
+  // ---------- detail sheet ----------
+  const Sheet = {
+    stack: [], opener: null,
+    open(view, opener) { if (!this.stack.length) this.opener = opener || document.activeElement; this.stack.push(view); this.render(); },
+    replace(view) { this.stack[this.stack.length - 1] = view; this.render(); },
+    back() {
+      const top = this.stack.pop();
+      if (top && top.type === 'record' && S.selId === top.id) clearSelection(true);
+      if (top && top.type === 'hhday') unpinHousehold();
+      if (top && top.type === 'pin') S.selPin = null;
+      if (!this.stack.length) return this.close();
+      this.render();
+    },
+    close(noFocus) {
+      for (const v of this.stack) { if (v.type === 'hhday') unpinHousehold(); if (v.type === 'pin') S.selPin = null; }
+      this.stack = [];
+      const el = $('#sheet'); el.classList.remove('open'); el.hidden = true; $('#feedwrap').inert = false; $('#feedwrap').removeAttribute('aria-hidden');
+      if (S.selId) clearSelection(true);
+      const o = this.opener; this.opener = null;
+      if (!noFocus && o && document.contains(o)) o.focus(); else if (!noFocus) $('#scene').focus();
+    },
+    render() {
+      const v = this.stack[this.stack.length - 1], el = $('#sheet');
+      el.hidden = false; requestAnimationFrame(() => el.classList.add('open'));
+      $('#feedwrap').inert = true; $('#feedwrap').setAttribute('aria-hidden', 'true');
+      $('#sheet-body').innerHTML = v.type === 'record' ? recordHTML(H.recById.get(v.id)) : v.type === 'party' ? partyHTML(H.party.get(v.id)) : v.type === 'pin' ? pinHTML(S.pins.get(v.key)) : hhDayHTML(v.id);
+      $('#sheet-back').setAttribute('aria-label', this.stack.length > 1 ? 'Back' : 'Close and return to activity');
+      const h = $('#sheet-title'); h && h.focus({ preventScroll: true });
+    },
+  };
+  function kv(rows) { return `<dl class="kv">${rows.filter((r) => r && r[1] !== '' && r[1] != null).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`; }
+  const whereOf = (p) => p.where || H.DISTRICTS[p.district];
+  function partyLine(p) { return `${esc(p.name)} <span class="dim">· ${esc(whereOf(p))}</span>`; }
+  const HHTYPE = { alone: 'Lives alone', married_kids: 'Married couple with children', married_nokids: 'Married couple', single_parent: 'Single parent', cohab_kids: 'Couple with children', cohab_nokids: 'Couple', roommates: 'Roommates', multigen: 'Multigenerational', adult_child: 'Adult child at home', other_family: 'Other family' };
+  function hhInfo(p) {
+    const i = p.info; if (!i) return '';
+    const type = HHTYPE[i.type] || String(i.type || '').replace(/_/g, ' ').replace(/^group_quarters:/, 'Group quarters: ');
+    return [type, i.size ? `${i.size} ${i.size === 1 ? 'person' : 'people'}` : '', i.income ? `${H.fmtMoney(i.income).replace(/\.00$/, '')} a year` : '', i.alice === 'alice' ? 'ALICE' : i.alice === 'poverty' ? 'in poverty' : '', i.bank && i.bank !== 'banked' ? i.bank : ''].filter(Boolean).join(' · ');
+  }
+  function recordHTML(r) {
+    const a = amountOf(r), fail = r._vk === 'fail', vk = r._vk;
+    const status = fail ? `<span class="pill fail">${H.outcomeWord(r)}</span>` : `<span class="pill ok">${vk === 'unpaid' ? 'Done · unpaid' : 'Completed'}</span>`;
+    const to = r._stop ? `Halvern Transit <span class="dim">· ${esc(H.STOP_NAME(r._stop))} stop</span>` : partyLine(r._to);
+    const money = (v) => H.fmtMoney(v);
+    const bd = vk === 'unpaid' ? kv([['Time spent', `${r.time_minutes} min`], ['Getting there', r.travel_mode ? `${r.travel_mode[0].toUpperCase() + r.travel_mode.slice(1)}${r.travel_miles ? `, ${r.travel_miles} mi` : ''}` : '']])
+      : r.record_type === 'failed_attempt' && !r.amount_gross ? kv([['Time waiting', `${r.wait_minutes} min`], ['Time lost in all', `${r.time_minutes} min`]])
+      : kv([['Gross', money(r.amount_gross)], r.sales_tax ? ['Sales tax (in gross)', money(r.sales_tax)] : null, r.fee_amount ? [`Fee · ${r.fee_type.replace(/_/g, ' ')}`, money(r.fee_amount)] : null, ['Paid by the household', money(r.amount_paid_by_user)], r.amount_paid_by_third_party ? [`Paid by ${esc(r.third_party_payer)}`, money(r.amount_paid_by_third_party)] : null, r.imputed_public_cost ? ['Public cost', money(r.imputed_public_cost)] : null]);
+    return `<p class="eyebrow">${iconSVG(vk, 24)}<span>${REC[vk].label}</span></p>
+      <h2 id="sheet-title" tabindex="-1" class="big ${a.cls}">${a.txt}</h2>
+      <p class="status">${status}${fail ? `<span class="why">${esc(H.reason(r))}</span>` : ''}</p>
+      ${kv([['From', partyLine(r._from)], ['To', to], ['Method', esc(H.methodLabel(r)) || (vk === 'unpaid' || vk === 'service' ? 'No money moved' : '')], ['Time', `${H.fmt(r._t)}, Wednesday, March 3`], ['Category', esc(H.catLabel(r))], r._real ? ['Record', `${esc(r.record_id)}${r._handWritten ? ' · hand-written' : ''}`] : null])}
+      <h3>Breakdown</h3>${bd}
+      <h3>The job</h3><blockquote class="job">“${esc(r.job_statement)}”</blockquote>
+      ${r.narrative ? `<p class="narr">${esc(r.narrative)}</p>` : ''}
+      ${r.household_id ? `<button class="btn primary wide" data-hhday="${r.household_id}">See this household’s day</button>` : ''}`;
+  }
+  function recentFor(pred, n = 25) { const out = []; for (let i = S.idx - 1; i >= 0 && out.length < n; i--) if (pred(H.records[i])) out.push(H.records[i]); return out; }
+  function partyHTML(p) {
+    // once the real day has loaded, a v3 home or building stands for the real households and places drawn there
+    const home = H.realLoaded && p.members != null, bldg = H.realLoaded && !!p.stands;
+    const list = recentFor(home ? (r) => r._hh.home === p : bldg ? (r) => r._to.v3 === p || r._from.v3 === p : (r) => r._from === p || r._to === p);
+    let sub = p.type === 'household' ? `Household in ${whereOf(p)}` : `${p.sector} · ${whereOf(p)}`;
+    if (home) sub = `${p.members.toLocaleString('en-US')} households in the data are drawn at this home`;
+    if (bldg) sub = `${p.sector} · stands for ${p.stands.length} ${p.stands.length === 1 ? 'place' : 'places'} in the data: ${p.stands.slice(0, 4).map((q) => q.name).join(', ')}${p.stands.length > 4 ? '…' : ''}`;
+    if (p.info) sub = `${hhInfo(p)} · ${whereOf(p)}`;
+    return `<p class="eyebrow"><span>${home ? 'Homes' : p.type === 'household' ? 'Household' : 'Place'}</span></p><h2 id="sheet-title" tabindex="-1" class="title">${esc(p.name)}</h2><p class="dim">${esc(sub)}</p>
+      ${p.type === 'household' && !home ? `<button class="btn primary wide" data-hhday="${p.id}">See this household’s day</button>` : ''}
+      <h3>Recent records</h3>${list.length ? `<ul class="feed inline">${list.map((r) => rowHTML(r)).join('')}</ul>` : '<p class="dim">No records here yet today.</p>'}`;
+  }
+  function pinHTML(p) {
+    if (!p) return '<h2 id="sheet-title" tabindex="-1">No failures here</h2>';
+    const n = p.recs.length;
+    const st = p.tile.org && p.tile.org.stands ? p.tile.org.stands.length : 0;
+    return `<p class="eyebrow">${iconSVG('fail', 24)}<span>Failures at a place</span></p><h2 id="sheet-title" tabindex="-1" class="title">${esc(p.name)}</h2><p class="dim">${n.toLocaleString('en-US')} ${n === 1 ? 'failure' : 'failures'} here so far today${st > 1 ? ` · this building stands for ${st} places in the data` : ''}</p>
+      <ul class="feed inline">${p.recs.slice(-60).reverse().map((r) => rowHTML(r)).join('')}</ul>${n > 60 ? '<p class="dim small">Showing the latest 60.</p>' : ''}`;
+  }
+  function hhDayHTML(id) {
+    const p = H.party.get(id), all = H.records.filter((r) => r.household_id === id), so = all.filter((r) => r._i < S.idx), later = all.filter((r) => r._i >= S.idx);
+    const inn = so.filter((r) => r._vk === 'income').reduce((s, r) => s + r.amount_gross, 0), out = so.filter((r) => (r._vk === 'purchase' || r._vk === 'bill')).reduce((s, r) => s + r.amount_paid_by_user, 0);
+    const un = so.filter((r) => r._vk === 'unpaid').reduce((s, r) => s + r.time_minutes, 0), fails = so.filter((r) => r._vk === 'fail').length;
+    return `<p class="eyebrow"><span>Household’s day</span></p><h2 id="sheet-title" tabindex="-1" class="title">${esc(p.name)}</h2>${p.info ? `<p class="dim">${esc(hhInfo(p))}</p>` : ''}<p class="dim">${esc(whereOf(p))} · so far, to ${H.fmt(S.t)}</p>
+      <div class="mini-tiles"><div><span class="lbl">Money in</span><span class="v in">${H.fmtMoney(inn, true)}</span></div><div><span class="lbl">Money out</span><span class="v">${H.fmtMoney(-out, true)}</span></div><div><span class="lbl">Unpaid</span><span class="v">${H.fmtHours(un)}</span></div><div><span class="lbl">Failures</span><span class="v">${fails}</span></div></div>
+      <p class="dim small">Its paths stay drawn on the city while this is open.</p>
+      <h3>So far today</h3>${so.length ? `<ul class="feed inline">${so.slice().reverse().map((r) => rowHTML(r)).join('')}</ul>` : '<p class="dim">Nothing yet today.</p>'}
+      ${later.length ? `<h3>Later today</h3><ul class="feed inline later">${later.map((r) => rowHTML(r)).join('')}</ul>` : ''}`;
+  }
+  function openHouseholdDay(id) {
+    unpinHousehold(); S.hhDay = id; pinHousehold(id);
+    Sheet.open({ type: 'hhday', id });
+  }
+  function unpinHousehold() {
+    if (!S.hhDay) return;
+    for (const F of S.flights) if (F.rec.household_id === S.hhDay && F.id !== S.selId) F.steady = false;
+    S.hhDay = null;
+  }
+
+  // ---------- selection ----------
+  function selectRecord(id, opener) {
+    const r = H.recById.get(id); if (!r) return;
+    if (S.selId && S.selId !== id) { const old = S.fmap.get(S.selId); if (old && !(S.hhDay && old.rec.household_id === S.hhDay)) old.steady = false; }
+    S.selId = id;
+    let F = S.fmap.get(id);
+    if (!F && r._i < S.idx) F = makeFlight(r, true, true);
+    if (F) F.steady = true;
+    Feed.mark();
+    const row = $(`#feed .row[data-id="${id}"]`); if (row) row.scrollIntoView({ block: 'nearest', behavior: S.rm ? 'auto' : 'smooth' });
+    if (F) panIntoView(F);
+    if (Sheet.stack.length && Sheet.stack[Sheet.stack.length - 1].type === 'record') Sheet.replace({ type: 'record', id }); else Sheet.open({ type: 'record', id }, opener);
+    if (smallScreen()) openDrawer(true);
+  }
+  function clearSelection(fromSheet) {
+    const F = S.fmap.get(S.selId);
+    if (F && !(S.hhDay && F.rec.household_id === S.hhDay)) F.steady = false;
+    S.selId = null; Feed.mark();
+    if (!fromSheet && Sheet.stack.length) Sheet.close(true);
+  }
+  function panIntoView(F) {
+    const v = active(), [w, h] = v.size(), pts = [0, 0.5, 1].map((s) => v.pathPoint(F, Math.min(s, F.stop)));
+    const off = pts.some(([x, y]) => x < 30 || y < 30 || x > w - 30 || y > h - 30);
+    if (off) { const mid = [(F.a[0] + F.b[0]) / 2, (F.a[2] + F.b[2]) / 2]; App.cam.x = mid[0]; App.cam.z = mid[1]; }
+  }
+
+  // ---------- hit testing in screen space ----------
+  function hitFlights(px, py) {
+    const v = active(), out = [];
+    for (const F of S.flights) {
+      const h = progress(F), steady = F.steady || S.rm;
+      if (!steady && h < 0) continue;
+      const end = steady ? F.stop : Math.min(h, F.stop);
+      if (end <= 0) continue;
+      if (!steady && h > F.stop + 0.35) continue;
+      const [hx, hy] = v.pathPoint(F, end), dh = Math.hypot(px - hx, py - hy);
+      let dmin = dh, prev = null;
+      for (let i = 0; i <= 20; i++) {
+        const p = v.pathPoint(F, (end * i) / 20);
+        if (prev) { const dx = p[0] - prev[0], dy = p[1] - prev[1], l2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((px - prev[0]) * dx + (py - prev[1]) * dy) / l2)); dmin = Math.min(dmin, Math.hypot(px - prev[0] - t * dx, py - prev[1] - t * dy)); }
+        prev = p;
+      }
+      if (dmin <= 10) out.push({ F, head: dh <= 10, d: dmin });
+    }
+    out.sort((a, b) => (b.head - a.head) || ((b.F.kind === 'fail') - (a.F.kind === 'fail')) || (b.F.rec._t - a.F.rec._t));
+    return out;
+  }
+  function headPoint(F) { const h = progress(F), steady = F.steady || S.rm; return active().pathPoint(F, steady ? F.stop : Math.max(0, Math.min(h, F.stop))); }
+
+  // ---------- scene input ----------
+  let fading = false, fadeTimer = 0;
+  const scene = () => $('#scene');
+  let drag = null, hoverReq = null;
+  function pointerPos(e) { const r = scene().getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  function initScene() {
+    const sc = scene();
+    sc.addEventListener('pointerdown', (e) => { if (e.target.closest('.scene-ctrls,.chooser')) return; drag = { x: e.clientX, y: e.clientY, moved: false, id: e.pointerId }; sc.setPointerCapture(e.pointerId); });
+    sc.addEventListener('pointermove', (e) => {
+      if (drag) {
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if (!drag.moved && Math.hypot(dx, dy) > 4) drag.moved = true;
+        if (drag.moved) { active().panPx(dx, dy); drag.x = e.clientX; drag.y = e.clientY; hideChip(); }
+        return;
+      }
+      hoverReq = pointerPos(e);
+    });
+    sc.addEventListener('pointerleave', () => { hoverReq = null; S.hoverId = null; hideChip(); });
+    sc.addEventListener('pointerup', (e) => {
+      const d = drag; drag = null;
+      if (!d || d.moved || e.target.closest('.scene-ctrls,.chooser')) return;
+      const [px, py] = pointerPos(e);
+      const hits = hitFlights(px, py);
+      closeChooser();
+      if (hits.length === 1 || (hits.length > 1 && hits[0].head && !hits[1].head)) return selectRecord(hits[0].F.id, sc);
+      if (hits.length > 1) return openChooser(hits.slice(0, 5), px, py);
+      const place = active().pickPlace(px, py, S);
+      if (place && place.type === 'pin') { S.selPin = place.pin.key; Sheet.stack.length ? Sheet.replace({ type: 'pin', key: place.pin.key }) : Sheet.open({ type: 'pin', key: place.pin.key }, sc); if (smallScreen()) openDrawer(true); return; }
+      if (place && place.type === 'party') { Sheet.stack.length ? Sheet.replace({ type: 'party', id: place.party.id }) : Sheet.open({ type: 'party', id: place.party.id }, sc); if (smallScreen()) openDrawer(true); return; }
+      if (S.selId || Sheet.stack.length) { clearSelection(); Sheet.close(true); }
+    });
+    sc.addEventListener('wheel', (e) => { e.preventDefault(); const [px, py] = pointerPos(e); active().zoomAt(e.deltaY < 0 ? 1.12 : 1 / 1.12, px, py); }, { passive: false });
+    sc.addEventListener('keydown', sceneKey);
+  }
+  function hoverTest() {
+    if (!hoverReq || drag) return;
+    const [px, py] = hoverReq; hoverReq = null;
+    const hits = hitFlights(px, py);
+    const id = hits.length ? hits[0].F.id : null;
+    S.hoverId = id;
+    let cursor = id ? 'pointer' : 'grab';
+    if (!id && S.view === 'map') { const p = active().pickPlace(px, py, S); if (p) cursor = 'pointer'; }
+    scene().style.cursor = cursor;
+    const choose = hits.length > 1 && !(hits[0].head && !hits[1].head);
+    if (id) showChip(hits[0].F.rec, px, py, choose ? hits.length : 1); else hideChip();
+  }
+  function showChip(r, px, py, n) {
+    const c = $('#hoverchip'), a = amountOf(r);
+    const fromN = r._from.type === 'household' ? r._from.name : r._from.name, toN = r._stop ? `${H.STOP_NAME(r._stop)} stop` : r._to.name;
+    c.innerHTML = `${iconSVG(r._vk, 20)}<span><b>${REC[r._vk].label}</b> · <span class="${a.cls}">${a.txt}</span>${r._vk === 'fail' ? ` · ${H.outcomeWord(r)}` : ''}<br><span class="dim">${esc(fromN)} → ${esc(toN)}</span>${n > 1 ? `<br><span class="dim">${n} records here · click to choose</span>` : ''}</span>`;
+    c.hidden = false;
+    const [w, h] = active().size(), cw = c.offsetWidth, ch = c.offsetHeight;
+    c.style.left = Math.min(w - cw - 8, px + 14) + 'px'; c.style.top = Math.max(8, Math.min(h - ch - 8, py + 14)) + 'px';
+  }
+  function hideChip() { $('#hoverchip').hidden = true; }
+  function openChooser(hits, px, py) {
+    const c = $('#chooser');
+    c.innerHTML = `<p class="ch-h" id="ch-h">${hits.length} records here</p><ul>${hits.map((h) => { const r = h.F.rec, a = amountOf(r); return `<li><button data-id="${r.record_id}">${iconSVG(r._vk, 20)}<span>${REC[r._vk].label} · ${esc(cpName(r))}</span><span class="amt ${a.cls}">${a.txt}</span></button></li>`; }).join('')}</ul>`;
+    c.hidden = false;
+    const [w, h] = active().size();
+    c.style.left = Math.min(w - c.offsetWidth - 8, px + 10) + 'px'; c.style.top = Math.min(h - c.offsetHeight - 8, py + 10) + 'px';
+    c.querySelector('button').focus();
+  }
+  function closeChooser() { const c = $('#chooser'); if (!c.hidden) { c.hidden = true; c.innerHTML = ''; } }
+  function activeFlights() { return S.flights.filter((F) => { const h = progress(F); return F.steady || S.rm || (h >= 0 && h <= F.stop + 0.3); }).sort((a, b) => a.born - b.born || a.rec._t - b.rec._t); }
+  function sceneKey(e) {
+    const v = active(), step = e.shiftKey ? 160 : 40;
+    const k = e.key;
+    if (k === 'ArrowLeft') v.panPx(step, 0); else if (k === 'ArrowRight') v.panPx(-step, 0); else if (k === 'ArrowUp') v.panPx(0, step); else if (k === 'ArrowDown') v.panPx(0, -step);
+    else if (k === '+' || k === '=') v.zoomAt(1.2); else if (k === '-' || k === '_' || k === '−') v.zoomAt(1 / 1.2);
+    else if (k === '[' || k === ']') {
+      const list = activeFlights(); if (!list.length) { say('No records in flight right now.'); e.preventDefault(); return; }
+      let i = list.findIndex((F) => F.id === S.focusId);
+      i = k === ']' ? (i + 1) % list.length : (i <= 0 ? list.length - 1 : i - 1);
+      S.focusId = list[i].id; panIntoView(list[i]); const r = list[i].rec, a = amountOf(r);
+      say(`${REC[r._vk].label}, ${a.sr}, from ${r._from.name} to ${cpName(r)}. ${i + 1} of ${list.length}. Press Enter to open.`);
+    } else if (k === 'Enter') { if (S.focusId && S.fmap.has(S.focusId)) selectRecord(S.focusId, scene()); else return; }
+    else return;
+    e.preventDefault();
+  }
+
+  // ---------- views and switching ----------
+  function setView(v, fromKey) {
+    if (v === 'mini' && !views.mini) { say(miniFailed ? 'The miniature could not load on this device. Showing the map.' : 'The miniature is still loading.'); if (miniFailed) v = 'map'; }
+    if (S.view === v && !fromKey) return;
+    S.view = v;
+    $$('input[name="view"]').forEach((i) => (i.checked = i.value === v));
+    $('#L-mini').classList.toggle('on', v === 'mini'); $('#L-map').classList.toggle('on', v === 'map');
+    $('#blurset').hidden = v !== 'mini';
+    fading = !S.rm; clearTimeout(fadeTimer); fadeTimer = setTimeout(() => (fading = false), 340);
+    S.hoverId = null; hideChip(); closeChooser();
+    updateSceneLabel(true);
+  }
+  let miniFailed = false;
+  App.onMiniReady = () => {
+    views.mini = window.MiniView;
+    views.mini.mount($('#L-mini')); views.mini.setBlur(S.blur);
+    $('#L-mini .loading')?.remove();
+    if (S.view === 'mini') setView('mini', true);
+  };
+  setTimeout(() => { if (!views.mini) { miniFailed = true; const l = $('#L-mini .loading'); if (l) l.textContent = 'The miniature needs WebGL and could not load here. The map shows the same city.'; if (S.view === 'mini') setView('map'); } }, 12000);
+
+  // ---------- keyboard and controls ----------
+  function smallScreen() { return window.innerWidth < 1280; }
+  function openDrawer(on) {
+    const rail = $('#rail'); rail.classList.toggle('open', on); $('#drawer-btn').setAttribute('aria-expanded', on);
+    rail.inert = smallScreen() && !on;
+    if (on && smallScreen()) { const t = $('#sheet-title') && !$('#sheet').hidden ? $('#sheet-title') : $('#rail h2'); t && t.focus && setTimeout(() => t.focus(), 30); }
+  }
+  function syncDrawer() { const rail = $('#rail'); rail.inert = smallScreen() && !rail.classList.contains('open'); $('#drawer-btn').hidden = !smallScreen(); }
+  function setPlaying(p) {
+    S.playing = p; const b = $('#play');
+    b.setAttribute('aria-label', p ? 'Pause' : 'Play'); b.querySelector('.pi').hidden = !p; b.querySelector('.pl').hidden = p;
+    if (!p) say(`Paused at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, $${Math.round(H.cum.money[S.idx]).toLocaleString('en-US')} moved.`);
+  }
+  function initControls() {
+    Feed.el = $('#feed');
+    $$('input[name="view"]').forEach((i) => i.addEventListener('change', () => setView(i.value)));
+    $$('input[name="blur"]').forEach((i) => i.addEventListener('change', () => { S.blur = i.value; views.mini && views.mini.setBlur(i.value); }));
+    $$('input[name="speed"]').forEach((i) => i.addEventListener('change', () => {
+      if (i.value === 'live') { const d = new Date(); S.speed = 1 / 60; seek(d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60); say(`Live: playing at real speed from ${H.fmt(S.t)}.`); }
+      else S.speed = +i.value;
+    }));
+    $('#play').addEventListener('click', () => setPlaying(!S.playing));
+    $('#zin').addEventListener('click', () => active().zoomAt(1.25)); $('#zout').addEventListener('click', () => active().zoomAt(1 / 1.25));
+    $('#drawer-btn').addEventListener('click', () => openDrawer(!$('#rail').classList.contains('open')));
+    $('#drawer-close').addEventListener('click', () => { openDrawer(false); $('#drawer-btn').focus(); });
+    $('#sheet-back').addEventListener('click', () => Sheet.back());
+    const tl = $('#tl');
+    tl.addEventListener('input', () => { seek(+tl.value); updateTimeline(); });
+    tl.addEventListener('keydown', (e) => {
+      if (e.key === 'PageUp' || e.key === 'PageDown') { e.preventDefault(); seek(Math.floor(S.t) + (e.key === 'PageUp' ? 60 : -60)); updateTimeline(); }
+    });
+    $$('.filters button').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.k, on = !S.filters.has(k);
+      on ? S.filters.add(k) : S.filters.delete(k); b.setAttribute('aria-pressed', on);
+      for (const F of S.flights) if (!S.filters.has(F.kind) && F.id !== S.selId) dropFlight(F);
+      S.flights = S.flights.filter((F) => !F.dead);
+      Feed.rebuild();
+    }));
+    document.addEventListener('click', (e) => {
+      const row = e.target.closest('button.row, #chooser button[data-id]');
+      if (row) { closeChooser(); selectRecord(row.dataset.id, row.closest('#chooser') ? scene() : row); return; }
+      const hd = e.target.closest('[data-hhday]'); if (hd) { openHouseholdDay(hd.dataset.hhday); return; }
+    });
+    document.addEventListener('keydown', (e) => {
+      const tag = (e.target.tagName || '').toLowerCase(), typing = tag === 'input' && e.target.type === 'text';
+      const onControl = ['button', 'input', 'select', 'textarea', 'a'].includes(tag);
+      if (e.key === ' ' && !onControl) { e.preventDefault(); setPlaying(!S.playing); return; }
+      if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { setView(S.view === 'mini' ? 'map' : 'mini'); return; }
+      if ((e.key === 'D') && e.shiftKey && !typing) { toggleDebug(); return; }
+      if (e.key === 'Escape') {
+        if (!$('#chooser').hidden) { closeChooser(); scene().focus(); return; }
+        if (Sheet.stack.length) { Sheet.back(); return; }
+        if (S.selId) { clearSelection(); return; }
+        if (S.focusId) { S.focusId = null; return; }
+        if ($('#rail').classList.contains('open')) { openDrawer(false); $('#drawer-btn').focus(); }
+      }
+    });
+    window.addEventListener('resize', syncDrawer); syncDrawer();
+    rmQuery.addEventListener('change', () => { S.rm = rmQuery.matches; document.body.classList.toggle('rm', S.rm); });
+    document.body.classList.toggle('rm', S.rm);
+  }
+
+  // ---------- timeline with volume histogram ----------
+  let histDrawnAt = -1;
+  function drawHist() {
+    const cv = $('#hist'), r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, r.width, r.height);
+    const bins = new Array(144).fill(0), fb = new Array(144).fill(0);
+    for (const rec of H.records) { const b = Math.min(143, Math.floor(rec._t / 10)); bins[b]++; if (rec._vk === 'fail') fb[b]++; }
+    const mx = Math.max(...bins), bw = r.width / 144, ht = r.height - 9, now = Math.floor(S.t / 10);
+    for (let i = 0; i < 144; i++) { const h = Math.max(1, (bins[i] / mx) * (ht - 4)); c.fillStyle = i <= now ? '#7D8797' : '#C9D0DA'; c.fillRect(i * bw + 0.5, ht - h, Math.max(1, bw - 1), h); }
+    // plum marks: ten minutes where failures run well above the day's usual share
+    const share = fb.reduce((a, b) => a + b, 0) / Math.max(1, bins.reduce((a, b) => a + b, 0));
+    c.fillStyle = '#8E3B6D';
+    for (let i = 0; i < 144; i++) if (fb[i] >= 2 && fb[i] / bins[i] >= 1.5 * share) c.fillRect(i * bw + 0.5, r.height - 5, Math.max(2, bw - 0.5), 5);
+    histDrawnAt = now;
+  }
+  function updateTimeline() {
+    const tl = $('#tl'); tl.value = Math.floor(S.t); tl.setAttribute('aria-valuetext', H.fmt(S.t));
+    $('#clock').textContent = H.fmt(S.t);
+    if (Math.floor(S.t / 10) !== histDrawnAt) drawHist();
+  }
+
+  // ---------- screen reader text ----------
+  let lastLabelMin = -1, lastHour = -1;
+  function say(msg) { const l = $('#live'); l.textContent = ''; setTimeout(() => (l.textContent = msg), 30); }
+  function updateSceneLabel(force) {
+    const m = Math.floor(S.t); if (m === lastLabelMin && !force) return; lastLabelMin = m;
+    const inflight = S.flights.filter((F) => !F.steady && progress(F) <= F.stop).length;
+    scene().setAttribute('aria-label', `${S.view === 'mini' ? 'Miniature' : 'Map'} view of Halvern at ${H.fmt(S.t)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures, ${inflight} in flight.`);
+  }
+
+  // ---------- overlay: keyboard focus ring ----------
+  function drawOverlay() {
+    const cv = $('#overlay'), r = scene().getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    if (cv.width !== Math.round(r.width * dpr) || cv.height !== Math.round(r.height * dpr)) { cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
+    const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, r.width, r.height);
+    const F = S.focusId && S.fmap.get(S.focusId);
+    if (F) {
+      const [x, y] = headPoint(F);
+      c.lineWidth = 5; c.strokeStyle = '#FFFFFF'; c.beginPath(); c.arc(x, y, 15, 0, 7); c.stroke();
+      c.lineWidth = 2.5; c.strokeStyle = '#1F5AF0'; c.beginPath(); c.arc(x, y, 15, 0, 7); c.stroke();
+    } else if (S.focusId) S.focusId = null;
+  }
+
+  // ---------- debug readout ----------
+  let dbg = debugOn, fpsE = 0; const frameTimes = [];
+  function toggleDebug() { dbg = !dbg; $('#debug').hidden = !dbg; }
+  function updateDebug(dt) {
+    const nowT = performance.now(); frameTimes.push(nowT); while (frameTimes.length > 30) frameTimes.shift();
+    fpsE = frameTimes.length > 1 ? ((frameTimes.length - 1) * 1000) / (nowT - frameTimes[0]) : 0;
+    if (!dbg) return;
+    const info = S.view === 'mini' && views.mini && views.mini.info();
+    $('#debug').textContent = `${S.view} · ${fpsE.toFixed(0)} fps · ${S.flights.length} paths · ${S.pins.size} pins${info ? ` · ${info.calls} draws · ${(info.triangles / 1000).toFixed(0)}k tris` : ''} · ${S.idx}/${H.records.length} records`;
+  }
+  App.fps = () => fpsE;
+
+  // ---------- main loop ----------
+  const FLIGHTS_PER_SEC = Math.min(innerWidth, innerHeight) < 700 ? 14 : 28;
+  let flightAcc = 0;
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (S.playing) {
+      const dm = dt * S.speed;
+      S.animNow += dt;
+      if (S.t + dm >= 1440) { seek(0); }
+      else {
+        const t1 = S.t + dm;
+        // at most FLIGHTS_PER_SEC new paths a second; the counters, feed and failure pins still see every record
+        let j = S.idx; while (j < H.records.length && H.records[j]._t <= t1) j++;
+        const rate = j > S.idx ? Math.min(1, (FLIGHTS_PER_SEC * dt) / (j - S.idx)) : 1;
+        while (S.idx < j) { flightAcc += rate; const fly = flightAcc >= 1; if (fly) flightAcc -= 1; emit(H.records[S.idx], fly); S.idx++; }
+        S.t = t1;
+      }
+      const hr = Math.floor(S.t / 60);
+      if (hr !== lastHour) { lastHour = hr; say(`${H.fmt(hr * 60)}. ${S.idx.toLocaleString('en-US')} records so far, ${H.cum.fails[S.idx]} failures.`); }
+    }
+    for (const tm of App.timers) if (tm.at <= S.animNow) { tm.done = true; tm.fn(); }
+    App.timers = App.timers.filter((x) => !x.done);
+    // retire finished flights
+    for (const F of S.flights) {
+      if (F.steady) continue;
+      if (S.rm) { if (S.t > F.rmUntil || S.t < F.rec._t) dropFlight(F); continue; }
+      if (progress(F) > F.stop + (F.kind === 'fail' ? 0.6 : 0.55)) dropFlight(F);
+    }
+    if (S.flights.some((F) => F.dead)) S.flights = S.flights.filter((F) => !F.dead);
+    S.dark = H.dark(S.t);
+    hoverTest();
+    const dtA = S.playing ? dt : 0;
+    if (S.view === 'map' || fading) views.map.frame(S);
+    if (views.mini && (S.view === 'mini' || fading)) views.mini.frame(S, dtA);
+    drawOverlay();
+    Feed.flush(); Summary.update(); updateTimeline(); updateSceneLabel(); updateDebug(dt);
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    views.map.mount($('#L-map'));
+    initScene(); initControls();
+    if (dbg) $('#debug').hidden = false;
+    $$('input[name="speed"]').forEach((i) => (i.checked = Math.abs(+i.value - S.speed) < 1e-6));
+    setPlaying(S.playing);
+    seek(S.t);
+    setView(window.MiniView ? 'mini' : 'mini', true);
+    if (window.MiniView) App.onMiniReady();
+    requestAnimationFrame(loop);
+  });
+  // real-day.js calls these: status while the run loads, then useDay once H.records holds it
+  App.status = (st) => {
+    const c = $('#datachip'); if (!c) return;
+    c.classList.toggle('warn', st.state === 'failed');
+    c.textContent = st.state === 'loading' ? `Placeholder day · loading the real one ${Math.round(st.p * 100)}%`
+      : st.state === 'real' ? `${st.n.toLocaleString('en-US')} records · March 3, 2027` : 'Placeholder day · the real one didn’t load';
+    if (st.state !== 'loading') say(c.textContent);
+  };
+  App.useDay = () => {
+    if (Sheet.stack.length) Sheet.close(true);
+    S.selId = null; S.hhDay = null; S.selPin = null; histDrawnAt = -1;
+    seek(S.t);
+  };
+  App.headPoint = headPoint; App.progress = progress; App.seek = seek; App.select = selectRecord; App.setView = setView; App.setPlaying = setPlaying; App.hitFlights = hitFlights; App.openHouseholdDay = openHouseholdDay;
+})();
+</script>
+<script>
+(function () {
+  // filter buttons and on-scene legend use the same record language
+  const order = ['purchase', 'income', 'bill', 'service', 'unpaid', 'fail'];
+  const svg = (k, s) => { const c = H.REC[k].map, h = H.REC[k].head, r = s / 2;
+    const shape = h === 'circle' ? `<circle cx="${r}" cy="${r}" r="${r * .32}" fill="${c}"/>` : h === 'diamond' ? `<path d="M${r} ${r * .58}L${r * 1.42} ${r}L${r} ${r * 1.42}L${r * .58} ${r}Z" fill="${c}"/>` : h === 'square' ? `<rect x="${r * .7}" y="${r * .7}" width="${r * .6}" height="${r * .6}" fill="${c}"/>` : h === 'ring' ? `<circle cx="${r}" cy="${r}" r="${r * .3}" fill="none" stroke="${c}" stroke-width="2"/>` : `<path d="M${r * .68} ${r * .68}L${r * 1.32} ${r * 1.32}M${r * 1.32} ${r * .68}L${r * .68} ${r * 1.32}" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`;
+    return `<svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" aria-hidden="true" class="ico"><circle cx="${r}" cy="${r}" r="${r}" fill="${c}" fill-opacity=".12"/>${shape}</svg>`; };
+  const line = (k) => { const st = H.REC[k], da = st.dash === 'long' ? '6 3' : st.dash === 'short' ? '2 3' : ''; return `<svg width="26" height="10" viewBox="0 0 26 10" aria-hidden="true"><path d="M1 5H${k === 'fail' ? 13 : 19}" stroke="${st.map}" stroke-width="${2 * st.w}" ${da ? `stroke-dasharray="${da}"` : ''}/>${k === 'fail' ? `<path d="M15 2l6 6M21 2l-6 6" stroke="${st.map}" stroke-width="2"/>` : st.head === 'circle' ? `<circle cx="22" cy="5" r="3.3" fill="${st.map}"/>` : st.head === 'diamond' ? `<path d="M22 1l4 4-4 4-4-4z" fill="${st.map}"/>` : st.head === 'square' ? `<rect x="19" y="2" width="6" height="6" fill="${st.map}"/>` : `<circle cx="22" cy="5" r="3" fill="none" stroke="${st.map}" stroke-width="1.6"/>`}</svg>`; };
+  const NAMES = { purchase: 'Purchases', income: 'Income', bill: 'Bills', service: 'Public services', unpaid: 'Unpaid work', fail: 'Failures' };
+  document.getElementById('filters').innerHTML = order.map((k) => `<button type="button" data-k="${k}" aria-pressed="true">${svg(k, 24)}${NAMES[k]}</button>`).join('');
+  document.getElementById('legendstrip').innerHTML = order.map((k) => `<span>${line(k)}${H.REC[k].label}</span>`).join('');
+})();
+</script>
+<script src="../../fflate.js"></script>
+<script src="real-day.js"></script>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script type="module">// ===== Halvern in Motion v3 · Miniature view (Tabletop v2, softened) =====
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const col = (h) => new THREE.Color(h);
+const Y0 = H.Y0, W2 = H.W2;
+const TABLE = '#2B2622', PRIMER = '#B9B4AC';
+const SKIN = ['#f5d7c0', '#eac09a', '#d6a27a', '#c08857', '#a26a3f', '#85532f', '#6a3f24', '#4b2c1b'];
+const CLOTH = ['#e63946', '#f4a261', '#2a9d8f', '#457b9d', '#e9c46a', '#8d5bb5', '#f1faee', '#1d3557', '#6a994e', '#bc4749', '#ff7f51', '#3d405b'];
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const PITCH = (35 * Math.PI) / 180, HEADING = -0.5;
+
+let renderer, scene, camera, sun, hemi, rtA, rtB, quad, quadScene, quadCam, matH, matV, depthMat, el, canvas, built = false, W = 0, Hh = 0;
+let winIM, lampIM, arcGeo, headGeo, arcMesh, headMesh, kitMeshes = [], groundIM;
+const G = {};
+
+function makeGeoms() {
+  G.box = new RoundedBoxGeometry(1, 1, 1, 2, 0.08); G.box.translate(0, 0.5, 0);
+  G.flat = new THREE.BoxGeometry(1, 1, 1); G.flat.translate(0, 0.5, 0);
+  const tri = new THREE.Shape([new THREE.Vector2(-0.5, 0), new THREE.Vector2(0.5, 0), new THREE.Vector2(0, 1)]);
+  G.gable = new THREE.ExtrudeGeometry(tri, { depth: 1, bevelEnabled: false }); G.gable.translate(0, 0, -0.5); G.gable.rotateY(Math.PI / 2);
+  G.hip = new THREE.ConeGeometry(Math.SQRT1_2, 1, 4, 1); G.hip.rotateY(Math.PI / 4); G.hip.translate(0, 0.5, 0);
+  G.cyl = new THREE.CylinderGeometry(1, 1, 1, 28); G.cyl.translate(0, 0.5, 0);
+  G.cone = new THREE.ConeGeometry(1, 1, 20); G.cone.translate(0, 0.5, 0);
+  G.dome = new THREE.SphereGeometry(1, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+  G.ball = new THREE.IcosahedronGeometry(1, 2);
+  G.wheel = new THREE.CylinderGeometry(0.018, 0.018, 0.014, 16); G.wheel.rotateX(Math.PI / 2);
+  G.pegBody = new THREE.LatheGeometry([[0, 0], [0.038, 0], [0.04, 0.006], [0.031, 0.017], [0.026, 0.058], [0.031, 0.074], [0.022, 0.088], [0, 0.092]].map(([x, y]) => new THREE.Vector2(x, y)), 24);
+  G.head = new THREE.SphereGeometry(0.027, 20, 14); G.head.translate(0, 0.116, 0);
+}
+
+function groundColor(t) {
+  switch (t.kind) {
+    case 'road': return '#5f5e63'; case 'rail': return '#857563';
+    case 'parking': case 'bigbox': case 'grocery': case 'diner': case 'gas': return '#7d7c80';
+    case 'plaza': return '#e3d6bb'; case 'field': return '#8b6b4a';
+    case 'tower': case 'office': case 'cityhall': case 'bank': case 'clinic': case 'bushub': return '#cfc7b6';
+    case 'shed': case 'tank': case 'utility': return '#a39d90';
+    default: return (t.x * 7 + t.y * 3) % 5 === 0 ? '#6faa4a' : '#79B552';
+  }
+}
+
+function build() {
+  makeGeoms();
+  canvas = document.createElement('canvas'); canvas.className = 'gl';
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  scene = new THREE.Scene(); scene.background = col(TABLE);
+  camera = new THREE.PerspectiveCamera(20, 1, 1, 200);
+  hemi = new THREE.HemisphereLight(0xdfe8ff, 0x5a4a3a, 0.9); scene.add(hemi);
+  sun = new THREE.DirectionalLight(0xffffff, 2.2);
+  sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096);
+  Object.assign(sun.shadow.camera, { left: -12.5, right: 12.5, top: 12.5, bottom: -12.5, near: 1, far: 80 });
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.015;
+  scene.add(sun, sun.target); sun.layers.enableAll(); hemi.layers.enableAll();
+
+  const table = new THREE.Mesh(new THREE.BoxGeometry(60, 1, 60), new THREE.MeshStandardMaterial({ color: col('#4a3b30'), roughness: 0.8 }));
+  table.position.y = -0.55; table.receiveShadow = true; scene.add(table);
+  const board = new THREE.Mesh(new RoundedBoxGeometry(21, 0.2, 21, 3, 0.08), new THREE.MeshStandardMaterial({ color: col('#e9e0cc'), roughness: 0.9 }));
+  board.position.y = -0.1; board.receiveShadow = true; board.castShadow = true; scene.add(board);
+
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new THREE.Vector3(), s = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
+  groundIM = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.04, 1), new THREE.MeshStandardMaterial({ roughness: 0.95 }), H.tiles.length);
+  groundIM.receiveShadow = true;
+  H.tiles.forEach((t, i) => { const [x, z] = W2(t); m.makeTranslation(x, 0.02, z); groundIM.setMatrixAt(i, m); groundIM.setColorAt(i, col(groundColor(t))); });
+  scene.add(groundIM);
+
+  const byKey = {};
+  for (const part of H.plan.parts) (byKey[part.k] || (byKey[part.k] = [])).push(part);
+  for (const [key, list] of Object.entries(byKey)) {
+    const im = new THREE.InstancedMesh(G[key], new THREE.MeshStandardMaterial({ roughness: 0.72, metalness: 0.02 }), list.length);
+    list.forEach((pt, i) => { q.setFromAxisAngle(Y, pt.r); m.compose(p.set(pt.x, pt.y, pt.z), q, s.set(pt.sx, pt.sy, pt.sz)); im.setMatrixAt(i, m); im.setColorAt(i, col(pt.c)); });
+    im.castShadow = key !== 'flat'; im.receiveShadow = true;
+    im.userData.tiles = list.map((pt) => pt.tile);
+    scene.add(im); kitMeshes.push(im);
+  }
+  const W_ = H.plan.wins;
+  winIM = new THREE.InstancedMesh(G.flat, new THREE.MeshBasicMaterial(), W_.length);
+  W_.forEach((w, i) => { const [x, y, z, sx, sy, sz] = w.m; m.compose(p.set(x, y, z), q.identity(), s.set(sx, sy, sz)); winIM.setMatrixAt(i, m); winIM.setColorAt(i, col(w.glass)); });
+  scene.add(winIM);
+  lampIM = new THREE.InstancedMesh(new THREE.SphereGeometry(0.016, 12, 8), new THREE.MeshBasicMaterial(), H.plan.lamps.length);
+  H.plan.lamps.forEach(([x, y, z], i) => { m.makeTranslation(x, y, z); lampIM.setMatrixAt(i, m); lampIM.setColorAt(i, col('#e8e6df')); });
+  scene.add(lampIM);
+  depthMat = new THREE.MeshBasicMaterial({ colorWrite: false });
+  makeArcs(); makePost();
+  built = true;
+}
+
+// ---------- flight paths: instanced ribbons and heads, animated on the GPU ----------
+const ARC_N = 56, MAX = 4096;
+const COMMON = `
+attribute vec3 iStart; attribute vec3 iEnd; attribute vec4 iColor; attribute vec4 iTime; attribute vec4 iStyle; attribute float iId;
+uniform float uNow; uniform float uHover; uniform float uDim; uniform float uRM;
+vec3 arcAt(float t){ vec3 p = mix(iStart, iEnd, t); p.y += iTime.z * 4.0 * t * (1.0 - t); return p; }`;
+const arcVS = COMMON + `
+attribute float aT; attribute float aSide; uniform float uWidth;
+varying float vT; varying float vH; varying vec4 vColor; varying vec4 vStyle; varying float vKind; varying float vSide; varying float vLen; varying float vA;
+void main(){
+  float h = (uNow - iTime.x) / iTime.y;
+  float steady = max(iStyle.w, uRM);
+  float stop = iStyle.z;
+  float hh = steady > 0.5 ? stop : min(h, stop);
+  float t = aT;
+  vec3 p = arcAt(t);
+  vec3 d = iEnd - iStart; d.y += iTime.z * 4.0 * (1.0 - 2.0 * t);
+  vec3 side = normalize(cross(d, normalize(cameraPosition - p)));
+  float hov = abs(iId - uHover) < 0.5 ? 1.7 : 1.0;
+  float w = uWidth * iColor.w * hov * (steady > 0.5 ? 1.0 : 0.65 + 0.7 * smoothstep(hh - 0.22, hh, t) * step(t, hh));
+  p += side * aSide * w;
+  vT = t; vH = steady > 0.5 ? 99.0 : h; vColor = iColor; vStyle = iStyle; vKind = iTime.w; vSide = aSide;
+  vLen = length(iEnd - iStart) + iTime.z * 1.5;
+  vA = (uHover > -0.5 && abs(iId - uHover) > 0.5) ? uDim : 1.0;
+  gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+}`;
+const arcFS = `
+uniform float uRM;
+varying float vT; varying float vH; varying vec4 vColor; varying vec4 vStyle; varying float vKind; varying float vSide; varying float vLen; varying float vA;
+void main(){
+  float t = vT, h = vH, stop = vStyle.z, L = 0.3, a;
+  if (t > stop + 0.002) discard;
+  bool steady = vStyle.w > 0.5 || uRM > 0.5;
+  float hh = min(h, stop);
+  if (steady) a = 0.95;
+  else {
+    float trail = smoothstep(hh - L, hh, t) * step(t, hh);
+    a = max(trail, 0.25 * step(t, hh));
+    if (h > stop) a *= 1.0 - smoothstep(stop, stop + (vKind > 1.5 ? 0.55 : L * 1.6), h);
+  }
+  float on = 1.0;
+  if (vStyle.x > 0.5 && vStyle.x < 1.5) on = step(0.35, fract(t * vLen / 0.32));
+  else if (vStyle.x > 1.5) on = step(0.5, fract(t * vLen / 0.11));
+  a *= on * vA;
+  float e = abs(vSide);
+  vec3 c = vColor.rgb;
+  if (e > 0.55) c = vec3(0.055, 0.106, 0.18);
+  a *= 1.0 - smoothstep(0.9, 1.0, e);
+  if (a < 0.02) discard;
+  gl_FragColor = vec4(c, a);
+  #include <colorspace_fragment>
+}`;
+const headVS = COMMON + `
+attribute vec2 aCorner; uniform vec2 uRes; uniform float uPx;
+varying vec2 vUv; varying vec4 vColor; varying float vShape; varying float vA;
+void main(){
+  float h = (uNow - iTime.x) / iTime.y, stop = iStyle.z;
+  float steady = max(iStyle.w, uRM);
+  float s; float a = 1.0;
+  if (steady > 0.5) s = stop;
+  else if (iTime.w > 1.5) { s = min(h, stop); if (h > stop) a = 1.0 - smoothstep(stop, stop + 0.55, h); }
+  else { s = min(h, stop); if (h > stop || h < 0.0) a = 0.0; }
+  if (h < 0.0 && steady < 0.5) a = 0.0;
+  float shape = iStyle.y;
+  if (iTime.w > 1.5 && (h >= stop || steady > 0.5)) shape = 4.0;
+  else if (iTime.w > 1.5) shape = 0.0;
+  vec4 c = projectionMatrix * viewMatrix * vec4(arcAt(s), 1.0);
+  float hov = abs(iId - uHover) < 0.5 ? 1.35 : 1.0;
+  c.xy += aCorner * (uPx * hov * (a > 0.0 ? 1.0 : 0.0)) * 2.0 / uRes * c.w;
+  vUv = aCorner; vColor = iColor; vShape = shape;
+  vA = a * ((uHover > -0.5 && abs(iId - uHover) > 0.5) ? uDim : 1.0);
+  gl_Position = c;
+}`;
+const headFS = `
+varying vec2 vUv; varying vec4 vColor; varying float vShape; varying float vA;
+void main(){
+  vec2 p = vUv; float d; float inner = 0.6, outer = 0.86;
+  if (vShape < 0.5) d = length(p);
+  else if (vShape < 1.5) d = (abs(p.x) + abs(p.y)) * 0.78;
+  else if (vShape < 2.5) d = max(abs(p.x), abs(p.y)) * 0.9;
+  else if (vShape < 3.5) { float r = length(p); d = abs(r - 0.52) + 0.3; inner = 0.47; outer = 0.62; }
+  else { d = min(abs(p.x - p.y), abs(p.x + p.y)) * 0.7071 * 3.0; if (max(abs(p.x), abs(p.y)) > 0.66) d = 9.0; inner = 0.5; outer = 0.95; }
+  if (d > outer) discard;
+  vec3 c = d < inner ? vColor.rgb : vec3(0.055, 0.106, 0.18);
+  if (vA < 0.02) discard;
+  gl_FragColor = vec4(c, vA);
+  #include <colorspace_fragment>
+}`;
+const KIND = { purchase: 0, income: 0, bill: 0, service: 0, unpaid: 1, fail: 2 };
+const DASHC = { solid: 0, long: 1, short: 2 }, HEADC = { circle: 0, diamond: 1, square: 2, ring: 3, x: 4 };
+let attrs = {};
+function makeArcs() {
+  const inst = {};
+  for (const [name, n] of [['iStart', 3], ['iEnd', 3], ['iColor', 4], ['iTime', 4], ['iStyle', 4], ['iId', 1]]) {
+    const a = new THREE.InstancedBufferAttribute(new Float32Array(MAX * n), n); a.setUsage(THREE.DynamicDrawUsage); inst[name] = a;
+  }
+  for (let i = 0; i < MAX; i++) { inst.iId.setX(i, i); inst.iTime.setXYZW(i, -1e6, 1, 0, 0); }
+  attrs = inst;
+  arcGeo = new THREE.InstancedBufferGeometry();
+  const aT = [], aS = [], pos = [], idx = [];
+  for (let i = 0; i <= ARC_N; i++) for (const s of [-1, 1]) { aT.push(i / ARC_N); aS.push(s); pos.push(0, 0, 0); }
+  for (let i = 0; i < ARC_N; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  arcGeo.setIndex(idx);
+  arcGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  arcGeo.setAttribute('aT', new THREE.Float32BufferAttribute(aT, 1));
+  arcGeo.setAttribute('aSide', new THREE.Float32BufferAttribute(aS, 1));
+  headGeo = new THREE.InstancedBufferGeometry();
+  headGeo.setIndex([0, 1, 2, 0, 2, 3]);
+  headGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Array(12).fill(0), 3));
+  headGeo.setAttribute('aCorner', new THREE.Float32BufferAttribute([-1, -1, 1, -1, 1, 1, -1, 1], 2));
+  for (const [k, a] of Object.entries(inst)) { arcGeo.setAttribute(k, a); headGeo.setAttribute(k, a); }
+  arcGeo.instanceCount = headGeo.instanceCount = MAX;
+  const uni = { uNow: { value: 0 }, uHover: { value: -1 }, uDim: { value: 0.35 }, uRM: { value: 0 }, uWidth: { value: 0.05 }, uRes: { value: new THREE.Vector2(1, 1) }, uPx: { value: 7.5 } };
+  arcMesh = new THREE.Mesh(arcGeo, new THREE.ShaderMaterial({ uniforms: uni, vertexShader: arcVS, fragmentShader: arcFS, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
+  headMesh = new THREE.Mesh(headGeo, new THREE.ShaderMaterial({ uniforms: uni, vertexShader: headVS, fragmentShader: headFS, transparent: true, depthWrite: false, depthTest: false }));
+  for (const mm of [arcMesh, headMesh]) { mm.frustumCulled = false; mm.layers.set(1); scene.add(mm); }
+  arcMesh.renderOrder = 5; headMesh.renderOrder = 6;
+}
+const slotOf = new Map(), slotId = new Array(MAX).fill(null), free = [];
+for (let i = MAX - 1; i >= 0; i--) free.push(i);
+const heightOf = (F) => Math.min(3, 0.35 + Math.hypot(F.b[0] - F.a[0], F.b[2] - F.a[2]) * 0.2);
+function writeSlot(i, F) {
+  const st = H.REC[F.kind], c = col(st.mini);
+  attrs.iStart.setXYZ(i, ...F.a); attrs.iEnd.setXYZ(i, ...F.b);
+  attrs.iColor.setXYZW(i, c.r, c.g, c.b, st.w * (0.75 + 0.18 * Math.log10((F.rec.amount_gross || 10) + 1)));
+  attrs.iTime.setXYZW(i, F.born, F.dur, heightOf(F), KIND[F.kind]);
+  attrs.iStyle.setXYZW(i, DASHC[st.dash], HEADC[st.head], F.stop, F.steady ? 1 : 0);
+}
+function syncFlights(S) {
+  let dirty = false;
+  const live = new Set();
+  for (const F of S.flights) {
+    live.add(F.id);
+    let i = slotOf.get(F.id);
+    if (i == null) { if (!free.length) continue; i = free.pop(); slotOf.set(F.id, i); slotId[i] = F.id; writeSlot(i, F); F._mst = F.steady; dirty = true; }
+    else if (F._mst !== F.steady) { attrs.iStyle.setW(i, F.steady ? 1 : 0); F._mst = F.steady; dirty = true; }
+  }
+  for (const [id, i] of slotOf) if (!live.has(id)) { attrs.iTime.setXYZW(i, -1e6, 1, 0, 0); attrs.iStyle.setW(i, 0); slotOf.delete(id); slotId[i] = null; free.push(i); dirty = true; }
+  if (dirty) for (const a of Object.values(attrs)) a.needsUpdate = true;
+  const u = arcMesh.material.uniforms;
+  u.uNow.value = S.animNow; u.uRM.value = S.rm ? 1 : 0;
+  u.uHover.value = S.hoverId && slotOf.has(S.hoverId) ? slotOf.get(S.hoverId) : -1;
+  u.uRes.value.set(W, Hh);
+}
+function pathPointWorld(F, s) { const h = heightOf(F); return new THREE.Vector3(F.a[0] + (F.b[0] - F.a[0]) * s, F.a[1] + (F.b[1] - F.a[1]) * s + h * 4 * s * (1 - s), F.a[2] + (F.b[2] - F.a[2]) * s); }
+function project(v) { const p = v.clone().project(camera); return [(p.x * 0.5 + 0.5) * W, (-p.y * 0.5 + 0.5) * Hh, p.z]; }
+
+// ---------- post: soft focus away from the middle band ----------
+function makePost() {
+  rtA = new THREE.WebGLRenderTarget(4, 4, { samples: 4 }); rtB = new THREE.WebGLRenderTarget(4, 4);
+  rtA.texture.colorSpace = THREE.SRGBColorSpace; rtB.texture.colorSpace = THREE.SRGBColorSpace;
+  const vs = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+  const fs = (final) => `
+    uniform sampler2D tex; uniform vec2 dir; uniform float band; uniform float ramp; uniform float maxR; varying vec2 vUv;
+    void main(){
+      float d = abs(vUv.y - 0.5) * 2.0;
+      float r = maxR * smoothstep(band, band + ramp, d);
+      vec4 c = vec4(0.0); float w = 0.0;
+      for (int i = -6; i <= 6; i++) { float fi = float(i); float g = exp(-fi*fi/18.0); c += texture2D(tex, vUv + dir * fi * r / 6.0) * g; w += g; }
+      c /= w;
+      ${final ? `float l = dot(c.rgb, vec3(0.299, 0.587, 0.114)); c.rgb = mix(vec3(l), c.rgb, 1.16); vec2 q = vUv - 0.5; c.rgb *= 1.0 - dot(q, q) * 0.45;` : ''}
+      gl_FragColor = c;
+      ${final ? '#include <colorspace_fragment>' : ''}
+    }`;
+  const mk = (final) => new THREE.ShaderMaterial({ uniforms: { tex: { value: null }, dir: { value: new THREE.Vector2() }, band: { value: 0.6 }, ramp: { value: 0.4 }, maxR: { value: 1 } }, vertexShader: vs, fragmentShader: fs(final), depthTest: false, depthWrite: false });
+  matH = mk(false); matV = mk(true);
+  quadScene = new THREE.Scene(); quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matH); quad.frustumCulled = false; quadScene.add(quad);
+}
+
+// ---------- decorative movers: pegs, cars, buses, train ----------
+const MAT = {};
+const mat = (c, o = {}) => MAT[c + JSON.stringify(o)] || (MAT[c + JSON.stringify(o)] = new THREE.MeshStandardMaterial({ color: col(c), roughness: 0.5, ...o }));
+let agents = [], pinObjs = new Map(), lastWinKey = '', glowTiles = new Map(), clock = 0;
+function addPeg() {
+  const g = new THREE.Group(), body = new THREE.Mesh(G.pegBody, mat(pick(CLOTH))), head = new THREE.Mesh(G.head, mat(pick(SKIN), { roughness: 0.6 }));
+  body.castShadow = head.castShadow = true; g.add(body, head); g.scale.setScalar(1.12); scene.add(g); return g;
+}
+function addCar(kind, color, ribbon) {
+  const g = new THREE.Group(), bus = kind === 'bus';
+  const body = new THREE.Mesh(G.box, mat(color)); body.scale.set(bus ? 0.42 : 0.17, bus ? 0.11 : 0.05, bus ? 0.12 : 0.085); body.position.y = 0.012; body.castShadow = true; g.add(body);
+  if (bus) { const w = new THREE.Mesh(G.flat, mat('#2b2f38')); w.scale.set(0.36, 0.035, 0.122); w.position.y = 0.075; g.add(w); }
+  else { const cab = new THREE.Mesh(G.box, mat('#cfdbe4', { roughness: 0.2 })); cab.scale.set(0.09, 0.04, 0.075); cab.position.set(-0.012, 0.058, 0); g.add(cab); }
+  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { const wh = new THREE.Mesh(G.wheel, mat('#222')); wh.position.set(x * (bus ? 0.14 : 0.052), 0.018, z * (bus ? 0.06 : 0.044)); g.add(wh); }
+  if (ribbon) { const rb = new THREE.Mesh(G.flat, mat('#ffffff', { emissive: col('#555') })); rb.scale.set(0.028, 0.008, 0.09); rb.position.set(-0.012, 0.098, 0); g.add(rb); }
+  scene.add(g); return g;
+}
+function pathPos(a) {
+  const p = a.path, i = Math.min(a.i, p.length - 1), j = Math.min(i + 1, p.length - 1);
+  const [ax, az] = W2(p[i]), [bx, bz] = W2(p[j]);
+  let x = ax + (bx - ax) * a.u, z = az + (bz - az) * a.u;
+  const dx = bx - ax, dz = bz - az;
+  if (dx || dz) a.dir = [dx, dz];
+  if (a.dir) { x += -a.dir[1] * a.side; z += a.dir[0] * a.side; }
+  return [x, z];
+}
+function spawn(path, kind, o = {}) {
+  if (!path || path.length < 2) return null;
+  const obj = kind === 'peg' ? addPeg() : addCar(kind, o.color || pick(H.CARC), o.ribbon);
+  const a = { kind, obj, path, i: 0, u: 0, speed: o.speed || (kind === 'peg' ? 1.0 : 2.0), side: o.side ?? (kind === 'peg' ? (Math.random() < 0.5 ? -0.4 : 0.4) : 0.15), wait: 0, ...o };
+  const [x, z] = pathPos(a); obj.position.set(x, Y0, z); agents.push(a); return a;
+}
+function kill(a) { a.dead = true; scene.remove(a.obj); }
+const trim = (p, n) => (p.length > n ? p.slice(p.length - n) : p);
+function onRecord(r, sampled) {
+  if (App.S.rm || agents.length > 150) return;
+  const vk = r._vk;
+  if (vk === 'fail' && r._stop) {
+    const stop = r._stop; let far = H.randomRoad();
+    for (let k = 0; k < 6 && Math.abs(far.x - stop.x) + Math.abs(far.y - stop.y) < 6; k++) far = H.randomRoad();
+    spawn(H.path(stop, far), 'bus', { color: '#f2c14e', speed: 1.7, side: 0.17 });
+    spawn(trim(H.path(r._hh.tile, stop), 3), 'peg', { speed: 0.9, onArrive(a) { a.obj.traverse((o) => { if (o.isMesh) { o.material = mat(PRIMER, { roughness: 1 }); o.layers.set(1); } }); a.wait = 3.5; a.after = kill; } });
+  } else if (vk === 'fail' && r._place) {
+    spawn(trim(H.path(r._hh.tile, r._place), 4), 'peg', { onArrive(a) { a.obj.traverse((o) => { if (o.isMesh) { o.material = mat(PRIMER, { roughness: 1 }); o.layers.set(1); } }); a.wait = 3.5; a.after = kill; } });
+  } else if (!sampled) return;
+  else if (vk === 'purchase' && r._to.tile) spawn(trim(H.path(r._hh.tile, r._to.tile), 3 + Math.floor(Math.random() * 4)), 'peg', { onArrive(a) { a.wait = 0.6; a.after = kill; } });
+  else if (vk === 'unpaid') spawn(trim(H.path(r._hh.tile, r._to.tile), 12), 'car', { ribbon: true, speed: 1.9, onArrive(a) { a.wait = 0.8; a.after = kill; } });
+  else if (vk === 'income') App.later(1.6, () => glowTiles.set(r._to.tile, clock + 2.2));
+}
+function ambient(dt, t) {
+  if (App.S.rm) return;
+  const act = Math.min(1, H.RATE.purchase(t) / 3.6);
+  const cars = agents.filter((a) => a.kind === 'car' && a.amb).length, pegs = agents.filter((a) => a.kind === 'peg' && a.amb).length;
+  if (cars < 8 + 30 * act && Math.random() < dt * 7) { const p = H.path(H.randomRoad(), H.randomRoad()); if (p.length > 3) spawn(p, 'car', { amb: true }); }
+  if (pegs < 6 + 30 * act && Math.random() < dt * 7) { const p = H.path(H.randomRoad(), H.randomRoad()); if (p.length > 2) spawn(trim(p, 7), 'peg', { amb: true, speed: 0.75 }); }
+  if (!agents.some((a) => a.kind === 'train') && Math.random() < dt * 0.08 && H.dark(t) < 0.9) {
+    const g = new THREE.Group();
+    for (let k = 0; k < 4; k++) { const c = new THREE.Mesh(G.box, mat(k ? '#3E6FB0' : '#c0392b')); c.scale.set(0.16, 0.12, 0.42); c.position.set(0, 0.024, -k * 0.46); c.castShadow = true; g.add(c); }
+    g.position.set(9.5, Y0, 2.6); scene.add(g); agents.push({ kind: 'train', obj: g, v: 1.4 });
+  }
+}
+
+// ---------- pins: one per place, count on the flag ----------
+function pinMesh(p) {
+  const g = new THREE.Group();
+  const needle = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.3, 6), new THREE.MeshBasicMaterial({ color: col('#9a9a9a') })); needle.position.y = 0.15;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.042, 18, 12), new THREE.MeshStandardMaterial({ color: col('#B04A88'), emissive: col('#8E3B6D'), emissiveIntensity: 0.55, roughness: 0.3 })); head.position.y = 0.3;
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 40;
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.15, 0.094), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })); flag.position.set(0.08, 0.22, 0); flag.rotation.y = -0.5;
+  g.add(needle, head, flag); g.position.set(p.x, Y0, p.z); g.traverse((o) => o.layers.set(1)); scene.add(g);
+  return { g, head, cv, tex, n: -1 };
+}
+function syncPins(S) {
+  for (const [k, o] of pinObjs) if (!S.pins.has(k)) { scene.remove(o.g); pinObjs.delete(k); }
+  for (const [k, p] of S.pins) {
+    let o = pinObjs.get(k); if (!o) { o = pinMesh(p); pinObjs.set(k, o); }
+    if (o.n !== p.recs.length) {
+      o.n = p.recs.length;
+      const c = o.cv.getContext('2d');
+      c.fillStyle = '#F6F1DF'; c.fillRect(0, 0, 64, 40); c.fillStyle = '#8E3B6D'; c.fillRect(0, 0, 6, 40);
+      c.fillStyle = '#2b2622'; c.font = '700 26px Figtree, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(o.n), 35, 22);
+      o.tex.needsUpdate = true; o.head.scale.setScalar(1 + Math.min(1.2, 0.15 * (o.n - 1)));
+    }
+    const age = S.animNow - (p.born ?? -9);
+    o.g.position.y = age >= 0 && age < 0.5 && !S.rm ? 0.6 - (age / 0.5) * (0.6 - Y0) : Y0;
+  }
+}
+
+// ---------- light ----------
+function light(t) {
+  const dk = H.dark(t), wm = H.warm(t), a = H.sunAngle(t);
+  const elev = Math.max(0.05, Math.sin(Math.min(Math.PI, Math.max(0, a)))) * 1.05;
+  const dir = new THREE.Vector3(Math.cos(a), Math.max(0.12, Math.sin(elev)), Math.sin(a) * 0.55 + 0.35).normalize();
+  sun.position.copy(dir.multiplyScalar(30)); if (dk > 0.6) sun.position.set(-12, 22, 14);
+  sun.intensity = 2.6 * (1 - dk) + 0.65 * dk;
+  sun.color.set(col('#ffffff').lerp(col('#ffb070'), Math.min(1, wm * 0.8)).lerp(col('#8fa3ff'), dk));
+  hemi.intensity = 0.75 + 0.25 * (1 - dk);
+  hemi.color.set(col('#dfe8ff').lerp(col('#5a6aa8'), dk));
+  hemi.groundColor.set(col('#5a4a3a').lerp(col('#1a1a2e'), dk));
+  scene.background.set(col(TABLE).lerp(col('#141018'), dk * 0.6));
+  const key = Math.round(dk * 10) + '|' + Math.floor(t);
+  if (key !== lastWinKey) {
+    lastWinKey = key;
+    const c = new THREE.Color(), warm = col('#ffd27a'), cool = col('#fff0c8'), dark = col('#1b2130');
+    H.plan.wins.forEach((w, i) => {
+      const g = col(w.refl ? '#7f97ad' : w.glass), on = H.winLit(w, t);
+      if (dk < 0.25) c.copy(g); else c.copy(dark).lerp(g, Math.max(0, 1 - dk) * 0.6);
+      if (on && dk >= 0.25) c.copy(w.work ? cool : warm);
+      winIM.setColorAt(i, c);
+    });
+    winIM.instanceColor.needsUpdate = true;
+    const lc = dk > 0.35 ? col('#ffe2a0') : col('#e8e6df');
+    for (let i = 0; i < H.plan.lamps.length; i++) lampIM.setColorAt(i, lc);
+    lampIM.instanceColor.needsUpdate = true;
+  }
+}
+
+// ---------- camera ----------
+const dist = () => Math.max(8, Math.min(70, 30 / App.cam.zoom));
+function updateCamera() {
+  camera.aspect = W / Hh; camera.updateProjectionMatrix();
+  const d = dist(), cp = Math.cos(PITCH), tx = App.cam.x, tz = App.cam.z;
+  camera.position.set(tx + Math.sin(HEADING) * d * cp, Math.sin(PITCH) * d, tz + Math.cos(HEADING) * d * cp);
+  camera.lookAt(tx, 0, tz);
+}
+
+// ---------- frame ----------
+let blurMode = 'subtle';
+function frame(S, dtAnim) {
+  clock += dtAnim;
+  light(S.t);
+  for (const a of agents) {
+    if (a.dead) continue;
+    if (a.kind === 'train') { a.obj.position.z += a.v * dtAnim; if (a.obj.position.z > 12) kill(a); continue; }
+    if (a.wait > 0) { a.wait -= dtAnim; if (a.wait <= 0 && a.after) a.after(a); continue; }
+    if (a.arrived) continue;
+    a.u += a.speed * dtAnim;
+    while (a.u >= 1 && a.i < a.path.length - 1) { a.u -= 1; a.i++; }
+    if (a.i >= a.path.length - 1) { a.u = 0; a.arrived = true; if (a.onArrive) a.onArrive(a); else kill(a); continue; }
+    const [x, z] = pathPos(a);
+    if (a.kind !== 'peg' && a.dir) a.obj.rotation.y = Math.atan2(-a.dir[1], a.dir[0]);
+    a.obj.position.set(x, Y0 + (a.kind === 'peg' ? Math.abs(Math.sin(clock * 11 + a.side * 9)) * 0.012 : 0), z);
+  }
+  agents = agents.filter((a) => !a.dead);
+  if (dtAnim > 0) ambient(dtAnim, S.t);
+  let gc = false;
+  for (const [t2, until] of glowTiles) {
+    const idx = []; H.plan.wins.forEach((w, i) => { if (w.tile === t2) idx.push(i); });
+    if (until < clock) { glowTiles.delete(t2); lastWinKey = ''; continue; }
+    for (const i of idx) winIM.setColorAt(i, col(S.rm || Math.sin(clock * 9) > -0.3 ? '#fff2a8' : '#ffd27a'));
+    gc = true;
+  }
+  if (gc) winIM.instanceColor.needsUpdate = true;
+  syncFlights(S); syncPins(S);
+  updateCamera();
+
+  const w = renderer.domElement.width, h = renderer.domElement.height;
+  if (rtA.width !== w || rtA.height !== h) { rtA.setSize(w, h); rtB.setSize(w, h); }
+  const pr = renderer.getPixelRatio(), d = dist();
+  const zoomFade = THREE.MathUtils.smoothstep(d, 10, 24);
+  let maxR = 0, band = 0.6, ramp = 0.4;
+  if (blurMode === 'subtle') maxR = (7 / 3) * pr * zoomFade;
+  else if (blurMode === 'full') { maxR = 7 * pr * zoomFade; band = 0.1 + 0.18 * Math.min(1, (d - 12) / 40); ramp = 0.42; }
+  renderer.autoClear = true; renderer.shadowMap.autoUpdate = true;
+  camera.layers.set(0);
+  renderer.setRenderTarget(rtA); renderer.render(scene, camera);
+  for (const m of [matH, matV]) { m.uniforms.band.value = band; m.uniforms.ramp.value = ramp; m.uniforms.maxR.value = maxR; }
+  quad.material = matH; matH.uniforms.tex.value = rtA.texture; matH.uniforms.dir.value.set(1 / w, 0);
+  renderer.setRenderTarget(rtB); renderer.render(quadScene, quadCam);
+  quad.material = matV; matV.uniforms.tex.value = rtB.texture; matV.uniforms.dir.value.set(0, 1 / h);
+  renderer.setRenderTarget(null); renderer.render(quadScene, quadCam);
+  // sharp pass: depth of the city, then records, heads, pins and failed pegs on top
+  renderer.autoClear = false; renderer.shadowMap.autoUpdate = false; renderer.clearDepth();
+  const bg = scene.background; scene.background = null;
+  scene.overrideMaterial = depthMat; renderer.render(scene, camera); scene.overrideMaterial = null;
+  camera.layers.set(1); renderer.render(scene, camera);
+  scene.background = bg; camera.layers.set(0); renderer.autoClear = true;
+}
+
+function resize() {
+  const r = el.getBoundingClientRect(); W = r.width; Hh = r.height;
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  renderer.setSize(W, Hh, false);
+}
+const ray = new THREE.Raycaster();
+function pickPlace(px, py, S) {
+  for (const [k, p] of S.pins) { const [x, y] = project(new THREE.Vector3(p.x, 0.3, p.z)); if (Math.hypot(px - x, py - y) < 14) return { type: 'pin', pin: p }; }
+  ray.setFromCamera(new THREE.Vector2((px / W) * 2 - 1, -(py / Hh) * 2 + 1), camera);
+  const hits = ray.intersectObjects([...kitMeshes, groundIM], false);
+  for (const hit of hits) {
+    const tile = hit.object === groundIM ? H.tiles[hit.instanceId] : hit.object.userData.tiles[hit.instanceId];
+    if (!tile) continue;
+    const hhs = H.hhAtTile(tile);
+    if (hhs.length) { let best = hhs[0], bd = 1e9; for (const hh of hhs) { const d = Math.hypot(hh.anchor[0] - hit.point.x, hh.anchor[2] - hit.point.z); if (d < bd) (bd = d), (best = hh); } return { type: 'party', party: best }; }
+    if (tile.org) return { type: 'party', party: tile.org };
+    if (tile.kind === 'road') return null;
+  }
+  return null;
+}
+window.MiniView = {
+  name: 'mini', ready: true,
+  mount(container) { if (!built) build(); el = container; el.appendChild(canvas); new ResizeObserver(resize).observe(el); resize(); },
+  frame, onRecord, pickPlace,
+  pathPoint(F, s) { const [x, y] = project(pathPointWorld(F, s)); return [x, y]; },
+  project(x, y, z) { const [a, b] = project(new THREE.Vector3(x, y, z)); return [a, b]; },
+  panPx(dx, dy) {
+    const k = dist() / 900;
+    App.cam.x += -dx * k * Math.cos(HEADING) - dy * k * 1.6 * Math.sin(HEADING);
+    App.cam.z += dx * k * Math.sin(HEADING) - dy * k * 1.6 * Math.cos(HEADING);
+  },
+  zoomAt(f) { App.cam.zoom = Math.max(App.ZMIN, Math.min(App.ZMAX, App.cam.zoom * f)); },
+  setBlur(m) { blurMode = m; },
+  reset() { for (const a of agents) scene.remove(a.obj); agents = []; glowTiles.clear(); lastWinKey = ''; },
+  info: () => renderer && renderer.info.render,
+  size: () => [W, Hh],
+};
+if (window.App && App.onMiniReady) App.onMiniReady();
+</script>
+</body>
+</html>

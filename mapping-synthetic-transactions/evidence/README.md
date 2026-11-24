@@ -10,10 +10,10 @@ The real-world research read beside Medianville. Nothing here goes into a record
 | [`quotes.csv`](quotes.csv) | 25 short quotes (under 15 words, one per source), each with its speaker as the source described them and a "When…, I want…, so I can…" restatement in Medianville's form. |
 | [`research-prompt.md`](research-prompt.md) | The prompt that produced the files above. |
 
-Not built yet: `evidence_links.csv`, which will join findings to records ([data update plan](../reference/medianville-data-update-plan.md), section 2).
+Not built yet: `evidence_links.csv`, which will join findings to records ([data update plan](../story/03-grounding-in-evidence/medianville-data-update-plan.md), section 2).
 
 The other research:
 
-- **Calibration anchors** for the first run: the [run record](../reference/medianville-2027-03-03-run-record.md) and the white paper, [Seeing the Margins](../reference/seeing-the-margins.md).
+- **Calibration anchors** for the first run: the [run record](../story/01-one-day/medianville-2027-03-03-run-record.md) and the white paper, [Seeing the Margins](../story/00-the-idea/seeing-the-margins.md).
 - **Downloaded datasets** that set v2's rates: [`../sources/manifest.csv`](../sources/manifest.csv) (52 rows: 42 fetched, 10 listed for later versions), with the derived tables in `../sources/derived/` and the targets in `../sim/evidence_targets.csv`.
-- **District history** behind the systems lens: each circumstance's `source_note` in `../systems-lens/blocks.json`, checked as recorded in the [design record](../reference/medianville-systems-lens.md).
+- **District history** behind the systems lens: each circumstance's `source_note` in `../systems-lens/blocks.json`, checked as recorded in the [design record](../story/04-the-refined-city/medianville-systems-lens.md).

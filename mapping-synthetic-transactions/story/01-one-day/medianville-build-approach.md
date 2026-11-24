@@ -32,7 +32,7 @@ A model cannot write 200,000 consistent records by hand. Money would not reconci
 
 **3. Build the organizations.** About 1,670 invented businesses, agencies, churches and schools across six districts, with hours, accepted payment methods and staff sizes, plus outside parties such as the Treasury, card processors and "customers in general".
 
-**4. Build the population.** Households by type and district, then people with age, education, disability, language, coverage and benefits. Employment was fitted so that jobs match the 21-sector mix in the prompt. Wages, rents and mortgage costs were scaled until 41.5% of households fell below the ALICE threshold. (Note added 2026-11-20: the wage scale this produced, 1.23, pays each worker about 14% above real pay for their occupation, which makes up for Medianville's smaller households. See the wage note in the [data update plan](medianville-data-update-plan.md).)
+**4. Build the population.** Households by type and district, then people with age, education, disability, language, coverage and benefits. Employment was fitted so that jobs match the 21-sector mix in the prompt. Wages, rents and mortgage costs were scaled until 41.5% of households fell below the ALICE threshold. (Note added 2026-11-20: the wage scale this produced, 1.23, pays each worker about 14% above real pay for their occupation, which makes up for Medianville's smaller households. See the wage note in the [data update plan](../03-grounding-in-evidence/medianville-data-update-plan.md).)
 
 **5. Build each household's finances.** Wallets (checking, savings, cash, prepaid, card debt) and a list of recurring bills with due days and payment methods. The liquid-funds threshold was solved so that exactly 63% of adults could cover a $400 emergency.
 

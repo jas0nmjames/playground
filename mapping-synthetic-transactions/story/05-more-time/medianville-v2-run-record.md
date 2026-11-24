@@ -1,6 +1,6 @@
 # Medianville run record: v2, the published days
 
-Packed 2026-11-21 in Claude Code on Jason's Mac, on branch `medianville-v2-phase5`, as the [data update plan](medianville-data-update-plan.md)'s phase 5. Nineteen one-day runs of the same city: the baseline day, Wednesday, March 3, 2027, with 300 hand-written records, and the 18 typed days that stand for 2027 (`sim/evidence/typed_days.py`). Seed 20270303, full city (41,400 households plus group quarters, 99,743 residents), records tagged with the systems lens's mapped blocks. Each day is its own run: nothing carries from one to the next (the carried month is the [month run record](medianville-2027-03-month-run-record.md)).
+Packed 2026-11-21 in Claude Code on Jason's Mac, on branch `medianville-v2-phase5`, as the [data update plan](../03-grounding-in-evidence/medianville-data-update-plan.md)'s phase 5. Nineteen one-day runs of the same city: the baseline day, Wednesday, March 3, 2027, with 300 hand-written records, and the 18 typed days that stand for 2027 (`sim/evidence/typed_days.py`). Seed 20270303, full city (41,400 households plus group quarters, 99,743 residents), records tagged with the systems lens's mapped blocks. Each day is its own run: nothing carries from one to the next (the carried month is the [month run record](medianville-2027-03-month-run-record.md)).
 
 ## Where they are
 
