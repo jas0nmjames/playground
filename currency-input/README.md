@@ -2,6 +2,7 @@
 published: 2024-09-07
 updated: 2025-09-02
 summary: A text field that formats digits as US dollars while you type.
+status: done
 ---
 
 # Currency Input

@@ -19,6 +19,13 @@
  *   thumbnail_alt: text     alt text for the thumbnail (otherwise decorative)
  *   preview:   path         short looping video (.mp4/.webm), relative to the folder
  *                           (otherwise preview.mp4 / preview.webm in the folder)
+ *   status:    active | paused | done | archived      required; `build.js --check` fails without it
+ *              active    being worked on now
+ *              paused    unfinished, and set aside for now
+ *              done      finished; it may still get fixes
+ *              archived  kept for the record, no longer maintained
+ *   issue:     123          the project's tracking issue on GitHub. Written by
+ *                           scripts/sync-github.mjs; don't set it by hand
  */
 
 const fs = require('fs');
@@ -30,6 +37,7 @@ const GITHUB_TREE_BASE = 'https://github.com/jas0nmjames/playground/tree/main/';
 
 const THUMBNAIL_NAMES = ['thumbnail.webp', 'thumbnail.jpg', 'thumbnail.jpeg', 'thumbnail.png', 'thumbnail.avif', 'thumbnail.gif'];
 const PREVIEW_NAMES = ['preview.webm', 'preview.mp4'];
+const STATUSES = ['active', 'paused', 'done', 'archived'];
 
 function unquote(value) {
   const m = value.match(/^(['"])(.*)\1$/);
@@ -118,6 +126,12 @@ function collectProjects() {
       ? [fm.preview]
       : PREVIEW_NAMES.filter(name => fs.existsSync(path.join(ROOT, dir, name)));
 
+    const status = fm.status ? fm.status.trim().toLowerCase() : null;
+    if (status && !STATUSES.includes(status)) {
+      throw new Error(`${dir}/README.md has status: ${fm.status}; use one of ${STATUSES.join(', ')}`);
+    }
+    const issue = fm.issue && /^\d+$/.test(fm.issue.trim()) ? Number(fm.issue) : null;
+
     for (const file of [thumbnail, ...previews].filter(Boolean)) {
       if (!fs.existsSync(path.join(ROOT, dir, file))) {
         throw new Error(`${dir}/README.md points at ${file}, which does not exist`);
@@ -138,6 +152,8 @@ function collectProjects() {
       thumbnail,
       thumbnailAlt: fm.thumbnail_alt || '',
       previews,
+      status,
+      issue,
     });
   }
 
@@ -160,6 +176,7 @@ function byPublishedDesc(a, b) {
 
 module.exports = {
   ROOT,
+  STATUSES,
   GITHUB_PAGES_BASE,
   collectProjects,
   byPublishedAsc,

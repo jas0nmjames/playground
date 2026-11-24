@@ -4,6 +4,7 @@ updated: 2026-03-10
 tags: generative
 nosite: true
 summary: A three.js game over procedural terrain, with triplanar textures, scattered rocks and enemies. It needs a build step, so there's no live site yet.
+status: paused
 ---
 
 # Velocity — Textured v1.1.0

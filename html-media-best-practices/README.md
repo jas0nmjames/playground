@@ -2,6 +2,7 @@
 published: 2023-07-12
 updated: 2026-11-17
 summary: Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video, and YouTube and Vimeo embeds.
+status: done
 ---
 
 # HTML Media Best Practices

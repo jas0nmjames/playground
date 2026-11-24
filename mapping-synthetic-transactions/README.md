@@ -5,6 +5,7 @@ tags: generative
 title: Medianville
 summary: One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a 3D miniature town and a printed map sheet, with a systems lens and a data explorer.
 pinned: 1
+status: active
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
