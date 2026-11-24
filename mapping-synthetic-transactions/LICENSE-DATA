@@ -1,0 +1,55 @@
+Medianville: data, documents and images
+=======================================
+
+Medianville © 2026 by Jason James is licensed under Creative Commons Attribution 4.0
+International (CC BY 4.0). To view a copy of this license, visit
+https://creativecommons.org/licenses/by/4.0/
+
+The full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+This file covers the mapping-synthetic-transactions/ folder of the jas0nmjames/playground
+repository, published at https://medianville.netlify.app/.
+
+
+What CC BY 4.0 covers
+---------------------
+
+- The generated data: the published runs in data/ (the day zips and data/runs/manifest.json)
+  and the tables in data/halvern/, and the month released as medianville_2027-03_month.zip.
+- systems-lens/blocks.json: the mapped blocks, their circumstances, patterns and loops.
+- The hand-written records: sim/detailed_overrides.csv, sim/detailed_sample.csv and
+  sim/detail_parts/, data/halvern/detailed_overrides.csv, data/halvern/detailed_sample_500.csv
+  and data/halvern/detail_parts/, and the copies inside the zips.
+- The pages for agents: llms.txt, llms-full.txt and agents/.
+- The documents: the READMEs, story/ (the decision log, the run records and the other
+  documents), and the evidence results in sim/evidence/results/.
+- The images and video in this folder: the screenshots in story/ and archive/,
+  thumbnail.webp and preview.mp4.
+
+
+What it does not cover
+----------------------
+
+- evidence/ is under neither license. It holds third-party material: quotes, sources,
+  findings drawn from them and citations. Each quote and source belongs to its author or
+  publisher.
+- The code is under the Mozilla Public License 2.0, the repository's license (see LICENSE at
+  the repository root): sim/ (the simulator and its tests, except the hand-written records
+  above), tools/, sources/tools/, the copies of the simulator inside the zips and in
+  data/halvern/, and the pages' HTML, JavaScript and CSS (index.html, about/, explorer/,
+  systems-lens/, archive/, real-day.js, runs.js and sound.js).
+- fflate.js is fflate by Arjun Barrett and contributors, under the MIT License
+  (https://github.com/101arrowz/fflate).
+- The public datasets that sources/ lists and derives tables from keep their publishers'
+  terms, recorded in the license_or_terms column of sources/manifest.csv.
+
+
+How to attribute
+----------------
+
+Cite as: James, J. (2026). Medianville: a simulated American city's transactions
+[synthetic dataset]. https://medianville.netlify.app/ Data under CC BY 4.0.
+
+Please also say that the data is synthetic: every person, household, business and street is
+invented, and no record describes a real person or place. The license cannot require that;
+the project asks it (https://medianville.netlify.app/llms.txt).

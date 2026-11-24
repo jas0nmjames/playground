@@ -22,6 +22,14 @@ An animated view of Medianville, an invented American city of about 100,000 peop
 
 The city was called Halvern before 2026-11-20, and the archives keep that name.
 
+## For agents
+
+The live site has a small layer for agents and LLMs to read, as static files. [`llms.txt`](llms.txt) ([on the site](https://medianville.netlify.app/llms.txt)) is the way in: what Medianville is, the provenance note to say once at the start of a session (synthetic, grounded in real research, Jason James's project), how to cite it, and links to the rest. [`agents/`](agents/) holds Markdown pages: the About page, a data dictionary for every table, every run with its own README and summary, the districts and their circumstances, and the March month. [`llms-full.txt`](llms-full.txt) is all of it in one file. Every page starts with a one-line header that points back to `llms.txt`.
+
+Agents bring their own compute: the day zips are linked on GitHub (`raw.githubusercontent.com`), not on this site, and [`robots.txt`](robots.txt) keeps crawlers off the zips. [`_headers`](_headers) serves the agent files as Markdown. Every page links `llms.txt` as `rel="alternate"`, and the About page carries a schema.org Dataset in JSON-LD.
+
+`tools/build_agent_pages.py` (standard library only) writes `agents/`, `llms-full.txt` and the JSON-LD from the About page, the run zips, the manifest, `systems-lens/blocks.json` and the month run record. Run it after changing any of them and commit what it writes; `sim/tests/test_agent_pages.py` fails when a page is stale. `llms.txt` is written by hand.
+
 ## History
 
 The work is told as milestones, each with its own chapter in [the story](story/). Folders, tags and milestone titles use these names; viewers and data runs keep their own version numbers.
@@ -205,7 +213,10 @@ which writes `data/runs/v2/medianville_<date>.zip` and `data/runs/manifest.json`
 | `evidence/` | The real-accounts research that came before the downloads: the human-evidence report (the first day scored against 69 real sources), its 69 sources, 76 findings and 25 quotes, and the prompt that produced them. The findings' `E` ids are the `evidence_ids` in `systems-lens/blocks.json`. |
 | `sources/` | The download manifest and log, the tools that build `sources/derived/` from the raw downloads, and the derived tables the simulator reads. Raw files stay out of git. |
 | `story/` | How the project was made, one folder per milestone: the documents behind it, the decision log and the screenshots, listed below |
-| `tools/check_links.py` | Checks every link in the project's documents and pages, relative or to this repo on GitHub and Pages |
+| `tools/check_links.py` | Checks every link in the project's documents and pages, relative or to this repo on GitHub, Pages and the Netlify site |
+| `llms.txt`, `llms-full.txt`, `agents/` | The pages for agents and LLMs (see [For agents](#for-agents)); `llms.txt` by hand, the rest written by `tools/build_agent_pages.py` |
+| `robots.txt`, `_headers` | Crawlers welcome everywhere but the zips; Netlify's headers for the agent files and the data |
+| `LICENSE-DATA`, `CITATION.cff` | The CC BY 4.0 notice for the data and documents, and how to cite them (see [License](#license)) |
 
 ### The story and its documents
 
@@ -301,6 +312,12 @@ The town itself is unchanged. Every addition draws from its own random stream, s
 - The miniature needs WebGL and loads three.js 0.160.0 from jsDelivr. If either is missing, v3 switches to the map after 12 seconds.
 - Positions are approximate, as described above, and a building's sheet lists the real places it stands for. v3's map labels and building names are its own inventions.
 - In this container's software rendering, the miniature ran at about one frame a second, as the unmodified artifact did. Frame rates on real hardware weren't measured. The new look draws the scene twice plus its shadows, about six million triangles a frame with the land past the board, and renders at no more than 1.5 times the screen's pixel density to pay for it.
+
+## License
+
+The code (the simulator in `sim/`, `tools/`, and the pages' HTML, JavaScript and CSS) is under the Mozilla Public License 2.0, the repository's [license](../LICENSE). The generated data, `systems-lens/blocks.json`, the hand-written records, the agent pages, the documents and the images are under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-DATA`](LICENSE-DATA)). [`evidence/`](evidence/) is third-party material (quotes, sources and citations) and is under neither; the public datasets in `sources/` keep their publishers' terms. `fflate.js` is MIT.
+
+Cite it as: James, J. (2026). Medianville: a simulated American city's transactions [synthetic dataset]. https://medianville.netlify.app/ Data under CC BY 4.0. [`CITATION.cff`](CITATION.cff) has the same. Please say that the data is synthetic; the license can't require it, so the project asks.
 
 ## Claude
 

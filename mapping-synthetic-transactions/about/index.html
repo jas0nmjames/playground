@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>About Medianville</title>
 <meta name="description" content="What Medianville is, where it came from, how the day was made, what's real and what isn't, and who made it.">
+<link rel="canonical" href="https://medianville.netlify.app/about/">
+<link rel="alternate" type="text/markdown" href="/llms.txt" title="For agents and LLMs">
+<meta property="og:title" content="About Medianville">
+<meta property="og:description" content="What Medianville is, where it came from, how the day was made, what&#x27;s real and what isn&#x27;t, and who made it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -63,6 +67,655 @@ footer a { color:var(--ink2); }
   footer { padding:0 16px; }
 }
 </style>
+<script type="application/ld+json" id="dataset-jsonld">
+{
+ "@context": "https://schema.org",
+ "@type": "Dataset",
+ "name": "Medianville: a simulated American city's transactions",
+ "description": "Synthetic data: a simulated American city of about 100,000 people, weighted to the United States as a whole. Its records are every job someone did to get something done: purchases, bills, benefit deposits, forms, waits, declined cards and unpaid care, one simulated day at a time across 2027. Every person, household, business and street is invented; rates and targets come from real public research, but no record describes a real person or place.",
+ "url": "https://medianville.netlify.app/",
+ "sameAs": "https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions",
+ "creator": {
+  "@type": "Person",
+  "name": "Jason James",
+  "url": "https://jasonjames.works"
+ },
+ "license": "https://creativecommons.org/licenses/by/4.0/",
+ "isAccessibleForFree": true,
+ "temporalCoverage": "2027",
+ "keywords": [
+  "synthetic data",
+  "simulation",
+  "household finance",
+  "jobs to be done",
+  "public services",
+  "United States"
+ ],
+ "citation": "James, J. (2026). Medianville: a simulated American city's transactions [synthetic dataset]. https://medianville.netlify.app/",
+ "isBasedOn": [
+  {
+   "@type": "Dataset",
+   "name": "American Community Survey",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Census Bureau"
+   },
+   "url": "https://www.census.gov/programs-surveys/acs"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Current Employment Statistics",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Bureau of Labor Statistics"
+   },
+   "url": "https://www.bls.gov/ces/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "United For ALICE",
+   "publisher": {
+    "@type": "Organization",
+    "name": "United For ALICE"
+   },
+   "url": "https://www.unitedforalice.org/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Consumer Expenditure Survey",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Bureau of Labor Statistics"
+   },
+   "url": "https://www.bls.gov/cex/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Social Security cost-of-living adjustment",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Social Security Administration"
+   },
+   "url": "https://www.ssa.gov/cola/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Supplemental Nutrition Assistance Program",
+   "publisher": {
+    "@type": "Organization",
+    "name": "USDA Food and Nutrition Service"
+   },
+   "url": "https://www.fns.usda.gov/snap"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Medicare costs",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Centers for Medicare & Medicaid Services"
+   },
+   "url": "https://www.medicare.gov/basics/costs/medicare-costs"
+  },
+  {
+   "@type": "Dataset",
+   "name": "American Time Use Survey: annual tables",
+   "publisher": {
+    "@type": "Organization",
+    "name": "BLS"
+   },
+   "url": "https://www.bls.gov/tus/tables.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Unpaid Eldercare in the United States (ATUS)",
+   "publisher": {
+    "@type": "Organization",
+    "name": "BLS"
+   },
+   "url": "https://www.bls.gov/news.release/elcare.toc.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "ATUS microdata (respondent, activity, roster files)",
+   "publisher": {
+    "@type": "Organization",
+    "name": "BLS"
+   },
+   "url": "https://www.bls.gov/tus/data.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Survey and Diary of Consumer Payment Choice",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Federal Reserve Bank of Atlanta"
+   },
+   "url": "https://www.atlantafed.org/research-and-data/surveys/survey-and-diary-of-consumer-payment-choice"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Survey of Household Economics and Decisionmaking",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Federal Reserve Board"
+   },
+   "url": "https://www.federalreserve.gov/consumerscommunities/shed_data.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Schedule of Social Security Benefit Payments 2027",
+   "publisher": {
+    "@type": "Organization",
+    "name": "SSA"
+   },
+   "url": "https://www.ssa.gov/pubs/EN-05-10031-2027.pdf"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Federal holidays 2027",
+   "publisher": {
+    "@type": "Organization",
+    "name": "OPM"
+   },
+   "url": "https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "SNAP issuance schedules by state",
+   "publisher": {
+    "@type": "Organization",
+    "name": "USDA FNS and state agencies"
+   },
+   "url": "https://www.fns.usda.gov/snap"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Refund timing and PATH Act hold",
+   "publisher": {
+    "@type": "Organization",
+    "name": "IRS"
+   },
+   "url": "https://www.irs.gov/refunds"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Consumer Sentinel Network Data Book",
+   "publisher": {
+    "@type": "Organization",
+    "name": "FTC"
+   },
+   "url": "https://www.ftc.gov/data"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Annual Report of Payday Lending Activity (CDDTL)",
+   "publisher": {
+    "@type": "Organization",
+    "name": "California DFPI"
+   },
+   "url": "https://dfpi.ca.gov/publications/payday-lenders-publications"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Credit Access Business data reports",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Texas OCCC"
+   },
+   "url": "https://occc.texas.gov"
+  },
+  {
+   "@type": "Dataset",
+   "name": "CFPB data point: Payday lending",
+   "publisher": {
+    "@type": "Organization",
+    "name": "CFPB"
+   },
+   "url": "https://www.consumerfinance.gov/data-research/research-reports/cfpb-data-points-payday-lending/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Title-loan regulator reports from other states",
+   "publisher": {
+    "@type": "Organization",
+    "name": "State regulators (e.g., Tennessee TDFI)"
+   },
+   "url": "https://www.tn.gov/tdfi.html"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Consumer Expenditure Survey public-use microdata (Interview and Diary)",
+   "publisher": {
+    "@type": "Organization",
+    "name": "BLS"
+   },
+   "url": "https://www.bls.gov/cex/pumd.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Survey of Consumer Finances",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Federal Reserve Board"
+   },
+   "url": "https://www.federalreserve.gov/econres/scfindex.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Medical Expenditure Panel Survey",
+   "publisher": {
+    "@type": "Organization",
+    "name": "AHRQ"
+   },
+   "url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files.jsp"
+  },
+  {
+   "@type": "Dataset",
+   "name": "County Business Patterns",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Census Bureau"
+   },
+   "url": "https://www.census.gov/programs-surveys/cbp/data/datasets.html"
+  },
+  {
+   "@type": "Dataset",
+   "name": "National Survey of Unbanked and Underbanked Households",
+   "publisher": {
+    "@type": "Organization",
+    "name": "FDIC"
+   },
+   "url": "https://www.fdic.gov/household-survey"
+  },
+  {
+   "@type": "Dataset",
+   "name": "SOI tax stats: EITC and paid-preparer use",
+   "publisher": {
+    "@type": "Organization",
+    "name": "IRS Statistics of Income"
+   },
+   "url": "https://www.irs.gov/statistics/soi-tax-stats-individual-statistical-tables-by-size-of-adjusted-gross-income"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Bank call reports (overdraft and NSF revenue)",
+   "publisher": {
+    "@type": "Organization",
+    "name": "FFIEC"
+   },
+   "url": "https://cdr.ffiec.gov/public/PWS/DownloadBulkData.aspx"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Household Debt and Credit Report",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Federal Reserve Bank of New York"
+   },
+   "url": "https://www.newyorkfed.org/microeconomics/hhdc"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Residential Energy Consumption Survey",
+   "publisher": {
+    "@type": "Organization",
+    "name": "EIA"
+   },
+   "url": "https://www.eia.gov/consumption/residential/data/2020/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Utility Disconnections Dashboard",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Energy Justice Lab (Indiana University)"
+   },
+   "url": "https://utilitydisconnections.org/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Eviction Tracking System",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Eviction Lab (Princeton)"
+   },
+   "url": "https://evictionlab.org/eviction-tracking/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "American Housing Survey",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Census Bureau / HUD"
+   },
+   "url": "https://www.census.gov/programs-surveys/ahs/data.html"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Occupational Employment and Wage Statistics",
+   "publisher": {
+    "@type": "Organization",
+    "name": "BLS"
+   },
+   "url": "https://www.bls.gov/oes/tables.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "National Compensation Survey: Employee Benefits",
+   "publisher": {
+    "@type": "Organization",
+    "name": "BLS"
+   },
+   "url": "https://www.bls.gov/ebs/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "National Database of Childcare Prices",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Department of Labor Women's Bureau"
+   },
+   "url": "https://www.dol.gov/agencies/wb/topics/featured-childcare"
+  },
+  {
+   "@type": "Dataset",
+   "name": "SNAP Quality Control public data",
+   "publisher": {
+    "@type": "Organization",
+    "name": "USDA FNS (hosted by Mathematica)"
+   },
+   "url": "https://snapqcdata.net/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Medicaid renewal and work-requirement reporting",
+   "publisher": {
+    "@type": "Organization",
+    "name": "CMS and state dashboards (Georgia Pathways)"
+   },
+   "url": "https://data.medicaid.gov/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "National Transit Database",
+   "publisher": {
+    "@type": "Organization",
+    "name": "FTA"
+   },
+   "url": "https://www.transit.dot.gov/ntd/ntd-data"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Food Access Research Atlas",
+   "publisher": {
+    "@type": "Organization",
+    "name": "USDA ERS"
+   },
+   "url": "https://www.ers.usda.gov/data-products/food-access-research-atlas/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Rural-Urban Continuum Codes",
+   "publisher": {
+    "@type": "Organization",
+    "name": "USDA ERS"
+   },
+   "url": "https://www.ers.usda.gov/data-products/rural-urban-continuum-codes/"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Dialysis facilities",
+   "publisher": {
+    "@type": "Organization",
+    "name": "CMS Provider Data"
+   },
+   "url": "https://data.cms.gov/provider-data/topics/dialysis-facilities"
+  },
+  {
+   "@type": "Dataset",
+   "name": "National Agricultural Workers Survey",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Department of Labor ETA"
+   },
+   "url": "https://www.dol.gov/agencies/eta/national-agricultural-workers-survey/data"
+  },
+  {
+   "@type": "Dataset",
+   "name": "H-2A disclosure data",
+   "publisher": {
+    "@type": "Organization",
+    "name": "Department of Labor OFLC"
+   },
+   "url": "https://www.dol.gov/agencies/eta/foreign-labor/performance"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Births, deaths, marriages and divorces",
+   "publisher": {
+    "@type": "Organization",
+    "name": "CDC NCHS"
+   },
+   "url": "https://www.cdc.gov/nchs/nvss/marriage-divorce.htm"
+  },
+  {
+   "@type": "Dataset",
+   "name": "SOI migration data",
+   "publisher": {
+    "@type": "Organization",
+    "name": "IRS Statistics of Income"
+   },
+   "url": "https://www.irs.gov/statistics/soi-tax-stats-migration-data"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Storm Events Database",
+   "publisher": {
+    "@type": "Organization",
+    "name": "NOAA NCEI"
+   },
+   "url": "https://www.ncei.noaa.gov/stormevents/ftp.jsp"
+  },
+  {
+   "@type": "Dataset",
+   "name": "GHCN-Daily station record: Atlanta Hartsfield-Jackson airport (USW00013874)",
+   "publisher": {
+    "@type": "Organization",
+    "name": "NOAA NCEI"
+   },
+   "url": "https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily"
+  },
+  {
+   "@type": "Dataset",
+   "name": "Elder Fraud Report",
+   "publisher": {
+    "@type": "Organization",
+    "name": "FBI IC3"
+   },
+   "url": "https://www.ic3.gov/AnnualReport/Reports"
+  },
+  {
+   "@type": "CreativeWork",
+   "name": "Medianville human evidence report: the first day read beside 69 real sources",
+   "url": "https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/evidence/report.md"
+  }
+ ],
+ "distribution": [
+  {
+   "@type": "DataDownload",
+   "name": "v1 · Wednesday, March 3, 2027 (500 hand-written records)",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/medianville_2027-03-03.zip",
+   "contentSize": "16182979 bytes",
+   "sha256": "79b1815c8c63c20598c8929ab642b7aa15d7430a875b9b3a8320a6ff5aa42981"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Wednesday, March 3, 2027 · the baseline day (300 hand-written records)",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-03.zip",
+   "contentSize": "16298598 bytes",
+   "sha256": "d80dfd6b9151ed9f1229d0561aa9f684b563ec761ffdb78fa97c1d2f71302ea6"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Monday, July 5, 2027 · major holiday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-07-05.zip",
+   "contentSize": "11916147 bytes",
+   "sha256": "a2b918a8187f79f7f61a433f5c12238d025de7a16fee3a7e7d4da8f715b63f8b"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Monday, October 11, 2027 · minor holiday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-11.zip",
+   "contentSize": "13280504 bytes",
+   "sha256": "b16ea98133d9551f355b0c571a93a6a69427ed6f4c467b944f9dfcb4f81e6949"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Saturday, October 9, 2027 · Saturday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-09.zip",
+   "contentSize": "12143057 bytes",
+   "sha256": "575782906f65099521e05d366c21b4f585680c4ad1a970b8d01f796ead4b2b58"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Sunday, October 10, 2027 · Sunday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-10.zip",
+   "contentSize": "12770347 bytes",
+   "sha256": "ee3f3adc2b7faf5c415d01d1982670f58f211b97d63e5c73940e06ed765f4168"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Tuesday, March 2, 2027 · EITC refund wave",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-02.zip",
+   "contentSize": "14617074 bytes",
+   "sha256": "2a5243aaddc819c549aca34a851d1940548353e5ce6fd942623bb8b45c4d1fac"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Wednesday, September 1, 2027 · SSI day",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-09-01.zip",
+   "contentSize": "17987799 bytes",
+   "sha256": "fde2bb9317d0b4b8dd1ccd699db7cdf3f385dbbefe83abb4c038cd70882b4535"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Wednesday, November 3, 2027 · Social Security on the 3rd",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-11-03.zip",
+   "contentSize": "15987937 bytes",
+   "sha256": "eac89ba19107a7757752a8f440ef79de20b81f3de3d3c57609f57a6dc3fa8e4c"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Wednesday, October 13, 2027 · Social Security Wednesday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-13.zip",
+   "contentSize": "15733668 bytes",
+   "sha256": "1eb177aaf3d9392c9a9fa7c50fc7fbce6e62d75d33eed88b8049eab698bb7204"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Wednesday, October 20, 2027 · Social Security Wednesday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-20.zip",
+   "contentSize": "15991292 bytes",
+   "sha256": "3b35d917a76e16c8e48f072d32cce2b54e06da43b6262ef7ea9186ac39e7494f"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Wednesday, October 27, 2027 · Social Security Wednesday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-27.zip",
+   "contentSize": "15582231 bytes",
+   "sha256": "59d8f6f62c01dce527e9c5a1a688ee0b4d6c566f3d2819c5ef5013a336ffea3b"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Friday, October 8, 2027 · Friday payday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-08.zip",
+   "contentSize": "17713743 bytes",
+   "sha256": "3f3619abba51609ef6150e273c4846cf9a68e9b8286f7be2bed97c7a8d28983c"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Friday, October 15, 2027 · Friday payday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-15.zip",
+   "contentSize": "18634551 bytes",
+   "sha256": "da0227686e9f086ccb73a7d622e3a0038ff0442b2ed6e1a6c1b191cebb8b86fb"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Tuesday, March 16, 2027 · tax-season weekday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-16.zip",
+   "contentSize": "14665718 bytes",
+   "sha256": "52cf0a92581fcf70b0fc9f1a05e93583634a453dc8ffa068ccc06b952c743fff"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Tuesday, October 5, 2027 · early-month weekday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-05.zip",
+   "contentSize": "14974392 bytes",
+   "sha256": "8803fea38baf89a1a430b153794030ebe6e13aa7c4c9d0f7ccdce616a8c395f1"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Thursday, October 14, 2027 · mid-month weekday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-14.zip",
+   "contentSize": "15066399 bytes",
+   "sha256": "271455c942f503013dd3ee567b2d0596c914e7b186a4c5aeb5a11b06c9fec76c"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Tuesday, October 26, 2027 · late-month weekday",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-26.zip",
+   "contentSize": "14129217 bytes",
+   "sha256": "1725063c831e408ce54805e1a8cc2fd88ccba85a321483f99c32cc2c861b8e09"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Tuesday, January 19, 2027 · storm day",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-01-19.zip",
+   "contentSize": "12470797 bytes",
+   "sha256": "02a6f623b383d1e0d79c161c39a917b1c0b71b6625bd2aa4c593f88b0d62ec7c"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "v2 · Thursday, July 22, 2027 · heat day",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-07-22.zip",
+   "contentSize": "13211179 bytes",
+   "sha256": "b3aff16381f0865afaf9df94ee2fef0d8f70cb8b9d3789fd46903f4051149bdb"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "March 2027, 31 days carried day to day (GitHub Release, about 460 MB)",
+   "encodingFormat": "application/zip",
+   "contentUrl": "https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip"
+  },
+  {
+   "@type": "DataDownload",
+   "name": "The systems lens's mapped blocks (systems-lens/blocks.json)",
+   "encodingFormat": "application/json",
+   "contentUrl": "https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/systems-lens/blocks.json"
+  }
+ ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the text</a>

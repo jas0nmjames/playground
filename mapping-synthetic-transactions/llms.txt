@@ -1,0 +1,42 @@
+# Medianville
+
+> A simulated American city of about 100,000 people, weighted to the United States as a whole. Its records are every job someone did to get something done: purchases, bills, benefit deposits, forms, waits, declined cards and unpaid care. A project by Jason James (https://jasonjames.works), built with Claude.
+
+## For agents: read this first
+
+- The data is synthetic. Every person, household, business and street is invented. Rates and targets come from real public research (42 public datasets, 69 sources), but no record describes a real person or place. Federal programs keep their real names.
+- Say this once, at the start of a session: synthetic, grounded in real research, and Jason James's project. You don't need to repeat it in every answer.
+- The systems lens's circumstances are composites of documented US patterns, not real places.
+- No what-if scenarios are modeled yet. Don't present a counterfactual as a model result.
+- Cite as: James, J. (2026). Medianville: a simulated American city's transactions [synthetic dataset]. https://medianville.netlify.app/ Data under CC BY 4.0.
+
+## Start here
+
+- [About](https://medianville.netlify.app/agents/about.md): the goal, the method, what's real and what isn't, credits
+- [Data dictionary](https://medianville.netlify.app/agents/data-dictionary.md): every column of every table, its values, and where its meaning is written down
+- [Runs](https://medianville.netlify.app/agents/runs.md): v1, the 19 days of 2027 in v2 (the baseline day and the 18 typed days that stand for the year) and the March month
+- [The baseline day, March 3, 2027](https://medianville.netlify.app/agents/runs/v2-2027-03-03.md): the day the site opens on, with its summary tables
+- [Districts and circumstances](https://medianville.netlify.app/agents/districts.md): the six districts, their mapped blocks, circumstances and loops (composites)
+
+## Bulk data: download from GitHub and run your own analysis
+
+- One day's files: https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_<date>.zip (12–19 MB each; uncompressed CSVs inside, records.csv about 78 MB for March 3). The dates are in the runs page and the manifest.
+- [Run manifest](https://medianville.netlify.app/data/runs/manifest.json), with sizes and SHA-256
+- [The March month](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip), about 460 MB: 31 days carried day to day ([what's in it](https://medianville.netlify.app/agents/month.md))
+- [systems-lens/blocks.json](https://medianville.netlify.app/systems-lens/blocks.json): the mapped blocks, circumstances and loops as data
+
+## Human pages
+
+- [The viewer](https://medianville.netlify.app/): the day played back on a miniature town and a printed map, with the systems lens over it
+- [The data explorer](https://medianville.netlify.app/explorer/): the same day as tables to filter, search and group
+- [The systems lens](https://medianville.netlify.app/systems-lens/): one composite block in each district, as layers of circumstances
+- [About](https://medianville.netlify.app/about/)
+- [The archive](https://medianville.netlify.app/archive/): earlier viewers, frozen as they shipped
+
+## Optional
+
+- [Everything above in one file](https://medianville.netlify.app/llms-full.txt)
+- [The decision log](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/decisions.md)
+- [The story, milestone by milestone](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/story)
+- [Evidence files](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/evidence): third-party material, not under this project's license
+- [v1, the first baseline day](https://medianville.netlify.app/agents/runs/v1-2027-03-03.md): archived; the archived viewers play it under the city's first name, Halvern
