@@ -128,7 +128,7 @@ README frontmatter is the single source of truth for what each project is: its t
 
 - a label per project, `project: <folder>`, and a **tracking issue**, "Project: <title>", with the summary, dates, status, links, and the project's milestones and releases. It's closed when the project is done or archived. Its number goes back into the README's frontmatter as `issue:`.
 - **tasks** from a reviewed list, `scripts/tasks/<folder>.md`, as issues under the tracking issue (see [`scripts/tasks/README.md`](scripts/tasks/README.md)).
-- a user-level GitHub Project, **Playground**, with every tracking issue and task, and their Status, Published, Updated and Project fields.
+- a user-level GitHub Project, **Playground**, with every tracking issue and task, and their Status, Published, Last updated and Project fields.
 
 ```bash
 gh auth refresh -s project            # once: writing to a user-level Project needs it

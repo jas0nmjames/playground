@@ -3,6 +3,7 @@ published: 2026-07-21
 updated: 2026-07-21
 summary: A browser fan tribute to Strikefleet Omega (~2012), the draw-a-flight-path carrier-defense game. Vanilla JavaScript and canvas, no build step.
 status: active
+issue: 112
 ---
 
 # Strikefleet Omega — Recreated
