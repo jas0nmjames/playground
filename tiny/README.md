@@ -4,6 +4,7 @@ updated: 2025-09-02
 tags: generative
 summary: A tiny scroll-snapping site sized for an Apple Watch screen.
 status: paused
+issue: 100
 ---
 
 # Tiny

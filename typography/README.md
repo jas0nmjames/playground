@@ -3,6 +3,7 @@ published: 2022-11-01
 updated: 2025-09-02
 url: https://jas0nmjames.github.io/playground/typography/bungee.html
 status: done
+issue: 94
 ---
 
 # typography
