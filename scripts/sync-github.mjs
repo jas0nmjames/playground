@@ -32,7 +32,7 @@
  *                            Matched by title, so renaming a task makes a new issue.
  *   Project "Playground"     a user-level GitHub Project, created once, with the
  *                            fields Status (single select: active, paused, done,
- *                            archived), Published (date), Updated (date) and Project
+ *                            archived), Published (date), Last updated (date) and Project
  *                            (text). Every tracking issue and task is added to it with
  *                            those fields set from its project's frontmatter.
  *
@@ -60,6 +60,10 @@ const PROJECT_TITLE = 'Playground';
 const LABEL_COLOR = 'c4c6e2'; // the directory site's --secondary
 const TRACKING = { name: 'tracking', color: 'e05b08', description: "A project's tracking issue, kept in sync with its README" };
 const STATUS_COLORS = { active: 'GREEN', paused: 'YELLOW', done: 'BLUE', archived: 'GRAY' };
+// The Project's fields, by frontmatter key. Not "Updated": every Project already has a hidden,
+// read-only field of that name (when the item last changed), and GitHub rejects writes to it.
+const PFIELDS = { status: 'Status', published: 'Published', updated: 'Last updated', project: 'Project' };
+const PFIELD_TYPES = { published: 'DATE', updated: 'DATE', project: 'TEXT' };
 const CLOSED_STATUSES = ['done', 'archived'];
 const TASKS_DIR = path.join(ROOT, 'scripts', 'tasks');
 const BLOB = `https://github.com/${REPO}/blob/main/`;
@@ -73,10 +77,42 @@ const step = name => ONLY === 'all' || ONLY === name;
 
 // ─── gh ───────────────────────────────────────────────────────────────────
 
+// A GitHub outage (5xx) or secondary rate limit is retried, but only for calls that are safe
+// to repeat. A create might have gone through before the error, so it isn't retried: the run
+// stops, and running the script again finds what was made and carries on from there.
+const TRANSIENT = /HTTP 5\d\d|Service Unavailable|Bad Gateway|Gateway Time-?out|timed out|ECONNRESET|secondary rate limit|submitted too quickly/i;
+const UNSAFE_TO_REPEAT = args =>
+  (args[1] === 'create' && ['issue', 'label', 'project'].includes(args[0])) ||
+  (args[0] === 'project' && args[1] === 'field-create') ||
+  args.some(a => a.includes('addSubIssue'));
+const pause = ms => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+
+class GhError extends Error {}
+
 function gh(args, { input, json = false } = {}) {
-  const out = execFileSync('gh', args, { input, encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['pipe', 'pipe', 'pipe'] });
-  return json ? JSON.parse(out || 'null') : out.trim();
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const out = execFileSync('gh', args, { input, encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['pipe', 'pipe', 'pipe'] });
+      return json ? JSON.parse(out || 'null') : out.trim();
+    } catch (e) {
+      const msg = String(e.stderr || e.message).trim();
+      if (TRANSIENT.test(msg) && !UNSAFE_TO_REPEAT(args) && attempt < 4) {
+        console.log(`          (GitHub: ${msg.split('\n')[0]}; trying again in ${attempt * 5}s)`);
+        pause(attempt * 5000);
+        continue;
+      }
+      throw new GhError(`gh ${args.slice(0, 3).join(' ')} … failed: ${msg}`);
+    }
+  }
 }
+process.on('uncaughtException', e => {
+  if (!(e instanceof GhError)) throw e;
+  console.error(`\nStopped. ${e.message}`);
+  console.error(TRANSIENT.test(e.message)
+    ? 'That looks like a GitHub outage. Run the script again when it passes: it finds what this run made and carries on.'
+    : 'Nothing after this point was changed. Running the script again carries on from here once the cause is fixed.');
+  process.exit(1);
+});
 function ghPages(apiPath) { // REST list, every page, as one array
   return OFFLINE ? [] : gh(['api', '--paginate', '--slurp', apiPath], { json: true }).flat();
 }
@@ -306,7 +342,8 @@ if (step('project')) {
     say('create', 'field Status (single select)');
     write(['project', 'field-create', String(proj.number), '--owner', OWNER, '--name', 'Status', '--data-type', 'SINGLE_SELECT', '--single-select-options', STATUSES.join(',')]);
   }
-  for (const [name, type] of [['Published', 'DATE'], ['Updated', 'DATE'], ['Project', 'TEXT']]) {
+  for (const [key, type] of Object.entries(PFIELD_TYPES)) {
+    const name = PFIELDS[key];
     if (field(name)) say('ok', `field ${name}`);
     else { say('create', `field ${name} (${type.toLowerCase()})`); write(['project', 'field-create', String(proj.number), '--owner', OWNER, '--name', name, '--data-type', type]); }
   }
@@ -315,7 +352,14 @@ if (step('project')) {
   const fieldsNow = APPLY ? gh(['project', 'field-list', String(proj.number), '--owner', OWNER, '--format', 'json', '--limit', '100'], { json: true }).fields : fields;
   const F = name => fieldsNow.find(f => f.name === name);
   const items = live ? gh(['project', 'item-list', String(proj.number), '--owner', OWNER, '--format', 'json', '--limit', '2000'], { json: true }).items : [];
-  const norm = item => Object.fromEntries(Object.entries(item).map(([k, v]) => [k.toLowerCase().replace(/\s+/g, ''), v]));
+  const normKey = k => k.toLowerCase().replace(/\s+/g, '');
+  const norm = item => Object.fromEntries(Object.entries(item).map(([k, v]) => [normKey(k), v]));
+  // An item's current value for a frontmatter key; dates compared by day
+  const current = (item, k) => {
+    const v = item[normKey(PFIELDS[k])];
+    if (v === undefined || v === null) return '';
+    return PFIELD_TYPES[k] === 'DATE' ? String(v).slice(0, 10) : String(v);
+  };
   const byIssue = new Map(items.filter(i => i.content && i.content.number).map(i => [i.content.number, norm(i)]));
 
   const rows = [];
@@ -334,11 +378,11 @@ if (step('project')) {
       const added = write(['project', 'item-add', String(proj.number), '--owner', OWNER, '--url', `https://github.com/${REPO}/issues/${number ?? '<new>'}`, '--format', 'json'], { json: true, dry: { id: '<new>' } });
       item = { id: added.id };
     }
-    const diffs = Object.entries(want).filter(([k, v]) => v && String(item[k] ?? '') !== v);
+    const diffs = Object.entries(want).filter(([k, v]) => v && current(item, k) !== v);
     if (!diffs.length) { say('ok', `#${number} ${what}`); continue; }
-    if (byIssue.has(number)) say('set', `#${number} ${what}: ${diffs.map(([k, v]) => `${k} ${item[k] ?? '—'} → ${v}`).join(', ')}`);
+    if (byIssue.has(number)) say('set', `#${number} ${what}: ${diffs.map(([k, v]) => `${PFIELDS[k]} ${current(item, k) || '—'} → ${v}`).join(', ')}`);
     for (const [k, v] of diffs) {
-      const f = F(k === 'status' ? 'Status' : k[0].toUpperCase() + k.slice(1));
+      const f = F(PFIELDS[k]);
       const base = ['project', 'item-edit', '--id', item.id, '--project-id', proj.id, '--field-id', f ? f.id : `<${k} field>`];
       if (k === 'status') {
         const opt = f && (f.options || []).find(o => o.name === v);
@@ -350,11 +394,11 @@ if (step('project')) {
 
   console.log(`
   Views can't be made through GitHub's API. Make these by hand in the Project, once:
-  1. Roadmap: layout Roadmap, start date Published, target date Updated, group by
+  1. Roadmap: layout Roadmap, start date Published, target date Last updated, group by
      Status. The "when was each made" timeline.
   2. Board: layout Board, column field Status, filter "is:issue is:open -label:tracking".
      The open tasks by status.
-  3. Table: layout Table, group by Project, with Status, Published and Updated shown.`);
+  3. Table: layout Table, group by Project, with Status, Published and Last updated shown.`);
 }
 
 console.log(`\n${changes ? `${changes} change${changes === 1 ? '' : 's'}` : 'Nothing to change.'}${APPLY ? '' : ' Dry run: nothing was changed. Run again with --apply.'}`);
