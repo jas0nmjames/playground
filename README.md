@@ -173,9 +173,9 @@ Totals from the Generative Consumption table in each project's README, plus the 
 | [Technology & Society](./tech-and-society-course/) | 1 | Claude Code | 0.090 kWh | 0.035 kg CO₂ | 0.045 L |
 | [dut dut](./dut-dut/) | 4 | Claude Code | 3.870 kWh | 1.494 kg CO₂ | 1.935 L |
 | [Marimba navigator](./marimba/) | 9 | Claude Code | 3.168 kWh | 1.222 kg CO₂ | 1.584 L |
-| [Transactions are Jobs to be Done](./mapping-synthetic-transactions/) | 12 counted | Claude Code, Claude app | 24.930 kWh | 9.624 kg CO₂ | 12.465 L |
+| [Transactions are Jobs to be Done](./mapping-synthetic-transactions/) | 13 counted | Claude Code, Claude app | 27.450 kWh | 10.597 kg CO₂ | 13.725 L |
 | [Small as Voyager](./small-as-voyager/) | 1 counted | Claude Code | 0.594 kWh | 0.229 kg CO₂ | 0.297 L |
 | Repo-level (directory automation, website and maintenance, above) | 4 | Claude Code | 3.006 kWh | 1.160 kg CO₂ | 1.503 L |
-| **Total** | **46** | | **40.536 kWh** | **15.666 kg CO₂** | **28.908 L** |
+| **Total** | **47** | | **43.056 kWh** | **16.639 kg CO₂** | **30.168 L** |
 
 [^claude]: assuming 18 Wh per prompt; carbon at about 0.386 kg CO₂ per kWh and water at 0.5 L per kWh; does not include estimate for foundation model training. Arrival's ChatGPT session uses its own water figure (2.5 L per kWh), which is why its water total is high.
