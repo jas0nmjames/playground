@@ -4,7 +4,7 @@ The public datasets that set v2's rates. **Status (2026-11-22):** `manifest.csv`
 
 ## Instructions for Claude Code (phase 2, as written)
 
-Companion to the manifest (written as `halvern-download-manifest.csv`, now `manifest.csv`) and [`medianville-data-update-plan.md`](../reference/medianville-data-update-plan.md) (phase 2). Run in `playground/mapping-synthetic-transactions` on a feature branch; merge into `development`, never `main`.
+Companion to the manifest (written as `halvern-download-manifest.csv`, now `manifest.csv`) and [`medianville-data-update-plan.md`](../story/03-grounding-in-evidence/medianville-data-update-plan.md) (phase 2). Run in `playground/mapping-synthetic-transactions` on a feature branch; merge into `development`, never `main`.
 
 ## Setup
 
