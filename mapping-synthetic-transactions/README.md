@@ -1,96 +1,79 @@
 ---
 published: 2026-11-17
-updated: 2026-11-23
+updated: 2026-11-24
 tags: generative
 title: Medianville
-summary: One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a night map, a 3D miniature town and a printed map sheet.
+summary: One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a 3D miniature town and a printed map sheet, with a systems lens and a data explorer.
 pinned: 1
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
 
-Two animated views of Medianville, an invented American city of about 100,000 people, that play back every record of one simulated day: Wednesday, March 3, 2027 by default (202,402 records in v2), or any of 18 other days that together stand for 2027. The records are purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The night map draws each record as a light crossing an abstract map of the city's six districts. The latest viewer replays the same day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation. A menu in the header of both switches days.
+An animated view of Medianville, an invented American city of about 100,000 people, that plays back every record of one simulated day: Wednesday, March 3, 2027 by default (202,402 records in v2), or any of 18 other days that together stand for 2027. The records are purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The viewer replays the day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation. A menu in the header of both switches days.
 
-**Start here:** [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) always opens the latest viewer. Earlier versions stay online, unchanged, in `v1/` and `v3/`.
+**Start here:** [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) always opens the latest viewer. Earlier versions are kept, unchanged, in the [archive](archive/), and how the project was made, milestone by milestone, is in [the story](story/).
 
 **About the name.** Medianville nods to Robert and Helen Lynd's *Middletown* (1929), their study of Muncie, Indiana, as a typical American town. "Median" is how this city is typical: it's weighted to the whole country, with households built by rule to match national shares from the Census Bureau's American Community Survey. (Drawing them from ACS microdata is planned for v3.) The Lynds picked Muncie partly because it was mostly white and native-born. Medianville's typicality comes from weighting, not from leaving groups out.
 
 The city was called Halvern before 2026-11-20, and the archives keep that name.
 
-## Versions
+## History
 
-Viewers and data runs are numbered separately.
+The work is told as milestones, each with its own chapter in [the story](story/). Folders, tags and milestone titles use these names; viewers and data runs keep their own version numbers.
 
-| Viewer | Where | Status |
-|---|---|---|
-| Latest: Miniature and Map, with the systems lens over the city, photographic light and surface, turning and tilting, and sound | [`/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) | Current. New work lands here. |
-| v3: Miniature and Map, as first shipped (Nov 17–18, 2026) | [`/v3/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v3/) | Archived as shipped, from commit `0881c42`. |
-| v1: the night map | [`/v1/`](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v1/) | Archived as shipped, from commit `0881c42`. |
+| Milestone | Viewer | Data run | Data plan phases |
+|---|---|---|---|
+| [M1 One day](story/01-one-day/) | v1, the first viewer ([archived](archive/)) | v1: `halvern_2027-03-03.zip` | — |
+| [M2 Miniature and Map](story/02-miniature-and-map/) | v3 as first shipped ([archived](archive/)) | v1 | — |
+| [M3 Grounding in evidence](story/03-grounding-in-evidence/) | — | v1, measured against evidence targets | 0, 1, 2 |
+| [M4 The refined city](story/04-the-refined-city/) | latest (root) | v1 renamed: `medianville_2027-03-03.zip` | 3b (rename) |
+| [M5 More time](story/05-more-time/) | latest, with the day menu | v2: 19 days and the March month | 3, 4, 5, "6"* |
+| [M6 Refinements](story/06-refinements/) | latest | v2 | — |
 
-No viewer v2 shipped: the second round was a set of visual-direction prototypes in the Claude app, and the chosen direction became v3. The archived pages change only in their relative paths and an "Archived version" link back to the latest.
+\* [#82](https://github.com/jas0nmjames/playground/pull/82), the systems lens's district tier, shipped as "phase 6" of v2; the data update plan's own phase 6 is still to come.
+
+[M0 The idea](story/00-the-idea/) came before any of it, and [Next: mining for projects](story/next-mining-for-projects/) is the goal still ahead. No viewer v2 shipped: the second round was a set of visual-direction prototypes in the Claude app, and the chosen direction became v3. The [archive](archive/) keeps the frozen viewers; they change only in their relative paths and an "Archived version" link back to the latest.
+
+### Data runs
 
 | Data run | File | Status |
 |---|---|---|
 | v1: Wednesday, March 3, 2027 | `data/halvern_2027-03-03.zip` | Frozen as shipped. The archived viewers load it. |
 | v1, renamed | `data/medianville_2027-03-03.zip` | The same run with only the city's name changed, written by `tools/rename_run.py`. The latest viewer and the explorer list it in their day menu as v1. |
-| v2: the evidence update | `data/runs/v2/medianville_<date>.zip`, 19 days listed in `data/runs/manifest.json`; simulator in `sim/` (the `medianville_sim` package), frozen at commit `dd0e6b6` | Current, 2026-11-21. The baseline day (Wednesday, March 3, 2027, with 300 hand-written records) and the 18 typed days that stand for 2027. The latest viewer and the explorer open the baseline day; `?run=<id>` or the day menu opens another. See the [data update plan](reference/medianville-data-update-plan.md) and the [close reading](reference/medianville-v2-close-reading.md). |
-| v2, phase 4: March 1–31, 2027, carried day to day | GitHub Release `medianville-v2-month-2027-03`: [download (about 460 MB), not needed to use the site](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip) | Built 2026-11-20 and rebuilt 2026-11-21 on the frozen simulator: 5.7 million records with the chains across days (unpaid bills, shutoffs, overdrafts, payday and title loans). The pages never load it. Checks and summary in `sim/evidence/results/v2_month_2027-03/`; see the [month run record](reference/medianville-2027-03-month-run-record.md). |
+| v2: the evidence update | `data/runs/v2/medianville_<date>.zip`, 19 days listed in `data/runs/manifest.json`; simulator in `sim/` (the `medianville_sim` package), frozen at commit `dd0e6b6` | Current, 2026-11-21. The baseline day (Wednesday, March 3, 2027, with 300 hand-written records) and the 18 typed days that stand for 2027. The latest viewer and the explorer open the baseline day; `?run=<id>` or the day menu opens another. See the [data update plan](story/03-grounding-in-evidence/medianville-data-update-plan.md) and the [close reading](story/05-more-time/medianville-v2-close-reading.md). |
+| v2, phase 4: March 1–31, 2027, carried day to day | GitHub Release `medianville-v2-month-2027-03`: [download (about 460 MB), not needed to use the site](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip) | Built 2026-11-20 and rebuilt 2026-11-21 on the frozen simulator: 5.7 million records with the chains across days (unpaid bills, shutoffs, overdrafts, payday and title loans). The pages never load it. Checks and summary in `sim/evidence/results/v2_month_2027-03/`; see the [month run record](story/05-more-time/medianville-2027-03-month-run-record.md). |
 
 ## Views
 
-| | Night map (v1) | Miniature and Map (latest) |
-|---|---|---|
-| Live page | [mapping-synthetic-transactions/v1/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/v1/) | [mapping-synthetic-transactions/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/) |
-| Look | Dark, full-screen night sky; districts as glowing rings and clusters | Light; a tabletop 3D town, or the same town as a printed topographic sheet (press **M** to switch) |
-| City | The run's six districts, D1–D6, laid out as abstract shapes | v3's own small town; the run's districts and places are folded onto its homes and buildings |
-| Record kinds | 13 colors, one per record type | 6 kinds with their own color, line and head: purchase, income, bill, public service, unpaid work, failure |
-| Needs | Any modern browser | WebGL, plus three.js from a CDN (falls back to the map without it) |
+The viewer and the data explorer read `data/runs/manifest.json` (through `runs.js`) and open its default run, v2's baseline day; the day menu reloads the page with `?run=<id>`, and the link to the other page keeps the choice. Without the manifest they fall back to `data/medianville_2027-03-03.zip`.
 
-Both animated pages link to each other and to the systems lens in their footers. The latest viewer and the data explorer read `data/runs/manifest.json` (through `runs.js`) and open its default run, v2's baseline day; the day menu reloads the page with `?run=<id>`, and the link to the other viewer keeps the choice. Without the manifest they fall back to `data/medianville_2027-03-03.zip`. The night map, now an archive, loads the original v1 file, `data/halvern_2027-03-03.zip`.
+### Miniature and Map
 
-### Night map
-
-![The night map at 8:02 a.m.: lights crossing the six districts, with counters, timeline and live ticker on the right](screenshots/night-map.jpg)
-
-8:02 a.m., playing at one minute a second.
-
-### Miniature and Map (latest)
-
-![The miniature town at 12:30 p.m. in midday sun, with street paint, parked cars and the land beyond the board, record paths arcing between homes and buildings, small crimson flags at the places where something just failed, the day control in the header and Sound in the city's corner](screenshots/v3-miniature.jpg)
+![The miniature town at 12:30 p.m. in midday sun, with street paint, parked cars and the land beyond the board, record paths arcing between homes and buildings, small crimson flags at the places where something just failed, the day control in the header and Sound in the city's corner](story/06-refinements/v3-miniature.jpg)
 
 The Miniature view at 12:30 p.m., playing at five minutes a second. Amber arcs are purchases and violet dashed arcs public services, here children headed to school; each small crimson flag marks a place where something failed in the last few minutes.
 
-![The Map view of most of the sheet, drawn as a printed map in the viewer's type and navy ink, with record paths crossing it and numbered crimson failure triangles](screenshots/v3-map.jpg)
+![The Map view of most of the sheet, drawn as a printed map in the viewer's type and navy ink, with record paths crossing it and numbered crimson failure triangles](story/06-refinements/v3-map.jpg)
 
 The same moment in the Map view, zoomed out to show most of the sheet.
 
-![The intro over the dimmed city: "One day in Medianville", what the city is, how it was made and who made it, with Enter the city, Explore the data and About the project](screenshots/intro-desktop.jpg)
+![The intro over the dimmed city: "One day in Medianville", what the city is, how it was made and who made it, with Enter the city, Explore the data and About the project](story/06-refinements/intro-desktop.jpg)
 
-On a first visit, an intro opens over the city while the day loads, and **About** in the header reopens it. The full [About page](about/) covers the origin, method, sources, limits and credits ([phone](screenshots/intro-phone.jpg); About page on [desktop](screenshots/about-desktop.jpg) and [phone](screenshots/about-phone.jpg)).
+On a first visit, an intro opens over the city while the day loads, and **About** in the header reopens it. The full [About page](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/about/) covers the origin, method, sources, limits and credits ([phone](story/06-refinements/intro-phone.jpg); About page on [desktop](story/04-the-refined-city/about-desktop.jpg) and [phone](story/04-the-refined-city/about-phone.jpg)).
 
 ### Systems lens
 
-![The systems lens: six stacked layers of Larkin Avenue, with record 6 selected, lines dropping to the circumstances behind it, callouts on the right and the Rollover loop drawn through the top two layers](screenshots/systems-lens.jpg)
+![The systems lens: six stacked layers of Larkin Avenue, with record 6 selected, lines dropping to the circumstances behind it, callouts on the right and the Rollover loop drawn through the top two layers](story/06-refinements/systems-lens.jpg)
 
-The systems lens opens over the city in the latest viewer from a record's **What shaped this**, from a household's day, or from the **Systems lens** button in the header (**L**). It maps one composite block in each district, defined in `systems-lens/blocks.json`, and the run tags the records of those blocks' households, so the lens shows the record you opened. Every other record opens its district's block on the **district tier**: the circumstances true across the whole district, with the bar above the lens saying the record comes from elsewhere in the district. It also runs on its own at [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/), where a menu switches blocks and each pin shows a composite example. The [design record](reference/medianville-systems-lens.md) explains the choices, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
+The systems lens opens over the city in the latest viewer from a record's **What shaped this**, from a household's day, or from the **Systems lens** button in the header (**L**). It maps one composite block in each district, defined in `systems-lens/blocks.json`, and the run tags the records of those blocks' households, so the lens shows the record you opened. Every other record opens its district's block on the **district tier**: the circumstances true across the whole district, with the bar above the lens saying the record comes from elsewhere in the district. It also runs on its own at [systems-lens/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/), where a menu switches blocks and each pin shows a composite example. The [design record](story/04-the-refined-city/medianville-systems-lens.md) explains the choices, and the three directions tried first are kept at [systems-lens/directions.html](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/systems-lens/directions.html).
 
 The screenshots were taken from these pages in headless Chrome, driven over the DevTools protocol so each one shows a set moment (the viewer at 12:30 p.m., playing at five minutes a second), at twice the pixel density; the intro is at 1× and the phone intro at 390 × 844.
 
 ### Data explorer
 
-![The data explorer: records that didn't work for households in poverty, grouped by job, with filters on the left and totals above](screenshots/explorer.jpg)
+![The data explorer: records that didn't work for households in poverty, grouped by job, with filters on the left and totals above](story/06-refinements/explorer.jpg)
 
 [explorer/](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/explorer/) is the run as tables: every record, household, person and organization, with filters, search and drill-downs. Here, the 1,584 records that didn't work for households in poverty on the baseline day, grouped by job.
-
-## Watching the night map
-
-Placeholder records move while the real day downloads (16 MB), and then the clock starts at 6:30 a.m.
-
-- **Clock and timeline.** Play or pause with the button or the space bar. Pick a speed from real time up to 30 minutes per second, and drag the timeline to jump. The bars show how busy each five minutes is, with failures in red.
-- **Map.** The six districts are drawn as rings and clusters: downtown in the middle, inner and outer suburbs around it, and the satellite city, rural town and open country outside. Dots are households, squares are outside parties such as the Treasury, and the color of each light is the kind of record.
-- **Records.** Tap a light or a line in the ticker to open the record: the job statement ("When…, I want to…, so I can…"), who paid, who else paid, the cost to the public, time, travel, frictions and outcome. From there you can show the household's whole day, follow it on the map, or open the attempt a retry links back to.
-- **Filter.** Narrow the map by kind of record, district, friction or failure, the 500 hand-written records (marked ✎), or a word in the job name.
-- **Load run.** Loads another run from your computer: a zip from the simulator, or `records.csv` with `organizations.csv`, `households.csv` and `persons.csv`.
 
 ## Watching the latest viewer
 
@@ -143,7 +126,7 @@ The explorer doesn't link into a moment of the animations, because they don't ac
 
 ## Running them locally
 
-No build step. Serve the folder, then open `/` for the latest viewer, `/v1/` for the night map, `/v3/` for archived v3, `/systems-lens/` for the systems lens and `/explorer/` for the data explorer:
+No build step. Serve the folder, then open `/` for the latest viewer, `/systems-lens/` for the systems lens, `/explorer/` for the data explorer and `/archive/` for the archived viewers:
 
 ```bash
 python3 -m http.server 5181 --directory mapping-synthetic-transactions
@@ -194,8 +177,8 @@ which writes `data/runs/v2/medianville_<date>.zip` and `data/runs/manifest.json`
 | `real-day.js` | Loads the run for the latest viewer and folds it onto its town (see below) |
 | `runs.js` | Reads `data/runs/manifest.json` for both viewers: which day to open (the default, or `?run=<id>`) and the day menu |
 | `sound.js` | The latest viewer's sound, generated in the browser with Web Audio |
-| `v1/index.html` | Archived: the night map (canvas map, timeline, ticker, record sheets and filters) |
-| `v3/index.html`, `v3/real-day.js` | Archived: Miniature and Map (v3) as first shipped |
+| `archive/` | The frozen viewers, one folder per milestone (M1's first viewer, and v3 as first shipped with its `real-day.js`), each with its own README, and an [index page](archive/) that shows them side by side |
+| `v1/index.html`, `v3/index.html` | Redirects to the archive, so old links and bookmarks still work |
 | `systems-lens/index.html` | The systems lens: the layers, callouts, loops and details sheet, with its prototype content built in |
 | `explorer/index.html` | The data explorer: loading, tables, filters, search, group-by, detail sheets and summary, in one page |
 | `systems-lens/directions.html` | The three directions tried first (Section, Exploded view, The Works), in their original hand-drawn style |
@@ -210,45 +193,43 @@ which writes `data/runs/v2/medianville_<date>.zip` and `data/runs/manifest.json`
 | `data/halvern/simulate.py`, `halvern_sim/` | The v1 simulator, frozen (Python 3.10+ and numpy). The package's own [README](data/halvern/README.md) explains how to re-run it for another date, a storm, or several days in a row. `sim/tests` checks that it still reproduces the zip byte for byte. |
 | `sim/detailed_overrides.csv`, `sim/detailed_sample.csv`, `sim/detail_parts/` | v2's 300 hand-written records: the text keyed to the baseline day's record ids, the finished rows on their own, and the parts they were written in |
 | `tools/pack_runs.py`, `tools/sample_records.py`, `tools/merge_detailed.py` | Pack the published days and write the manifest; draw samples to read or write; merge the hand-written parts |
-| `sim/simulate.py`, `sim/medianville_sim/` | The v2 simulator, frozen for v2's hand-written records, with its tests (`sim/tests/`), evidence targets (`sim/evidence_targets.csv`) and typed-day checks (`sim/evidence/`). See the [data update plan](reference/medianville-data-update-plan.md). `medianville_sim/carry.py` is what a run of several days carries from one day to the next (phase 4). |
+| `sim/simulate.py`, `sim/medianville_sim/` | The v2 simulator, frozen for v2's hand-written records, with its tests (`sim/tests/`), evidence targets (`sim/evidence_targets.csv`) and typed-day checks (`sim/evidence/`). See the [data update plan](story/03-grounding-in-evidence/medianville-data-update-plan.md). `medianville_sim/carry.py` is what a run of several days carries from one day to the next (phase 4). |
 | `sim/evidence/month.py`, `sim/evidence/month_targets.csv` | The month's evidence checks: its targets, the chains across days, and the typed-day targets over the month |
 | `sim/evidence/results/v2_month_2027-03/` | The March 2027 month's `summary.md` and `evidence_checks.md`. The month itself is a Release download (above), not in the repo. |
 | `tools/pack_month.py` | Packs a carried month into one zip, the same bytes every time, with a `SHA256SUMS` file inside |
 | `evidence/` | The real-accounts research that came before the downloads: the human-evidence report (the first day scored against 69 real sources), its 69 sources, 76 findings and 25 quotes, and the prompt that produced them. The findings' `E` ids are the `evidence_ids` in `systems-lens/blocks.json`. |
 | `sources/` | The download manifest and log, the tools that build `sources/derived/` from the raw downloads, and the derived tables the simulator reads. Raw files stay out of git. |
-| `screenshots/` | The screenshots above, plus the intro and the About page |
-| `reference/` | The documents behind the project, listed below |
+| `story/` | How the project was made, one folder per milestone: the documents behind it, the decision log and the screenshots, listed below |
+| `tools/check_links.py` | Checks every link in the project's documents and pages, relative or to this repo on GitHub and Pages |
 
-### Reference documents
+### The story and its documents
 
-- [Design decision log](reference/design-decisions.md): every decision behind the project, with why, what else was considered, what it costs and whose call it was. Written after the rename to Medianville.
-- [Seeing the Margins: What a Representative American Day Reveals](reference/seeing-the-margins.md): the research white paper. Why no real city stands in for the US, and what fragility, payment habits and government look like in an ordinary day.
-- [Synthetic Mid-America: City Design v0.1](reference/synthetic-mid-america-city-design-v0.1.md): the design of the city, covering districts, economy, transaction model, field visits, and the lenses used to read it.
-- [Medianville data update plan](reference/medianville-data-update-plan.md): how the evidence was folded in and the run went past one day, phase by phase, with each phase's status.
-- [Human evidence report](evidence/report.md): the first day scored against 69 real sources, kept as written, with its [sources](evidence/sources.csv), [findings](evidence/evidence.csv), [quotes](evidence/quotes.csv) and [research prompt](evidence/research-prompt.md).
-- [Medianville transaction generator prompt](reference/medianville-transaction-generator-prompt.md): the prompt that generated the data.
-- [How the Medianville day was built](reference/medianville-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed.
-- [Medianville run record](reference/medianville-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
-- [Medianville month run record](reference/medianville-2027-03-month-run-record.md): the March 2027 month (v2, phase 4, rebuilt in phase 5): dates, seed, records, size, SHA-256, how to rebuild it, and where to download it.
-- [Medianville v2 run record](reference/medianville-v2-run-record.md): the 19 published days (v2, phase 5): kinds, weights, records, sizes, SHA-256, how they were checked and how to rebuild them.
-- [Medianville v2 close reading](reference/medianville-v2-close-reading.md): 200 records read by two readers before v2 was frozen, what they found, what was fixed and what was left for v3; the second readers' reports on [the sample](reference/medianville-v2-second-reader.md) and on [the hand-written records](reference/medianville-v2-handwritten-second-reader.md) are kept as written.
-- [Medianville Systems Lens: design record](reference/medianville-systems-lens.md): the directions tried for the systems lens, what was decided, and what waits for the next run.
-- [Medianville Miniature: realism design record](reference/medianville-miniature-realism.md): the tilt-shift references, the iterations tried in the realism lab, what was kept and how it works.
+[`story/`](story/) tells the project as milestones and holds the documents behind it, each in the milestone that produced it:
+
+- [The story](story/README.md): the arc on one page, with the version table and a line per milestone.
+- [Design decision log](story/decisions.md): every decision behind the project, with why, what else was considered, what it costs, whose call it was and its milestone.
+- **M0 The idea:** [Seeing the Margins: What a Representative American Day Reveals](story/00-the-idea/seeing-the-margins.md), the research white paper (why no real city stands in for the US, and what fragility, payment habits and government look like in an ordinary day), and [Synthetic Mid-America: City Design v0.1](story/00-the-idea/synthetic-mid-america-city-design-v0.1.md), the design of the city: districts, economy, transaction model, field visits, and the lenses used to read it.
+- **M1 One day:** [the transaction generator prompt](story/01-one-day/medianville-transaction-generator-prompt.md) that generated the data; [how the day was built](story/01-one-day/medianville-build-approach.md): the method, what close reading of the sample caught, and what was left unfixed; and the [run record](story/01-one-day/medianville-2027-03-03-run-record.md): what the run produced and how close it came to each anchor.
+- **M3 Grounding in evidence:** the [data update plan](story/03-grounding-in-evidence/medianville-data-update-plan.md): how the evidence was folded in and the run went past one day, phase by phase, with each phase's status; and the [human evidence report](evidence/report.md): the first day scored against 69 real sources, kept as written, with its [sources](evidence/sources.csv), [findings](evidence/evidence.csv), [quotes](evidence/quotes.csv) and [research prompt](evidence/research-prompt.md).
+- **M4 The refined city:** the [systems lens design record](story/04-the-refined-city/medianville-systems-lens.md): the directions tried, what was decided, and what waits for the next run; and the [miniature realism design record](story/04-the-refined-city/medianville-miniature-realism.md): the tilt-shift references, the iterations tried in the realism lab, what was kept and how it works.
+- **M5 More time:** the [v2 run record](story/05-more-time/medianville-v2-run-record.md): the 19 published days (phase 5): kinds, weights, records, sizes, SHA-256, how they were checked and how to rebuild them; the [month run record](story/05-more-time/medianville-2027-03-month-run-record.md): the March 2027 month (phase 4, rebuilt in phase 5): dates, seed, records, size, SHA-256, how to rebuild it, and where to download it; and the [v2 close reading](story/05-more-time/medianville-v2-close-reading.md): 200 records read by two readers before v2 was frozen, what they found, what was fixed and what was left for v3. The second readers' reports on [the sample](story/05-more-time/medianville-v2-second-reader.md) and on [the hand-written records](story/05-more-time/medianville-v2-handwritten-second-reader.md) are kept as written.
+
+The documents were in `reference/` until 2026-11-24. The frozen simulator in `sim/`, its targets and the packing tools still name them by their old `reference/` paths, because changing them would change the published zips; [the story's README](story/README.md#where-the-documents-were) maps each old path to its new one.
 
 Everything in the data is synthetic. People, businesses and local agencies are invented. Federal programs keep their real names because the specification requires them. Synthetic data suggests where to look; it isn't evidence.
 
 ### Data sources
 
-The research came in four rounds, and the [About page](about/#sources) lists every source:
+The research came in four rounds, and the [About page](https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/about/#sources) lists every source:
 
-1. **Calibration anchors** for the first run: the American Community Survey, Current Employment Statistics, the Diary of Consumer Payment Choice, SHED, United For ALICE, the Consumer Expenditure Survey and 2027 program figures ([run record](reference/medianville-2027-03-03-run-record.md)).
+1. **Calibration anchors** for the first run: the American Community Survey, Current Employment Statistics, the Diary of Consumer Payment Choice, SHED, United For ALICE, the Consumer Expenditure Survey and 2027 program figures ([run record](story/01-one-day/medianville-2027-03-03-run-record.md)).
 2. **Real accounts** beside the first day: 69 sources, 76 findings and 25 quotes in [`evidence/`](evidence/), summed up in the [evidence report](evidence/report.md), which named what v2 had to add.
 3. **Downloaded datasets** that set v2's rates: 42 public datasets in [`sources/manifest.csv`](sources/manifest.csv) (10 more listed for later versions), built into `sources/derived/` and named target by target in `sim/evidence_targets.csv`.
 4. **District history** behind the systems lens: each circumstance's `source_note` in `systems-lens/blocks.json`.
 
-**Wages are boosted on purpose.** Each worker is paid 1.23 times the national pay for their occupation, about 14% more than a real worker in the same job in 2027. Medianville's households are smaller than real ones, so fewer paychecks reach each home, and the boost makes up for it. Household incomes, balances and bills are closer to right this way, but one person's paycheck runs high, so compare households rather than occupations. The [data update plan](reference/medianville-data-update-plan.md) explains the numbers; the next version, which rebuilds households at their real size, drops the boost.
+**Wages are boosted on purpose.** Each worker is paid 1.23 times the national pay for their occupation, about 14% more than a real worker in the same job in 2027. Medianville's households are smaller than real ones, so fewer paychecks reach each home, and the boost makes up for it. Household incomes, balances and bills are closer to right this way, but one person's paycheck runs high, so compare households rather than occupations. The [data update plan](story/03-grounding-in-evidence/medianville-data-update-plan.md) explains the numbers; the next version, which rebuilds households at their real size, drops the boost.
 
-**What v2 still gets wrong.** v2 keeps v1's people so the two can be compared, and some of v1's households don't hold up. The [close reading](reference/medianville-v2-close-reading.md) lists them, and the next version, drawn from Census microdata, redraws them:
+**What v2 still gets wrong.** v2 keeps v1's people so the two can be compared, and some of v1's households don't hold up. The [close reading](story/05-more-time/medianville-v2-close-reading.md) lists them, and the next version, drawn from Census microdata, redraws them:
 - SSI goes to people whose household income or spouse rules it out, and some SSI recipients have no Medicaid.
 - Coverage doesn't always follow eligibility, such as uninsured adults with no income.
 - Every renter with no income pays the same $380.
@@ -258,25 +239,11 @@ The research came in four rounds, and the [About page](about/#sources) lists eve
 - Overdraft fees fall on fewer accounts than in life.
 - `time_minutes` counts the wait but not the travel.
 
-## How the night map works
-
-The page reads the CSVs directly as bytes, without turning every row into an object, so 201,753 records load in a few seconds. Each household and organization gets a fixed spot inside its district from a hash of its id, so the same entity always lands in the same place. As the clock advances, the page releases the records due by that time. It animates a sample of them along curved paths (up to 26 a frame on wide screens, 9 on phones), and the four counters stay exact. Records whose two ends are the same place, such as a school day, show as a ring that pulses outward instead.
-
-Changes since the Claude artifact it came from:
-
-- It loads `data/halvern_2027-03-03.zip` by itself on open, instead of asking for the file. If the download fails, it says so and falls back to the placeholder day and the Load run button.
-- The placeholder day finishes building before the real one starts, so the two builds never share lookup tables.
-- On narrow screens, floating captions stay inside the map.
-- "Didn't work" now counts what the run's summary counts as a failure: every failed attempt, plus anything declined, abandoned, failed or rescheduled. It used to count "partial" outcomes too, which made it 8,726 by midnight instead of 6,896. "Money moved" leaves out failed records.
-- Short names with characters such as the en dash in "Marlow's Market – Downtown" no longer come out garbled.
-- Job names drop their group prefix ("Coffee", not "Food.coffee"), as in v3.
-- A footer credits the page, links to the latest viewer and v3, and gives the impact figure below.
-
 ## How the Miniature and Map use the real day (since v3)
 
 The figures in this section are for v1's March 3, the day v3 first loaded; v2's days differ a little (the explorer and each run's `summary.md` have their counts).
 
-v3 was built as a Claude artifact around its own placeholder day: 4,130 records among 225 homes and 100 named buildings. `real-day.js` (once `v3/real-day.js`) swaps in the real run once it has downloaded. Records keep their real ids, names, amounts, districts, job statements and narratives. Only where they are drawn is approximate, because v3 draws one small town rather than the run's six districts.
+v3 was built as a Claude artifact around its own placeholder day: 4,130 records among 225 homes and 100 named buildings. `real-day.js` (once `v3/real-day.js`; the copy as first shipped is in [`archive/m2-miniature-and-map/`](archive/m2-miniature-and-map/)) swaps in the real run once it has downloaded. Records keep their real ids, names, amounts, districts, job statements and narratives. Only where they are drawn is approximate, because v3 draws one small town rather than the run's six districts.
 
 **Homes.** Each household is drawn at one of v3's homes in the area its district folds into, picked by a hash of its id:
 
@@ -311,7 +278,7 @@ By midnight v3 shows $56.1 million moved, 6,896 failures and 15,650 unpaid hours
 
 ### How the miniature looks
 
-The miniature's look came out of a realism lab built against tilt-shift photographs (see [the design record](reference/medianville-miniature-realism.md)). It keeps the town, the record language and the focus blur, and adds:
+The miniature's look came out of a realism lab built against tilt-shift photographs (see [the design record](story/04-the-refined-city/medianville-miniature-realism.md)). It keeps the town, the record language and the focus blur, and adds:
 
 - **Sun and sky.** A solar path for March 3 near 39° N, with north up as on the Map: sunrise 6:48 a.m., sunset 6:12 p.m., the sun 44° high at noon. Sky colours follow the sun's height and light the town through an environment map, so shade takes the sky's colour and glass and paint reflect it. Exposure adjusts to the light.
 - **Filmic tone.** Highlights roll off instead of clipping, with the saturation, contrast, split toning and grain of a print.
@@ -332,11 +299,11 @@ The town itself is unchanged. Every addition draws from its own random stream, s
 
 ## Claude
 
-The data was generated by Claude Fable 5.2 (`claude-fable-5-2`) in the Claude app, in one long session on November 16, 2026. That session is described in [How the Medianville day was built](reference/medianville-build-approach.md). The research, the city design, the night map and v3 were also made with Claude in the Claude app. None of those sessions can be counted from here.
+The data was generated by Claude Fable 5.2 (`claude-fable-5-2`) in the Claude app, in one long session on November 16, 2026. That session is described in [How the Medianville day was built](story/01-one-day/medianville-build-approach.md). The research, the city design, the first viewer (now in the archive) and v3 were also made with Claude in the Claude app. None of those sessions can be counted from here.
 
 The work in this repository was one Claude Code session (claude-opus-5-5) on November 17, 2026, in three passes:
 
-1. **Moving the night map here.** Matched the project to its artifact, copied the page and unzip library, unpacked the run, added the reference documents, made the page load the run on its own, added the footer, tested it in headless Chromium at desktop and phone sizes, fixed the caption overflow that showed, wrote this README, and opened the pull request into `development`.
+1. **Moving the first viewer (now in the archive) here.** Matched the project to its artifact, copied the page and unzip library, unpacked the run, added the reference documents, made the page load the run on its own, added the footer, tested it in headless Chromium at desktop and phone sizes, fixed the caption overflow that showed, wrote this README, and opened the pull request into `development`.
 2. **Finding v3.** Found v3, Miniature and Map, among the artifacts and checked what it needed to show the real day.
 3. **v3 on the real day.** Read v3 in full, wrote `v3/real-day.js`, and changed v3 for real volumes: the public-service kind, the path budget, place-only pins, failure marks, real labels and sheets, and the header status. Fixed the garbled names and the failure count in both versions. Tested v3 in headless Chromium with three.js served locally: the day loaded in about 15 seconds with no errors, the counters matched the run's summary, and the record, household, building and pin sheets showed the right data. Took the screenshots, updated this README and the root README, and opened the pull request into `development`.
 
@@ -360,16 +327,18 @@ Phase 5, reading and publishing v2, was one Claude Code session (claude-opus-5-5
 4. **Hand-written records.** It froze the simulator and wrote 300 hand-written records. A second agent checked them against their fields, and it fixed what that turned up.
 5. **Publishing.** It packed and verified the 19 days and updated this README, the About page, the plan, the decision log and the run records.
 
-Phase 6, removing the systems lens's dead ends, was one Claude Code session (claude-opus-5-5) on November 21, 2026, from Jason's handoff and its district history addendum. It wrote the district tier into `systems-lens/blocks.json` (34 circumstances and six district loops, every existing id kept), checked the figures in the twelve historical and built circumstances against their sources with three web-reading agents and the BLS, FDIC and Census data themselves, and reworded six (listed in the [design record](reference/medianville-systems-lens.md)). It added district mode to the lens, the fourth case to the viewer's record and household sheets, and the explorer's link and "Lens tags" label; extended the blocks test and added tests that every published run's tags hold; and checked it all in headless Chrome: 56 records and every household type on each of the 20 days (1,120 records and 339 households opened in the lens, with no disabled rows and no page errors), the explorer's link for a record of each kind on every day (60 links, each opening the right block in the right mode, on the same day), and the pages at desktop and phone widths. It updated this README, the About page, the design record and the decision log, and opened the pull request into `development`.
+Phase 6, removing the systems lens's dead ends, was one Claude Code session (claude-opus-5-5) on November 21, 2026, from Jason's handoff and its district history addendum. It wrote the district tier into `systems-lens/blocks.json` (34 circumstances and six district loops, every existing id kept), checked the figures in the twelve historical and built circumstances against their sources with three web-reading agents and the BLS, FDIC and Census data themselves, and reworded six (listed in the [design record](story/04-the-refined-city/medianville-systems-lens.md)). It added district mode to the lens, the fourth case to the viewer's record and household sheets, and the explorer's link and "Lens tags" label; extended the blocks test and added tests that every published run's tags hold; and checked it all in headless Chrome: 56 records and every household type on each of the 20 days (1,120 records and 339 households opened in the lens, with no disabled rows and no page errors), the explorer's link for a record of each kind on every day (60 links, each opening the right block in the right mode, on the same day), and the pages at desktop and phone widths. It updated this README, the About page, the design record and the decision log, and opened the pull request into `development`.
 
 
 The polish pass was one Claude Code session (claude-opus-5-5) on November 22, 2026, from Jason's list of adjustments. It planned the work at medium effort, then made it in three phases, one commit each, checking every phase in the browser at phone, tablet and desktop widths: Live playback by default, turning the board while paused, the new title and subtitle, and the "Sample day" chip; the map's margin rebuilt and the sheet restyled in the viewer's type and colors; and the compact header with its menu, the view switch and lens over the city, the day menu beside the clock, and the footer fitted to a phone. It retook the miniature, map and intro screenshots, and updated this README and the decision log.
 
 The sources and docs review was one Claude Code session (claude-opus-5-5) on November 22, 2026, from Jason's question about missing sources. It checked the About page, the intro, the explorer, the READMEs and the reference docs against the published v2 run, brought the human-evidence report and its 69 sources into `evidence/`, rewrote the About page's sources (all four rounds of research, every downloaded dataset), method, limits and credits for v2, and updated the sources and root READMEs.
+The milestones pass was one Claude Code session (claude-opus-5-5) on November 24, 2026, from Jason's handoff. It moved the frozen viewers into `archive/` and the documents into `story/`, one folder per milestone, with a README for each, and tagged every entry in the decision log with its milestone. It took the first viewer off the live pages and the directory, wrote a link checker and the script for the GitHub milestones, tags and releases, and tested the pages in headless Chromium at desktop and phone widths. It retook the thumbnail and the preview, frame by frame on a paused clock because this container renders WebGL in software. In the same session it added a `status` to every project in the playground and wrote `scripts/sync-github.mjs` (pull request #91). Its row is an estimate of about 140 model requests, counted from the session's tool calls.
+
 | Created | Tool | Model | Estimated energy consumption[^claude] | Estimated carbon emissions | Estimated water usage |
 |---|---|---|---|---|---|
 | November 16, 2026 | Claude app | claude-fable-5-2 | not measurable from here | — | — |
-| November 2026 | Claude app (research, city design, night map, v3) | (unknown) | not measurable from here | — | — |
+| November 2026 | Claude app (research, city design, first viewer, v3) | (unknown) | not measurable from here | — | — |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 0.702 kWh | 0.271 kg CO₂ | 0.351 L |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 0.108 kWh | 0.042 kg CO₂ | 0.054 L |
 | November 17, 2026 | Claude Code | claude-opus-5-5 | 1.008 kWh | 0.389 kg CO₂ | 0.504 L |
@@ -385,6 +354,7 @@ The sources and docs review was one Claude Code session (claude-opus-5-5) on Nov
 | November 21, 2026 | Claude Code (phase 6: the lens's dead ends) | claude-opus-5-5 | 3.258 kWh | 1.258 kg CO₂ | 1.629 L |
 | November 22, 2026 | Claude Code (polish pass) | claude-opus-5-5 | 2.160 kWh | 0.834 kg CO₂ | 1.080 L |
 | November 22, 2026 | Claude Code (sources and docs review) | claude-opus-5-5 | 0.810 kWh | 0.313 kg CO₂ | 0.405 L |
-| **Total (countable)** | | | **24.930 kWh** | **9.624 kg CO₂** | **12.465 L** |
+| November 24, 2026 | Claude Code (milestones, story and archive; the playground's status and GitHub sync) | claude-opus-5-5 | 2.520 kWh | 0.973 kg CO₂ | 1.260 L |
+| **Total (countable)** | | | **27.450 kWh** | **10.597 kg CO₂** | **13.725 L** |
 
 [^claude]: assuming 18 Wh per model API request; carbon at 0.386 kg CO₂ per kWh and water at 0.5 L per kWh, as across this playground; does not include estimate for foundation model training. The Claude Code rows are the three passes above: 39 and 6 requests measured in the session transcript, and 56 for the third, of which 41 were measured before this README was written and 15 are an estimate for the README, the commit, the pull request and the reply. The first pass was estimated at 32 requests when it shipped and measured at 39 afterwards. That's 101 requests in all; at the time of measuring, the session had used ≈ 24M tokens, about 97% of them cache reads. The phase 5 row is 300 requests: 285 measured in the session's transcript and its two reader agents' transcripts (deduplicated by message id; about 106M tokens, nearly all cache reads), and 15 estimated for the last commit, the pull request and the reply. The phase 6 row is 181 requests: 151 measured in the session's transcript and its three web-reading agents' transcripts (deduplicated by message id; about 42M tokens, 98% of them cache reads), and 30 estimated for the README, the commits, the pull request and the reply. The polish pass row is 120 requests: 104 measured in the session's transcript (deduplicated by message id; about 18M tokens, 98% of them cache reads), and 16 estimated for the README, the last commit and the reply. The sources and docs review is an estimate of about 45 requests, counted from the session's tool calls.

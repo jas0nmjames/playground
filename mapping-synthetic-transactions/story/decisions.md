@@ -1,8 +1,8 @@
 # Medianville: design decision log
 
-Started 2026-11-20. One place for the decisions behind the project, gathered from the dated docs in this project, so the reasoning can be read, criticized or reversed without digging through ten files. It goes into the repo as `reference/design-decisions.md`, and the site's About page links to it.
+Started 2026-11-20. One place for the decisions behind the project, gathered from the dated docs in this project, so the reasoning can be read, criticized or reversed without digging through ten files. It went into the repo as `reference/design-decisions.md` and moved to `story/decisions.md` on 2026-11-24, when the project's documents were sorted into milestones; the site's About page links to it.
 
-**Each entry:** what was decided, why, what else was considered, and what it costs. **Who** says whose call it was: *Jason* (his direction or choice), *Build* (a method choice Claude made while building, recorded in the build notes), or *Jason, on a proposal* (Claude proposed it and Jason chose it). **Source** is the project doc that records it. Project docs written before the rename keep the old name, Halvern, in their file names; the ones copied into `reference/` were renamed with the city on 2026-11-20.
+**Each entry:** what was decided, why, what else was considered, and what it costs. **Who** says whose call it was: *Jason* (his direction or choice), *Build* (a method choice Claude made while building, recorded in the build notes), or *Jason, on a proposal* (Claude proposed it and Jason chose it). **Source** is the project doc that records it. **Milestone** is the chapter of [the story](README.md) the decision belongs to, by the date it was made or first shipped. Project docs written before the rename keep the old name, Halvern, in their file names; the ones copied into `reference/` were renamed with the city on 2026-11-20.
 
 New decisions go at the end of their section with a date. A reversed decision stays in the log, marked *Superseded* with a pointer to the new entry.
 
@@ -11,11 +11,13 @@ New decisions go at the end of their section with a date. A reversed decision st
 ## 1. The idea and its framing
 
 ### 1.1 Every transaction is a job to be done
+- **Milestone:** [M0 The idea](00-the-idea/)
 - **Decided:** A record is anything someone did to get something done, not only money changing hands: a purchase, a bill, a benefit deposit, a form, a wait, a declined card, a wasted trip, an hour of unpaid care. Each record says what the job was, who paid, who else paid, what it cost in time and effort, and whether it worked.
 - **Why:** The project exists to find small, practical projects that improve daily life at the margins. At the margins, the frustration is often in the non-monetary jobs and the failures, which a spending dataset would leave out.
 - **Who:** Jason (the project's premise and title). **When:** before 2026-11-16. **Source:** `medianville-transaction-generator-prompt.md`.
 
 ### 1.2 A synthetic city, not a real one
+- **Milestone:** [M0 The idea](00-the-idea/)
 - **Decided:** Build a fictional city weighted to the whole country, and visit real places in the Atlanta area for examples and anecdotes.
 - **Why:** The starting question was which American town is most like America. The published rankings (FiveThirtyEight, WalletHub) each pick a different winner, and every real metro that scores well underweights rural and small-town life, where many margin problems are. None of them measures industry mix.
 - **Considered:** A real test-market city (Columbus, Indianapolis); "a synthetic Indianapolis".
@@ -23,15 +25,18 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Jason, on a proposal. **When:** 2026-11-16.
 
 ### 1.3 Six districts in national proportions
+- **Milestone:** [M0 The idea](00-the-idea/)
 - **Decided:** Downtown, inner suburbs, outer suburbs, a satellite city, a rural town and open country, sized so the rural share and drive distances come out at national rates.
 - **Who:** Jason, on a proposal. **Source:** generator prompt.
 
 ### 1.4 A systems lens alongside the city
+- **Milestone:** [M0 The idea](00-the-idea/)
 - **Decided:** Show the circumstances that shape each job (social, cultural, historical, political, economic and environmental) and the feedback loops between jobs, as well as the jobs themselves.
 - **Why:** After Donald Martin Jr.'s talk at the Reimagining AI conference (2025) and his definition of societal context. A day of transactions shows what happened. The lens is for showing why it keeps happening to the same people.
 - **Who:** Jason. **When:** 2026-11-18. **Source:** `halvern-systems-lens-prototypes.md`.
 
 ### 1.5 The name: Medianville
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** The city was renamed from Halvern to Medianville, a nod to the Lynds' *Middletown* (1929) and the "typical town" studies that followed it.
 - **Why:** The name should say what the city is for. Unlike the Lynds' Muncie, Medianville's typicality comes from weighting, not from leaving groups out. The README carries a naming note.
 - **Considered:** Renaming right away, or after the v2 data was packaged. It was first held until after v2 so it would happen only once, across everything. Renaming between phase 3 and packaging still does it once, and before any v2 run or hand-written record exists, so none of them has to be renamed afterwards.
@@ -39,6 +44,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Kept:** The frozen v1 run (`data/halvern_2027-03-03.zip` and `data/halvern/`) and the archived viewers (`v1/` and `v3/`) keep Halvern, as a record of what shipped. Past results in `sim/evidence/results/` keep it too. Decided 2026-11-20.
 
 ### 1.6 A renamed copy of v1 for the latest pages
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** `tools/rename_run.py` writes `data/medianville_2027-03-03.zip` from the frozen v1 zip with only the name changed: the case map is applied to every file's contents and paths, and every other byte, timestamp and permission is kept. The latest viewer, the explorer and the systems lens load the copy; the archived viewers keep loading the original.
 - **Why:** Until v2 is packaged, the latest pages show v1's records, and those name the city's own places (its transit agency, its savings bank, its hospital) under the old name. Without the copy, every record sheet in the renamed pages would say the old name.
 - **Considered:** Renaming the names in each page as the records load, which every page would have to repeat; waiting for v2, which leaves the old name on screen until then.
@@ -46,6 +52,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Jason. **When:** 2026-11-20. **Source:** `medianville-data-update-plan.md`, phase 3b.
 
 ### 1.7 Carried runs leave the one-day path untouched
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Everything that carries from one day to the next lives in `sim/medianville_sim/carry.py` and runs only in a carried run (`--days` above 1, `--state-in`, or `--carry`). Every hook elsewhere is guarded before any random draw, decisions made only in carried runs draw from a stream of their own, and records keep their 31 columns. Chains that cross days go in a new `links.csv` beside each day's records: the chain, its step, and the earlier record (date and record id) it follows from.
 - **Why:** The brief: the one-day path must not change. Each commit was rerun over the typed-day year and `v2_rates_typed_days_2027` came out byte for byte; `tests/test_carry.py` pins the 10% one-day run's hashes. Record ids start again each day, so a cross-day link has to name the date too, and a separate file keeps the records' schema the same for every viewer.
 - **Considered:** A new column in `records.csv` (would change every one-day file); a burn-in of simulated February days (the month would not open on the SCF-matched balances).
@@ -53,24 +60,28 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Jason (the rule), Build (the method). **When:** 2026-11-20. **Source:** `medianville-data-update-plan.md`, phase 4.
 
 ### 1.8 The month opens on March 1 with what was already in motion
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** The month starts from March 1's opening balances. It inherits, without records, what earlier days would have set going: shutoff notices sent in the ten days before, the payday loans and title loans already out (in steady state), and the tax season so far (who has filed or been refunded). The retry queue and overdraft chains start empty.
 - **Why:** Without the inheritance, the first week would have no disconnections and no loans coming due. A burn-in of February days would drift the opening balances away from the SCF match.
 - **Cost:** The first few days run a little light on retries and overdraft chains.
 - **Who:** Build. **When:** 2026-11-20.
 
 ### 1.9 Retrying unpaid bills, and setting money aside for them
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** A bill not paid in full on its due day joins a retry queue. Lenders, card issuers, insurers and schools re-present a bounced autopay twice (3, then 5 business days later; NACHA allows two). Landlords and utilities do not: the household pays by hand on the next day money comes in, with part payments for rent and utilities and the minimum for a card. Merchants retry a declined card 2 and 5 days later, then the subscription lapses. Each retry carries the returned-payment fee and, after the grace period, the late fee from the bill's terms. On the morning a bill is due, a carried household moves money from savings for it, as far as savings go, and the move is recorded.
 - **Why:** A one-day run's opening balances already include the money set aside for that day's autopays (`finance.build_finance`); without the same habit on later days, bills failed for want of the build-time top-up, and 39% of households missed a bill in March. With it, the share of adults with a bill still unpaid on their own account on March 31 lands near SHED 2025's 15.2% of adults who cannot pay all of this month's bills (`sources/tools/shed_bills.py`). It is read per adult, as SHED asks it; the share of households runs higher, since any one account in the household counts.
 - **Cost:** The schedules are common practice, not counted. SHED's EF5C is read from its answers, because the codebook's text could not be extracted.
 - **Who:** Build. **When:** 2026-11-20.
 
 ### 1.10 Shutoffs come only from notice timers
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** In a carried run a shutoff notice starts a timer. The day before the date the household pays (85% of those who can), sets up a payment plan (70% of those who can make a down payment), or asks the community action agency for crisis help (pledged four times in ten); otherwise a crew disconnects on a Monday-to-Thursday business day at or soon after the date. Reconnection takes the past-due amount or part of it, a $35-75 fee, a call or a trip to a payment counter, and the next business day; gas needs someone home for a four-hour window.
 - **Why:** The notice and shutoff rates (T16, T05) are kept, and the share of notices that end in a shutoff falls out of the household's money. The response shares are fitted to about one notice in four on the full-city month (the first fit, with plans at 55% and pledges at 30%, shut off 35% of notices and ran 14.6 disconnections a day); EIA-112 2024's reconnection shares (85% electric, 71% gas) check the other end.
 - **Cost:** The response shares are estimates fitted on the month, not measured.
 - **Who:** Build. **When:** 2026-11-20.
 
 ### 1.11 Overdraft chains, and concentration left as measured
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Carried, an overdrawn account stays below zero until money comes in, so one overdraft leads to more. Banks cap overdraft fees at three a day, cover no item past $400 below zero, and charge an extended fee after a week; someone already below zero tries a card that will not clear 10% of the time, against 35% in a one-day run. A rent payment missed within two weeks of a fee joins the overdraft's chain. Concentration is measured, not forced.
 - **Why:** Without a total limit, the one-day rule (any item up to $260 short) let accounts sink without end and the month ran near 290 fees a day; with a $500 limit the full-city month still ran 187.5. The $400 limit and the 10% habit were fitted to T01 on the full-city month. The CFPB's 9% of accounts paying 79% of fees cannot be reached: only the 6.6% of accounts opted in to coverage can overdraw, and that is set by the one-day population.
 - **Considered:** Letting banks pay ACH and recurring items into overdraft for accounts without the opt-in (Reg E's opt-in covers only ATM and one-time card payments), which would spread fees; it changes the one-day path, so it is left to Jason (plan section 9, item 6).
@@ -78,91 +89,107 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Build; the open question is Jason's. **When:** 2026-11-20.
 
 ### 1.12 Payday loans as sequences, counted with their renewals
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Payday and online loans sit in a loan book, each due on the borrower's first payday a week or more away. A first loan is meant to be repaid 38% of the time, renewed 57% and defaulted 5%; later ones are renewed 84%, after CFPB's 2014 data point. What the account holds can turn a repayment into a renewal and a renewal into a bounce. A bounced loan is re-presented twice, then goes to collections. New sequences start at 1/4.56 of the one-day rate, and T02 is read in the month as loans plus renewals. Title loans carry too: rollovers pay the fee again, a missed payment raises the repossession risk, and a repossessed car stays gone.
 - **Why:** The one-day draws of loans and repayments are unrelated to each other. The California and Texas reports behind T02 count loans and refinances together, and CFPB's sequence shape reproduces its 80% renewal share and long tail.
 - **Cost:** Repaying and borrowing again the same day (common where rollovers are banned) is folded into renewals.
 - **Who:** Build. **When:** 2026-11-20.
 
 ### 1.13 One refund a season, SNAP that runs down, and surplus moved to savings
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** In a carried run each account gets one federal and one state refund a season and each household files once. SNAP shopping comes more often the more of the month's benefit is left. On a day money comes in, an account above twice its opening balance plus $500 moves the excess over 1.5 times the opening balance to savings, recorded as a transfer.
 - **Why:** Drawn fresh each day, refunds paid the same filers again and again (about $2,200 per ALICE household in a test March). SNAP was left a fifth unspent at month's end. And because the one-day simulator sets spending by counts and shares rather than dollars, households above ALICE take in more than they spend, so checking climbed about $3,400 a month instead of following the pay calendar.
 - **Cost:** The SNAP pace and the sweep are estimates; the sweep hides the under-spending in savings rather than fixing it, which waits for v3's spending model.
 - **Who:** Build. **When:** 2026-11-20.
 
 ### 1.14 Weekly hours swing for hourly and gig workers
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Each hourly or gig worker gets a weekly hours factor (lognormal, mean 1; standard deviation .22 for variable schedules, .12 for other part-timers, .38 for gig work; each week correlated about .44 with the one before). It scales the days worked that week, the paycheck for the weeks it covers, and gig earnings.
 - **Why:** The brief asked for week-to-week income volatility from SIPP or the JPMorgan Chase Institute if downloaded. Neither was (`sources/manifest.csv`: to_fetch), so the sizes are labeled estimates.
 - **Cost:** Estimates until SIPP or JPMC figures are downloaded.
 - **Who:** Build. **When:** 2026-11-20.
 
 ### 1.15 The month ships as a Release bundle, not on the site
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** The March 2027 month is packed by `tools/pack_month.py` into `data/medianville_2027-03_month.zip` (gitignored): each day's tables and `links.csv`, the last day's carried state, the month's summary and checks, and a `SHA256SUMS` file. It goes into the GitHub Release `medianville-v2-month-2027-03`, which Jason creates. The repo keeps only the run record, the month's `summary.md` and `evidence_checks.md`; the README links the Release as a download not needed to use the site.
 - **Why:** At about half a gigabyte it is too big for the repo and the Pages site, and visitors should never download it. The zip is built the same way every time (sorted entries, fixed timestamps, fixed permissions, deflate level 9), so a rebuild with the same Python and zlib gives the same SHA-256, and `SHA256SUMS` compares the contents even when zlib differs.
-- **Who:** Jason (where it lives), Build (the format). **When:** 2026-11-20. **Source:** `reference/medianville-2027-03-month-run-record.md`.
+- **Who:** Jason (where it lives), Build (the format). **When:** 2026-11-20. **Source:** [`05-more-time/medianville-2027-03-month-run-record.md`](05-more-time/medianville-2027-03-month-run-record.md).
 
 ---
 
 ## 2. Method: how the data is made
 
 ### 2.1 Simulate, don't write
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** Code generates the population, the finances and the day. The model writes only the job statements, the text templates and 500 records by hand.
 - **Why:** No model can write 200,000 consistent records by hand. Money wouldn't reconcile, and people would be in two places at once.
 - **Who:** Build. **When:** 2026-11-16. **Source:** `medianville-build-approach.md`.
 
 ### 2.2 Settle the day in time order against real wallets
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** Every action goes into one queue ordered by minute and is settled against the household's balance.
 - **Why:** That's what makes a declined card at 5 p.m. depend on a bill that drafted at 2 a.m. Cascades are the point of the project.
 - **Who:** Build. **Source:** build approach.
 
 ### 2.3 Calibrate to published anchors, and label every estimate
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** Calibrate to a fixed set of targets: about 100,000 residents, the BLS industry mix, 43 payments per adult per month, a 14% cash share, 63% of adults able to cover a $400 emergency, 4 in 10 households below the ALICE threshold, and the Consumer Expenditure Survey spending order. Every figure that isn't derived from an anchor goes in `assumptions.csv` with a reason.
 - **Why:** A synthetic city can only be trusted where it can be checked.
 - **Who:** Jason, on a proposal (the generator prompt). **Source:** run record.
 
 ### 2.4 Real federal names, invented local ones
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** The IRS, Treasury, Medicare, SNAP and the Postal Service keep their real names. Every person, business, agency, church and street is invented.
 - **Why:** The program rules are real and national, and the jobs make no sense without them. Local names would point at real people and places.
 - **Who:** Build, reconciling two rules in the prompt. **Source:** build approach.
 
 ### 2.5 Freeze the simulator before hand-writing
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** No change to the simulator once hand-written text exists. Later fixes are limited to text, and known problems are listed rather than fixed.
 - **Why:** Any population change redraws the random numbers and the record ids, and then the 500 hand-written records land on the wrong rows.
 - **Cost:** Some known oddities stay in v1: odd employer and occupation pairs, long errand trips, zero marriages and divorces.
 - **Who:** Build. **Source:** build approach.
 
 ### 2.6 Read a sample closely, as a test
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** Reading 500 records one at a time counts as a validation step, alongside the automated checks.
 - **Why:** It caught what the numeric checks passed: union dues paid to a charity, a 91-year-old schoolteacher, "cash only" text on a debit purchase.
 - **Next time:** Do it earlier, on a smaller sample, and add a second reader that hasn't seen the code.
 - **Who:** Build. **Source:** build approach.
 
 ### 2.7 Keep real and synthetic apart
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** No real quote or real person ever goes into a record. Real evidence enters only as numbers (targets, rates) and as links by job category, friction and household type.
 - **Why:** Putting a real person's words in a fictional resident's mouth would be fabrication, and it would make the synthetic data look more real than it is.
 - **Who:** Jason, on a proposal. **When:** 2026-11-17. **Source:** `halvern-human-evidence-research-prompt.md`, data update plan section 2.
 
 ### 2.8 Only strong evidence sets a rate
+- **Milestone:** [M3 Grounding in evidence](03-grounding-in-evidence/)
 - **Decided:** Only evidence graded A or B moves a rate in the simulator. Weaker evidence can add job kinds and texture, but not frequencies.
 - **Who:** Jason, on a proposal. **When:** 2026-11-18. **Source:** data update plan.
 
 ### 2.9 Past one day: typical days first, then a month
+- **Milestone:** [M3 Grounding in evidence](03-grounding-in-evidence/)
 - **Decided:** After the baseline day, run a weighted set of 10 to 12 typical days that stand for a year, then one continuous month with balances carried forward.
 - **Why:** One Wednesday can't balance annual spending shares. Rare events are too noisy to rank, and the most promising problems play out across days.
 - **Who:** Jason, on a proposal. **When:** 2026-11-18. **Source:** data update plan section 4.
 
 ### 2.10 Same people for v2, real households in v3
+- **Milestone:** [M3 Grounding in evidence](03-grounding-in-evidence/)
 - **Decided (recommended; confirm):** v2 keeps v1's population so before-and-after comparisons stay clean. Drawing real household structures from ACS microdata waits for v3.
 - **Note:** v1's households are built by rule to match national shares. They aren't drawn from ACS microdata, so site copy shouldn't say they are.
 - **Source:** data update plan section 9.
 
 ### 2.11 Fix what v2 broke and what the records say wrong; leave the people for v3
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Before the freeze, fix the one problem v2 made worse (owners' housing costs drawn apart from income), the records that don't add up or don't fit (claims, practices, invoices, payers, fees, waits), and text that doesn't fit the person or place. Leave the population's problems (SSI and Medicaid against income, coverage against eligibility, $0-income rent, jobs tied to the wrong employers, long trips) as v2's known limits.
 - **Why:** The fixes change no one's identity, so 2.10's before-and-after comparison holds, and every typed-day target stayed in range after them. The population's problems are v1's and need the population redrawn, which v3 does from microdata anyway.
 - **Considered:** Fixing the population's problems now as well (breaks comparability and means retuning); freezing as it was (keeps a regression v2 introduced).
 - **Cost:** v2 still shows SSI where it couldn't be paid, refundable credits on high incomes and some 60-80 mile trips. The month was rebuilt, and its Release asset has to be replaced.
-- **Who:** Jason, on a proposal. **When:** 2026-11-21. **Source:** `reference/medianville-v2-close-reading.md`.
+- **Who:** Jason, on a proposal. **When:** 2026-11-21. **Source:** [`05-more-time/medianville-v2-close-reading.md`](05-more-time/medianville-v2-close-reading.md).
 
 ### 2.12 Two readers, and a second reader for the hand-written text
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** The close reading had two readers for 200 records: Claude Code, which built the simulator and then measured each suspicion across the whole day, and a separate agent that saw only the record cards. After the freeze, 300 records were hand-written (40% from the job kinds new or changed since v1, the rest stratified), and a second reader that had not seen the code checked each one against its own fields.
 - **Why:** 2.6's "next time": a reader who knows the code reads past what it expects. The outside reader found the $380 rent floor and the ignored travel time, which the first reader had missed.
 - **Who:** Build, following 2.6. **When:** 2026-11-21. **Source:** close reading; `sim/detail_parts/`.
@@ -172,45 +199,54 @@ New decisions go at the end of their section with a date. A reversed decision st
 ## 3. The viewer: how the day is shown
 
 ### 3.1 Three visual directions, prototyped, then Tabletop
+- **Milestone:** [M2 Miniature and Map](02-miniature-and-map/)
 - **Decided:** Of three briefs (Tiles, an isometric pixel city; Tabletop, a tilt-shift miniature; and Six Streets, a cut-paper cross-section), the Tabletop look was chosen. It was then revised with Tiles' range of buildings, flight-path arcs instead of flipping discs, a range of skin tones on the figures and softer shapes.
 - **Why:** It had the strongest sense of a real place. Tiles and Six Streets each had a part worth keeping: building variety, and a per-district failure count.
 - **Who:** Jason. **When:** 2026-11-17. **Source:** `halvern-visual-directions-prototypes.md`.
 
 ### 3.2 Two views of one city: Miniature and Map
+- **Milestone:** [M2 Miniature and Map](02-miniature-and-map/)
 - **Decided:** Two views of the same city: the Miniature, and an invented quadrangle map sheet. They share centre, zoom, records, filters and selection, and the M key switches between them.
 - **Why:** The Miniature makes the city feel lived in. The Map makes places and distance readable.
 - **Who:** Jason. **When:** 2026-11-17. **Source:** `halvern-two-views-refinement-prompt.md`.
 
 ### 3.3 One record language across both views
+- **Milestone:** [M2 Miniature and Map](02-miniature-and-map/)
 - **Decided:** Each record kind gets a colour, a line pattern and a head shape: purchase amber with a circle, income green with a diamond, bill blue dashes with a square, unpaid work short dashes with a ring, and a failure plum, stopping halfway at an ×.
 - **Why:** Pattern and shape carry the type as well as colour, so the record kind still reads for colour-blind viewers (checked against Machado 2009 simulations).
 - **Source:** visual directions prototypes.
 - *Partly superseded 2026-11-23:* failure is crimson now, not plum (or pink in the Miniature). See 3.10.
 
 ### 3.4 Failures are never sampled
+- **Milestone:** [M2 Miniature and Map](02-miniature-and-map/)
 - **Decided:** At any zoom or speed, every failure is drawn. Failure pins are one per place with a count, so they don't pile up into clutter.
 - **Why:** Failures are what the project is looking for.
 - **Source:** visual directions briefs and prototypes.
 - *Partly superseded 2026-11-23:* the miniature's pins became small crimson flags, and on both views a place's marker now comes down after a while instead of staying all day. Every failure is still drawn. See 3.9 and 3.10.
 
 ### 3.5 A finance-app interface
+- **Milestone:** [M2 Miniature and Map](02-miniature-and-map/)
 - **Decided:** Figtree with tabular figures, summary tiles, an Activity feed with signed amounts, transaction sheets and a timeline histogram, with a "Simulated city · no real people" chip in the header.
 - **Why:** Most people already know how to read a banking app. The chip is there so no one mistakes the records for real people.
 - **Source:** visual directions prototypes.
 
 ### 3.6 A photographic miniature, without lens blur
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** Keep the Light, Surface and Horizon iterations (filmic tone, sun and sky, contact shadows, night lights, materials, street detail, land past the board). Drop the tilted-plane lens blur. Add turning and tilting with mouse, touch and keys.
 - **Who:** Jason. **When:** 2026-11-19. **Source:** `halvern-miniature-realism-lab.md`.
 
 ### 3.7 Sound: off by default, Mix A
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** Sound starts off. There are two layers: ambience for realism, and records as sound (a pluck pitched by record kind, a low thud for anything not completed, and a pluck cloud above 12 records a second). Ambience never scales with playback speed. The background stays low and the separate sounds stay up.
 - **Who:** Jason. **When:** 2026-11-20. **Source:** `halvern-sound-lab.md`.
 
 ### 3.8 The real day preloaded
+- **Milestone:** [M1 One day](01-one-day/)
 - **Decided:** Every page loads the run from the repo when it opens. There's no upload step, and a placeholder day plays only while the file downloads.
 - **Who:** Jason. **Source:** `halvern-in-motion-viewer.md`.
 
 ### 3.9 End marks that linger, and small failure flags that come down
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** A record's path still fades as it lands, but its end mark (the kind's icon, a little smaller; the × for a failure) stays where the record ended and fades over three simulated minutes. At Live the city shows where its last few minutes of activity went; at 5 or 20 min/s a mark is gone in a blink. A mark can be hovered, which draws its path again and shows the record, and clicked, which opens it; stacked marks open the chooser. Opening or scrubbing to a time draws the marks of the minutes before it, thinned to what playing at that speed would have drawn.
 - **Decided:** In the Miniature, a failure raises a small flag at its place (in the failure colour, with a notch, on a pale pole) instead of a pink pin. It rises out of the ground, runs its cloth back up the pole at each further failure there, and sinks once the place has gone eight simulated minutes without one, staying at least four real seconds so it can be seen and tapped at fast speeds. It turns to face the camera and doesn't flutter. The cloth carries the place's failure count for the day only once you zoom in far enough to read it; hovering a flag shows the place, the count and the latest failure's time, and clicking lists them. The Map's triangles follow the same timing and fade out. The on-scene legend adds "Recent failure at a place" in the Miniature.
 - **Why:** The pins read as pink decoration, didn't match the plum used for failures elsewhere, and their counts were too small to read. They stayed all day while every record's path vanished in seconds, so the board showed the day's failures against almost none of its activity: at Live, about four paths were in flight at once. Failures hold longer than the end marks because they are what the project is looking for.
@@ -218,6 +254,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Jason, on a proposal (lingering activity came from a design critique; the red flag, failures that come down but stay longer than activity, lingering end marks instead of trails, and a quieter flag were his). **When:** 2026-11-23.
 
 ### 3.10 Failure is crimson everywhere
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** Failure has one colour family across the viewer, the data explorer and the systems lens: crimson `#BC2F52` for ink (the Map, badges, the timeline's marks, text and legends; the CSS variable is `--fail`) and a lighter crimson `#E23E5A` for the Miniature's paths, × marks and flags. It replaces plum `#8E3B6D` for ink and pink `#F4A3DA` in the Miniature. The flag's cloth uses the Miniature colour exactly, outside the scene's tone curve, as the paths do. Pale tints for chips and badges are `#FCEFF2` and `#F0C3CE`.
 - **Why:** Failure had three colours (plum, pink and the flag's red), and plum and pink both sat next to public service's violet: ΔE2000 about 19 and 17 for typical vision, and down to 12 and 10 for protanopes. Crimson roughly doubles the gap from public service (31 and 36 for typical vision, 26 and 40 for protanopes) and joins the red flag. It also raises the weakest colour-blind pairing on the Map from 9.8 to 12.6 and in the Miniature from 6.2 to 16.7. Text contrast stays AA: 5.7:1 on white, 5.4:1 on the map paper, and white on a crimson badge 5.7:1.
 - **Considered:** Pure red. Against purchase's brown `#A65300` it measured 2.8 ΔE for deuteranopes, and against income's green `#145A33` 2.8 for protanopes, so a failure would look the same as either to them. A search of hues from 325° to 360° found crimson (about 345°) the best balance. Making the flag plum instead was dropped: it would have lost the red flag and left the public-service clash.
@@ -225,6 +262,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Jason, on a proposal. **When:** 2026-11-23.
 
 ### 3.11 The Activity feed holds still while you use it
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** The latest-records list stops taking in new rows while someone is using it: a mouse over the list or its heading, the list scrolled down from the top, keyboard focus inside it, a touch in the last six seconds, or, on a touch screen, the Activity drawer open. New records wait behind a blue "N new" button beside the "Latest records" heading; it brings them in and returns to the top (keyboard focus moves to the first row). Letting go of the feed brings them in too. The counters above keep running.
 - **Why:** At Live the list took in new rows several times a second, so a row moved between seeing it and clicking it, and a different record opened (found in a design critique on a phone). Holding on hover is the usual pattern for live lists; a touch screen has no hover, so the drawer, which covers the city and is where people tap rows, holds the whole time it's open.
 - **Considered:** Holding for any focus inside the list. A mouse click leaves focus on the clicked row, which kept the feed held after the mouse had left, so only keyboard focus (`:focus-visible`) counts.
@@ -235,30 +273,36 @@ New decisions go at the end of their section with a date. A reversed decision st
 ## 4. The systems lens
 
 ### 4.1 Exploded view; The Works and Section dropped
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** The lens is an exploded view: six aligned layers of the same blocks, with threads from a record down to what shaped it. The Section view folds into it (how slowly each layer changes). The Works, which drew one household as plumbing, is dropped.
 - **Why:** Stacked layers show how circumstances pile up in the same places, such as a redline, a highway, missing banks and an exhaust zone on the same squares. The plumbing tied an abstract model to pipes the city doesn't have.
 - **Who:** Jason. **When:** 2026-11-18. **Source:** systems lens prototypes.
 
 ### 4.2 "What if" waits for real model runs
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** No button to remove a circumstance until the circumstances drive the simulator. Then a "what if" becomes a second run with the same seed and one setting changed.
 - **Why:** Today the links between records and circumstances are drawn by hand. A remove button would show an illustration as if it were a model result.
 - **Who:** Jason, on a proposal. **When:** 2026-11-18. **Source:** systems lens prototypes.
 
 ### 4.3 One visual system, with Biesty in the structure only
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** The lens uses the viewer's design system. Stephen Biesty's influence survives in the structure (exploded layers, callouts with leader lines), not in an ink-and-watercolour rendering.
 - **Who:** Jason. **When:** 2026-11-18.
 
 ### 4.4 The lens as an overlay on the city
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** A Map | Miniature switch, opening on Miniature, plus a separate Systems lens toggle (L). The lens grows out of a record's Details rail. Playback pauses, and Back to the city or Esc returns to the same record.
 - **Considered:** The lens as a third view in the switch (option A on the IA canvas).
 - **Who:** Jason. **When:** 2026-11-19. **Source:** `halvern-mapped-blocks.md`.
 
 ### 4.5 One mapped block per district, from one file
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** One composite block per district. `systems-lens/blocks.json` is the single source: the lens draws from it, and the simulator tags records from it after the day without drawing any random numbers.
 - **Cost:** The circumstances and figures are Claude-drafted composites of documented US patterns. They're labelled composite on screen and are waiting for Jason's review.
 - **Source:** mapped blocks.
 
 ### 4.6 A district tier, so no record is a dead end
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Each mapped block also carries circumstances true across its whole district (`"scope": "district"`) and a district loop (`D1`, opened by `districtStart`). A record or household off the mapped blocks opens its district's block in district mode: the district tier is the story, each with an "Across" pill naming the district, the block's own circumstances fold away, and the bar above the lens says the record is from elsewhere in the district. The explorer links to the lens by the same rules, and its "Lens" filter becomes "Lens tags".
 - **Why:** About 93% of records ended at a disabled "Not mapped yet" row. A district tier is honest about scale: it says what holds across the district without implying the record happened on the block.
 - **Also decided:** Seasonal guest workers in open country go on the political layer, so every district has a political circumstance. The social layer stays empty downtown, in the satellite city and in the rural town for now.
@@ -266,6 +310,7 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Who:** Jason. **When:** 2026-11-21. **Source:** `medianville-phase6-lens-dead-ends-handoff.md` and its district history addendum.
 
 ### 4.7 Layer colours in two lightness tiers
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** New layer colours, chosen so that every pair, and every layer against failure crimson `#BC2F52`, stays apart for typical, protan and deutan vision: Historical `#6A3A04` (dark brown), Political `#1F3B83` (navy), Economic `#A77D1E` (ochre), Built & natural `#38927D` (jade), Social & cultural `#785D7F` (dusty plum) and Cultural `#8D78C0` (soft violet). They replace `#8C6239`, `#3457A6`, `#B7832A`, `#3F8758`, `#C2556A` and `#7A5BB0`. Only the six `--c-*` variables in `systems-lens/index.html` change: `blocks.json` names the colours by variable, and the viewer shows the lens in an iframe, so nothing else keeps a copy. The earlier directions page, `systems-lens/directions.html`, keeps its own palette.
 - **Why:** Protanopes and deuteranopes keep lightness and a blue–yellow axis but lose red–green. The old colours all sat at a similar lightness (L* 38–58), so they depended on red–green. Measured as CIEDE2000 on Machado (2009) simulations at full severity, eight of the 21 pairs fell under 12 for at least one of the three visions. The weakest were Built & natural against crimson (3.2 for deuteranopes), Political against Cultural (4.3 for protanopes), Social against Built & natural (4.3 for deuteranopes), Historical against crimson (5.0 for deuteranopes), and Social against crimson (8.2 for typical vision, 8.5 for protanopes, 7.2 for deuteranopes). The new colours sit in two lightness tiers: dark (Historical, Political, Social & cultural; L* 27–43) and mid (Economic, Built & natural, Cultural; L* 55). Within each tier, one colour sits at the yellow end, one near neutral and one at the blue end. Crimson, which protanopes see as a dark grey and deuteranopes as a mid olive, falls in the gaps. The lowest pair goes from 8.2 to 15.6 for typical vision, 4.3 to 14.8 for protanopes, 3.2 to 14.8 for deuteranopes, and 8.5 to 16.5 for tritanopes. Social against crimson becomes 21.8, 14.8 and 26.7. Historical, the bedrock layer, is now the darkest. Every layer is also at least 8.8 from the record-kind colours and the loop blue `#1F5AF0`, where Political against the bill blue `#2F5E9E` was 2.2, Cultural 3.6, and Historical against purchase 7.5. Political no longer reads as a bill record.
 - **Considered:** Moving only Social toward magenta (`#B04C8C`, `#B8509A`): that clears crimson, but for protanopes it lands 5–8 from Cultural and Political, and it leaves Built & natural 3.2 from crimson. Keeping Built & natural a true green: green and crimson both turn olive for deuteranopes, so capping its hue at 158° held the best set to 11.0, and at 165° to 12.2. The jade at 174° reaches 14.8. A dark berry for Social scored as well but read as a darker red beside crimson. A bright violet for Cultural clashed with the earthier colours. Taking every layer to 4.5:1 on white, so the white text on type pills passes AA, held the best set to 13.6. It also pushed Economic to an orange on top of purchase `#A65300` (4.6) and cut tritan to about 9.
@@ -278,24 +323,29 @@ New decisions go at the end of their section with a date. A reversed decision st
 ## 5. Data access and the repo
 
 ### 5.1 A separate data explorer
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** A table-based explorer on its own page, with filters, search, group-by, detail sheets and CSV download. It isn't a Claude artifact.
 - **Why:** Browsing the records directly is a different task from watching the day. An artifact can't fetch from GitHub Pages, so it would have to carry the 16 MB zip itself.
 - **Source:** `halvern-data-explorer.md`.
 
 ### 5.2 Latest viewer at the root, archives frozen
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** The latest viewer lives at the folder root, v1 (the night map) and v3 (as first shipped) are frozen archives, and no viewer v2 shipped.
 - **Who:** Jason. **When:** 2026-11-20. **Source:** `halvern-integration-plan.md`.
 
 ### 5.3 Design labs stay in the project
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** Design labs happen as artifacts in this project, and nothing reaches the repo on its own. Work merges into `development` first, and Jason promotes to `main`.
 - **Source:** integration plan.
 
 ### 5.4 Days chosen from a manifest, each its own link
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** Both viewers read `data/runs/manifest.json` through `runs.js`, open its default run (v2's baseline day) and list every run, v1 included, in a day menu. Choosing a day reloads the page with `?run=<id>`, and the link to the other viewer carries it. Without the manifest the pages load v1's zip, as before.
 - **Why:** A reload gives every day its own address and avoids resetting a loaded day in place. A manifest lets new runs ship without touching the pages.
 - **Who:** Build, on the plan's section 7. **When:** 2026-11-21.
 
 ### 5.5 The typed-day zips go in the repo, once
+- **Milestone:** [M5 More time](05-more-time/)
 - **Decided:** The baseline day and the 18 typed days are committed as `data/runs/v2/medianville_<date>.zip` (about 280 MB together), only after the simulator was frozen and the hand-written text merged.
 - **Why:** The site must serve them (Pages doesn't serve Git LFS), and a zip committed twice stays in the history twice.
 - **Cost:** The repository grows by about 280 MB. The month stays a Release download (1.15).
@@ -306,49 +356,60 @@ New decisions go at the end of their section with a date. A reversed decision st
 ## 6. Explaining the project (2026-11-20)
 
 ### 6.1 A first-visit intro overlay
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** A dismissible overlay on first visit says what the city is, the goal, how it was made and who made it. It's remembered once dismissed, reopened from an About button, and skipped by deep links. It doubles as the loading moment.
 - **Who:** Jason.
 
 ### 6.2 Plain credit, both ways
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** The overlay and the About page say plainly what Claude did (wrote the simulator, generated the day, hand-wrote 500 records, built the viewers) and what Jason did (the idea and where it came from, the framing, and the direction and decisions throughout).
 - **Who:** Jason.
 
 ### 6.3 About gets its own page
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** `about/` is a page of its own, linked from the overlay, the viewer header and the explorer. It covers the goal, the origin, the method, the data sources, what's real and what isn't, the limits and the credits.
 - **Who:** Jason.
 
 ### 6.4 The decision log is linked, not shown
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** This log lives in the docs and the repo. The About page links to it but doesn't reproduce it.
 - **Who:** Jason, on a proposal.
 
 ### 6.5 Links to the data explorer
+- **Milestone:** [M4 The refined city](04-the-refined-city/)
 - **Decided:** "Data" goes in the viewer header (not in the view switch, since the explorer is a different page). The overlay carries a secondary button, and each record's Details rail gets an "Open in data explorer" link to that record.
 - **Who:** Jason, on a proposal.
 
 ## 7. Polish pass (2026-11-22)
 
 ### 7.1 The viewer opens in Live
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** Playback starts at Live: the simulated day plays at the visitor's own time of day, one minute a minute. 1, 5 and 20 min/s are still one tap away. A visit at night opens on a quiet, dark city, and that's accepted.
 - **Who:** Jason.
 
 ### 7.2 "Medianville", with a subtitle that says what it is
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** The header reads **Medianville** with the subtitle "One day of transactions in a simulated American city", replacing "Medianville in Motion". Because the subtitle says "simulated", the header drops its "Simulated city · no real people" chip. The chip stays in the intro overlay and on About.
 - **Who:** Jason, choosing from proposals.
 
 ### 7.3 "Sample day", not "placeholder" and "the real one"
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** While the run downloads, the chip reads "Sample day · loading the full simulation". "The real one" suggested real data, and nothing on the page is real.
 - **Who:** Jason, on a proposal.
 
 ### 7.4 The board turns while paused
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** Turning, tilting and north-up ease into place even while playback is paused. Only the city's motion (records, vehicles, people) stops.
 - **Who:** Jason.
 
 ### 7.5 The map sheet joins the viewer's look
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** The Map keeps its topographic drawing (contours, cased roads, creek, symbols) but takes the viewer's design system: Figtree instead of Barlow Condensed, navy ink (`#0E1B2E`) instead of black, lighter paper (`#FBF9F4`), and the slate page behind the sheet instead of warm grey, with a thin border and soft shadow like the viewer's cards. The italic serif stays only for the creek's name, as on printed maps. Street names use an en space between words, since a plain space nearly vanishes at map sizes.
 - **Decided:** The margin below the frame is laid out in clear columns: the legend on the left, the scale and north arrow on the right, and the title block under them. It starts a clear gap below the outer frame line, which used to run through the LEGEND heading.
 - **Who:** Jason, on a proposal.
 
 ### 7.6 A compact header below 1,280 px
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** Below 1,280 px, where Activity already becomes a drawer, the header keeps only the title and subtitle, **Activity** and a menu button. The menu holds the status chip, the day menu, focus blur, **Sound**, **Data** and **About**. The Miniature/Map switch and **Systems lens** sit over the city's top-left corner. On a phone the zoom and turn buttons stack down the right edge below them, so the lens button keeps its full name: a bare "Lens" was unclear. On an iPhone the city gets about 630 px of height instead of about 340.
 - **Decided:** At 1,280 px and wider, the header stays on one row: the subtitle sits under the title, the day menu moves to the footer beside the clock, and **Sound** shows only its icon below 1,440 px.
 - **Decided:** The page sizes to the visible screen (`100dvh`) and keeps clear of the iPhone's home indicator and notch. On a phone the speed buttons read Live, 1, 5 and 20 min/s, so the clock, play button and speeds share one row.
@@ -357,26 +418,31 @@ New decisions go at the end of their section with a date. A reversed decision st
 - *Partly superseded 2026-11-23:* **Sound** has left the header and the menu for the city's corner (see 7.11).
 
 ### 7.7 A Key button where the legend strip doesn't fit
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** Below 760 px wide or 620 px tall, where the record legend strip along the bottom of the city is hidden, a **Key** button sits in its place at the bottom-left. It opens the same legend as a small two-column card above the button (with "Recent failure at a place" across both columns in the Miniature), and closes it again. It starts closed, and the choice is remembered in the browser (`medianville-key-v1`). The legend is now a labelled group ("Key") for screen readers rather than hidden from them.
 - **Why:** On a phone nothing on screen said what the colours, line patterns, end marks and flags meant; the filter chips that double as a key are inside the Activity drawer. Found in a design critique on 2026-11-23.
 - **Considered:** Putting the key in the header menu, which is easy to miss, and opening it by default on a phone, which covers the city on a first visit, and in landscape takes about half its height.
 - **Who:** Jason, on a proposal. **When:** 2026-11-23.
 
 ### 7.8 The day and its size in one control
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** The status chip ("202,402 records · March 3, 2027") and the day menu become one control: the day on top ("Wed, Mar 3, 2027 · baseline"), its record count under it ("202,402 records in the day"), a calendar icon and a chevron. The native select lies invisibly over the whole box, so a click anywhere opens the list of days and keyboards and screen readers get a real select (the count is its description). While the run downloads it reads "Sample day" over "Loading the full simulation 42%". It sits in the header beside the title at 1,280 px and wider, and first in the menu below that; the footer keeps the clock, play, speeds and timeline. The tile above the Activity feed now reads "Records so far", so the two counts don't seem to disagree.
 - **Why:** The chip looked like a control and wasn't one, while the menu that changed the day sat at the other end of the page. The day, its size and the way to change it belong together.
 - **Who:** Jason, on a design critique. **When:** 2026-11-23.
 
 ### 7.9 Data and About read as links
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** In the header, **Data** and **About** lose their outlines: text links with their icons, underlined on hover, set apart from the view switch, **Systems lens** and **Sound** by a thin rule. In the menu below 1,280 px they are rows under a rule, each ending in a chevron. **About** still opens the project intro over the city.
 - **Why:** They take you somewhere (the data explorer, the project intro) rather than change the view, and outlined like **Sound** they read as the same kind of control.
 - **Who:** Jason, on a proposal. **When:** 2026-11-23.
 
 ### 7.10 Smaller fixes from the design critique
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** Category names keep their acronyms and compounds: "ATM withdrawal", "Grocery SNAP purchase", "Over-the-counter medicine", "Medicare Part B premium" (the same acronyms as the data explorer, plus 23 hyphenated or capitalised compounds from the run's 383 categories). A feed row's time moves under its amount, place names may wrap to a second line, and a failure's second line no longer repeats the word in its badge. The Map's "Power & Water" label moves above its building, clear of "Water Tank", and "ROUTE 9" moves off the building it crossed. Spoken labels lose a doubled full stop after "a.m." and "p.m.", the failure count gets its thousands comma, and the city's label is refreshed as soon as the full day loads rather than a minute later. On touch screens every control is at least 44 px on its shorter side; inline links in the credit line keep text spacing.
 - **Who:** Jason, on a design critique. **When:** 2026-11-23.
 
 ### 7.11 Sound on the city
+- **Milestone:** [M6 Refinements](06-refinements/)
 - **Decided:** **Sound** moves out of the header (and out of the menu below 1,280 px) onto the city's bottom-right corner at every width: icon and label on wider screens, just the speaker icon below 760 px (its accessible name still says whether sound is on). Its panel opens upward from the button and is never taller than the city, scrolling inside in a short landscape window. Keys pressed inside it, such as arrows on a volume slider, stay out of the city's own keys, and pointer presses and the scroll wheel there no longer pan or zoom the map. **S** still toggles it.
 - **Why:** Sound is the city's, a background that follows the hour and a pluck for each record, so it belongs with the city, across from the key. The header keeps only what applies to the whole page: the title, the day, the view, the lens, and the links to the data and the project.
 - **Decided:** A second after sound is turned on, the panel checks that the browser's audio clock has moved. If it hasn't (the browser reports the audio as running but has no output, as in an embedded browser, or keeps it suspended), a note in the panel says the browser isn't playing audio and that another browser should work, and screen readers hear it. A hidden tab, which stops the clock on purpose, isn't checked.
