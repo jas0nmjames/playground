@@ -2,6 +2,7 @@
 published: 2026-11-17
 updated: 2026-11-24
 tags: generative
+url: https://medianville.netlify.app/
 title: Medianville
 summary: One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a 3D miniature town and a printed map sheet, with a systems lens and a data explorer.
 pinned: 1
@@ -10,6 +11,8 @@ issue: 115
 ---
 
 # Transactions are Jobs to be Done: Synthetic Market Animation
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7162487b-5b7b-4cba-829f-bf319d02e97c/deploy-status)](https://app.netlify.com/projects/medianville/deploys)
 
 An animated view of Medianville, an invented American city of about 100,000 people, that plays back every record of one simulated day: Wednesday, March 3, 2027 by default (202,402 records in v2), or any of 18 other days that together stand for 2027. The records are purchases, bills, paychecks, benefits, school days, bus rides, unpaid care and failed attempts. The viewer replays the day on a 3D miniature town and on a printed map sheet, with sound. A systems lens opens over the city on one mapped block in each district, as stacked layers of the circumstances behind its records, with the feedback loops that keep them going. A data explorer lays out the same day as tables to filter, search and group, without the animation. A menu in the header of both switches days.
 
