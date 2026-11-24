@@ -11,6 +11,7 @@
  *
  *   node scripts/build.js          write the files
  *   node scripts/build.js --check  change nothing; exit 1 if any file is out of date
+ *                                  or any project has no `status`
  *
  * Everything outside the markers is hand-written and left alone.
  * See scripts/projects.js for the frontmatter keys.
@@ -58,11 +59,11 @@ function buildTable(projects) {
     const site = p.siteUrl ? `[↗](${p.siteUrl})` : '—';
     const desc = (p.summary || p.description || '').replace(/\|/g, '\\|');
     const tag = p.tags.length ? p.tags.map(t => `\`${t}\``).join(' ') : '';
-    return `| ${readme} | ${site} | ${desc} | ${tag} | ${formatMonth(p.published)} | ${formatMonth(p.updated)} |`;
+    return `| ${readme} | ${site} | ${desc} | ${tag} | ${p.status || '—'} | ${formatMonth(p.published)} | ${formatMonth(p.updated)} |`;
   });
   return [
-    '| Project | Site | Description | Tags | Published | Updated |',
-    '|---|---|---|---|---|---|',
+    '| Project | Site | Description | Tags | Status | Published | Updated |',
+    '|---|---|---|---|---|---|---|',
     ...rows,
   ].join('\n');
 }
@@ -154,6 +155,7 @@ function renderTitle(p, href, { layered }) {
 
 function renderMeta(p) {
   const parts = [];
+  if (p.status) parts.push(`<span class="status status--${p.status}"><span class="visually-hidden">Status: </span>${p.status}</span>`);
   if (p.published) parts.push(`<time datetime="${p.published}">${formatMonth(p.published)}</time>`);
   if (p.updated && formatMonth(p.updated) !== formatMonth(p.published)) {
     parts.push(`updated <time datetime="${p.updated}">${formatMonth(p.updated)}</time>`);
@@ -238,6 +240,7 @@ function buildJson(projects) {
     published: p.published,
     updated: p.updated,
     tags: p.tags,
+    status: p.status,
     url: p.siteUrl,
     source: p.sourceUrl,
     pinned: p.pinned === null ? null : (Number.isFinite(p.pinned) ? p.pinned : true),
@@ -250,20 +253,26 @@ function buildJson(projects) {
 // ─── write or check ───────────────────────────────────────────────────────
 
 const projects = collectProjects();
+const noStatus = projects.filter(p => !p.status).map(p => p.dir);
 const outputs = [buildReadme(projects), buildIndex(projects), buildJson(projects)];
 
 const stale = outputs.filter(o => !fs.existsSync(o.file) || fs.readFileSync(o.file, 'utf8') !== o.content);
 
 if (CHECK) {
+  if (noStatus.length) {
+    console.error(`No status: ${noStatus.join(', ')}`);
+    console.error('Add `status: active | paused | done | archived` to each README\'s frontmatter.');
+  }
   if (stale.length) {
     console.error(`Out of date: ${stale.map(o => path.relative(ROOT, o.file)).join(', ')}`);
     console.error('Run `node scripts/build.js` and commit the result.');
-    process.exit(1);
   }
+  if (stale.length || noStatus.length) process.exit(1);
   console.log(`Up to date: ${projects.length} projects.`);
 } else {
   for (const o of stale) fs.writeFileSync(o.file, o.content);
   const pinnedCount = projects.filter(p => p.pinned !== null).length;
+  if (noStatus.length) console.warn(`No status yet: ${noStatus.join(', ')} (build.js --check will fail).`);
   console.log(`${projects.length} projects (${pinnedCount} pinned). ` +
     (stale.length ? `Wrote ${stale.map(o => path.relative(ROOT, o.file)).join(', ')}.` : 'Nothing changed.'));
 }

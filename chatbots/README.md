@@ -2,6 +2,7 @@
 published: 2023-03-15
 updated: 2025-09-02
 summary: Experiments with chatbots and live chat: traditional dialog bots, NLP and NLU, large language models, live chat widgets and conversation design.
+status: archived
 ---
 
 # playground-chatbots

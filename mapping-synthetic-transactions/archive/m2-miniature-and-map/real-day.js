@@ -1,11 +1,11 @@
 // ===== Halvern in Motion v3 · the real synthetic day =====
-// Loads ../data/halvern_2027-03-03.zip (201,753 records) and puts it on v3's city.
+// Loads ../../data/halvern_2027-03-03.zip (201,753 records) and puts it on v3's city.
 // v3 draws one small town, so the run's six districts and 1,672 organizations are
 // folded onto its homes and buildings (see FOLD and kindOf below). Records keep their
 // real ids, names, amounts, districts and text; only their position on the map is
 // approximate. Until the zip has loaded, v3's own placeholder day plays.
 (function () {
-  const RUN = '../data/halvern_2027-03-03.zip';
+  const RUN = '../../data/halvern_2027-03-03.zip';
   const pad = (n, w) => String(n).padStart(w, '0');
 
   // ---------- CSV read straight from bytes (same reader as the night map) ----------

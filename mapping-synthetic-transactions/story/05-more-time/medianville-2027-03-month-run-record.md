@@ -1,6 +1,6 @@
 # Medianville run record: March 2027, carried day to day (v2, phase 4)
 
-Rebuilt 2026-11-21 in Claude Code on Jason's Mac, on branch `medianville-v2-phase5`, after the [close reading](medianville-v2-close-reading.md)'s fixes; first built 2026-11-20 in the [data update plan](medianville-data-update-plan.md)'s phase 4 (that build, SHA-256 `7339315…ed58`, is superseded). Thirty-one days, March 1-31, 2027, each starting from the balances and unfinished business of the day before (`sim/medianville_sim/carry.py`; decisions 1.7-1.15 in the [decision log](design-decisions.md)). Seed 20270303, full city (41,400 households plus 2,099 group-quarters units, 99,743 residents), ordinary weather, records tagged with the systems lens's mapped blocks. No hand-written text: that belongs to the one-day baseline. Deterministic: the same commit, Python and numpy reproduce every file byte for byte.
+Rebuilt 2026-11-21 in Claude Code on Jason's Mac, on branch `medianville-v2-phase5`, after the [close reading](medianville-v2-close-reading.md)'s fixes; first built 2026-11-20 in the [data update plan](../03-grounding-in-evidence/medianville-data-update-plan.md)'s phase 4 (that build, SHA-256 `7339315…ed58`, is superseded). Thirty-one days, March 1-31, 2027, each starting from the balances and unfinished business of the day before (`sim/medianville_sim/carry.py`; decisions 1.7-1.15 in the [decision log](../decisions.md)). Seed 20270303, full city (41,400 households plus 2,099 group-quarters units, 99,743 residents), ordinary weather, records tagged with the systems lens's mapped blocks. No hand-written text: that belongs to the one-day baseline. Deterministic: the same commit, Python and numpy reproduce every file byte for byte.
 
 ## Download
 
@@ -31,7 +31,7 @@ Under `medianville_2027-03/`:
 
 ## The chains, in figures
 
-Full report: [`sim/evidence/results/v2_month_2027-03/evidence_checks.md`](../sim/evidence/results/v2_month_2027-03/evidence_checks.md). Targets: `sim/evidence/month_targets.csv`.
+Full report: [`sim/evidence/results/v2_month_2027-03/evidence_checks.md`](../../sim/evidence/results/v2_month_2027-03/evidence_checks.md). Targets: `sim/evidence/month_targets.csv`.
 
 | Check | March | Target |
 |---|---|---|

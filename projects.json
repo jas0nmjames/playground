@@ -2,12 +2,13 @@
   {
     "dir": "mapping-synthetic-transactions",
     "title": "Medianville",
-    "summary": "One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a night map, a 3D miniature town and a printed map sheet.",
+    "summary": "One simulated day in Medianville, an invented American city of about 100,000 people, played back record by record (purchases, bills, paychecks, bus rides, failed attempts) on a 3D miniature town and a printed map sheet, with a systems lens and a data explorer.",
     "published": "2026-11-17",
-    "updated": "2026-11-23",
+    "updated": "2026-11-24",
     "tags": [
       "generative"
     ],
+    "status": "active",
     "url": "https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions",
     "pinned": 1,
@@ -25,6 +26,7 @@
     "tags": [
       "generative"
     ],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/liquid-hourglass/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/liquid-hourglass",
     "pinned": null,
@@ -42,6 +44,7 @@
     "tags": [
       "generative"
     ],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/marimba/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/marimba",
     "pinned": 3,
@@ -55,6 +58,7 @@
     "published": "2026-07-21",
     "updated": "2026-07-21",
     "tags": [],
+    "status": "active",
     "url": "https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/strikefleet-omega-recreated",
     "pinned": null,
@@ -68,6 +72,7 @@
     "published": "2026-07-20",
     "updated": "2026-07-21",
     "tags": [],
+    "status": "done",
     "url": "https://dutdut.netlify.app/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/dut-dut",
     "pinned": 2,
@@ -81,6 +86,7 @@
     "published": "2026-04-22",
     "updated": "2026-11-20",
     "tags": [],
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/small-as-voyager/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/small-as-voyager",
     "pinned": null,
@@ -96,6 +102,7 @@
     "tags": [
       "generative"
     ],
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/tech-and-society-course/tech-society-primer.html",
     "source": "https://github.com/jas0nmjames/playground/tree/main/tech-and-society-course",
     "pinned": null,
@@ -111,6 +118,7 @@
     "tags": [
       "generative"
     ],
+    "status": "done",
     "url": "https://project-scravax.netlify.app/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/project-scravax",
     "pinned": null,
@@ -128,6 +136,7 @@
     "tags": [
       "generative"
     ],
+    "status": "archived",
     "url": null,
     "source": "https://github.com/jas0nmjames/playground/tree/main/rock-and-bop",
     "pinned": null,
@@ -143,6 +152,7 @@
     "tags": [
       "generative"
     ],
+    "status": "paused",
     "url": null,
     "source": "https://github.com/jas0nmjames/playground/tree/main/terminal-velocity",
     "pinned": null,
@@ -158,6 +168,7 @@
     "tags": [
       "generative"
     ],
+    "status": "paused",
     "url": null,
     "source": "https://github.com/jas0nmjames/playground/tree/main/microwave",
     "pinned": null,
@@ -173,6 +184,7 @@
     "tags": [
       "generative"
     ],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/shapes/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/shapes",
     "pinned": null,
@@ -190,6 +202,7 @@
     "tags": [
       "generative"
     ],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/arrival/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/arrival",
     "pinned": null,
@@ -203,6 +216,7 @@
     "published": "2025-08-04",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "paused",
     "url": null,
     "source": "https://github.com/jas0nmjames/playground/tree/main/ephemeral-guidance",
     "pinned": null,
@@ -216,6 +230,7 @@
     "published": "2025-07-07",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/forms/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/forms",
     "pinned": null,
@@ -231,6 +246,7 @@
     "tags": [
       "generative"
     ],
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/tiny/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/tiny",
     "pinned": null,
@@ -244,6 +260,7 @@
     "published": "2024-09-07",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/currency-input/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/currency-input",
     "pinned": null,
@@ -257,6 +274,7 @@
     "published": "2023-07-12",
     "updated": "2026-11-17",
     "tags": [],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/html-media-best-practices/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/html-media-best-practices",
     "pinned": null,
@@ -270,6 +288,7 @@
     "published": "2023-04-11",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/exit-modals/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/exit-modals",
     "pinned": null,
@@ -283,6 +302,7 @@
     "published": "2023-03-15",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "archived",
     "url": "https://jas0nmjames.github.io/playground/chatbots/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/chatbots",
     "pinned": null,
@@ -296,6 +316,7 @@
     "published": "2023-01-17",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/captions/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/captions",
     "pinned": null,
@@ -309,6 +330,7 @@
     "published": "2022-11-01",
     "updated": "2025-09-02",
     "tags": [],
+    "status": "done",
     "url": "https://jas0nmjames.github.io/playground/typography/bungee.html",
     "source": "https://github.com/jas0nmjames/playground/tree/main/typography",
     "pinned": null,

@@ -10,7 +10,7 @@
   let RUN = FALLBACK, RUN_BYTES = 16182979;
   const pad = (n, w) => String(n).padStart(w, '0');
 
-  // ---------- CSV read straight from bytes (same reader as the night map) ----------
+  // ---------- CSV read straight from bytes (same CSV reader as the archived first viewer) ----------
   const TD = new TextDecoder();
   class Reader {
     constructor(b) { this.b = b; this.p = b[0] === 0xef && b[1] === 0xbb && b[2] === 0xbf ? 3 : 0; this.fs = new Int32Array(64); this.fe = new Int32Array(64); this.fq = new Uint8Array(64); }

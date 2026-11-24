@@ -31,7 +31,7 @@ header.top { position:relative; display:flex; align-items:center; gap:10px 18px;
 .brand { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-right:auto; min-width:0; }
 h1 { font-size:18px; font-weight:700; margin:0; letter-spacing:-.01em; }
 .chip { font-size:13px; font-weight:600; color:var(--ink2); background:var(--page); border:1px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; }
-.runpick { border-radius:999px; min-height:32px; padding:4px 10px; font-size:13px; cursor:pointer; }
+.runpick { border-radius:999px; min-height:32px; padding:4px 10px; font-size:13px; cursor:pointer; max-width:220px; } /* the longest day name would push About onto a second line */
 .chip.err { color:var(--fail); border-color:var(--fail); background:var(--fail-soft); }
 nav.tabs { display:flex; gap:2px; border:1px solid var(--ctrl); border-radius:999px; padding:3px; background:var(--surface); overflow-x:auto; max-width:100%; }
 nav.tabs a { text-decoration:none; color:var(--ink2); font-weight:600; font-size:14px; padding:6px 13px; border-radius:999px; white-space:nowrap; min-height:32px; display:flex; align-items:center; }
@@ -336,10 +336,14 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     alice: 'ALICE', b2b: 'Business to business', in_person: 'In person', school_bus: 'School bus', ride_from_family_or_friend: 'Ride from family or friend', ui: 'UI', pos: 'POS', atm: 'ATM' };
   const WORD = { snap: 'SNAP', wic: 'WIC', tanf: 'TANF', ssi: 'SSI', ebt: 'EBT', irs: 'IRS', va: 'VA', ach: 'ACH', atm: 'ATM', ev: 'EV', alice: 'ALICE', medicare: 'Medicare', medicaid: 'Medicaid',
     p2p: 'P2P', bnpl: 'BNPL', hoa: 'HOA', fica: 'FICA', ssa: 'SSA', dmv: 'DMV', er: 'ER', cdl: 'CDL', ged: 'GED', hvac: 'HVAC', ui: 'UI', liheap: 'LIHEAP', chip: 'CHIP', '401k': '401(k)', ira: 'IRA', cms: 'CMS', usps: 'USPS', id: 'ID' };
+  const JOIN = [['over the counter', 'over-the-counter'], ['after school', 'after-school'], ['rent to own', 'rent-to-own'], ['buy here pay here', 'buy-here-pay-here'], ['follow up', 'follow-up'],
+    ['self employed', 'self-employed'], ['self employment', 'self-employment'], ['self pay', 'self-pay'], ['one time', 'one-time'], ['top up', 'top-up'], ['jump start', 'jump-start'], ['sit down', 'sit-down'],
+    ['big box', 'big-box'], ['fill up', 'fill-up'], ['fill in', 'fill-in'], ['move in', 'move-in'], ['buy in', 'buy-in'], ['no show', 'no-show'], ['cash out', 'cash-out'], ['dropoff', 'drop-off'], ['part b', 'Part B'], ['real ID', 'REAL ID'], ['head start', 'Head Start']];
   const human = (s) => {
     if (!s) return '—'; if (SPECIAL[s]) return SPECIAL[s];
     let t = String(s).replace(/_/g, ' ').trim().split(' ').map((w) => WORD[w.toLowerCase()] || w).join(' ');
     t = t.replace(/\bsocial security\b/gi, 'Social Security');
+    for (const [a, b] of JOIN) t = t.replace(new RegExp('\\b' + a + '\\b', 'gi'), b); // same compounds as the viewer
     return t.charAt(0).toUpperCase() + t.slice(1);
   };
   const DNAME = { D1: 'Downtown and core', D2: 'Inner suburbs', D3: 'Outer suburbs', D4: 'Satellite city', D5: 'Rural town', D6: 'Open country', outside: 'Outside Medianville' };

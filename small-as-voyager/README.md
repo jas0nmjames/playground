@@ -1,6 +1,7 @@
 ---
 published: 2026-04-22
 updated: 2026-11-20
+status: paused
 ---
 
 # Small as Voyager
