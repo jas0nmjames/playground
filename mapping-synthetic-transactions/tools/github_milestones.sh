@@ -18,7 +18,7 @@
 #
 # The release notes are tools/release-notes/<tag>.md; {{PUBLISHED}} becomes today's date.
 # The repo's other milestones belong to other projects, so every title starts "Medianville · ".
-set -euo pipefail
+set -eo pipefail   # no -u: bash 3.2 (macOS) treats "${empty[@]}" as unbound
 
 REPO="jas0nmjames/playground"
 BRANCH="main"   # where the story links point
@@ -96,29 +96,32 @@ TAGS=(
 
 field() { echo "$1" | head -1 | cut -d'|' -f"$2"; }   # entries' later lines are description text
 
-# Existing milestones: title → number, and their current state, due date and description.
-declare -A MS_NUM MS_STATE MS_DUE MS_DESC KEY_NUM
+# Existing milestones, as parallel arrays (macOS ships bash 3.2, which has no associative arrays).
+EX_NUM=(); EX_TITLE=(); EX_STATE=(); EX_DUE=()
 if [ "$OFFLINE" = 0 ]; then
   while IFS=$'\t' read -r num title state due; do
     [ -n "$num" ] || continue
-    MS_NUM["$title"]=$num; MS_STATE["$title"]=$state; MS_DUE["$title"]=${due:0:10}
-    MS_DESC["$title"]=$(gh api "repos/$REPO/milestones/$num" --jq .description)
+    EX_NUM+=("$num"); EX_TITLE+=("$title"); EX_STATE+=("$state"); EX_DUE+=("${due:0:10}")
   done < <(gh api --paginate "repos/$REPO/milestones?state=all&per_page=100" \
              --jq '.[] | select(.title | startswith("Medianville · ")) | [.number, .title, .state, (.due_on // "")] | @tsv')
 fi
+existing() {  # index of the existing milestone with this title, or -1
+  local i=0
+  while [ "$i" -lt "${#EX_TITLE[@]}" ]; do
+    [ "${EX_TITLE[$i]}" = "$1" ] && { echo "$i"; return; }
+    i=$((i + 1))
+  done
+  echo -1
+}
+
+# Each milestone key's number: KEYNUM_M0, KEYNUM_M1 … (or "(new: …)" until it's created)
+for m in "${MILESTONES[@]}"; do
+  key=$(field "$m" 1); title=$(field "$m" 2); i=$(existing "$title")
+  if [ "$i" -ge 0 ]; then printf -v "KEYNUM_$key" '%s' "${EX_NUM[$i]}"; else printf -v "KEYNUM_$key" '%s' "(new: $title)"; fi
+done
+key_num() { local v="KEYNUM_$1"; echo "${!v}"; }
 
 # ─── 1. milestones ───────────────────────────────────────────────────────────
-for m in "${MILESTONES[@]}"; do
-  key=$(field "$m" 1); title=$(field "$m" 2); state=$(field "$m" 3); due=$(field "$m" 4); folder=$(field "$m" 5)
-  lines=$(echo "$m" | cut -d'|' -f6-)
-  desc="$lines
-Story: $STORY/$folder"
-  if [ -n "${MS_NUM[$title]:-}" ]; then
-    KEY_NUM[$key]=${MS_NUM[$title]}
-  else
-    KEY_NUM[$key]="(new: $title)"
-  fi
-done
 
 if step milestones; then
   echo; echo "-- 1. Milestones"
@@ -129,20 +132,24 @@ if step milestones; then
 Story: $STORY/$folder"
     args=(-f "title=$title" -f "state=$state" -f "description=$desc")
     [ -n "$due" ] && args+=(-f "due_on=${due}T12:00:00Z")
-    num=${MS_NUM[$title]:-}
+    i=$(existing "$title"); num=""; have_state=""; have_due=""; have_desc=""
+    if [ "$i" -ge 0 ]; then
+      num=${EX_NUM[$i]}; have_state=${EX_STATE[$i]}; have_due=${EX_DUE[$i]}
+      have_desc=$(gh api "repos/$REPO/milestones/$num" --jq .description)
+    fi
     if [ -z "$num" ]; then
       echo "create  $title  [$state${due:+, due $due}]"
       echo "$desc" | sed 's/^/          | /'
       if [ "$APPLY" = 1 ]; then
-        KEY_NUM[$key]=$(gh api -X POST "repos/$REPO/milestones" "${args[@]}" --jq .number)
-        echo "          → milestone ${KEY_NUM[$key]}"
+        printf -v "KEYNUM_$key" '%s' "$(gh api -X POST "repos/$REPO/milestones" "${args[@]}" --jq .number)"
+        echo "          → milestone $(key_num "$key")"
       else
         printf '  $ gh api -X POST repos/%s/milestones -f title=%q -f state=%s%s -f description=…\n' "$REPO" "$title" "$state" "${due:+ -f due_on=${due}T12:00:00Z}"
       fi
-    elif [ "${MS_STATE[$title]}" != "$state" ] || [ "${MS_DUE[$title]}" != "$due" ] || [ "${MS_DESC[$title]}" != "$desc" ]; then
-      echo "update  #$num $title  [${MS_STATE[$title]} → $state; due ${MS_DUE[$title]:-none} → ${due:-none}; description $([ "${MS_DESC[$title]}" = "$desc" ] && echo same || echo changes)]"
+    elif [ "$have_state" != "$state" ] || [ "$have_due" != "$due" ] || [ "$have_desc" != "$desc" ]; then
+      echo "update  #$num $title  [$have_state → $state; due ${have_due:-none} → ${due:-none}; description $([ "$have_desc" = "$desc" ] && echo same || echo changes)]"
       upd=(-f "state=$state" -f "description=$desc")
-      if [ -n "$due" ]; then upd+=(-f "due_on=${due}T12:00:00Z"); elif [ -n "${MS_DUE[$title]}" ]; then upd+=(-F "due_on=null"); fi
+      if [ -n "$due" ]; then upd+=(-f "due_on=${due}T12:00:00Z"); elif [ -n "$have_due" ]; then upd+=(-F "due_on=null"); fi
       run gh api -X PATCH "repos/$REPO/milestones/$num" "${upd[@]}" --silent
     else
       echo "ok      #$num $title"
@@ -154,7 +161,7 @@ fi
 if step prs; then
   echo; echo "-- 2. Pull requests → milestones"
   for row in "${PRS[@]}"; do
-    key=${row%%|*}; nums=${row#*|}; target=${KEY_NUM[$key]}
+    key=${row%%|*}; nums=${row#*|}; target=$(key_num "$key")
     for n in $nums; do
       if [ "$OFFLINE" = 0 ]; then
         cur=$(gh api "repos/$REPO/issues/$n" --jq '[(.milestone.number // "" | tostring), (.pull_request.merged_at // ""), .title] | join("|")')
@@ -216,10 +223,10 @@ if step releases; then
       [ "$tag" = medianville-m1-one-day ] && git show "$sha:mapping-synthetic-transactions/data/halvern_2027-03-03.zip" > "$TMP/halvern_2027-03-03.zip"
       return 0
     }
-    existing=""
-    [ "$OFFLINE" = 0 ] && existing=$(gh release view "$tag" --repo "$REPO" --json assets --jq '.assets[].name' 2>/dev/null || echo "__none__")
-    [ "$OFFLINE" = 1 ] && existing="__none__"
-    if [ "$existing" = "__none__" ]; then
+    have_assets=""
+    [ "$OFFLINE" = 0 ] && have_assets=$(gh release view "$tag" --repo "$REPO" --json assets --jq '.assets[].name' 2>/dev/null || echo "__none__")
+    [ "$OFFLINE" = 1 ] && have_assets="__none__"
+    if [ "$have_assets" = "__none__" ]; then
       size=$(git archive --format=zip "$sha" mapping-synthetic-transactions | wc -c | awk '{printf "%.1f MB", $1/1048576}')
       echo "create  $title  ($tag; assets: $(basename "$zip") $size$([ ${#assets[@]} -gt 1 ] && echo ", halvern_2027-03-03.zip"))"
       sed "s/{{PUBLISHED}}/$TODAY/" "$notes_src" > "$TMP/$tag.md"
@@ -228,7 +235,7 @@ if step releases; then
       run gh release create "$tag" --repo "$REPO" --verify-tag --latest=false --title "$title" --notes-file "$TMP/$tag.md" "${assets[@]}"
     else
       missing=()
-      for a in "${assets[@]}"; do grep -qx "$(basename "$a")" <<<"$existing" || missing+=("$a"); done
+      for a in "${assets[@]}"; do grep -qx "$(basename "$a")" <<<"$have_assets" || missing+=("$a"); done
       if [ ${#missing[@]} -eq 0 ]; then
         echo "ok      $title"
       else
