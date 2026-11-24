@@ -10,6 +10,8 @@ issue: 111
 
 # dut dut
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d7f2b1fe-d2ac-4c9d-852f-ca4ed86447a8/deploy-status)](https://app.netlify.com/projects/dutdut/deploys)
+
 A web-based app to annotate, create, preview, and learn from drumline cadences. Paint hits, accents, flams, diddles, and buzz rolls onto a per-voice grid (cymbal, snare, 6 tenors, 5 basses) across multiple named sections; see the pattern render as percussion staff notation; preview it with a synthesized drumline; and export it as MIDI, WAV audio, or a score image. An Insights panel analyzes what you've written — rudiments, syncopation, backbeats, hemiolas, call-and-response, and more — with hover-to-highlight on the score and links to learn each concept. Work autosaves in the browser and can be saved/loaded as a JSON project file.
 
 ## Getting started
