@@ -42,6 +42,7 @@ The work is told as milestones, each with its own chapter in [the story](story/)
 | [M4 The refined city](story/04-the-refined-city/) | latest (root) | v1 renamed: `medianville_2027-03-03.zip` | 3b (rename) |
 | [M5 More time](story/05-more-time/) | latest, with the day menu | v2: 19 days and the March month | 3, 4, 5, "6"* |
 | [M6 Refinements](story/06-refinements/) | latest | v2 | — |
+| [M7 Open to agents](story/07-open-to-agents/) | latest, with Copy for AI | v2, with pages for agents ([For agents](#for-agents)) | — |
 
 \* [#82](https://github.com/jas0nmjames/playground/pull/82), the systems lens's district tier, shipped as "phase 6" of v2; the data update plan's own phase 6 is still to come.
 
