@@ -58,7 +58,7 @@
     "published": "2026-07-21",
     "updated": "2026-07-21",
     "tags": [],
-    "status": "done",
+    "status": "active",
     "url": "https://jas0nmjames.github.io/playground/strikefleet-omega-recreated/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/strikefleet-omega-recreated",
     "pinned": null,
@@ -86,7 +86,7 @@
     "published": "2026-04-22",
     "updated": "2026-11-20",
     "tags": [],
-    "status": "done",
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/small-as-voyager/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/small-as-voyager",
     "pinned": null,
@@ -102,7 +102,7 @@
     "tags": [
       "generative"
     ],
-    "status": "done",
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/tech-and-society-course/tech-society-primer.html",
     "source": "https://github.com/jas0nmjames/playground/tree/main/tech-and-society-course",
     "pinned": null,
@@ -136,7 +136,7 @@
     "tags": [
       "generative"
     ],
-    "status": "paused",
+    "status": "archived",
     "url": null,
     "source": "https://github.com/jas0nmjames/playground/tree/main/rock-and-bop",
     "pinned": null,
@@ -216,7 +216,7 @@
     "published": "2025-08-04",
     "updated": "2025-09-02",
     "tags": [],
-    "status": "done",
+    "status": "paused",
     "url": null,
     "source": "https://github.com/jas0nmjames/playground/tree/main/ephemeral-guidance",
     "pinned": null,
@@ -230,7 +230,7 @@
     "published": "2025-07-07",
     "updated": "2025-09-02",
     "tags": [],
-    "status": "done",
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/forms/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/forms",
     "pinned": null,
@@ -246,7 +246,7 @@
     "tags": [
       "generative"
     ],
-    "status": "done",
+    "status": "paused",
     "url": "https://jas0nmjames.github.io/playground/tiny/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/tiny",
     "pinned": null,
@@ -302,7 +302,7 @@
     "published": "2023-03-15",
     "updated": "2025-09-02",
     "tags": [],
-    "status": "done",
+    "status": "archived",
     "url": "https://jas0nmjames.github.io/playground/chatbots/",
     "source": "https://github.com/jas0nmjames/playground/tree/main/chatbots",
     "pinned": null,
