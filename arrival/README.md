@@ -4,6 +4,7 @@ updated: 2025-09-02
 tags: generative
 summary: An image generator and decoder for Heptapod B, the logogram language in the film Arrival (2016).
 status: done
+issue: 103
 ---
 
 # Arrival

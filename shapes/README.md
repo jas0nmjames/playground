@@ -4,6 +4,7 @@ updated: 2025-09-02
 tags: generative
 summary: Labeled shapes from a small list of items drop and bounce around the page, with Matter.js physics.
 status: done
+issue: 105
 ---
 
 # Shapes

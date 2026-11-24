@@ -5,6 +5,7 @@ tags: generative
 nosite: true
 summary: Concept: upload a photo of a plate of food and get a microwave time that leaves it hot, but not too hot.
 status: paused
+issue: 104
 ---
 
 # Microwave

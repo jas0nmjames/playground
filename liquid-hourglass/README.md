@@ -4,6 +4,7 @@ updated: 2026-11-16
 tags: generative
 summary: A double liquid-motion hourglass driven by a particle fluid simulation rather than scripted animation. Tap it to turn it over.
 status: done
+issue: 114
 ---
 
 # Liquid hourglass

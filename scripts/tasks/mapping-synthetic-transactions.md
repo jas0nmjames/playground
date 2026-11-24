@@ -3,7 +3,7 @@
 Drafted from the project's README, the story and its docs. medianville-future-phases.md (group D) isn't in the repo, so Next is drawn from the city design and the evidence report: check it against group D before syncing.
 
 ## Medianville · M6 Refinements
-- [ ] Run tools/github_milestones.sh: milestones, PR milestones, tags and releases
+- [x] Run tools/github_milestones.sh: milestones, PR milestones, tags and releases
   Dry run first, then --apply, from the Mac, once the story/ and archive/ pull request has reached main.
 - [ ] Add the Claude-app prompts to each milestone's prompts/ folder, word for word
   The story READMEs list each one as "To add".

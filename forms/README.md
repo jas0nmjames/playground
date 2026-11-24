@@ -3,6 +3,7 @@ published: 2025-07-07
 updated: 2025-09-02
 summary: KYC banking form experiments with JSON logic, multi-country support and wizard patterns.
 status: done
+issue: 101
 ---
 
 # Forms
