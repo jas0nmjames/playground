@@ -17,7 +17,7 @@ Welcome to my playground.
 | [HTML Media Best Practices](./html-media-best-practices/) | [↗](https://jas0nmjames.github.io/playground/html-media-best-practices/) | Demos of accessible, performant images and video on the web: responsive and lazy-loaded images, self-hosted video, and YouTube and Vimeo embeds. |  | done | Jul 2023 | Nov 2026 |
 | [Currency Input](./currency-input/) | [↗](https://jas0nmjames.github.io/playground/currency-input/) | A text field that formats digits as US dollars while you type. |  | done | Sep 2024 | Sep 2025 |
 | [Tiny](./tiny/) | [↗](https://jas0nmjames.github.io/playground/tiny/) | A tiny scroll-snapping site sized for an Apple Watch screen. | `generative` | paused | Jun 2025 | Sep 2025 |
-| [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) | KYC banking form experiments with JSON logic, multi-country support and wizard patterns. |  | paused | Jul 2025 | Sep 2025 |
+| [Forms](./forms/) | [↗](https://jas0nmjames.github.io/playground/forms/) | KYC banking form experiments with JSON logic, multi-country support and wizard patterns. |  | done | Jul 2025 | Sep 2025 |
 | [ephemeral guidance](./ephemeral-guidance/) | — | Notes on the 'unknown unknowns' of interfaces generated on the fly, through the lens of digital banking. |  | paused | Aug 2025 | Sep 2025 |
 | [Arrival](./arrival/) | [↗](https://jas0nmjames.github.io/playground/arrival/) | An image generator and decoder for Heptapod B, the logogram language in the film Arrival (2016). | `generative` | done | Aug 2025 | Sep 2025 |
 | [Microwave](./microwave/) | — | Concept: upload a photo of a plate of food and get a microwave time that leaves it hot, but not too hot. | `generative` | paused | Sep 2025 | Sep 2025 |
