@@ -2,7 +2,7 @@
 
 ## When
 
-From 2026-11-24. The first pass is this milestone's first pull request, into `development`. Still open: the rest of M7 is listed under [What it set up next](#what-it-set-up-next). No release yet.
+From 2026-11-24. The first pass is [#134](https://github.com/jas0nmjames/playground/pull/134), into `development`. [GitHub milestone](https://github.com/jas0nmjames/playground/issues?q=milestone%3A%22Medianville+%C2%B7+M7+Open+to+agents%22), once Jason runs `tools/github_milestones.sh`. Still open: the rest of M7 is listed under [What it set up next](#what-it-set-up-next). No release yet.
 
 ## What I wanted
 

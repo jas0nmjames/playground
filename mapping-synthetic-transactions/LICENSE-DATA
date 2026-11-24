@@ -38,8 +38,8 @@ What it does not cover
   above), tools/, sources/tools/, the copies of the simulator inside the zips and in
   data/halvern/, and the pages' HTML, JavaScript and CSS (index.html, about/, explorer/,
   systems-lens/, archive/, real-day.js, runs.js and sound.js).
-- fflate.js is fflate by Arjun Barrett and contributors, under the MIT License
-  (https://github.com/101arrowz/fflate).
+- fflate.js is fflate (https://github.com/101arrowz/fflate), third-party code under the
+  MIT License.
 - The public datasets that sources/ lists and derives tables from keep their publishers'
   terms, recorded in the license_or_terms column of sources/manifest.csv.
 
