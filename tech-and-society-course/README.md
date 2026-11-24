@@ -4,6 +4,7 @@ updated: 2026-04-06
 tags: generative
 url: https://jas0nmjames.github.io/playground/tech-and-society-course/tech-society-primer.html
 status: paused
+issue: 109
 ---
 
 # Technology & Society: A Primer for Designers

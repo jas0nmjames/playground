@@ -4,6 +4,7 @@ updated: 2025-09-02
 nosite: true
 summary: Notes on the 'unknown unknowns' of interfaces generated on the fly, through the lens of digital banking.
 status: paused
+issue: 102
 ---
 
 # ephemeral guidance
