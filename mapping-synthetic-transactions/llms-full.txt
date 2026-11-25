@@ -15,7 +15,7 @@ llms.txt, the About page, the data dictionary, the runs, the districts and the b
 - The data is synthetic. Every person, household, business and street is invented. Rates and targets come from real public research (42 public datasets, 69 sources), but no record describes a real person or place. Federal programs keep their real names.
 - Say this once, at the start of a session: synthetic, grounded in real research, and Jason James's project. You don't need to repeat it in every answer.
 - The systems lens's circumstances are composites of documented US patterns, not real places.
-- No what-if scenarios are modeled yet. Don't present a counterfactual as a model result.
+- No what-if scenarios are modeled. Don't present a counterfactual as a model result.
 - Cite as: James, J. (2026). Medianville: a simulated American city's transactions [synthetic dataset]. https://medianville.netlify.app/ Data under CC BY 4.0.
 
 ## Start here
@@ -73,11 +73,11 @@ There are two ways in. [The city](https://medianville.netlify.app/) plays the da
 
 It began with a question Jason asked: which American city or town best matches the country’s mix of wealth, race, class, industry and gender? The published rankings each pick a different winner, and the places that score well tend to leave out rural and small-town life, where many of the hardest daily jobs are.
 
-So the city is synthetic, weighted to the whole country. It’s paired with visits to real places around Atlanta for examples and stories.
+So the city is synthetic, weighted to the whole country.
 
 The framing is Jason’s: every transaction is a job to be done, including the unpaid ones and the ones that fail.
 
-The systems lens comes from Donald Martin Jr.’s idea of societal context: the social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems. Jason heard him speak at the Reimagining AI conference in 2025.
+The systems lens comes from Donald Martin Jr.’s idea of societal context: the social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems. Jason heard him speak at blackcomputeHER.org’s 2025 AI Summit, [Reimagining AI in Our Own Image](https://blackcomputeher.org/ai-summit/).
 
 The name nods to Robert and Helen Lynd’s *Middletown* (1929), the study of Muncie, Indiana that started a long line of “typical town” research. Unlike their Muncie, Medianville’s typicality comes from weighting, not from leaving groups out.
 
@@ -95,8 +95,6 @@ The city was called Halvern until November 20, 2026. The first run as it shipped
 - v2 runs 18 typed days that stand for 2027 (weekends, paydays, benefit days, holidays, tax season, a winter storm, a heat wave) beside the same Wednesday. Before it was frozen, two readers read 200 of its records, and 300 more of the baseline day were written by hand.
 
 The city on this site opens on v2’s Wednesday. The day menu holds the 18 other days and the first version of the Wednesday, for comparison. A whole month, March 2027, carried day to day so unpaid bills, shutoffs and loan rollovers chain across days, is a separate download the site doesn’t load.
-
-**What’s next.** A third version will draw households from Census microdata instead of building them by rule, so they come out at their real size and makeup.
 
 The longer account is in [how the first day was built](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-build-approach.md), the [first run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-2027-03-03-run-record.md), the [data update plan](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/03-grounding-in-evidence/medianville-data-update-plan.md) and the [v2 run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/05-more-time/medianville-v2-run-record.md).
 
@@ -177,13 +175,13 @@ Then 42 public datasets were downloaded, each logged in the [sources manifest](h
 - [Births, deaths, marriages and divorces](https://www.cdc.gov/nchs/nvss/marriage-divorce.htm) (CDC NCHS) and [migration data](https://www.irs.gov/statistics/soi-tax-stats-migration-data) (IRS)
 - [Storm Events Database](https://www.ncei.noaa.gov/stormevents/ftp.jsp) and [GHCN-Daily](https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily) for Atlanta’s airport (NOAA): how often storm and heat days come
 
-v2 is checked against them across the [typed-day year](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_phase5_typed_days_2027/evidence_checks.md) and the [March month](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_month_2027-03/evidence_checks.md). Ten more are listed for later versions, among them the American Community Survey microdata, the National Household Travel Survey and the Survey of Income and Program Participation.
+v2 is checked against them across the [typed-day year](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_phase5_typed_days_2027/evidence_checks.md) and the [March month](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_month_2027-03/evidence_checks.md).
 
 ### 4. History behind the systems lens
 
 Each district’s historical and built circumstances name their own sources: the Housing Act of 1949 and the Federal-Aid Highway Act of 1956; the University of Richmond’s [Mapping Inequality](https://dsl.richmond.edu/panorama/redlining/) and [Renewing Inequality](https://dsl.richmond.edu/panorama/renewal/); the EPA on heat islands and brownfields; BLS manufacturing employment; the American Housing Survey and American Community Survey; the USDA Census of Agriculture and farm real estate values; American Farmland Trust; the NCES Digest of Education Statistics; and the UNC Sheps Center’s rural hospital closures. The [design record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/04-the-refined-city/medianville-systems-lens.md) lists the figures that were checked and reworded.
 
-Households in both versions are built by rule to match national shares. They aren’t drawn from Census microdata yet; that’s planned for the third version.
+Households in both versions are built by rule to match national shares. They aren’t drawn from Census microdata.
 
 ## What’s real and what isn’t
 
@@ -204,8 +202,6 @@ v2 keeps the first run’s people so the two can be compared, and some of those 
 - Each typed day is simulated on its own. Only the March month carries unpaid bills and loans from one day to the next.
 - Some 2027 figures, such as the Medicare Part B premium, are projections.
 - In the animated city, positions are approximate: the run’s six districts are drawn on a smaller model town.
-
-The third version, drawn from Census microdata, redraws the households.
 
 ## Who made it
 
@@ -570,7 +566,7 @@ Simulator: dd0e6b6 (hand-written text: 55aa238). Each zip holds the day's tables
 
 **Composite.** Every block, circumstance and loop here is a composite of documented US patterns on an invented block, not a real place. The district tier's figures are national or from documented cases and say so, and nothing local is named. The file's own note: "Composite circumstances on invented blocks, drawn from documented US patterns. Loops are hypotheses. The simulator reads 'select' and each pattern's 'match' to tag records; the lens reads everything else."
 
-Rendered from https://medianville.netlify.app/systems-lens/blocks.json (version 1), the file the systems lens (https://medianville.netlify.app/systems-lens/) draws and the simulator tags records from. Layers run from the fastest-changing to the slowest: Economic, Political, Built & natural, Social & cultural, Historical. Evidence ids (E…) are findings in the evidence folder on GitHub (https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/evidence/evidence.csv), third-party material that is not under this project's license. No what-if scenarios are modeled yet: a loop is a hypothesis, not a model result.
+Rendered from https://medianville.netlify.app/systems-lens/blocks.json (version 1), the file the systems lens (https://medianville.netlify.app/systems-lens/) draws and the simulator tags records from. Layers run from the fastest-changing to the slowest: Economic, Political, Built & natural, Social & cultural, Historical. Evidence ids (E…) are findings in the evidence folder on GitHub (https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/evidence/evidence.csv), third-party material that is not under this project's license. No what-if scenarios are modeled: a loop is a hypothesis, not a model result.
 
 | District | Name | Mapped block | Circumstances | Patterns | Loops |
 |---|---|---|---|---|---|
@@ -676,7 +672,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **A7** Plasma payments (income): links EC2; tagged when job_category matches `plasma_donation_payment`.
 - **A8** Parking (bill): links E2; tagged when job_category matches `parking_fee`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Late-fee ladder** (reinforcing). A short month means a partial rent payment. The late fee makes next month's bill bigger, so the next payment is more likely to fall short too.
   - Rent paid in full → Short payments (−): Less rent paid in full means more short payments.
@@ -795,7 +791,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **R6** Savings circle payments (unpaid): links S2; no match rule, so no record carries it.
 - **R5** Money sent abroad (bill): links S1, P1; tagged when job_category matches `remittance_sent`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Fee spiral** (reinforcing). A low balance lets a payment overdraw the account. The overdraft fee lowers the balance again, so the next payment is more likely to bounce.
   - Balance after bills → Payments that overdraw (−): A lower balance means more payments overdraw.
@@ -917,7 +913,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **F7** Mortgage and escrow (bill): links EC2, H1; tagged when job_category matches `property_tax_escrow|^housing\.mortgage$`.
 - **F8** Car payments (bill): links EC1, E1; tagged when job_category matches `^transportation\.car_payment$`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Plate-bill pileup** (reinforcing). A toll bill that goes unpaid gets a fee, and the fee doubles. The bigger bill is harder to pay on time, so more of the next bills go unpaid.
   - Bills paid on time → Unpaid tolls (−): Fewer bills paid on time means more unpaid tolls.
@@ -1022,7 +1018,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **M6** Pay advances (income): links EC2; tagged when job_category matches `earned_wage_advance`.
 - **M7** Urgent care (purchase): links E1; tagged when job_category matches `urgent_care_visit`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Advance loop** (reinforcing). A pay advance covers the gap now and comes out of the next paycheck with a fee. The smaller paycheck leaves the next week short, so the next advance comes sooner.
   - Paycheck left → Pay advances (−): A smaller paycheck means more advances.
@@ -1129,7 +1125,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **N6** Care from neighbors and kin (unpaid): links S1, E1; tagged when job_category matches `caregiving_visit|escort_to_appointment`.
 - **N7** Car repairs (bill): links E1; tagged when job_category matches `car_repair|car_wont_start|jump_start|tow_and_roadside`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Lot-rent squeeze** (reinforcing). Each lot-rent increase leaves less cash. With less cash, moving the home out of the park is out of reach, so the owner can keep raising the rent.
   - Rent increases → Cash left after rent (−): More increases leave less cash.
@@ -1238,7 +1234,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **C6** School breakfast (unpaid): links P2; tagged when job_category matches `school_breakfast`.
 - **C7** Care from neighbors (unpaid): links S1, E2; tagged when job_category matches `caregiving_visit|escort_to_appointment`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Ride debt** (reinforcing). Without a working car, getting to work means paying for rides. What goes to rides doesn't go to repairs, so the car stays broken and the rides continue.
   - A working car → Paid rides (−): No car means more paid rides.

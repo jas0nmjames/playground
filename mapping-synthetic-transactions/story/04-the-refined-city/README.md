@@ -6,7 +6,7 @@
 
 ## What I wanted
 
-TODO(Jason): what the city needed before it could be read, and why the systems lens came now.
+I didn't want a narrow view of a financial transaction. A person is trying to accomplish a goal, and I wanted to show how systems, society and history affect it. That brings my humanities background to a financial industry problem. The data tables and clear documentation help make it feel real.
 
 ## What I asked for
 

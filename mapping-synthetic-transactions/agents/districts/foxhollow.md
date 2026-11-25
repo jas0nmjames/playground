@@ -81,7 +81,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **F7** Mortgage and escrow (bill): links EC2, H1; tagged when job_category matches `property_tax_escrow|^housing\.mortgage$`.
 - **F8** Car payments (bill): links EC1, E1; tagged when job_category matches `^transportation\.car_payment$`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Plate-bill pileup** (reinforcing). A toll bill that goes unpaid gets a fee, and the fee doubles. The bigger bill is harder to pay on time, so more of the next bills go unpaid.
   - Bills paid on time → Unpaid tolls (−): Fewer bills paid on time means more unpaid tolls.

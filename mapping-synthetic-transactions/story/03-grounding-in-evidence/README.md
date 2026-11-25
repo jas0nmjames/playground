@@ -6,7 +6,7 @@
 
 ## What I wanted
 
-TODO(Jason): why one plausible day wasn't enough, and what "true enough" meant to you.
+I wanted publicly available research to become something you can explore, without relying on private data that couldn't be shared.
 
 ## What I asked for
 
