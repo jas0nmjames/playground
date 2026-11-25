@@ -504,23 +504,22 @@ const SCENES = {
     },
   },
   '07-lens': {
-    seconds: 10, tol: 7,
+    seconds: 13, tol: 7,
     url: (base) => viewer(base, '', 'household=H22924'),
     async setup(page) { await ready(page); await waitFor(page, "App.S.hhDay === 'H22924'", 20000, 'the household day'); await place(page, 1000, 560); await sleep(800); },
     async run(page, cdp) {
       await sleep(1000);
       const go = await spot(page, '#sheet [data-lens]', { scroll: true }); await moveTo(page, go.x, go.y, 800); await click(page);
       await sleep(1900);
-      // the lens is an iframe: find its layer list there. At 1280 px the lens is under its 1,240 px breakpoint and
-      // stacks, and only the top three layers in the list can be pointed at, so those are the ones lifted
+      // the lens is an iframe: find its layer list there, and lift each layer in turn
       const frame = await spot(page, '#lens-frame');
-      for (const name of ['Today', 'Economic', 'Political']) {
+      for (const name of ['Today', 'Economic', 'Political', 'Built & natural', 'Social & cultural', 'Historical']) {
         const r = await evaluate(page, `(() => { const d = document.getElementById('lens-frame').contentDocument;
           const el = [...d.querySelectorAll('#platelist .pbtn')].find((e) => e.querySelector('b').textContent.startsWith(${JSON.stringify(name)}));
           if (!el) return null; const b = el.getBoundingClientRect(); return { x: b.left + Math.min(60, b.width / 2), y: b.top + b.height / 2 }; })()`);
         if (!r) throw new Error(`no ${name} layer in the lens`);
-        await moveTo(page, frame.left + r.x, frame.top + r.y, 600);
-        await sleep(1250);
+        await moveTo(page, frame.left + r.x, frame.top + r.y, 450);
+        await sleep(1000);
       }
     },
   },
