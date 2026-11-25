@@ -20,11 +20,11 @@ There are two ways in. [The city](https://medianville.netlify.app/) plays the da
 
 It began with a question Jason asked: which American city or town best matches the country’s mix of wealth, race, class, industry and gender? The published rankings each pick a different winner, and the places that score well tend to leave out rural and small-town life, where many of the hardest daily jobs are.
 
-So the city is synthetic, weighted to the whole country. It’s paired with visits to real places around Atlanta for examples and stories.
+So the city is synthetic, weighted to the whole country.
 
 The framing is Jason’s: every transaction is a job to be done, including the unpaid ones and the ones that fail.
 
-The systems lens comes from Donald Martin Jr.’s idea of societal context: the social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems. Jason heard him speak at the Reimagining AI conference in 2025.
+The systems lens comes from Donald Martin Jr.’s idea of societal context: the social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems. Jason heard him speak at blackcomputeHER.org’s 2025 AI Summit, [Reimagining AI in Our Own Image](https://blackcomputeher.org/ai-summit/).
 
 The name nods to Robert and Helen Lynd’s *Middletown* (1929), the study of Muncie, Indiana that started a long line of “typical town” research. Unlike their Muncie, Medianville’s typicality comes from weighting, not from leaving groups out.
 
@@ -42,8 +42,6 @@ The city was called Halvern until November 20, 2026. The first run as it shipped
 - v2 runs 18 typed days that stand for 2027 (weekends, paydays, benefit days, holidays, tax season, a winter storm, a heat wave) beside the same Wednesday. Before it was frozen, two readers read 200 of its records, and 300 more of the baseline day were written by hand.
 
 The city on this site opens on v2’s Wednesday. The day menu holds the 18 other days and the first version of the Wednesday, for comparison. A whole month, March 2027, carried day to day so unpaid bills, shutoffs and loan rollovers chain across days, is a separate download the site doesn’t load.
-
-**What’s next.** A third version will draw households from Census microdata instead of building them by rule, so they come out at their real size and makeup.
 
 The longer account is in [how the first day was built](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-build-approach.md), the [first run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-2027-03-03-run-record.md), the [data update plan](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/03-grounding-in-evidence/medianville-data-update-plan.md) and the [v2 run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/05-more-time/medianville-v2-run-record.md).
 
@@ -124,13 +122,13 @@ Then 42 public datasets were downloaded, each logged in the [sources manifest](h
 - [Births, deaths, marriages and divorces](https://www.cdc.gov/nchs/nvss/marriage-divorce.htm) (CDC NCHS) and [migration data](https://www.irs.gov/statistics/soi-tax-stats-migration-data) (IRS)
 - [Storm Events Database](https://www.ncei.noaa.gov/stormevents/ftp.jsp) and [GHCN-Daily](https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily) for Atlanta’s airport (NOAA): how often storm and heat days come
 
-v2 is checked against them across the [typed-day year](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_phase5_typed_days_2027/evidence_checks.md) and the [March month](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_month_2027-03/evidence_checks.md). Ten more are listed for later versions, among them the American Community Survey microdata, the National Household Travel Survey and the Survey of Income and Program Participation.
+v2 is checked against them across the [typed-day year](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_phase5_typed_days_2027/evidence_checks.md) and the [March month](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_month_2027-03/evidence_checks.md).
 
 ### 4. History behind the systems lens
 
 Each district’s historical and built circumstances name their own sources: the Housing Act of 1949 and the Federal-Aid Highway Act of 1956; the University of Richmond’s [Mapping Inequality](https://dsl.richmond.edu/panorama/redlining/) and [Renewing Inequality](https://dsl.richmond.edu/panorama/renewal/); the EPA on heat islands and brownfields; BLS manufacturing employment; the American Housing Survey and American Community Survey; the USDA Census of Agriculture and farm real estate values; American Farmland Trust; the NCES Digest of Education Statistics; and the UNC Sheps Center’s rural hospital closures. The [design record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/04-the-refined-city/medianville-systems-lens.md) lists the figures that were checked and reworded.
 
-Households in both versions are built by rule to match national shares. They aren’t drawn from Census microdata yet; that’s planned for the third version.
+Households in both versions are built by rule to match national shares. They aren’t drawn from Census microdata.
 
 ## What’s real and what isn’t
 
@@ -151,8 +149,6 @@ v2 keeps the first run’s people so the two can be compared, and some of those 
 - Each typed day is simulated on its own. Only the March month carries unpaid bills and loans from one day to the next.
 - Some 2027 figures, such as the Medicare Part B premium, are projections.
 - In the animated city, positions are approximate: the run’s six districts are drawn on a smaller model town.
-
-The third version, drawn from Census microdata, redraws the households.
 
 ## Who made it
 

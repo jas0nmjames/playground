@@ -6,7 +6,7 @@ Before 2026-11-16, written up on 2026-11-16. No pull requests, commits or tag: t
 
 ## What I wanted
 
-TODO(Jason): the question in your own words. The About page puts it as: which American city or town best matches the country's mix of wealth, race, class, industry and gender?
+As a UX product designer, I want my work tied to real human context. Formal research does that, but I can't publish it, especially coming from a highly regulated industry like banking. So I wanted a fictitious world, something like SimCity or RollerCoaster Tycoon, but based in reality through secondary research. I studied history, and I'm used to looking closely at people's lives to find larger themes and stories about society.
 
 ## What I asked for
 

@@ -92,7 +92,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **R6** Savings circle payments (unpaid): links S2; no match rule, so no record carries it.
 - **R5** Money sent abroad (bill): links S1, P1; tagged when job_category matches `remittance_sent`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Fee spiral** (reinforcing). A low balance lets a payment overdraw the account. The overdraft fee lowers the balance again, so the next payment is more likely to bounce.
   - Balance after bills → Payments that overdraw (−): A lower balance means more payments overdraw.

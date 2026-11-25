@@ -636,7 +636,7 @@ def district_section(b):
         out.append("- **%s** %s (%s): links %s; %s." % (p["id"], p["title"], p["kind"], ", ".join(p["links"]),
                                                         "tagged when " + rules if rules else "no match rule, so no record carries it"))
     out.append("")
-    out.append("### Loops (hypotheses for the next run to test)\n")
+    out.append("### Loops (hypotheses, not findings)\n")
     for k, L in b["loops"].items():
         nodes = {n["k"]: n["t"] for n in L["nodes"]}
         out.append("- **%s %s** (%s). %s" % (k, L["name"], KIND.get(L["kind"], L["kind"]), L["text"]))
@@ -659,7 +659,7 @@ def districts_pages(blocks):
              "Rendered from %ssystems-lens/blocks.json (version %s), the file the systems lens (%ssystems-lens/) draws and the simulator tags records from. "
              "Layers run from the fastest-changing to the slowest: Economic, Political, Built & natural, Social & cultural, Historical. "
              "Evidence ids (E…) are findings in the evidence folder on GitHub (%sevidence/evidence.csv), third-party material that is not under this project's license. "
-             "No what-if scenarios are modeled yet: a loop is a hypothesis, not a model result.\n" % (SITE, blocks["version"], SITE, GH),
+             "No what-if scenarios are modeled: a loop is a hypothesis, not a model result.\n" % (SITE, blocks["version"], SITE, GH),
              "| District | Name | Mapped block | Circumstances | Patterns | Loops |", "|---|---|---|---|---|---|"]
     for b in blocks["blocks"]:
         intro.append("| %s | %s | %s (`%s`) | %d (%d district-wide) | %d | %s |" % (

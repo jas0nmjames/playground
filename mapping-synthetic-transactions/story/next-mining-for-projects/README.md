@@ -6,7 +6,7 @@ Not started. [GitHub milestone](https://github.com/jas0nmjames/playground/issues
 
 ## What I wanted
 
-TODO(Jason): the goal in your own words. The [city design](../00-the-idea/synthetic-mid-america-city-design-v0.1.md) puts it as a city "built to generate one ordinary day of transactions and mine them for jobs that go badly at the margins".
+I want product and design teams to be able to mine and explore the city as a thinking partner.
 
 ## What I asked for
 

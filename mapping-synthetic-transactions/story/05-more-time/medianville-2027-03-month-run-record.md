@@ -52,7 +52,7 @@ Full report: [`sim/evidence/results/v2_month_2027-03/evidence_checks.md`](../../
 
 Every household's money reconciles on every day. The typed-day targets hold as March averages as well (overdrafts, title payments, disconnections, notices, caregiving, paid tax preparation); T02's one-day count of new loans reads low in a carried month because renewals are counted separately (M08).
 
-**Overdraft concentration is the one check the month misses, and it was left for v3 (the plan's section 9, item 6).** Only accounts opted in to debit-card overdraft coverage can overdraw (`finance.OD_OPT_IN`, about 6.6% of accounts), and that is part of the one-day population, which the brief keeps unchanged. So 2.1% of accounts paid any fee in March and 1.1% paid 79% of them. Spreading fees means letting banks pay ACH and recurring items into overdraft for accounts without the opt-in, which changes the one-day path; it is listed for Jason in the plan's section 9, item 6.
+**Overdraft concentration is the one check the month misses.** Only accounts opted in to debit-card overdraft coverage can overdraw (`finance.OD_OPT_IN`, about 6.6% of accounts), and that is part of the one-day population, which the brief keeps unchanged. So 2.1% of accounts paid any fee in March and 1.1% paid 79% of them. Spreading fees means letting banks pay ACH and recurring items into overdraft for accounts without the opt-in, which changes the one-day path; it is listed for Jason in the plan's section 9, item 6.
 
 ## Rebuilding it
 
@@ -75,7 +75,7 @@ Checked before publishing (2026-11-21): packing twice gave the same SHA-256; all
 ## Known limits
 
 - One month, started on March 1. It inherits the shutoff notices of the ten days before, the payday and title loans already out and the tax season so far; the retry queue and overdraft chains start empty, so the first days run a little light.
-- People, households, jobs and bills stay the same all month: a birth, death, move or new job drawn on one day does not carry to the next (that waits for a year with the roster changing, option C).
+- People, households, jobs and bills stay the same all month: a birth, death, move or new job drawn on one day does not carry to the next.
 - The response shares at a shutoff notice, the overdraft terms, the retry schedules, the SNAP spending pace, the move of surplus checking to savings and the weekly hours are estimates, labeled in `carry.py`; SIPP and the JPMorgan Chase Institute's figures were not downloaded.
 - Overdraft fees fall on far fewer accounts than in life (above).
 - Wages carry v1's boost (decision 9.1 in the plan): compare households, not occupations.

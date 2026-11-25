@@ -307,7 +307,7 @@ const BY = {};
 CONTEXT.forEach(c => { c.kindOf = "context"; c.plate = LAYER_PLATE[c.layer]; BY[c.id] = c; });
 RECORDS.forEach(r => { r.kindOf = "record"; r.plate = 0; BY[r.id] = r; });
 
-/* Loops: hypotheses for the next run to test. Nodes sit on the plate they belong to. */
+/* Loops: hypotheses, not findings. Nodes sit on the plate they belong to. */
 const LOOPS = BLOCK.loops;
 
 /* The district tier: circumstances with "scope": "district" hold across the block's whole district, not just its street,
@@ -426,7 +426,7 @@ function reg(id, el, p){
   (featEls[id] = featEls[id] || []).push(el);
   el.classList.add("hit", "dimmable");
   el.setAttribute("tabindex", "0"); el.setAttribute("role", "button");
-  el.setAttribute("aria-label", BY[id].kindOf === "record" ? `Pattern ${BY[id].n}, ${BY[id].pattern}${BY[id].matched ? "" : " (not in the simulator yet)"}` : `${BY[id].title}, ${BY[id].year}`);
+  el.setAttribute("aria-label", BY[id].kindOf === "record" ? `Pattern ${BY[id].n}, ${BY[id].pattern}${BY[id].matched ? "" : " (not in the simulator)"}` : `${BY[id].title}, ${BY[id].year}`);
   onActivate(el, () => select(id));
 }
 
@@ -573,7 +573,7 @@ CONTEXT.forEach(c => {
   });
 });
 
-label(svgP, 24, 922, "Composite circumstances on invented blocks. The same square on every layer is the same place. Loops are hypotheses for run 2 to test.", {size:13, fill:"#5B6676", cls:"ui"});
+label(svgP, 24, 922, "Composite circumstances on invented blocks. The same square on every layer is the same place. Loops are hypotheses, not findings.", {size:13, fill:"#5B6676", cls:"ui"});
 
 /* ---------------- layout and motion */
 let cur = null;
@@ -836,7 +836,7 @@ function rowList(parent, ids){
     const m = h("span", null, b);
     const n = liveCount(x);
     h("span", {class:"nm", text: it.kindOf === "record" ? (LIVE ? it.pattern : it.title) : it.title}, m);
-    h("span", {class:"sub", text: it.kindOf === "record" ? (LIVE ? (n ? `${n} record${n === 1 ? "" : "s"} so far today` : it.matched ? "none yet today" : "not in the simulator yet") : `${it.time} · ${FACTS[x].with}`) : `${it.year} · ${PLATES[it.plate].name} layer`}, m);
+    h("span", {class:"sub", text: it.kindOf === "record" ? (LIVE ? (n ? `${n} record${n === 1 ? "" : "s"} so far today` : it.matched ? "none yet today" : "not in the simulator") : `${it.time} · ${FACTS[x].with}`) : `${it.year} · ${PLATES[it.plate].name} layer`}, m);
     h("span", {html:CHEV}, b);
     b.addEventListener("click", () => select(x));
   });
@@ -929,7 +929,7 @@ function renderDetail(){
     h("span", {text:`Pattern ${it.n} · ${BLOCK.name}`}, eb);
     h("h3", {class:"title", text:it.pattern}, sh);
     h("p", {class:"big", text: n ? `${n} record${n === 1 ? "" : "s"}` : "None yet"}, sh);
-    h("p", {class:"why", text: n ? "so far today, from households on this block." : it.matched ? "No records like this so far today." : "The simulator does not produce records like this yet, so the pin shows a composite example."}, sh);
+    h("p", {class:"why", text: n ? "so far today, from households on this block." : it.matched ? "No records like this so far today." : "The simulator does not produce records like this, so the pin shows a composite example."}, sh);
     if(list.length){ h("h4", {text: n > list.length ? `Latest ${list.length}` : "Records"}, sh); realRows(sh, list); }
     h("p", {class:"note", text:`Composite example: ${it.title}. ${it.body}`}, sh);
     h("h3", {text:"Shaped by"}, sh);
@@ -945,7 +945,7 @@ function renderDetail(){
     if(f.note) h("span", {class:"muted small", text:f.note}, st);
     h("p", {class:"why", text:it.body}, sh);
     kv(sh, [["Time", it.time], ["With", f.with], ["Kind", KIND_NAME[it.kind]], ["Layer", "Today"]]);
-    h("p", {class:"note", text: it.matched ? `Written for the lens. Records like it in the run are tagged “${it.pattern}”; open the lens from the city to see them.` : "Written for the lens. The simulator does not produce records like this yet."}, sh);
+    h("p", {class:"note", text: it.matched ? `Written for the lens. Records like it in the run are tagged “${it.pattern}”; open the lens from the city to see them.` : "Written for the lens. The simulator does not produce records like this."}, sh);
     h("h3", {text:"Shaped by"}, sh);
     rowList(sh, parents(id));
   } else {
@@ -998,7 +998,7 @@ function renderLoopCard(){
   if(L.drivers && L.drivers.length){ h("h3", {text:"Pushed from other layers"}, sh); rowList(sh, L.drivers.map(d => d.from)); }
   if(L.cross){ h("h3", {text:"Touches another loop"}, sh); L.cross.forEach(x => h("p", {class:"why", style:"margin:0 0 6px", text:`${x.to[0]} ${LOOPS[x.to[0]].name}: ${x.t}`}, sh)); }
   h("h3", {text:"Seen today"}, sh); rowList(sh, L.seen);
-  h("p", {class:"note", text:"This loop is a hypothesis drawn for the prototype, not a finding. Run 2’s caused_by links and repeated days can test whether it holds."}, sh);
+  h("p", {class:"note", text:"This loop is a hypothesis, not a finding."}, sh);
 }
 
 /* ================================================================ tools */

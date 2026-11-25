@@ -82,7 +82,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **A7** Plasma payments (income): links EC2; tagged when job_category matches `plasma_donation_payment`.
 - **A8** Parking (bill): links E2; tagged when job_category matches `parking_fee`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Late-fee ladder** (reinforcing). A short month means a partial rent payment. The late fee makes next month's bill bigger, so the next payment is more likely to fall short too.
   - Rent paid in full → Short payments (−): Less rent paid in full means more short payments.
