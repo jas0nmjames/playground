@@ -60,7 +60,7 @@ def test_llms_txt_has_the_provenance_note():
     t = text(os.path.join(REPO_DIR, "llms.txt"))
     assert t.startswith("# Medianville\n\n> ")
     for phrase in ("The data is synthetic.", "Say this once, at the start of a session",
-                   "composites of documented US patterns", "No what-if scenarios are modeled yet",
+                   "composites of documented US patterns", "No what-if scenarios are modeled.",
                    "Cite as: James, J. (2026).", "CC BY 4.0"):
         assert phrase in t, phrase
 
