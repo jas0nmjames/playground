@@ -5,13 +5,17 @@
     python3 tools/check_links.py --verbose  # also list every link checked
 
 Reads every .md and .html file in the project folder (not data/, which is frozen as
-delivered) and checks:
+delivered), and llms.txt and llms-full.txt as Markdown, and checks:
 
 - relative links and image paths: the file or folder exists (a folder needs an
   index.html or README.md), and a #heading anchor into a Markdown file matches one
-  of its headings, slugged the way GitHub slugs them;
-- links to this repo on GitHub (github.com/jas0nmjames/playground/blob|tree/<branch>/…)
-  and to GitHub Pages (jas0nmjames.github.io/playground/…): the path exists here.
+  of its headings, slugged the way GitHub slugs them. A page's root-relative links
+  start from this folder, which Netlify publishes; a Markdown file's start from the
+  repo root, as GitHub reads them;
+- links to this repo on GitHub (github.com/jas0nmjames/playground/blob|tree/<branch>/… and
+  raw.githubusercontent.com/jas0nmjames/playground/<branch>/…), to GitHub Pages
+  (jas0nmjames.github.io/playground/…) and to the Netlify site (medianville.netlify.app/…,
+  served from this folder): the path exists here.
 
 Other web links are not fetched. Exits 1 and lists the broken links if any.
 """
@@ -27,6 +31,9 @@ SKIP_DIRS = {"data", ".git", "node_modules", "__pycache__"}
 
 GH = re.compile(r"^https://github\.com/jas0nmjames/playground/(?:blob|tree|raw)/[^/]+/(.*)$")
 PAGES = re.compile(r"^https://jas0nmjames\.github\.io/playground/(.*)$")
+RAW = re.compile(r"^https://raw\.githubusercontent\.com/jas0nmjames/playground/[^/]+/(.*)$")
+NETLIFY = re.compile(r"^https://medianville\.netlify\.app/(.*)$")  # publishes this folder
+MARKDOWN_TXT = {"llms.txt", "llms-full.txt"}
 MD_LINK = re.compile(r"!?\[(?:[^\[\]]|\[[^\]]*\])*\]\(\s*<?([^)\s>]+)>?(?:\s+\"[^\"]*\")?\s*\)")
 MD_REF = re.compile(r"^\s*\[(?!\^)[^\]]+\]:\s*(\S+)", re.M)
 HTML_ATTR = re.compile(r"""\b(?:href|src)\s*=\s*["']([^"']+)["']""")
@@ -98,7 +105,12 @@ def resolve(src, url):
     url = url.strip()
     if url.startswith(("mailto:", "tel:", "data:", "javascript:")):
         return None
-    m = GH.match(url) or PAGES.match(url)
+    n = NETLIFY.match(url)
+    if n:
+        path, _, anchor = n.group(1).partition("#")
+        path = path.split("?")[0]
+        return os.path.join(PROJECT, unquote(path)), anchor, False
+    m = GH.match(url) or PAGES.match(url) or RAW.match(url)
     if m:
         rest = m.group(1)
         path, _, anchor = rest.partition("#")
@@ -110,14 +122,15 @@ def resolve(src, url):
     path = path.split("?")[0]
     if not path:
         return src, anchor, False
-    base = REPO if path.startswith("/") else os.path.dirname(src)
+    # a root-relative link: GitHub reads a Markdown file's from the repo root; Netlify serves a page's from this folder
+    base = (PROJECT if src.endswith(".html") else REPO) if path.startswith("/") else os.path.dirname(src)
     # a Markdown file is read on GitHub, so a folder link there opens the folder's README
     return os.path.normpath(os.path.join(base, unquote(path.lstrip("/")))), anchor, src.endswith(".md")
 
 
 def links_in(path):
     text = open(path, encoding="utf-8").read()
-    if path.endswith(".md"):
+    if path.endswith(".md") or os.path.basename(path) in MARKDOWN_TXT:
         text = FENCE.sub("", text)
         text = CODE.sub("", text)
         found = MD_LINK.findall(text) + MD_REF.findall(text) + HTML_ATTR.findall(text)
@@ -132,7 +145,8 @@ def main():
     files = []
     for root, dirs, names in os.walk(PROJECT):
         dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
-        files += [os.path.join(root, n) for n in sorted(names) if n.endswith((".md", ".html"))]
+        files += [os.path.join(root, n) for n in sorted(names) if n.endswith((".md", ".html")) or
+                  (root == PROJECT and n in MARKDOWN_TXT)]
     broken, checked = [], 0
     for f in files:
         for url in links_in(f):

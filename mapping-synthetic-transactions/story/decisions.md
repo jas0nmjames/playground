@@ -447,3 +447,38 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Why:** Sound is the city's, a background that follows the hour and a pluck for each record, so it belongs with the city, across from the key. The header keeps only what applies to the whole page: the title, the day, the view, the lens, and the links to the data and the project.
 - **Decided:** A second after sound is turned on, the panel checks that the browser's audio clock has moved. If it hasn't (the browser reports the audio as running but has no output, as in an embedded browser, or keeps it suspended), a note in the panel says the browser isn't playing audio and that another browser should work, and screen readers hear it. A hidden tab, which stops the clock on purpose, isn't checked.
 - **Who:** Jason, with the proposal's details. **When:** 2026-11-23.
+
+## 8. Agents (2026-11-24)
+
+### 8.1 Agents bring their own compute
+- **Milestone:** [M7 Open to agents](07-open-to-agents/)
+- **Decided:** The site carries small, labeled files an agent can read: `llms.txt`, Markdown pages in `agents/` and `llms-full.txt`. The bulk files are pointed to on GitHub (`raw.githubusercontent.com` for the day zips, the Release for the month), where an agent that can run code downloads them and does its own analysis. No server of ours runs a query.
+- **Why:** Medianville is a side project on Netlify's free plan. A query service would cost money and upkeep, and agent downloads from GitHub don't use Netlify's bandwidth.
+- **Considered:** A hosted MCP server or API that answers questions about the data.
+- **Cost:** An agent that can't run code can answer only what the summaries, the data dictionary and the district pages cover.
+- **Who:** Jason, on a proposal. **When:** 2026-11-24.
+
+### 8.2 Provenance once per session
+- **Milestone:** [M7 Open to agents](07-open-to-agents/)
+- **Decided:** The full note lives in `llms.txt`: the data is synthetic, grounded in real research, and Jason James's project; the systems lens's circumstances are composites; no what-if is modeled yet; and how to cite it. Every other agent file starts with a one-line header that points back to it, and `llms.txt` asks agents to say the note once, at the start of a session. The Copy for AI text carries the same line.
+- **Why:** An agent can land on any file, so each one needs the pointer. Repeating the whole note in every answer is noise.
+- **Considered:** Requiring the note in every answer.
+- **Who:** Jason. **When:** 2026-11-24.
+
+### 8.3 A readable layer before any protocol
+- **Milestone:** [M7 Open to agents](07-open-to-agents/)
+- **Decided:** Markdown at stable URLs comes first, written by `tools/build_agent_pages.py` from the repo's own files and committed, with a test that fails when a page is stale. Hugging Face, Parquet, a local MCP server and "Open in" links come later in M7, all built on it.
+- **Who:** Jason, on a proposal. **When:** 2026-11-24.
+
+### 8.4 Licenses
+- **Milestone:** [M7 Open to agents](07-open-to-agents/)
+- **Decided:** The code stays under the Mozilla Public License 2.0, the repository's license. The generated data, `blocks.json`, the hand-written records, the agent pages, the documents and the images are under CC BY 4.0 (`LICENSE-DATA`), with a `CITATION.cff`. `evidence/` is under neither, as third-party material; the public datasets in `sources/` keep their publishers' terms.
+- **Considered:** CC BY-SA, CC BY-NC and CC0 for the data, and MIT for the code.
+- **Cost:** No license can require the synthetic label; the provenance note asks for it instead.
+- **Who:** Jason, on a proposal. **When:** 2026-11-24.
+
+### 8.5 Bulk downloads on GitHub, crawlers kept off the zips
+- **Milestone:** [M7 Open to agents](07-open-to-agents/)
+- **Decided:** The agent files link the day zips on GitHub, not on the site. `robots.txt` lets every crawler and AI agent read the site except `/*.zip`. `_headers` caches `data/` for a day, not forever, because zips have been replaced under the same name before.
+- **Why:** Every human visit already loads a 12–19 MB day from Netlify; agents and crawlers shouldn't add to it.
+- **Who:** Jason, on a proposal. **When:** 2026-11-24.

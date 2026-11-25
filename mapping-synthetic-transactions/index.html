@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Medianville: a simulated city’s transactions</title>
+<meta name="description" content="Medianville is a simulated American city of about 100,000 people: one day of its transactions (purchases, bills, benefits, waits and failures) as a miniature and a map. Synthetic data built from real research; no real people.">
+<link rel="canonical" href="https://medianville.netlify.app/">
+<link rel="alternate" type="text/markdown" href="/llms.txt" title="For agents and LLMs">
+<meta property="og:title" content="Medianville: a simulated city’s transactions">
+<meta property="og:description" content="Medianville is a simulated American city of about 100,000 people: one day of its transactions (purchases, bills, benefits, waits and failures) as a miniature and a map. Synthetic data built from real research; no real people.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
@@ -215,6 +220,8 @@ body.rm .lens-panel, body.rm .lens-dim, body.rm .lens-city { transition:none !im
 .go.off .gi { background:var(--page); color:var(--ink2); }
 .go.off b { color:var(--ink2); }
 a.go { text-decoration:none; }
+/* a short confirmation at the bottom of the screen, as in the explorer (Copy for AI) */
+.toast { position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); max-width:calc(100vw - 32px); background:var(--ink); color:#fff; padding:10px 16px; border-radius:999px; font-weight:600; font-size:14px; z-index:70; box-shadow:var(--shadow); pointer-events:none; }
 /* Data and About in the header: other pages and the intro, kept apart from the view switch */
 /* Data and About take you somewhere (the explorer, the project intro) rather than change the view, so they read as links:
    no outline, underlined on hover, set apart from the controls by a thin rule */
@@ -242,6 +249,8 @@ a.go { text-decoration:none; }
 #intro-go:not(.loading) .bar { display:none; }
 .intro-more { font-weight:600; font-size:15px; color:var(--blue); text-decoration:none; padding:10px 4px; }
 .intro-more:hover { text-decoration:underline; }
+.intro-card p.intro-agents { margin:14px 0 0; padding-top:12px; border-top:1px solid var(--line); font-size:13px; color:var(--ink2); }
+.intro-agents a { color:var(--ink2); font-weight:600; }
 @media (max-width:600px) {
   .intro { place-items:end stretch; padding:0; }
   .intro-card { width:100%; max-height:88vh; border-radius:var(--r) var(--r) 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); animation-name:intro-up; }
@@ -475,7 +484,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
         <div class="feed-top"><h3 class="feed-h" id="feed-h">Latest records</h3><button type="button" class="feed-new" id="feed-new" hidden><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></button></div>
         <ul id="feed" class="feed" aria-labelledby="feed-h"></ul>
       </div>
-      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="about/">About</a> · <a href="explorer/">Data</a> · <a href="archive/">Archive</a> · <a href="systems-lens/" data-lens-open>Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
+      <p class="credit">Built by <a href="https://jasonjames.works">Jason James</a> with <a href="https://claude.ai">Claude</a> · <a href="about/">About</a> · <a href="llms.txt">For agents</a> · <a href="explorer/">Data</a> · <a href="archive/">Archive</a> · <a href="systems-lens/" data-lens-open>Systems lens</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions#claude">Environmental impact</a> · <a href="https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions">Data and method</a></p>
     </div>
     <section id="sheet" class="sheet" hidden aria-labelledby="sheet-title">
       <div class="sheet-top"><button class="btn ghost" id="sheet-back"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button></div>
@@ -514,6 +523,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   </div>
 </footer>
 <div id="live" class="sr-only" aria-live="polite"></div>
+<div class="toast" id="toast" hidden aria-hidden="true"></div>
 <div class="intro" id="intro" hidden>
   <div class="intro-dim" data-intro-close></div>
   <section class="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-h" aria-describedby="intro-d">
@@ -529,6 +539,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
       <a class="btn" href="explorer/">Explore the data</a>
       <a class="intro-more" href="about/">About the project →</a>
     </div>
+    <p class="intro-agents">An AI agent or LLM? Start at <a href="llms.txt">llms.txt</a>: what to read first, the data dictionary, every day’s summary and how to cite it.</p>
     <p class="sr-only" id="intro-live" aria-live="polite"></p>
   </section>
 </div>
@@ -2049,6 +2060,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   const TABLE_ICON = '<svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7h13M2.5 11h13M7 7v8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
   // the explorer's own addresses: #record-<id> and #household-<id>
   const explorerGo = (kind, id, sub) => `<a class="go" href="explorer/#${kind}-${encodeURIComponent(id)}"><span class="gi">${TABLE_ICON}</span><span><b>Open in data explorer</b><small>${sub}</small></span><span class="chev" aria-hidden="true">›</span></a>`;
+  const COPY_ICON = '<svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><rect x="6" y="6" width="9.5" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 6V4.5A2 2 0 0 0 10 2.5H4.5a2 2 0 0 0-2 2V10a2 2 0 0 0 2 2H6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
   const LAYERS_ICON = '<svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2L16 5.5 9 9 2 5.5z M2 9l7 3.5 7-3.5 M2 12.5L9 16l7-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
   function closerHTML(r) {
     const k = Lens.match(r), day = r.household_id
@@ -2059,7 +2071,8 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     else if ((db = Lens.districtBlock(r.district))) lens = `<button class="go" data-lens="${db.id}/district" data-from="${esc(r.record_id)}"><span class="gi">${LAYERS_ICON}</span><span><b>What shapes places like this</b><small>Across ${esc(db.districtName)} · ${esc(db.name)} is its mapped block</small></span><span class="chev" aria-hidden="true">›</span></button>`;
     else lens = `<div class="go off"><span class="gi">${LAYERS_ICON}</span><span><b>What shaped this</b><small>This record has no district, so there is no mapped block to open.</small></span></div>`;
     const data = r._real ? explorerGo('record', r.record_id, `${esc(r.record_id)} with every field, as a table`) : '';
-    return `<h3>Look closer</h3><div class="closer">${day}${lens}${data}</div>`;
+    const ai = r._real ? `<button class="go" data-copyai="${esc(r.record_id)}"><span class="gi">${COPY_ICON}</span><span><b>Copy for AI</b><small>${esc(r.record_id)} as JSON, with context for an assistant</small></span></button>` : '';
+    return `<h3>Look closer</h3><div class="closer">${day}${lens}${data}${ai}</div>`;
   }
   function recentFor(pred, n = 25) { const out = []; for (let i = S.idx - 1; i >= 0 && out.length < n; i--) if (pred(H.records[i])) out.push(H.records[i]); return out; }
   function partyHTML(p) {
@@ -2388,6 +2401,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
       const row = e.target.closest('button.row, #chooser button[data-id]');
       if (row) { closeChooser(); selectRecord(row.dataset.id, row.closest('#chooser') ? scene() : row); return; }
       const hd = e.target.closest('[data-hhday]'); if (hd) { openHouseholdDay(hd.dataset.hhday); return; }
+      const ai = e.target.closest('[data-copyai]'); if (ai) { copyForAI(ai.dataset.copyai, ai); return; }
       const ln = e.target.closest('[data-lens]'); if (ln) { const [bk, pt] = ln.dataset.lens.split('/'), dm = pt === 'district'; Lens.open(bk, dm ? null : pt || null, ln.dataset.from || null, ln, ln.dataset.hh || null, dm); return; }
       const lo = e.target.closest('[data-lens-open]'); if (lo) { e.preventDefault(); Lens.open(null, null, lo); return; }
     });
@@ -2441,6 +2455,34 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   // ---------- screen reader text ----------
   let lastLabelMin = -1, lastHour = -1;
   function say(msg) { const l = $('#live'); l.textContent = ''; setTimeout(() => (l.textContent = msg), 30); }
+  // a short note at the bottom of the screen; screen readers hear it through the live region
+  function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; say(msg); clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), 2600); }
+
+  // ---------- Copy for AI: a record as JSON with the context an assistant needs, to paste into a chat (clipboard only) ----------
+  // The same text as the explorer's button: every column of records.csv in its order, the nine numeric ones as numbers.
+  const AI_NUM = new Set(['amount_gross', 'amount_paid_by_user', 'amount_paid_by_third_party', 'imputed_public_cost', 'sales_tax', 'fee_amount', 'time_minutes', 'wait_minutes', 'travel_miles']);
+  function aiText(id, run, row) {
+    const o = {};
+    for (const k of Object.keys(row)) o[k] = AI_NUM.has(k) ? (Number.isFinite(+row[k]) ? +row[k] : null) : String(row[k] ?? '');
+    return 'This is a record from Medianville, a simulated American city (synthetic data, a project by Jason James). Context for agents: https://medianville.netlify.app/llms.txt\n\n'
+      + `Record ${id}, run ${run}:\n${JSON.stringify(o, null, 2)}\n\n`
+      + 'Starter questions: What led to this? Who else hit this friction on this day? What circumstances shaped it?';
+  }
+  async function copyText(text, back) {
+    try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) { /* try the older way */ }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove(); if (back) back.focus();
+    return ok;
+  }
+  async function copyForAI(id, btn) {
+    const r = H.recById.get(id); if (!r || !r._real) return;
+    // without a manifest the viewer plays its fallback zip, which is v1's day
+    const ok = await copyText(aiText(id, App.runId || 'v1-2027-03-03', r._row()), btn);
+    toast(ok ? `Copied ${id} for AI` : 'Couldn’t copy here');
+  }
   function updateSceneLabel(force) {
     const m = Math.floor(S.t); if (m === lastLabelMin && !force) return; lastLabelMin = m;
     const inflight = S.flights.filter((F) => !F.steady && progress(F) <= F.stop).length;
@@ -2539,6 +2581,7 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
   // real-day.js calls this once it knows which run it will load (sel is null without a manifest)
   App.onRuns = (sel) => {
     if (!sel || !window.MedianvilleRuns) return;
+    App.runId = sel.run.id;
     App.dayIso = sel.run.date;
     // 'Wed, Mar 3, 2027 · baseline', shown once the run is in
     const kind = MedianvilleRuns.optionLabel(sel.run).split(' · ').slice(1).join(' · ');

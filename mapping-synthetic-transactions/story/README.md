@@ -16,6 +16,7 @@ Folders, tags and milestone titles use milestone names; viewers and data runs ke
 | M4 The refined city | latest (root) | v1 renamed: `medianville_2027-03-03.zip` | 3b (rename) |
 | M5 More time | latest, with the day menu | v2: 19 days and the March month | 3, 4, 5, "6"* |
 | M6 Refinements | latest | v2 | — |
+| M7 Open to agents | latest, with Copy for AI | v2, with pages for agents | — |
 
 \* [#82](https://github.com/jas0nmjames/playground/pull/82), the systems lens's district tier, shipped as "phase 6" of v2. The [data update plan](03-grounding-in-evidence/medianville-data-update-plan.md#8-phases)'s own phase 6 (households from ACS microdata, a year at 10%) is still to come.
 
@@ -28,6 +29,7 @@ Folders, tags and milestone titles use milestone names; viewers and data runs ke
 - [M4 The refined city](04-the-refined-city/), Nov 18–20: the systems lens, mapped blocks, the photographic miniature, sound, the data explorer, the repo reorganized, the intro and About page, and the rename to Medianville.
 - [M5 More time](05-more-time/), Nov 20–21: v2's simulator changes, the typed-day year, the March 2027 month, close reading and publishing, and the lens's district tier.
 - [M6 Refinements](06-refinements/), Nov 21 onward: polish, rendering fixes, the day control, Sound on the city, the explorer header, and this story. Its README keeps a running log.
+- [M7 Open to agents](07-open-to-agents/), Nov 24 onward: the site made readable by agents and LLMs. The first pass: `llms.txt`, Markdown pages for every run and district, a data dictionary, licenses for the data, and Copy for AI on a record.
 
 ## Next
 

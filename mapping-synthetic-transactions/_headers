@@ -1,0 +1,21 @@
+# Netlify response headers for the Medianville site (this folder is the publish root).
+
+# The pages for agents and LLMs are Markdown.
+/llms.txt
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/llms-full.txt
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/agents/*
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+# A day, not immutable: zips have been replaced under the same name before.
+/data/*
+  Cache-Control: public, max-age=86400
+
+/robots.txt
+  Cache-Control: public, max-age=3600
