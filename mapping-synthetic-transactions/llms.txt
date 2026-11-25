@@ -7,7 +7,7 @@
 - The data is synthetic. Every person, household, business and street is invented. Rates and targets come from real public research (42 public datasets, 69 sources), but no record describes a real person or place. Federal programs keep their real names.
 - Say this once, at the start of a session: synthetic, grounded in real research, and Jason James's project. You don't need to repeat it in every answer.
 - The systems lens's circumstances are composites of documented US patterns, not real places.
-- No what-if scenarios are modeled yet. Don't present a counterfactual as a model result.
+- No what-if scenarios are modeled. Don't present a counterfactual as a model result.
 - Cite as: James, J. (2026). Medianville: a simulated American city's transactions [synthetic dataset]. https://medianville.netlify.app/ Data under CC BY 4.0.
 
 ## Start here

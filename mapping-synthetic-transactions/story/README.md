@@ -28,7 +28,7 @@ Folders, tags and milestone titles use milestone names; viewers and data runs ke
 - [M3 Grounding in evidence](03-grounding-in-evidence/), Nov 17–19 (the files reached the repo Nov 22): 69 sources of real evidence, the data update plan, the evidence targets and the downloaded datasets.
 - [M4 The refined city](04-the-refined-city/), Nov 18–20: the systems lens, mapped blocks, the photographic miniature, sound, the data explorer, the repo reorganized, the intro and About page, and the rename to Medianville.
 - [M5 More time](05-more-time/), Nov 20–21: v2's simulator changes, the typed-day year, the March 2027 month, close reading and publishing, and the lens's district tier.
-- [M6 Refinements](06-refinements/), Nov 21 onward: polish, rendering fixes, the day control, Sound on the city, the explorer header, and this story. Its README keeps a running log.
+- [M6 Refinements](06-refinements/), Nov 21 onward: polish, rendering fixes, the day control, Sound on the city, the explorer header, this story, and the public sharing pass (a shorter intro and the README's GIFs). Its README keeps a running log.
 - [M7 Open to agents](07-open-to-agents/), Nov 24 onward: the site made readable by agents and LLMs. The first pass: `llms.txt`, Markdown pages for every run and district, a data dictionary, licenses for the data, and Copy for AI on a record.
 
 ## Next

@@ -79,7 +79,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **N6** Care from neighbors and kin (unpaid): links S1, E1; tagged when job_category matches `caregiving_visit|escort_to_appointment`.
 - **N7** Car repairs (bill): links E1; tagged when job_category matches `car_repair|car_wont_start|jump_start|tow_and_roadside`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Lot-rent squeeze** (reinforcing). Each lot-rent increase leaves less cash. With less cash, moving the home out of the park is out of reach, so the owner can keep raising the rent.
   - Rent increases → Cash left after rent (−): More increases leave less cash.

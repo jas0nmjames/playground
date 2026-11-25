@@ -6,7 +6,7 @@
 
 ## What I wanted
 
-TODO(Jason): why one Wednesday wasn't enough, and what you hoped a year and a month would show.
+Financial activity isn't the same from one day to the next, something Claude reminded me of. Pulling in more simulated days lets us reach different conclusions. It also mattered that the experience stayed usable, both as an interface and as a build: rather than sending every visitor hundreds of megabytes at once, the site downloads each day only when you open it.
 
 ## What I asked for
 

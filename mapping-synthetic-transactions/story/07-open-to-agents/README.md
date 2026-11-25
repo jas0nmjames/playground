@@ -6,7 +6,7 @@ From 2026-11-24. The first pass is [#134](https://github.com/jas0nmjames/playgro
 
 ## What I wanted
 
-TODO(Jason): why open the city to agents and LLMs now, and what an agent should be able to do with it.
+The city is data-heavy, so opening it to AI agents made sense, especially as interfaces change. I'd been to a Figma book talk on *Sentient Design* and to blackcomputeHER.org's 2025 AI Summit, [Reimagining AI in Our Own Image](https://blackcomputeher.org/ai-summit/), where I particularly gained a lot from hearing Paz Perez speak and Donald Martin Jr. advocate for "societal context". I'm interested in Paz's work on model design and context, and agent access is a tangible way to start thinking about how to design around models, agents and their behavior.
 
 ## What I asked for
 

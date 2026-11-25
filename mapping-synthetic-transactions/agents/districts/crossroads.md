@@ -82,7 +82,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **C6** School breakfast (unpaid): links P2; tagged when job_category matches `school_breakfast`.
 - **C7** Care from neighbors (unpaid): links S1, E2; tagged when job_category matches `caregiving_visit|escort_to_appointment`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Ride debt** (reinforcing). Without a working car, getting to work means paying for rides. What goes to rides doesn't go to repairs, so the car stays broken and the rides continue.
   - A working car → Paid rides (−): No car means more paid rides.

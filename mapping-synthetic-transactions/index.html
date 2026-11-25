@@ -239,7 +239,7 @@ a.go { text-decoration:none; }
 .intro-card h2 { font-size:28px; line-height:1.15; letter-spacing:-.015em; margin:14px 0 12px; }
 .intro-card h2:focus, .intro-card h2:focus-visible { outline:none; } /* focused on open so it's read first; not in the tab order */
 .intro-card p { font-size:15.5px; line-height:1.55; margin:0 0 12px; }
-.intro-card p.intro-cred { font-size:14px; color:var(--ink2); }
+.intro-card p.intro-cred { font-size:14px; color:var(--ink2); margin:14px 0 0; }
 .intro-x { position:absolute; top:14px; right:14px; }
 .intro-acts { display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px; margin-top:18px; }
 .intro-acts .btn { min-height:44px; padding:10px 18px; font-size:15px; text-decoration:none; display:inline-flex; align-items:center; }
@@ -530,15 +530,13 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     <button type="button" class="iconbtn intro-x" data-intro-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <span class="chip">Simulated city · no real people</span>
     <h2 id="intro-h" tabindex="-1">One day in Medianville</h2>
-    <p id="intro-d">Medianville is a simulated American city of about 100,000 people, built to match the country as a whole. This is one day there, <span id="intro-date">Wednesday, March 3, 2027</span>: <span id="intro-n">about 200,000</span> transactions. Paychecks, bus fares, autopays, declined cards, hours of unpaid caregiving.</p>
-    <p>Each one is a <em>job to be done</em>: something a person was trying to get done. Seen together, they show how jobs collide (a bill that drafts at 2 a.m. declines a card at 5 p.m.) and the systems underneath that decide who they work for. The goal is to find small, practical fixes for daily life at the margins.</p>
-    <p>Households, wages, prices and payment habits are calibrated to federal data from the Census, BLS and the Federal Reserve, and rates such as fees, loans, shutoffs and caregiving hours are set from 42 public datasets. A simulator settles every dollar and every minute. Federal programs keep their real names. Every person, business and street is invented.</p>
-    <p class="intro-cred">It started with Jason James asking which American town is most like America. No real one is, so he set out to build one. Jason came up with the idea and directs the project. Claude, Anthropic’s AI model, wrote the simulator, generated the days, hand-wrote 300 of this day’s records (500 in the first version) and built this viewer with him.</p>
+    <p id="intro-d">Medianville is a fictitious American city of about 100,000 people. Built with publicly available research, it simulates representative days of financial life and beyond, including government services and unpaid labor. It shows the human goal behind each transaction and maps the surrounding societal contexts.</p>
     <div class="intro-acts">
       <button type="button" class="btn primary loading" id="intro-go" data-intro-close><span id="intro-go-l">Loading the day…</span><span class="bar" aria-hidden="true"></span></button>
       <a class="btn" href="explorer/">Explore the data</a>
       <a class="intro-more" href="about/">About the project →</a>
     </div>
+    <p class="intro-cred">By Jason James, built with Claude.</p>
     <p class="intro-agents">An AI agent or LLM? Start at <a href="llms.txt">llms.txt</a>: what to read first, the data dictionary, every day’s summary and how to cite it.</p>
     <p class="sr-only" id="intro-live" aria-live="polite"></p>
   </section>
@@ -2588,8 +2586,6 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     App.dayLabel = MedianvilleRuns.dateLabel(sel.run.date, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) + (kind ? ' · ' + kind : '');
     MedianvilleRuns.picker($('#runpick'), sel);
     MedianvilleRuns.carry($('#data-link'), sel);
-    const d = App.runDate(sel.run.date); if (d) $('#intro-date').textContent = d;
-    if (sel.run.records) $('#intro-n').textContent = sel.run.records.toLocaleString('en-US');
     if (!sel.found) say('That day is not in the list; showing ' + sel.run.label + '.');
   };
   // '2027-03-03' → 'Wednesday, March 3, 2027' (or 'March 3, 2027' without the weekday)
@@ -2601,8 +2597,25 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     if (Sheet.stack.length) Sheet.close(true);
     S.selId = null; S.hhDay = null; S.selPin = null; histDrawnAt = -1;
     seek(S.t); updateSceneLabel(true); // the label still counted the sample day until the minute changed
-    if (/[#&]lens=[^&/]+\/[^&/]*\/./.test(location.hash)) Lens.fromHash(true); else Lens.refresh();
+    if (/[#&]lens=[^&/]+\/[^&/]*\/./.test(location.hash)) Lens.fromHash(true); else { Lens.refresh(); openFromHash(); }
   };
+  // #record=<record id> pauses on the record's minute with its sheet open; #household=<household id> opens the household's
+  // day, paused just after its last record. Both wait for the real day, and an id that isn't in it is ignored.
+  function openFromHash() {
+    const q = new URLSearchParams(location.hash.slice(1)), rid = q.get('record'), hid = q.get('household');
+    if (q.get('lens')) return;
+    if (rid) {
+      const r = H.recById.get(rid); if (!r || r.record_id !== rid) return;
+      setPlaying(false); seek(r._t + .01);
+      selectRecord(rid, scene());
+    } else if (hid) {
+      const p = H.party.get(hid); if (!p || p.type !== 'household') return;
+      let last = null; for (const r of H.records) if (r.household_id === hid) last = r;
+      setPlaying(false); if (last) seek(last._t + .01);
+      openHouseholdDay(hid);
+      if (smallScreen()) openDrawer(true);
+    }
+  }
   App.headPoint = headPoint; App.progress = progress; App.seek = seek; App.select = selectRecord; App.setView = setView; App.setPlaying = setPlaying; App.hitFlights = hitFlights; App.openHouseholdDay = openHouseholdDay;
 })();
 </script>
@@ -2632,10 +2645,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
 })();
 </script>
 <script>
-// ===== First-visit intro: what the city is, how it was made, who made it. It doubles as the loading moment. =====
+// ===== First-visit intro: what the city is and who made it, in a few lines. It doubles as the loading moment. =====
 // Shown once (remembered in localStorage), reopened from About in the header, and skipped by deep links and ?intro=0.
-// ?intro=1 shows it even after it was dismissed. Numbers come from the loaded run; when the run picker lands,
-// data/runs/manifest.json can supply them before the zip is in.
+// ?intro=1 shows it even after it was dismissed.
 (function () {
   const KEY = 'medianville-intro-v1';
   const root = document.getElementById('intro'), card = root.querySelector('.intro-card'), head = document.getElementById('intro-h');
@@ -2692,10 +2704,6 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     if (st.state === 'loading') { bar.style.width = Math.round(st.p * 100) + '%'; goL.textContent = 'Loading the day…'; return; }
     if (ready) return; ready = true;
     go.classList.remove('loading'); goL.textContent = 'Enter the city';
-    if (st.state === 'real') {
-      if (st.n) document.getElementById('intro-n').textContent = st.n.toLocaleString('en-US');
-      const d = App.runDate(st.date); if (d) document.getElementById('intro-date').textContent = d;
-    }
     if (!root.hidden) document.getElementById('intro-live').textContent = 'The day has loaded.';
   };
 

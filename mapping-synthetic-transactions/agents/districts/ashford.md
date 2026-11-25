@@ -79,7 +79,7 @@ A record from the block's households that matches a pattern (the first that matc
 - **M6** Pay advances (income): links EC2; tagged when job_category matches `earned_wage_advance`.
 - **M7** Urgent care (purchase): links E1; tagged when job_category matches `urgent_care_visit`.
 
-## Loops (hypotheses for the next run to test)
+## Loops (hypotheses, not findings)
 
 - **R1 Advance loop** (reinforcing). A pay advance covers the gap now and comes out of the next paycheck with a fee. The smaller paycheck leaves the next week short, so the next advance comes sooner.
   - Paycheck left → Pay advances (−): A smaller paycheck means more advances.

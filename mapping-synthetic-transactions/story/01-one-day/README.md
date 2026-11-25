@@ -6,7 +6,7 @@
 
 ## What I wanted
 
-TODO(Jason): what you wanted from one simulated day, in your own words.
+With Fable 5.2 newly released, I wanted to try a less common use of it from a design perspective. Instead of generating a richer and richer interface, I wanted to generate the transactions themselves: an unorthodox idea, a representative city's financial life that we could get real insight from.
 
 ## What I asked for
 
