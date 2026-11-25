@@ -16,7 +16,7 @@ Rebuilt 2026-11-21 in Claude Code on Jason's Mac, on branch `medianville-v2-phas
 | SHA-256 of the `SHA256SUMS` inside | `05f914f27f25c7ba3a864b16cfb4d2e4d2bb097f60e2ca52e7f366d54ac1a47c` |
 | Simulator | `sim/` at commit `dd0e6b6`, frozen for v2 (no change once hand-written text exists) |
 | Built with | Python 3.11.5 (python.org installer), numpy 2.4.6, zlib 1.2.12, macOS 26.7.3 on arm64; 672 s for the 31 days, under 1 GB of memory |
-| Release download checked | Not yet. The Release still holds the phase 4 build (459,134,321 bytes, SHA-256 `7339315…ed58`); this file replaces it under the same name, and the row is filled in once the download is checked. |
+| Release download checked | 2026-11-25: the Release holds this build. GitHub reports the file at 460,891,403 bytes with SHA-256 `5aa7da82…729c3f`, matching the rows above; the phase 4 build is no longer available. |
 
 The zip's SHA-256 depends on the zlib that compresses it. `SHA256SUMS` lists the SHA-256 of every file inside, so two builds whose zips differ can still be compared file by file.
 
