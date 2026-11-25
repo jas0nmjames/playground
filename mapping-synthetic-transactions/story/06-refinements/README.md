@@ -2,7 +2,7 @@
 
 ## When
 
-From 2026-11-21, in [#83](https://github.com/jas0nmjames/playground/pull/83) and [#85](https://github.com/jas0nmjames/playground/pull/85), the commits pushed straight to `development` on Nov 23, and the milestones and archive work of Nov 24. Still open. [GitHub milestone](https://github.com/jas0nmjames/playground/issues?q=milestone%3A%22Medianville+%C2%B7+M6+Refinements%22). No release yet.
+From 2026-11-21, in [#83](https://github.com/jas0nmjames/playground/pull/83), [#85](https://github.com/jas0nmjames/playground/pull/85) and [#138](https://github.com/jas0nmjames/playground/pull/138), the commits pushed straight to `development` on Nov 23, and the milestones and archive work of Nov 24. Still open. [GitHub milestone](https://github.com/jas0nmjames/playground/issues?q=milestone%3A%22Medianville+%C2%B7+M6+Refinements%22). No release yet.
 
 ## What I asked for
 
@@ -26,7 +26,7 @@ The screenshots in this folder are the ones the [project README](../../README.md
 | 2026-11-23 | [`9ccbd7a`](https://github.com/jas0nmjames/playground/commit/9ccbd7a), [`a49d14c`](https://github.com/jas0nmjames/playground/commit/a49d14c) | A Key button for the legend on phones; one day control; Sound on the city; smaller fixes |
 | 2026-11-23 | [`d08935d`](https://github.com/jas0nmjames/playground/commit/d08935d), [`175551d`](https://github.com/jas0nmjames/playground/commit/175551d), [`8275a2e`](https://github.com/jas0nmjames/playground/commit/8275a2e) | The README screenshots retaken; the explorer's header on one row, with labels hyphenated like the viewer |
 | 2026-11-24 | This milestone's pull request | The milestones, the story and the archive; the first viewer taken off the live pages |
-| 2026-11-25 | The public sharing pass's pull request | A shorter intro; the README rewritten around the features, with seven GIFs and "Try it" links; `#record=` and `#household=` links in the viewer; the site and the agent files describe only work done to date; Jason's words in each milestone |
+| 2026-11-25 | [#138](https://github.com/jas0nmjames/playground/pull/138) | A shorter intro; the README rewritten around the features, with seven GIFs and "Try it" links; `#record=` and `#household=` links in the viewer; the site and the agent files describe only work done to date; Jason's words in each milestone |
 
 The Nov 23 commits went straight to `development`, so they can't be filed under a GitHub milestone; they're listed in its description. [`fae067f`](https://github.com/jas0nmjames/playground/commit/fae067f), pushed among them, is the playground's directory website, not Medianville. From here on, Medianville work goes through a pull request so it can be filed.
 
