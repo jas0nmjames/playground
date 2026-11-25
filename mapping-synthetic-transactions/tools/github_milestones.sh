@@ -67,6 +67,8 @@ Release: medianville-m4-the-refined-city."
 Release: medianville-m5-more-time; the month is medianville-v2-month-2027-03."
   "M6|Medianville · M6 Refinements|open||06-refinements|From Nov 21, ongoing: polish, rendering fixes, the day control, Sound on the city, the explorer header, and the story and archive.
 Pushed straight to development on Nov 23, so not filed here: 63c8731, 384a19f, 46851e2, 9ccbd7a, a49d14c, d08935d, 175551d, 8275a2e."
+  "M7|Medianville · M7 Open to agents|open||07-open-to-agents|From Nov 24, ongoing: the site made readable by agents and LLMs. First pass: llms.txt, the agents/ pages, a data dictionary, licenses and metadata, and Copy for AI.
+Still to come: Parquet and a Hugging Face dataset, a local MCP server, Open in links and an eval set."
   "NEXT|Medianville · Next: mining for projects|open||next-mining-for-projects|Not started. The project's actual goal: rank the frictions, recheck the project leads, and make the field visits.
 Its tasks are issues filed here."
 )
@@ -82,6 +84,7 @@ PRS=(
   "M4|60 63 64 66 67 68 69 72 77"
   "M5|71 78 80 81 82"
   "M6|83 85 90"
+  "M7|134"
 )
 
 # ─── tags and releases ───────────────────────────────────────────────────────

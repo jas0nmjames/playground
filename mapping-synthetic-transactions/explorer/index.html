@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Medianville Data Explorer</title>
+<meta name="description" content="The Medianville data explorer: one simulated day of a synthetic American city as tables of records, households, people and organizations to filter, search and group. Synthetic data built from real research; no real people.">
+<link rel="canonical" href="https://medianville.netlify.app/explorer/">
+<link rel="alternate" type="text/markdown" href="/llms.txt" title="For agents and LLMs">
+<meta property="og:title" content="Medianville Data Explorer">
+<meta property="og:description" content="The Medianville data explorer: one simulated day of a synthetic American city as tables of records, households, people and organizations to filter, search and group. Synthetic data built from real research; no real people.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400&display=swap" rel="stylesheet">
@@ -217,6 +222,8 @@ details.raw summary { cursor:pointer; font-weight:600; color:var(--blue); paddin
 details.raw table { width:100%; border-collapse:collapse; font-size:12.5px; }
 details.raw td { padding:5px 6px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
 details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monospace, Menlo, Consolas, monospace; }
+.btn.ai { display:inline-flex; align-items:center; gap:6px; }
+@media (pointer: coarse) { .btn.ai { min-height:44px; } }
 .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 16px; border-radius:999px; font-weight:600; z-index:40; box-shadow:var(--shadow); }
 .scrim { position:fixed; inset:0; background:rgba(14,27,46,.32); z-index:15; }
 
@@ -267,6 +274,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   </nav>
   <a class="ext" id="anim-link" href="https://jas0nmjames.github.io/playground/mapping-synthetic-transactions/">Open the animation ↗</a>
   <a class="ext" href="../about/">About</a>
+  <a class="ext" href="../llms.txt">For agents</a>
   <div id="progress" aria-hidden="true"><i></i></div>
 </header>
 
@@ -976,7 +984,32 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
     else { dim.facet.sel.add(k); }
     v.mode = 'rows'; v.page = 0; renderView('records');
   }
-  function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), 2600); }
+  function toast(msg) { const t = $('#toast'); t.hidden = false; t.textContent = ''; setTimeout(() => (t.textContent = msg), 30); clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), 2600); }
+
+  // ---------- Copy for AI: a record as JSON with the context an assistant needs, to paste into a chat (clipboard only) ----------
+  // The same text as the viewer's button: every column of records.csv in its order, the nine numeric ones as numbers.
+  function aiText(id, run, row) {
+    return 'This is a record from Medianville, a simulated American city (synthetic data, a project by Jason James). Context for agents: https://medianville.netlify.app/llms.txt\n\n'
+      + `Record ${id}, run ${run}:\n${JSON.stringify(row, null, 2)}\n\n`
+      + 'Starter questions: What led to this? Who else hit this friction on this day? What circumstances shaped it?';
+  }
+  async function copyText(text, back) {
+    try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) { /* try the older way */ }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove(); if (back) back.focus();
+    return ok;
+  }
+  async function copyForAI(id, btn) {
+    const R = D.rec, i = R.row(id); if (i < 0) return;
+    const row = {};
+    for (const nm of R.names) { const c = R.cols[nm]; row[nm] = c.kind === 'num' ? (Number.isFinite(c.v[i]) ? c.v[i] : null) : R.s(nm, i); }
+    // without a manifest the explorer opens its fallback zip, which is v1's day
+    const ok = await copyText(aiText(id, RUNSEL ? RUNSEL.run.id : 'v1-2027-03-03', row), btn);
+    toast(ok ? `Copied ${id} for AI` : 'Couldn’t copy here');
+  }
   async function exportCSV(v) {
     const T = v.T, names = T.names, q = (s) => { s = String(s); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const numStr = (x) => (Number.isFinite(x) ? String(x) : '');
@@ -1100,7 +1133,8 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (document.body.classList.contains('rail-open')) closeRail(); else if (!sheet.hidden) closeSheet(); } });
   body.addEventListener('click', (e) => {
     const b = e.target.closest('[data-open]'); if (b) { const [t, ...rest] = b.dataset.open.split('-'); openEntity(t, rest.join('-')); return; }
-    const s = e.target.closest('[data-scope]'); if (s) { const [t, ...rest] = s.dataset.scope.split('-'); scopeRecords(t, rest.join('-')); }
+    const s = e.target.closest('[data-scope]'); if (s) { const [t, ...rest] = s.dataset.scope.split('-'); scopeRecords(t, rest.join('-')); return; }
+    const ai = e.target.closest('[data-copyai]'); if (ai) copyForAI(ai.dataset.copyai, ai);
   });
   const kv = (pairs) => `<dl class="kv">${pairs.filter((p) => p && p[1] !== '' && p[1] != null).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
   const partyBtn = (id, lab, sub) => !id ? '<span class="pbtn plain"><b>—</b></span>' : `<button class="pbtn" data-open="${id[0] === 'O' ? 'org' : id[0] === 'H' ? 'household' : 'person'}-${esc(id)}"><b>${esc(lab)}</b><span>${esc(sub || id)}</span></button>`;
@@ -1167,6 +1201,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       <p class="voice">${esc(s('job_statement'))}</p>
       <p class="narr">${esc(hw ? nar.slice(11) : nar)}</p>
       <div class="flow">${partyBtn(from, R.fromLab[R.cols.from_party_id.c[i]], subFor(from))}<span class="ar" aria-label="to">→</span>${partyBtn(to, R.toLab[R.cols.to_party_id.c[i]], subFor(to))}</div>
+      <div class="acts"><button class="btn ai" data-copyai="${esc(id)}" aria-describedby="ai-note"><svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><rect x="6" y="6" width="9.5" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 6V4.5A2 2 0 0 0 10 2.5H4.5a2 2 0 0 0-2 2V10a2 2 0 0 0 2 2H6" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>Copy for AI</button><span class="muted" style="font-size:13px" id="ai-note">This record as JSON, with context for an assistant</span></div>
       <h3 class="sec">Money</h3>
       ${kv([['Amount', usd(a)], ['Paid by the person', usd(num('amount_paid_by_user'))], ['Paid by a third party', usd(num('amount_paid_by_third_party'))],
         ['Third-party payer', esc(s('third_party_payer'))], ['Cost to the public', usd(num('imputed_public_cost'))], ['Funding level', s('funding_level') ? esc(human(s('funding_level'))) : ''],
@@ -1180,7 +1215,7 @@ details.raw td:first-child { color:var(--ink2); width:42%; font-family:ui-monosp
       ${ben && ben !== actor ? partyBtn(ben, D.partyLabel(ben), 'Benefited · ' + ben) : ''}
       ${hid ? `<button class="pbtn" data-open="household-${esc(hid)}"><b>Household ${esc(hid)}</b><span>${esc(TIER_L[R.tier[i]])} · see the household's whole day</span></button>` : '<p class="muted">No household: a record between organizations.</p>'}
       ${relRow >= 0 || backRefs.length ? `<h3 class="sec">Linked records</h3>${relRow >= 0 ? `<p class="muted" style="margin:0 0 6px">This record follows:</p>${recList([relRow])}` : ''}${backRefs.length ? `<p class="muted" style="margin:10px 0 6px">Records that follow this one:</p>${recList(backRefs)}` : ''}` : ''}
-      <details class="raw"><summary>All 31 fields</summary><table>${R.names.map((nm) => `<tr><td>${esc(nm)}</td><td>${esc(R.cols[nm].kind === 'num' ? (Number.isFinite(R.v(nm, i)) ? R.v(nm, i) : '') : R.s(nm, i))}</td></tr>`).join('')}</table></details>`;
+      <details class="raw"><summary>All ${R.names.length} fields</summary><table>${R.names.map((nm) => `<tr><td>${esc(nm)}</td><td>${esc(R.cols[nm].kind === 'num' ? (Number.isFinite(R.v(nm, i)) ? R.v(nm, i) : '') : R.s(nm, i))}</td></tr>`).join('')}</table></details>`;
   }
   function householdHTML(id) {
     const HH = D.hh, h = HH.row(id); if (h < 0) return '';

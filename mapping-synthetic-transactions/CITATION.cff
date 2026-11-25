@@ -1,0 +1,30 @@
+# The data and documents are CC BY 4.0 (LICENSE-DATA); the code is MPL-2.0 (the repository's LICENSE).
+cff-version: 1.2.0
+message: "If you use Medianville, please cite it as below, and say that it is synthetic: every person, household, business and street is invented."
+type: dataset
+title: "Medianville: a simulated American city's transactions"
+abstract: "A simulated American city of about 100,000 people, weighted to the United States as a whole. Its records are every job someone did to get something done: purchases, bills, benefit deposits, forms, waits, declined cards and unpaid care. Synthetic data: rates and targets come from real public research, but no record describes a real person or place."
+authors:
+  - family-names: James
+    given-names: Jason
+    website: "https://jasonjames.works"
+date-released: 2026-11-17
+url: "https://medianville.netlify.app/"
+repository-code: "https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions"
+license: CC-BY-4.0
+keywords:
+  - synthetic data
+  - simulation
+  - household finance
+  - jobs to be done
+  - public services
+preferred-citation:
+  type: data
+  title: "Medianville: a simulated American city's transactions"
+  authors:
+    - family-names: James
+      given-names: Jason
+  year: 2026
+  medium: "synthetic dataset"
+  url: "https://medianville.netlify.app/"
+  notes: "Data under CC BY 4.0."

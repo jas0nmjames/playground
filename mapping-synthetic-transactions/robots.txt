@@ -1,0 +1,7 @@
+# Medianville: everyone is welcome to read this site, AI agents and crawlers included.
+# Agents and LLMs: start at https://medianville.netlify.app/llms.txt
+# The day zips are 12-19 MB each. Please download them from GitHub (the links are in llms.txt), not from this site.
+
+User-agent: *
+Allow: /
+Disallow: /*.zip

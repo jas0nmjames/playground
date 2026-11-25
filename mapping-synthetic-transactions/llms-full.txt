@@ -1,0 +1,1458 @@
+> Synthetic data from Medianville, a project by Jason James. Read https://medianville.netlify.app/llms.txt first.
+
+# Medianville: everything in one file
+
+llms.txt, the About page, the data dictionary, the runs, the districts and the baseline day's summary, in one request. Each part starts with a comment naming the page it comes from.
+
+---
+
+# Medianville
+
+> A simulated American city of about 100,000 people, weighted to the United States as a whole. Its records are every job someone did to get something done: purchases, bills, benefit deposits, forms, waits, declined cards and unpaid care. A project by Jason James (https://jasonjames.works), built with Claude.
+
+## For agents: read this first
+
+- The data is synthetic. Every person, household, business and street is invented. Rates and targets come from real public research (42 public datasets, 69 sources), but no record describes a real person or place. Federal programs keep their real names.
+- Say this once, at the start of a session: synthetic, grounded in real research, and Jason James's project. You don't need to repeat it in every answer.
+- The systems lens's circumstances are composites of documented US patterns, not real places.
+- No what-if scenarios are modeled yet. Don't present a counterfactual as a model result.
+- Cite as: James, J. (2026). Medianville: a simulated American city's transactions [synthetic dataset]. https://medianville.netlify.app/ Data under CC BY 4.0.
+
+## Start here
+
+- [About](https://medianville.netlify.app/agents/about.md): the goal, the method, what's real and what isn't, credits
+- [Data dictionary](https://medianville.netlify.app/agents/data-dictionary.md): every column of every table, its values, and where its meaning is written down
+- [Runs](https://medianville.netlify.app/agents/runs.md): v1, the 19 days of 2027 in v2 (the baseline day and the 18 typed days that stand for the year) and the March month
+- [The baseline day, March 3, 2027](https://medianville.netlify.app/agents/runs/v2-2027-03-03.md): the day the site opens on, with its summary tables
+- [Districts and circumstances](https://medianville.netlify.app/agents/districts.md): the six districts, their mapped blocks, circumstances and loops (composites)
+
+## Bulk data: download from GitHub and run your own analysis
+
+- One day's files: https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_<date>.zip (12–19 MB each; uncompressed CSVs inside, records.csv about 78 MB for March 3). The dates are in the runs page and the manifest.
+- [Run manifest](https://medianville.netlify.app/data/runs/manifest.json), with sizes and SHA-256
+- [The March month](https://github.com/jas0nmjames/playground/releases/download/medianville-v2-month-2027-03/medianville_2027-03_month.zip), about 460 MB: 31 days carried day to day ([what's in it](https://medianville.netlify.app/agents/month.md))
+- [systems-lens/blocks.json](https://medianville.netlify.app/systems-lens/blocks.json): the mapped blocks, circumstances and loops as data
+
+## Human pages
+
+- [The viewer](https://medianville.netlify.app/): the day played back on a miniature town and a printed map, with the systems lens over it
+- [The data explorer](https://medianville.netlify.app/explorer/): the same day as tables to filter, search and group
+- [The systems lens](https://medianville.netlify.app/systems-lens/): one composite block in each district, as layers of circumstances
+- [About](https://medianville.netlify.app/about/)
+- [The archive](https://medianville.netlify.app/archive/): earlier viewers, frozen as they shipped
+
+## Optional
+
+- [Everything above in one file](https://medianville.netlify.app/llms-full.txt)
+- [The decision log](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/decisions.md)
+- [The story, milestone by milestone](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/story)
+- [Evidence files](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/evidence): third-party material, not under this project's license
+- [v1, the first baseline day](https://medianville.netlify.app/agents/runs/v1-2027-03-03.md): archived; the archived viewers play it under the city's first name, Halvern
+
+---
+
+<!-- https://medianville.netlify.app/agents/about.md -->
+
+The About page of https://medianville.netlify.app/about/ as plain Markdown, written from about/index.html by tools/build_agent_pages.py. Links into the repository point at its main branch.
+
+# One day in Medianville
+
+Medianville is a model of an ordinary day in an ordinary American city, made so that the jobs people do, and the systems around them, can be seen together.
+
+## What this is
+
+Medianville is a simulated American city of about 100,000 people, built to match the country as a whole. The site opens on one day there, Wednesday, March 3, 2027: about 200,000 transactions. Paychecks, bus fares, autopays, declined cards, hours of unpaid caregiving. A menu in the header opens 18 other days that together stand for the year (Saturdays and Sundays, paydays, holidays, a storm, a heat wave), and the first version of the day.
+
+Each one is a *job to be done*: something a person was trying to get done. A record can be a purchase or a bill, but it can also be a form, a wait, a wasted trip or an hour spent caring for a parent. Each says what the job was, who paid, who else paid, what it cost in time and effort, and whether it worked.
+
+Seen together, the jobs show how they collide (a bill that drafts at 2 a.m. declines a card at 5 p.m.) and the systems underneath that decide who they work for. The goal is to find small, practical fixes for daily life at the margins.
+
+There are two ways in. [The city](https://medianville.netlify.app/) plays the day back on a miniature town or a printed map, with a systems lens that opens over it. The [data explorer](https://medianville.netlify.app/explorer/) lays out the same records as tables to filter, search and group.
+
+## Where it came from
+
+It began with a question Jason asked: which American city or town best matches the country’s mix of wealth, race, class, industry and gender? The published rankings each pick a different winner, and the places that score well tend to leave out rural and small-town life, where many of the hardest daily jobs are.
+
+So the city is synthetic, weighted to the whole country. It’s paired with visits to real places around Atlanta for examples and stories.
+
+The framing is Jason’s: every transaction is a job to be done, including the unpaid ones and the ones that fail.
+
+The systems lens comes from Donald Martin Jr.’s idea of societal context: the social, cultural, historical, political, economic and environmental circumstances that surround and shape people, places and problems. Jason heard him speak at the Reimagining AI conference in 2025.
+
+The name nods to Robert and Helen Lynd’s *Middletown* (1929), the study of Muncie, Indiana that started a long line of “typical town” research. Unlike their Muncie, Medianville’s typicality comes from weighting, not from leaving groups out.
+
+The city was called Halvern until November 20, 2026. The first run as it shipped and the archived versions keep that name.
+
+## How it was made
+
+**Simulate, don’t write.** No one, human or model, can write 200,000 consistent records by hand: money wouldn’t reconcile, and people would be in two places at once. So code does it.
+
+- People, households, employers and bills are generated from a seed. The same seed and options reproduce the files byte for byte.
+- The day is settled minute by minute against each household’s money. Every action goes into one queue in time order, so a bill at 2 a.m. can decline a card at 5 p.m.
+- The first run was calibrated to published anchors and checked: money reconciles for every household, nobody exceeds 24 hours in a day, and every paycheck has its withholding.
+- Then 500 records were read and written by hand as a believability test. Reading them caught what the numeric checks passed, such as union dues paid to a charity and a 91-year-old schoolteacher.
+- The second version (v2) keeps the same people and sets its rates from real evidence: first a pass of real accounts read beside the first day, then 42 downloaded public datasets. Only strong evidence is allowed to move a rate, and the rates are checked against their targets across the year.
+- v2 runs 18 typed days that stand for 2027 (weekends, paydays, benefit days, holidays, tax season, a winter storm, a heat wave) beside the same Wednesday. Before it was frozen, two readers read 200 of its records, and 300 more of the baseline day were written by hand.
+
+The city on this site opens on v2’s Wednesday. The day menu holds the 18 other days and the first version of the Wednesday, for comparison. A whole month, March 2027, carried day to day so unpaid bills, shutoffs and loan rollovers chain across days, is a separate download the site doesn’t load.
+
+**What’s next.** A third version will draw households from Census microdata instead of building them by rule, so they come out at their real size and makeup.
+
+The longer account is in [how the first day was built](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-build-approach.md), the [first run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-2027-03-03-run-record.md), the [data update plan](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/03-grounding-in-evidence/medianville-data-update-plan.md) and the [v2 run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/05-more-time/medianville-v2-run-record.md).
+
+## Data sources
+
+The research came in four rounds. Real evidence enters Medianville only as numbers: rates, shares and calendars. No real person’s words or record appear in a record.
+
+### 1. Calibration anchors (the first run)
+
+The first run was calibrated to these:
+
+- [American Community Survey](https://www.census.gov/programs-surveys/acs) (Census Bureau): national shares of household types, income, tenure, language and more
+- [Current Employment Statistics](https://www.bls.gov/ces/) (BLS): the industry mix of jobs
+- [Diary of Consumer Payment Choice](https://www.atlantafed.org/research-and-data/surveys/survey-and-diary-of-consumer-payment-choice) (Federal Reserve): about 43 payments per adult a month, 14% of them in cash
+- [Survey of Household Economics and Decisionmaking](https://www.federalreserve.gov/consumerscommunities/shed.htm) (Federal Reserve): 63% of adults could cover a $400 emergency
+- [United For ALICE](https://www.unitedforalice.org/): about 4 in 10 households below the ALICE threshold
+- [Consumer Expenditure Survey](https://www.bls.gov/cex/) (BLS): the order of spending, housing first, then transportation, then food
+- 2027 program figures from [Social Security](https://www.ssa.gov/cola/), [SNAP](https://www.fns.usda.gov/snap) and [Medicare](https://www.medicare.gov/basics/costs/medicare-costs)
+
+The thinking behind the city is in the white paper, [Seeing the Margins](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/00-the-idea/seeing-the-margins.md), and the [city design](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/00-the-idea/synthetic-mid-america-city-design-v0.1.md).
+
+### 2. Real accounts beside the first day
+
+Next, 69 sources were read beside the first day’s records: government reports and data, surveys, investigative and local journalism, and advocacy, industry and think-tank positions from left and right. They gave 76 findings on fees, high-cost loans, shutoffs, benefit paperwork, buses, schedules, caregiving, home care and distance to care. The [evidence report](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/evidence/report.md) scores the first day against them and lists what it was missing, which became v2’s new jobs and the district circumstances in the systems lens. The [evidence folder](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/evidence) holds every source, finding and quote. The quotes stay there: none is given to a Medianville resident.
+
+### 3. Downloaded datasets that set v2’s rates
+
+Then 42 public datasets were downloaded, each logged in the [sources manifest](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sources/manifest.csv) with its publisher, vintage, files, checksums and terms:
+
+**Time and care**
+
+- [American Time Use Survey](https://www.bls.gov/tus/) (BLS): annual tables, the eldercare release and the 2003–2025 microdata, for caregiving hours and when in the day errands, care and shopping happen
+- [National Database of Childcare Prices](https://www.dol.gov/agencies/wb/topics/featured-childcare) (Department of Labor): weekly child care prices
+- [National Compensation Survey: Employee Benefits](https://www.bls.gov/ebs/) (BLS): paid sick leave by wage level
+
+**Money and payments**
+
+- [Survey and Diary of Consumer Payment Choice](https://www.atlantafed.org/research-and-data/surveys/survey-and-diary-of-consumer-payment-choice) (Federal Reserve Bank of Atlanta), 2025: cash use by income, age and rural areas
+- [Survey of Household Economics and Decisionmaking](https://www.federalreserve.gov/consumerscommunities/shed_data.htm) (Federal Reserve), 2025 microdata: bills unpaid and care skipped, on the same households
+- [Survey of Consumer Finances](https://www.federalreserve.gov/econres/scfindex.htm) (Federal Reserve), 2025: balances, debts and assets
+- [National Survey of Unbanked and Underbanked Households](https://www.fdic.gov/household-survey) (FDIC), 2023
+- [Consumer Expenditure Survey microdata](https://www.bls.gov/cex/pumd.htm) (BLS), 2025: what households buy, how often and for how much
+- [Bank call reports](https://cdr.ffiec.gov/public/PWS/DownloadBulkData.aspx) (FFIEC): overdraft and NSF revenue
+- [Household Debt and Credit Report](https://www.newyorkfed.org/microeconomics/hhdc) (Federal Reserve Bank of New York): delinquency by loan type
+
+**High-cost credit and fraud**
+
+- [Payday lending annual report](https://dfpi.ca.gov/publications/payday-lenders-publications) (California DFPI), 2025
+- [Credit Access Business reports](https://occc.texas.gov) (Texas OCCC), 2025: payday and title loans, refinances and repossessions
+- [Data Point: Payday Lending](https://www.consumerfinance.gov/data-research/research-reports/cfpb-data-points-payday-lending/) (CFPB): loan sequences and rollovers
+- [Title Pledge Report](https://www.tn.gov/tdfi.html) (Tennessee TDFI), 2026
+- [Consumer Sentinel Network Data Book](https://www.ftc.gov/data) (FTC), 2024, and the [Elder Fraud Report](https://www.ic3.gov/AnnualReport/Reports) (FBI IC3): how large losses run
+
+**Housing and utilities**
+
+- [American Housing Survey](https://www.census.gov/programs-surveys/ahs/data.html) (Census Bureau and HUD), 2023: owners’ housing costs by income
+- [Residential Energy Consumption Survey](https://www.eia.gov/consumption/residential/) (EIA), 2024: disconnect notices
+- [Utility disconnections](https://utilitydisconnections.org/): EIA’s 2024 utility-level data and report, with the Energy Justice Lab’s documentation
+- [Eviction Tracking System](https://evictionlab.org/eviction-tracking/) (Eviction Lab, Princeton)
+
+**Benefits, taxes and the calendar**
+
+- [Schedule of Social Security Benefit Payments 2027](https://www.ssa.gov/pubs/EN-05-10031-2027.pdf) (SSA) and [federal holidays 2027](https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/) (OPM)
+- SNAP issuance schedules from eight state agencies, and [SNAP Quality Control data](https://snapqcdata.net/) (USDA FNS), FY2024
+- [Medicaid renewal and work-reporting data](https://data.medicaid.gov/) (CMS and Georgia Pathways)
+- [Refund timing](https://www.irs.gov/refunds) and [Statistics of Income](https://www.irs.gov/statistics/soi-tax-stats-individual-statistical-tables-by-size-of-adjusted-gross-income) (IRS): when EITC refunds land and who uses a paid preparer
+
+**Work, places and getting around**
+
+- [Occupational Employment and Wage Statistics](https://www.bls.gov/oes/tables.htm) (BLS), May 2025
+- [County Business Patterns](https://www.census.gov/programs-surveys/cbp/data/datasets.html) (Census Bureau), 2023: how many of each kind of business
+- [National Agricultural Workers Survey](https://www.dol.gov/agencies/eta/national-agricultural-workers-survey/data) and [H-2A disclosure data](https://www.dol.gov/agencies/eta/foreign-labor/performance) (Department of Labor): farmworkers and guest workers
+- [National Transit Database](https://www.transit.dot.gov/ntd/ntd-data) (FTA), [Food Access Research Atlas](https://www.ers.usda.gov/data-products/food-access-research-atlas/) and [Rural-Urban Continuum Codes](https://www.ers.usda.gov/data-products/rural-urban-continuum-codes/) (USDA ERS)
+
+**Health, life events and weather**
+
+- [Medical Expenditure Panel Survey](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files.jsp) (AHRQ), 2024, and [dialysis facilities](https://data.cms.gov/provider-data/topics/dialysis-facilities) (CMS)
+- [Births, deaths, marriages and divorces](https://www.cdc.gov/nchs/nvss/marriage-divorce.htm) (CDC NCHS) and [migration data](https://www.irs.gov/statistics/soi-tax-stats-migration-data) (IRS)
+- [Storm Events Database](https://www.ncei.noaa.gov/stormevents/ftp.jsp) and [GHCN-Daily](https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily) for Atlanta’s airport (NOAA): how often storm and heat days come
+
+v2 is checked against them across the [typed-day year](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_phase5_typed_days_2027/evidence_checks.md) and the [March month](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/evidence/results/v2_month_2027-03/evidence_checks.md). Ten more are listed for later versions, among them the American Community Survey microdata, the National Household Travel Survey and the Survey of Income and Program Participation.
+
+### 4. History behind the systems lens
+
+Each district’s historical and built circumstances name their own sources: the Housing Act of 1949 and the Federal-Aid Highway Act of 1956; the University of Richmond’s [Mapping Inequality](https://dsl.richmond.edu/panorama/redlining/) and [Renewing Inequality](https://dsl.richmond.edu/panorama/renewal/); the EPA on heat islands and brownfields; BLS manufacturing employment; the American Housing Survey and American Community Survey; the USDA Census of Agriculture and farm real estate values; American Farmland Trust; the NCES Digest of Education Statistics; and the UNC Sheps Center’s rural hospital closures. The [design record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/04-the-refined-city/medianville-systems-lens.md) lists the figures that were checked and reworded.
+
+Households in both versions are built by rule to match national shares. They aren’t drawn from Census microdata yet; that’s planned for the third version.
+
+## What’s real and what isn’t
+
+- **Real:** national rates and program rules, and the names of federal programs and agencies, such as the IRS, Medicare, SNAP and the Postal Service. The jobs make no sense without them.
+- **Invented:** every person, household, business, local agency, church and street.
+- The blocks in the systems lens are composites of documented US patterns, such as redlining, branch closures and cut bus routes. They’re labelled as composites on screen. Each district also has circumstances that hold across the whole district, written from national figures and documented cases, with nothing local named.
+- No real quote or real person ever appears in a record. Real evidence enters only as numbers.
+
+## Limits
+
+v2 keeps the first run’s people so the two can be compared, and some of those households don’t hold up. The [close reading](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/05-more-time/medianville-v2-close-reading.md) lists them:
+
+- Some SSI goes to people whose income or spouse rules it out, and coverage doesn’t always follow eligibility.
+- Every renter with no income pays the same rent, and some refundable credits reach households earning well over the limit.
+- Wages run about 14% high on purpose, to make up for households that are smaller than real ones. Compare households, not occupations.
+- A few jobs are paired with unrelated employers, and a few trips run 60 to 80 miles.
+- Overdraft fees fall on fewer accounts than in life.
+- Each typed day is simulated on its own. Only the March month carries unpaid bills and loans from one day to the next.
+- Some 2027 figures, such as the Medicare Part B premium, are projections.
+- In the animated city, positions are approximate: the run’s six districts are drawn on a smaller model town.
+
+The third version, drawn from Census microdata, redraws the households.
+
+## Who made it
+
+**Jason James**
+
+The idea and where it came from, the jobs-to-be-done framing, the systems lens, and every design decision: the visual direction, the views, the sound and the structure.
+
+**Claude (Anthropic’s AI model)**
+
+Researched the anchors and the real evidence, logged the downloaded datasets, wrote both simulators and generated the days (Claude Fable 5.2 for the first run, Claude Opus 5.5 for v2), hand-wrote the 800 detailed records (500 in the first run, 300 in v2), and built the viewers, the systems lens and the explorer, working in Claude and Claude Code under Jason’s direction.
+
+Every design decision, and why, is in the [decision log](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/decisions.md).
+
+## Links
+
+- [For agents and LLMs](https://medianville.netlify.app/llms.txt) · what to read first, the data dictionary, every day’s summary and the downloads, as plain text
+- [The repository](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions) · code, data and documents
+- [README](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/README.md) · the views, how they work, and what Claude did
+- [Decision log](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/decisions.md)
+- [First run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-2027-03-03-run-record.md) · the first day’s calibration and checks
+- [v2 run record](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/05-more-time/medianville-v2-run-record.md) · the 19 published days, their weights and checks
+- [Data update plan](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/03-grounding-in-evidence/medianville-data-update-plan.md) · how the evidence moved each rate
+- [Evidence report](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/evidence/report.md) and [sources manifest](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sources/manifest.csv) · the real accounts and the downloaded datasets
+- [Close reading](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/05-more-time/medianville-v2-close-reading.md) · two readers on 200 records before v2 was frozen, and what was fixed
+- [How the first day was built](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-build-approach.md)
+- Earlier versions are kept in the [archive](https://medianville.netlify.app/archive/), and how the project was made is in [the story](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/story).
+
+Built by [Jason James](https://jasonjames.works) with [Claude](https://claude.ai) · [The city](https://medianville.netlify.app/) · [Data](https://medianville.netlify.app/explorer/) · [For agents](https://medianville.netlify.app/llms.txt)
+
+---
+
+<!-- https://medianville.netlify.app/agents/data-dictionary.md -->
+
+# Data dictionary
+
+Every column of the tables in a Medianville run, what each value means, and where that is written down. Columns nothing in the repository describes are marked *undocumented*: read their values, not a meaning. Counts are from the baseline day, `v2-2027-03-03` (202,402 records), unless a column says otherwise. Every table is synthetic: no row describes a real person, household, business or place.
+
+## The files in a run
+
+A run is one zip (download links in https://medianville.netlify.app/agents/runs.md). Inside a v2 zip, under `medianville_<date>/`:
+
+- `records.csv`: every record of the day, one job someone was trying to get done, in time order.
+- `households.csv`, `persons.csv`, `organizations.csv`: who is in the city.
+- `household_ledger.csv`: each household's opening and closing balances; the money reconciles.
+- `public_services_context.csv`, `assumptions.csv`, `summary.md`: what public services cost, every estimate and its source, and the day in figures.
+- `blocks.json`: the systems lens's mapped blocks (https://medianville.netlify.app/agents/districts.md).
+- `simulate.py`, `medianville_sim/`: the simulator. `SHA256SUMS`: the SHA-256 of every file.
+- The baseline day only: `detailed_overrides.csv` and `detailed_sample.csv`, the hand-written text and the hand-written records on their own.
+
+The v1 zip keeps its tables under `medianville/out/` and its 500 hand-written records in `detailed_sample_500.csv`. The carried month adds `links.csv` to each day (https://medianville.netlify.app/agents/month.md).
+
+## Units and formats
+
+- Money: US dollars, two decimals in records.csv and household_ledger.csv, whole dollars for `annual_income` and `monthly_housing_cost`. Dollar figures are 2027 dollars where the summary says so (the median household income).
+- Time: minutes (`time_minutes`, `wait_minutes`); `timestamp_local` is `YYYY-MM-DDTHH:MM:SS`, local to the city.
+- Distance: miles (`travel_miles`).
+- Lists inside a cell are separated by `;`. Empty means none.
+- Text is UTF-8 CSV with a header row.
+
+## Ids
+
+| Id | Format | Example | Table |
+|---|---|---|---|
+| Record | `R` + 7 digits | `R0000001` | records.csv (restarts in every run and every day) |
+| Household | `H` + 5 digits | `H05202` | households.csv |
+| Person | `P` + 6 digits | `P011429` | persons.csv |
+| Organization | `O` + 4 digits | `O1076` | organizations.csv (outside parties included) |
+| Run | `v<version>-<date>` | `v2-2027-03-03` | data/runs/manifest.json |
+| Block | a lowercase name | `larkin` | blocks.json `blocks[].id` |
+| Pattern | letters and a number, per block | `R3` | blocks.json `patterns[].id` (unique within a block, not across blocks) |
+| Circumstance | letters and a number, per block | `EC1`, `DH1` | blocks.json `contexts[].id`; the D… ids are the district tier |
+| Evidence | `E` + 3 digits | `E009` | evidence/evidence.csv on GitHub (third-party material) |
+
+## Districts
+
+Shares are the prompt's targets; the baseline day's are in its summary (30.5 / 19.7 / 21.6 / 14.3 / 7.9 / 6.0%). Each district has one mapped block in the systems lens.
+
+| Code | District | Share of residents | Character | Mapped block |
+|---|---|---|---|---|
+| D1 | Downtown and core neighborhoods | 31% | Dense, transit-served, renters, government offices, night shifts | Pelham Street (`pelham`) |
+| D2 | Inner suburbs | 20% | Older housing and apartments, immigrant gateways, airport and service jobs | Larkin Avenue (`larkin`) |
+| D3 | Outer suburbs | 22% | New-build subdivisions, car-dependent, big-box retail, long commutes | Fox Hollow (`foxhollow`) |
+| D4 | Satellite city | 13% | Historic downtown, regional hospital, county seat, mixed old and new industry | Mill Street, Ashford Mills (`ashford`) |
+| D5 | Rural town | 8% | County seat of a few thousand, dollar stores, thin services, long drives | Main Street, Dunmore (`dunmore`) |
+| D6 | Open country | 6% | Farms, scattered homes, well water, distance to everything | Route 9 Crossroads (`crossroads`) |
+
+Every published run, v1 included, has exactly these columns in each table.
+
+## records.csv
+
+202,402 rows on the baseline day, 34 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `record_id` | One row per transaction, encounter or job attempt. `R` and 7 digits; the table is in time order. Ids start again at R0000001 in every run (and every day of the month), so name a record by its run and id. | prompt, day README, month record |
+| `timestamp_local` | When the record started (the explorer's "Started"), as `YYYY-MM-DDTHH:MM:SS` on the simulated date. The engine keeps every record inside the day's 1,440 minutes. | explorer, engine.py |
+| `record_type` | One of 12 kinds (values below). The prompt lists them without defining each. | prompt |
+| `job_category` | `category.kind`, for example `food.grocery_snap_purchase`. 383 distinct on the v2 baseline day (367 in v1). Categories below. | v1 README, summary |
+| `job_statement` | "When [situation], I want to [motivation], so I can [outcome]." Written from the actor's point of view, in plain words. Templated, except the hand-written records. | prompt, v1 README |
+| `actor_person_id` | A person id (`P…`). The prompt writes `job_statement` from the actor's point of view; no fuller definition is written down. | v1 README, prompt |
+| `household_id` | A household id (`H…`), as in households.csv. Otherwise undocumented. | v1 README |
+| `from_party_id` | The party the record goes from: `P…` people, `H…` households, `O…` organizations, including outside parties such as the Treasury, card networks and "Customers (general public)". The viewer draws each record as an arc from one party to the other. | v1 README, README |
+| `to_party_id` | The party the record goes to; ids as in `from_party_id`. | v1 README, README |
+| `beneficiary_person_id` | A person id. The record-reading tool labels it "For" when it differs from the actor. Otherwise undocumented. | sample_records.py |
+| `district` | District code, D1 to D6 (table below). | prompt |
+| `channel` | in_person, online, app, phone, mail or automatic. | prompt |
+| `payment_method` | cash, debit, credit, prepaid, ebt_snap, ebt_cash, wic, check, ach, p2p_app, bnpl, money_order, paycard, payroll_deduction, insurance or none. | prompt |
+| `amount_gross` | The face amount, in dollars: the price including sales tax and before fees; for a transfer the amount moved; for a prescription the cash price; for a public service the full cost of providing it. | v1 README |
+| `amount_paid_by_user` | What left the person's pocket, fees included (often 0). | v1 README, prompt |
+| `amount_paid_by_third_party` | What an insurer, program or agency paid. | v1 README |
+| `third_party_payer` | Names who paid `amount_paid_by_third_party`: the program, insurer or agency. | v1 README, prompt |
+| `funding_level` | federal, state, local, mixed, private or philanthropic. | prompt |
+| `imputed_public_cost` | The full cost of a public service whether or not anyone was charged; the estimates are in assumptions.csv. | v1 README, prompt |
+| `sales_tax` | Included in `amount_gross`, at 7% on taxable goods (groceries and prescriptions exempt). | v1 README, config.py |
+| `fee_type` | The kind of fee, such as `overdraft_fee` or `late_fee`; `+` joins two (`late_fee+postage`). | text.py |
+| `fee_amount` | The fee in dollars. Fees include overdraft, late, ATM, check-cashing, money-order, convenience, delivery, card-interest and loan finance charges. A fee above 0 adds the `fee` friction tag. | summary, engine.py |
+| `time_minutes` | Time spent, in minutes (the explorer's "Time spent"). It counts the wait but not the travel. | explorer, README, engine.py |
+| `wait_minutes` | Waiting, in minutes (the explorer's "Waiting"). A wait of 20 minutes or more adds the `wait` friction tag. | explorer, engine.py |
+| `travel_miles` | Travel, in miles. Distances come from a district-to-district table, so some single trips look long for the errand. 24 miles or more adds the `distance` friction tag. | explorer, v1 README, engine.py |
+| `travel_mode` | The explorer's "Travel mode". Otherwise undocumented (values below). | explorer |
+| `outcome` | completed, partial, declined, abandoned, rescheduled or failed. A record "didn't work" when it is a `failed_attempt` or ended declined, abandoned, failed or rescheduled; partial counts as worked. | prompt, README |
+| `friction_tags` | What got in the way, `;`-separated, from the 22 tags below; empty for none. The engine adds `fee`, `wait` and `distance` by rule (above). | prompt, engine.py |
+| `lens_tags` | Which perspective would flag this record, `;`-separated (values below). Not the systems lens: that is `block_id`, `block_pattern` and `context_ids`. | prompt, README |
+| `related_record_id` | Links records: every paycheck has linked rows for income tax withholding and FICA; a Social Security deposit shows the gross benefit and the Part B premium is a linked row; a retry points to the attempt that failed. | v1 README |
+| `narrative` | One short sentence of context. Hand-written narratives start with `[detailed]` (300 on the v2 baseline day, 500 in v1). | prompt, day README |
+| `block_id` | The block whose household made the record, or empty. | blocks.py |
+| `block_pattern` | The first pattern in that block the record matches, or empty. | blocks.py |
+| `context_ids` | The circumstances that pattern links to, separated by `;`. | blocks.py |
+
+**`record_type` values:** `purchase` 79,168, `public_service_encounter` 40,071, `bill_payment` 30,738, `non_monetary_job` 13,234, `transfer` 8,553, `income` 6,601, `tax` 5,554, `insurance_claim` 5,502, `failed_attempt` 5,009, `benefit_issuance` 3,607, `b2b` 3,140, `benefit_redemption` 1,225.
+
+**`outcome` values:** `completed` 194,366, `partial` 2,064, `failed` 2,018, `declined` 1,851, `abandoned` 1,585, `rescheduled` 518.
+
+**`friction_tags` values:** (empty) 171,135, `fee` 10,096, `distance` 6,492, `wait` 3,924, `insufficient_funds` 3,615, `no_transit` 2,309, `caregiving_conflict` 2,076, `other` 1,478, `schedule_volatility` 723, `digital_barrier` 691, `price_spike` 535, `out_of_stock` 463, `pending_hold` 421, `scam_attempt` 390, `disability_access` 357, `repeat_trip` 322, `paperwork` 264, `hours_mismatch` 205, `outage` 119, `language` 116, `missing_document` 60, `eligibility_confusion` 22, `benefits_cliff` 8.
+
+**`lens_tags` values:** (empty) 77,861, `public_finance` 57,585, `consumer_finance` 21,952, `aging` 20,690, `land_use` 17,484, `education` 16,915, `labor` 16,774, `disability` 16,071, `family_care` 14,601, `rural` 12,038, `health_cost` 9,399, `housing` 6,531, `small_business` 3,675, `digital_access` 3,058, `farmworker` 440.
+
+**`channel` values:** `in_person` 135,370, `automatic` 40,739, `online` 13,903, `app` 8,795, `phone` 2,282, `mail` 1,313.
+
+**`payment_method` values:** `none` 48,673, `credit` 41,713, `debit` 40,696, `ach` 22,690, `cash` 18,441, `prepaid` 11,429, `payroll_deduction` 7,415, `p2p_app` 3,944, `insurance` 2,938, `check` 2,581, `ebt_snap` 1,426, `wic` 181, `ebt_cash` 114, `paycard` 69, `money_order` 57, `bnpl` 35.
+
+**`funding_level` values:** (empty) 149,025, `mixed` 30,004, `federal` 18,650, `private` 2,503, `local` 1,035, `state` 704, `philanthropic` 481.
+
+**`travel_mode` values:** (empty) 97,970, `car` 77,804, `transit` 12,281, `school_bus` 7,285, `walk` 3,890, `ride_from_family_or_friend` 2,762, `bike` 154, `carpool` 131, `ambulance` 80, `paratransit` 45.
+
+**`job_category` categories (the part before the dot):** `food` 61,737, `discretionary` 27,048, `transportation` 22,505, `children_education` 16,912, `income` 14,863, `health` 13,775, `money_services` 11,707, `care_and_household` 10,716, `utilities` 7,232, `housing` 6,461, `business` 4,008, `giving_faith` 2,070, `work` 1,611, `civic_legal` 932, `public_services` 825.
+
+**`district` values:** `D1` 65,849, `D2` 40,920, `D3` 40,592, `D4` 28,792, `D5` 15,344, `D6` 10,905.
+
+**`block_id` values:** (empty) 187,742, `foxhollow` 3,625, `pelham` 2,964, `larkin` 2,437, `crossroads` 2,295, `dunmore` 1,844, `ashford` 1,495.
+
+## households.csv
+
+43,499 rows on the baseline day, 16 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `household_id` | `H` and 5 digits. | v1 README |
+| `district` | D1 to D6. | prompt |
+| `weight` | 1 for the full city and larger when you run a sample (written as 1 ÷ the run's scale). Every published run is the full city. | v1 README, output.py |
+| `household_type` | Values below. People in nursing homes, the jail, dorms, shelters and group homes are one-person units with a type starting `group_quarters:`. The other codes are not defined one by one. | v1 README |
+| `size` | The number of members. | output.py |
+| `annual_income` | The household's annual income, rounded to the dollar; the summary gives its median in 2027 dollars. | output.py, summary |
+| `income_source_mix` | Each source's share of income, `source:share` separated by `;`, largest first, sources under 0.5% left out; `none` with no income. Sources: wages, self_employment, social_security, ssi, pension, investments_and_retirement_draws, unemployment_insurance, va_compensation, child_support, tanf. | output.py |
+| `alice_status` | poverty, alice or above. Below United For ALICE's survival-budget threshold means in poverty or employed but unable to afford basics. | prompt |
+| `banked_status` | banked, underbanked or unbanked. | prompt |
+| `housing_tenure` | undocumented (values below). | — |
+| `monthly_housing_cost` | undocumented; whole dollars. | output.py |
+| `vehicles` | undocumented; a count (values below). | — |
+| `internet_at_home` | yes, no or mobile_only. | prompt |
+| `primary_language` | undocumented (values below). | — |
+| `notes` | Free text, often empty; households with SNAP carry `snap_monthly=<n>`. | output.py |
+| `block_id` | The mapped block the household lives on, or empty. | v1 README |
+
+**`household_type` values:** `alone` 11,382, `married_nokids` 10,635, `married_kids` 6,850, `adult_child` 3,488, `single_parent` 2,938, `roommates` 2,515, `multigen` 2,119, `group_quarters:college_dorm` 1,100, `cohab_kids` 1,030, `other_family` 443, `group_quarters:nursing_home` 370, `group_quarters:jail` 240, `group_quarters:group_home` 110, `group_quarters:shelter` 100, `group_quarters:assisted_living` 80, `group_quarters:residential_treatment` 50, `group_quarters:h2a_worker_housing` 49.
+
+**`housing_tenure` values:** `owner_with_mortgage` 16,034, `renter` 14,589, `owner_free_and_clear` 10,777, `group_quarters` 2,099.
+
+**`alice_status` values:** `above` 24,646, `alice` 13,572, `poverty` 5,281.
+
+**`banked_status` values:** `banked` 35,970, `underbanked` 5,400, `unbanked` 2,129.
+
+**`internet_at_home` values:** `yes` 35,632, `mobile_only` 4,676, `no` 3,191.
+
+**`vehicles` values:** `1` 17,491, `2` 13,476, `0` 6,125, `3` 5,238, `4` 1,147, `5` 22.
+
+**`primary_language` values:** `English` 36,306, `Spanish` 4,179, `Korean` 238, `Nepali` 234, `Hindi` 233, `Chinese` 227, `Tagalog` 226, `Vietnamese` 225, `Gujarati` 217, `Arabic` 170, `Russian` 161, `Portuguese` 147, `Polish` 146, `Bosnian` 138, `Ukrainian` 130, `Somali` 98, `French` 97, `Amharic` 85, `Haitian Creole` 73, `Swahili` 72, `Marshallese` 50, `Karen` 47.
+
+## persons.csv
+
+99,743 rows on the baseline day, 19 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `person_id` | `P` and 6 digits. | v1 README |
+| `household_id` | The person's household. | output.py |
+| `age` | undocumented. | — |
+| `birth_cohort` | The generation and birth year, for example `millennial_1987`. Generations by birth year: gen_alpha 2013 on, gen_z 1997, millennial 1981, gen_x 1965, baby_boomer 1946, silent 1928, greatest before. | v1 README, config.py |
+| `sex` | undocumented (F or M). | — |
+| `race_ethnicity` | undocumented (values below). | — |
+| `relationship_to_head` | undocumented (values below). | — |
+| `education` | undocumented (values below; `not_applicable` when none is set). | output.py |
+| `disability` | none, or the type (values below). | prompt |
+| `health_coverage` | undocumented (values below). | — |
+| `employment_status` | undocumented (values below). | — |
+| `occupation` | undocumented; free text, such as `line cook`. | — |
+| `employer_org_id` | The employer's organization id, or empty. | output.py |
+| `industry_sector` | The employer's sector: one of the 21 sectors of the prompt's economy table, or empty when none is set. | prompt |
+| `union_member` | yes or no. | prompt |
+| `work_schedule` | fixed, variable, night or none. | prompt |
+| `pay_cadence` | weekly, biweekly, semimonthly, monthly, irregular or none. | prompt |
+| `caregiver_for` | The person ids this person cares for, `;`-separated, or none. | prompt, output.py |
+| `benefits_received` | `;`-separated, or none. Social Security and SSDI carry their pay day: `(pay:3rd)` for long-time beneficiaries, people who also get SSI and people whose Medicare premium the state pays; otherwise `(pay:wed2)`, `(pay:wed3)` or `(pay:wed4)`, the second, third or fourth Wednesday, by birthday (1st to 10th, 11th to 20th, 21st on). SSI and VA compensation `(pay:1st)`; SNAP `(issue_day:N)`, the day of the month it is loaded. | output.py, population.py, summary |
+
+**`sex` values:** `F` 51,108, `M` 48,635.
+
+**`race_ethnicity` values:** `white_non_hispanic` 55,989, `hispanic` 18,560, `black_non_hispanic` 12,618, `asian_non_hispanic` 6,669, `multiracial_or_other` 5,339, `american_indian_alaska_native` 568.
+
+**`relationship_to_head` values:** `head` 41,400, `spouse` 21,173, `child` 20,693, `adult_child` 6,084, `unmarried_partner` 2,144, `resident` 2,099, `roommate` 2,074, `grandchild` 2,045, `parent` 1,211, `child_in_law` 444, `sibling` 251, `other_relative` 125.
+
+**`education` values:** `not_applicable` 22,738, `high_school` 19,294, `some_college` 16,696, `bachelor` 16,100, `graduate` 10,383, `less_than_high_school` 7,998, `associate` 6,534.
+
+**`disability` values:** `none` 85,629, `ambulatory` 3,842, `cognitive` 3,400, `hearing` 1,991, `independent_living` 1,594, `multiple` 1,442, `vision` 1,074, `self_care` 771.
+
+**`health_coverage` values:** `employer` 46,064, `medicaid` 13,782, `uninsured` 10,055, `medicare_advantage` 8,627, `medicare` 7,472, `marketplace` 6,995, `other_private` 3,814, `medicare_medicaid_dual` 2,356, `va` 468, `military` 110.
+
+**`employment_status` values:** `employed_full_time` 36,619, `child` 20,913, `retired` 16,428, `not_in_labor_force` 9,275, `employed_part_time` 8,418, `student` 3,298, `self_employed` 2,740, `unemployed` 2,052.
+
+**`work_schedule` values:** `none` 51,966, `fixed` 33,516, `variable` 11,754, `night` 2,507.
+
+**`pay_cadence` values:** `none` 51,966, `biweekly` 23,126, `weekly` 10,707, `semimonthly` 7,553, `monthly` 3,651, `irregular` 2,740.
+
+## organizations.csv
+
+1,820 rows on the baseline day, 9 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `org_id` | `O` and 4 digits; outside parties included. | v1 README |
+| `name` | Invented, like every business and local agency; federal programs and agencies keep their real names. | day README, v1 README |
+| `org_type` | business, nonprofit, government, religious or financial. | prompt |
+| `sector` | The sector (values below). | prompt |
+| `district` | D1 to D6, or `outside` for parties outside the city. | output.py |
+| `size_employees` | undocumented; empty for outside parties. | output.py |
+| `accepts` | The payment methods it takes, `;`-separated. | prompt |
+| `hours` | undocumented; `HH:MM-HH:MM`. | — |
+| `notes` | Free text; employers in the city carry `medianville_residents_on_staff=<n>`. | output.py |
+
+**`org_type` values:** `business` 1,486, `religious` 120, `government` 97, `financial` 68, `nonprofit` 49.
+
+**`district` values:** `D1` 489, `D3` 410, `D2` 360, `D4` 278, `D5` 142, `outside` 79, `D6` 62.
+
+**`sector` values:** `Other services (repair, salons, religious organizations)` 337, `Accommodation and food services` 278, `Retail trade` 250, `Health care and social assistance` 223, `Construction` 148, `Professional, scientific and technical services` 123, `Finance and insurance` 111, `State and local government (including public schools)` 75, `Administrative and support services` 44, `Wholesale trade` 37, `Real estate` 34, `Manufacturing` 30, `Transportation and warehousing` 24, `Arts, entertainment and recreation` 23, `Private educational services` 21, `Federal government` 19, `Information` 19, `Agriculture, forestry and fishing` 11, `Many parties (not one organization)` 5, `Management of companies` 4, `Utilities and mining` 4.
+
+## household_ledger.csv
+
+43,499 rows on the baseline day, 20 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `household_id` | The household. | output.py |
+| `wallets` | The number of the household's wallets. Otherwise undocumented. | output.py |
+| `open_checking` | Checking at the start of the day, in dollars, summed over the household's wallets; the same for each `open_` and `close_` column. | output.py |
+| `open_cash` | Cash at the start of the day. | output.py |
+| `open_prepaid` | Prepaid cards at the start of the day. | output.py |
+| `open_savings` | Savings at the start of the day. | output.py |
+| `open_card_debt` | Credit card balance owed at the start of the day. | output.py |
+| `inflows` | Money in during the day. | output.py |
+| `outflows` | Money out during the day. | output.py |
+| `close_checking` | Checking at the end of the day. | output.py |
+| `close_cash` | Cash at the end of the day. | output.py |
+| `close_prepaid` | Prepaid cards at the end of the day. | output.py |
+| `close_savings` | Savings at the end of the day. | output.py |
+| `close_card_debt` | Credit card balance owed at the end of the day. | output.py |
+| `open_net` | checking + cash + prepaid + savings − card debt, at the start of the day. | output.py |
+| `close_net` | The same at the end of the day. | output.py |
+| `reconciles` | yes when `open_net + inflows − outflows` equals `close_net` to within 6 cents. "The money reconciles." | output.py, day README |
+| `snap_open` | The SNAP balance at the start of the day. | output.py |
+| `snap_close` | The SNAP balance at the end of the day. | output.py |
+| `could_cover_400_emergency` | yes or no. The SHED anchor: 63% of adults would cover a $400 emergency with cash or its equivalent; the run solves a liquid-funds threshold ($4,263 on the baseline day) or $400 free on a card paid in full. | output.py, summary |
+
+## public_services_context.csv
+
+47 rows on the baseline day, 5 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `agency_or_service` | One row per agency or service, with its approximate daily operating cost and main funding source, so analysts can see the full public budget behind the day. | prompt |
+| `level` | federal, state or local. | prompt |
+| `daily_operating_cost_estimate` | The approximate daily operating cost, in dollars. | prompt |
+| `main_funding_source` | The main funding source; free text. | prompt |
+| `notes` | undocumented; free text. | — |
+
+## assumptions.csv
+
+64 rows on the baseline day, 4 columns.
+
+| Column | Meaning | Source |
+|---|---|---|
+| `assumption` | Every estimate, its value, a one-line rationale, and whether it is an anchor or an estimate. | v1 README |
+| `value` | The value. | prompt |
+| `rationale` | A one-line rationale. | v1 README |
+| `source_or_estimate` | Whether it is an anchor or an estimate, and its source. | v1 README, prompt |
+
+## Sources
+
+- **prompt**: the generator prompt the first run was made from, https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-transaction-generator-prompt.md ("Output files")
+- **v1 README**: the README.md inside the v1 zip, https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/medianville_2027-03-03.zip ("Reading records.csv")
+- **day README**: the README.md inside each v2 zip ("Files"); see https://medianville.netlify.app/agents/runs/v2-2027-03-03.md
+- **summary**: the run's summary.md; the baseline day's is in https://medianville.netlify.app/agents/runs/v2-2027-03-03.md
+- **README**: the project README, https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/README.md
+- **explorer**: the label the data explorer gives the column, https://medianville.netlify.app/explorer/
+- **output.py**: the code that writes the tables, https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/medianville_sim/output.py
+- **engine.py**: the code that writes each record, https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/medianville_sim/engine.py
+- **blocks.py**: the code that tags records with the systems lens's blocks, https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/medianville_sim/blocks.py
+- **population.py**: https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/medianville_sim/population.py
+- **config.py**: https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/medianville_sim/config.py
+- **text.py**: https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/sim/medianville_sim/text.py
+- **sample_records.py**: the tool that prints records as cards for reading, https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/tools/sample_records.py
+- **month record**: https://medianville.netlify.app/agents/month.md
+
+---
+
+<!-- https://medianville.netlify.app/agents/runs.md -->
+
+# Runs
+
+Every published run of Medianville: v1, the first baseline day, and v2, the baseline day and the 18 typed days that stand for 2027 (their weights add up to the 365 days of the year). Each is one simulated day of the whole city; nothing carries from one day to the next except in the March month (https://medianville.netlify.app/agents/month.md), a separate download.
+
+The site opens `v2-2027-03-03` by default; `?run=<id>` opens another, as in https://medianville.netlify.app/?run=v2-2027-07-22. Downloads are from GitHub, not this site; the manifest (https://medianville.netlify.app/data/runs/manifest.json) has each file's size and SHA-256.
+
+| Run | Date | Kind of day | Weather | Weight (days of 2027) | Records | Hand-written records | Size | Summary | Download |
+|---|---|---|---|---|---|---|---|---|---|
+| `v1-2027-03-03` | 2027-03-03 | baseline | ordinary | not weighted | 201,753 | 500 | 16.2 MB | [summary](https://medianville.netlify.app/agents/runs/v1-2027-03-03.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/medianville_2027-03-03.zip) |
+| `v2-2027-03-03` | 2027-03-03 | the baseline day | ordinary | not weighted | 202,402 | 300 | 16.3 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-03-03.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-03.zip) |
+| `v2-2027-07-05` | 2027-07-05 | major holiday | ordinary | 7.00 | 119,115 | 0 | 11.9 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-07-05.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-07-05.zip) |
+| `v2-2027-10-11` | 2027-10-11 | minor holiday | ordinary | 5.00 | 155,296 | 0 | 13.3 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-11.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-11.zip) |
+| `v2-2027-10-09` | 2027-10-09 | Saturday | ordinary | 52.00 | 126,424 | 0 | 12.1 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-09.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-09.zip) |
+| `v2-2027-10-10` | 2027-10-10 | Sunday | ordinary | 52.00 | 139,027 | 0 | 12.8 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-10.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-10.zip) |
+| `v2-2027-03-02` | 2027-03-02 | EITC refund wave | ordinary | 6.00 | 177,973 | 0 | 14.6 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-03-02.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-02.zip) |
+| `v2-2027-09-01` | 2027-09-01 | SSI day | ordinary | 11.00 | 240,834 | 0 | 18.0 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-09-01.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-09-01.zip) |
+| `v2-2027-11-03` | 2027-11-03 | Social Security on the 3rd | ordinary | 9.00 | 199,890 | 0 | 16.0 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-11-03.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-11-03.zip) |
+| `v2-2027-10-13` | 2027-10-13 | Social Security Wednesday | ordinary | 12.00 | 200,446 | 0 | 15.7 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-13.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-13.zip) |
+| `v2-2027-10-20` | 2027-10-20 | Social Security Wednesday | ordinary | 12.00 | 206,185 | 0 | 16.0 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-20.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-20.zip) |
+| `v2-2027-10-27` | 2027-10-27 | Social Security Wednesday | ordinary | 12.00 | 199,261 | 0 | 15.6 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-27.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-27.zip) |
+| `v2-2027-10-08` | 2027-10-08 | Friday payday | ordinary | 20.00 | 248,940 | 0 | 17.7 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-08.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-08.zip) |
+| `v2-2027-10-15` | 2027-10-15 | Friday payday | ordinary | 20.00 | 271,920 | 0 | 18.6 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-15.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-15.zip) |
+| `v2-2027-03-16` | 2027-03-16 | tax-season weekday | ordinary | 34.00 | 182,037 | 0 | 14.7 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-03-16.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-16.zip) |
+| `v2-2027-10-05` | 2027-10-05 | early-month weekday | ordinary | 31.79 | 184,121 | 0 | 15.0 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-05.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-05.zip) |
+| `v2-2027-10-14` | 2027-10-14 | mid-month weekday | ordinary | 32.79 | 188,685 | 0 | 15.1 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-14.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-14.zip) |
+| `v2-2027-10-26` | 2027-10-26 | late-month weekday | ordinary | 38.79 | 171,600 | 0 | 14.1 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-10-26.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-10-26.zip) |
+| `v2-2027-01-19` | 2027-01-19 | storm day | storm | 1.36 | 137,751 | 0 | 12.5 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-01-19.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-01-19.zip) |
+| `v2-2027-07-22` | 2027-07-22 | heat day | heat | 8.27 | 144,756 | 0 | 13.2 MB | [summary](https://medianville.netlify.app/agents/runs/v2-2027-07-22.md) | [zip](https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-07-22.zip) |
+
+Simulator: dd0e6b6 (hand-written text: 55aa238). Each zip holds the day's tables, its `summary.md`, the systems lens's `blocks.json` and the simulator that made it; the data dictionary is https://medianville.netlify.app/agents/data-dictionary.md.
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts.md -->
+
+# Districts and circumstances
+
+**Composite.** Every block, circumstance and loop here is a composite of documented US patterns on an invented block, not a real place. The district tier's figures are national or from documented cases and say so, and nothing local is named. The file's own note: "Composite circumstances on invented blocks, drawn from documented US patterns. Loops are hypotheses. The simulator reads 'select' and each pattern's 'match' to tag records; the lens reads everything else."
+
+Rendered from https://medianville.netlify.app/systems-lens/blocks.json (version 1), the file the systems lens (https://medianville.netlify.app/systems-lens/) draws and the simulator tags records from. Layers run from the fastest-changing to the slowest: Economic, Political, Built & natural, Social & cultural, Historical. Evidence ids (E…) are findings in the evidence folder on GitHub (https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/evidence/evidence.csv), third-party material that is not under this project's license. No what-if scenarios are modeled yet: a loop is a hypothesis, not a model result.
+
+| District | Name | Mapped block | Circumstances | Patterns | Loops |
+|---|---|---|---|---|---|
+| D1 | Downtown and core neighborhoods | Pelham Street (`pelham`) | 15 (5 district-wide) | 8 | R1, B1, D1 |
+| D2 | Inner suburbs | Larkin Avenue (`larkin`) | 18 (6 district-wide) | 9 | R1, R2, R3, B1, D1 |
+| D3 | Outer suburbs | Fox Hollow (`foxhollow`) | 13 (5 district-wide) | 8 | R1, B1, D1 |
+| D4 | Satellite city | Mill Street, Ashford Mills (`ashford`) | 14 (6 district-wide) | 7 | R1, R2, D1 |
+| D5 | Rural town | Main Street, Dunmore (`dunmore`) | 14 (6 district-wide) | 7 | R1, B1, D1 |
+| D6 | Open country | Route 9 Crossroads (`crossroads`) | 14 (6 district-wide) | 7 | R1, B1, D1 |
+
+One page per district, to keep each under about 8,000 tokens:
+
+- D1 Downtown and core neighborhoods, Pelham Street: https://medianville.netlify.app/agents/districts/pelham.md
+- D2 Inner suburbs, Larkin Avenue: https://medianville.netlify.app/agents/districts/larkin.md
+- D3 Outer suburbs, Fox Hollow: https://medianville.netlify.app/agents/districts/foxhollow.md
+- D4 Satellite city, Mill Street, Ashford Mills: https://medianville.netlify.app/agents/districts/ashford.md
+- D5 Rural town, Main Street, Dunmore: https://medianville.netlify.app/agents/districts/dunmore.md
+- D6 Open country, Route 9 Crossroads: https://medianville.netlify.app/agents/districts/crossroads.md
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts/pelham.md -->
+
+# D1 Downtown and core neighborhoods: Pelham Street
+
+**Composite**: an invented block drawn from documented US patterns, not a real place. Part of https://medianville.netlify.app/agents/districts.md, which explains the layers and the ids.
+
+Block id `pelham`, on Pelham St. Rowhouses cleared for a civic center in 1962, rooming hotels torn down in the 1980s, and rents climbing as the towers fill.
+
+The simulator puts 520 of the district's households on this block (`block_id = pelham` in households.csv and records.csv).
+
+## Across the whole district (the district tier)
+
+**Economic** (changes over years)
+
+- **DW1** · 2025 · Fees fall on thin balances. Across downtown, short balances cost money. Nationally an out-of-network ATM withdrawal averages $4.86 and an overdraft about $27, and about 9% of accounts pay 79% of all overdraft and returned-payment fees.
+  - Types: economic. Evidence: E009, E011.
+- **DW3** · 2024 · Schedules with little notice. Downtown jobs are mostly hourly service work. Nationally about two-thirds of service workers get their schedules with less than two weeks' notice, and 11% had a shift cancelled in the past month.
+  - Types: economic, social. Evidence: E040, E046.
+
+**Political** (changes over decades)
+
+- **DW2** · 2025 · Buses that don't come. Downtown riders depend on buses that run late or not at all. Where a route cancels 5% of trips, a five-day commuter meets a no-show bus about once every two weeks. In one large rider survey, 77% said bus problems made them miss something important in the past month.
+  - Types: political, environmental. Rests on: DE1, Pavement holds the heat. Evidence: E041, E043.
+
+**Built & natural** (changes over generations)
+
+- **DE1** · ongoing · Pavement holds the heat. Downtown is mostly pavement and roofs with few trees. The EPA estimates the heat island effect makes daytime temperatures in urban areas about 1 to 7°F higher than in outlying areas, which raises cooling bills and makes waiting at a bus stop harder.
+  - Types: environmental. Rests on: DH1, Renewal and highways through downtown. Source: US EPA, Heat Island Effect (Learn About Heat Islands).
+
+**Historical** (bedrock, lasts a century)
+
+- **DH1** · 1949–1974 · Renewal and highways through downtown. From the Housing Act of 1949 to the program's end in 1974, federal urban renewal cleared older downtown blocks across the country, and the 1956 interstate program routed highways through many of them. Cheap housing near downtown jobs was among what was lost.
+  - Types: historical, political. Source: Housing Act of 1949, Title I; Federal-Aid Highway Act of 1956; University of Richmond, Renewing Inequality.
+
+## On Pelham Street itself
+
+**Economic** (changes over years)
+
+- **EC1** · since 2018 · Rents up 40 percent as offices become lofts. Empty office floors are being converted to apartments that rent at the top of the market, and older walk-ups have raised rents to match. Wages for the jobs downtown have not kept pace, so rent takes more than half of many paychecks.
+  - Types: economic. Rests on: H2, The rooming hotels come down.
+- **EC2** · 2014 · A plasma center in the old department store. The plasma center pays about $40 a visit, more for new donors, up to twice a week. For people between paychecks it is the fastest legal cash downtown.
+  - Types: economic.
+
+**Political** (changes over decades)
+
+- **P1** · 2021 · Night buses end at 11 p.m.. After ridership fell in 2020 the transit agency ended most routes at 11 p.m. Late shifts in hospitals, restaurants and warehouses still end after midnight, so the trip home is a ride-hail or a long walk.
+  - Types: political.
+- **P2** · state law · Landlord law: late fees and fast evictions. State law lets landlords charge a late fee of 10 percent of the rent after five days and file for eviction ten days after a missed payment. A short month becomes a fee, then a court date.
+  - Types: political.
+
+**Built & natural** (changes over generations)
+
+- **E1** · pre-1950 · Walk-ups with no laundry hookups. Most of the older apartments were built without washer hookups, and landlords have not added them. Laundry means a trip to the laundromat with quarters or a card, several times a week for a family.
+  - Types: environmental, economic.
+- **E2** · 1964 · Parking where the homes stood. Much of the cleared land became surface lots and a five-level garage for county workers. Residents without a car pay the same meter rates as commuters for a short stop.
+  - Types: environmental, political. Rests on: H1, Urban renewal clears the Pelham rowhouses.
+
+**Social & cultural** (changes over generations)
+
+- **S1** · 1988 on · Services clustered downtown. The shelter, a free clinic and two meal programs sit within two blocks of each other on Pelham, because other neighborhoods objected to them. People who need them stay close, and their days are organized around intake hours.
+  - Types: social, political. Rests on: H2, The rooming hotels come down.
+- **S2** · today · Doubling up. To keep up with rent, many households here are two or three earners on one lease: roommates, adult children, cousins. Each owes a share to whoever holds the lease, often by app the night before rent is due.
+  - Types: social, economic. Rests on: EC1, Rents up 40 percent as offices become lofts.
+
+**Historical** (bedrock, lasts a century)
+
+- **H1** · 1962 · Urban renewal clears the Pelham rowhouses. A federal urban renewal grant paid the city to clear eleven blocks of rowhouses west of the courthouse for a civic center and parking. About 900 households were moved, most of them renters, and few were offered a place to come back to.
+  - Types: historical, political. Rests on: DH1, Renewal and highways through downtown.
+- **H2** · 1979–86 · The rooming hotels come down. Downtown had four single-room hotels where a worker could rent by the week without a deposit. They were demolished for office towers in the 1980s, and nothing that cheap replaced them. The shelter on Pelham opened in 1988.
+  - Types: historical, economic.
+
+## Patterns: the records the block's circumstances shape
+
+A record from the block's households that matches a pattern (the first that matches, in this order; the rules are regular expressions) carries its id in `block_pattern` and the circumstances it links to in `context_ids`. Pattern ids and loop ids are separate: pattern R1 is not loop R1.
+
+- **A1** Missed buses (fail): links P1; tagged when job_category matches `missed_bus`.
+- **A2** Late-night rides (purchase): links P1; tagged when job_category matches `ride_hail_trip`.
+- **A3** Rent short (fail): links EC1, P2; tagged when job_category matches `^housing\.rent$` and outcome matches `^(declined|failed|partial|abandoned|rescheduled)$`.
+- **A4** Shares of the rent (bill): links S2, EC1; tagged when job_category matches `roommate_rent_share`.
+- **A5** Laundromat (purchase): links E1; tagged when job_category matches `laundromat`.
+- **A6** Shelter nights (unpaid): links S1, H2; tagged when job_category matches `shelter_night`.
+- **A7** Plasma payments (income): links EC2; tagged when job_category matches `plasma_donation_payment`.
+- **A8** Parking (bill): links E2; tagged when job_category matches `parking_fee`.
+
+## Loops (hypotheses for the next run to test)
+
+- **R1 Late-fee ladder** (reinforcing). A short month means a partial rent payment. The late fee makes next month's bill bigger, so the next payment is more likely to fall short too.
+  - Rent paid in full → Short payments (−): Less rent paid in full means more short payments.
+  - Short payments → Late fees owed (+): More short payments mean more late fees.
+  - Late fees owed → Rent paid in full (−): More fees owed leave less to pay rent in full.
+  - Pushed + by P2: State law allows a 10% fee after five days.
+  - Pushed − by EC1: Rising rents make full payment harder.
+  - Seen in the records of pattern A3.
+- **B1 Doubling up** (balancing). When rent outruns one paycheck, a household takes on a roommate or a relative. The shared lease closes the gap, which holds the late-fee ladder back, at the cost of space.
+  - Rent gap → Roommates on the lease (+): A bigger gap means more roommates.
+  - Roommates on the lease → Shares paid in (+): More roommates mean more shares paid in.
+  - Shares paid in → Rent gap (−): More shares shrink the gap.
+  - Pushed + by EC1: Rents up 40% since 2018 widen the gap.
+  - Seen in the records of pattern A4.
+- **D1 Backup rides drain the budget** (reinforcing). When the bus doesn't come, a ride-hail fills in. Each backup ride spends cash that could have gone toward a car or a home closer to work, so the bus stays the only way and the next no-show costs again.
+  - Buses that don't come → Paid backup rides (+): More no-shows mean more ride-hail backups.
+  - Paid backup rides → Cash left for a car or a closer home (−): Backup rides spend the cash.
+  - Cash left for a car or a closer home → Buses that don't come (−): Less cash left keeps the bus the only way, no-shows and all.
+  - Pushed + by DW2: Routes that cancel trips make no-shows routine.
+  - Pushed + by DH1: Highways and renewal moved cheap housing away from the jobs, so more trips depend on the bus.
+  - Seen in the records of patterns A1, A2.
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts/larkin.md -->
+
+# D2 Inner suburbs: Larkin Avenue
+
+**Composite**: an invented block drawn from documented US patterns, not a real place. Part of https://medianville.netlify.app/agents/districts.md, which explains the layers and the ids.
+
+Block id `larkin`, on Larkin Ave. Red-rated in 1938, split by the interstate spur in 1961, and left with check cashers when the branches closed.
+
+The simulator puts 420 of the district's households on this block (`block_id = larkin` in households.csv and records.csv).
+
+## Across the whole district (the district tier)
+
+**Economic** (changes over years)
+
+- **DW1** · 2016 · High-cost lenders fill the gap. Across the inner suburbs, storefront lenders stand in for the banks that left. Nationally about 12 million people a year use payday loans, paying about $520 in fees to keep borrowing $375, mostly for rent and utilities rather than emergencies.
+  - Types: economic. Rests on: EC1, Hourly work, short-notice schedules; DH1, Neighborhoods graded for lending. Evidence: E019.
+- **DW2** · 2024 · Behind on the utility bill. About one household in six is behind on utility bills, and utilities disconnected electric service about 13.5 million times in 2024. Nearly 40% of households earning under $50,000 struggle to pay for energy.
+  - Types: economic, environmental. Rests on: DE1, Postwar houses getting old. Evidence: E082.
+
+**Political** (changes over decades)
+
+- **DW4** · 2026 · Local routes thinned. Local routes through the inner suburbs run short of drivers, and riders describe delays that have become routine for months at a time.
+  - Types: political. Evidence: E067.
+
+**Built & natural** (changes over generations)
+
+- **DE1** · 1945–1970 · Postwar houses getting old. Most inner-suburb housing went up in the postwar building boom. The median American home is now more than 40 years old, and houses this age need new roofs, furnaces and wiring, costs that land on owners with the least saved.
+  - Types: environmental, economic. Rests on: DH1, Neighborhoods graded for lending. Source: Census American Housing Survey (median year built).
+
+**Social & cultural** (changes over generations)
+
+- **DW3** · 2017 · Check cashers chosen on purpose. Many people here cash checks at a storefront even when they have a bank account. A researcher who worked behind a check-cashing counter found customers chose it for clear fees, fast money and service, to avoid surprise bank fees and holds.
+  - Types: social, economic. Evidence: E014, E015.
+
+**Historical** (bedrock, lasts a century)
+
+- **DH1** · 1930s · Neighborhoods graded for lending. In the 1930s the federal Home Owners' Loan Corporation graded neighborhoods for mortgage risk, A to D, and the lowest grade was outlined in red. Federal mortgage insurance followed similar rules for decades, so lending, and the family wealth that comes with owning a home, flowed unevenly across the inner suburbs.
+  - Types: historical, political, economic. Source: University of Richmond, Mapping Inequality (HOLC maps).
+
+## On Larkin Avenue itself
+
+**Economic** (changes over years)
+
+- **P1** · 2009 · The last bank branches close. After a bank merger in 2009 both branches on Larkin Avenue closed. The nearest branch is now 2.6 miles away. The old Medianville Savings building is a check casher.
+  - Types: economic. Rests on: H1, Rated “hazardous” on the 1938 appraisal map.
+- **EC1** · today · Hourly work, short-notice schedules. Most jobs open to people here are hourly, with schedules posted less than a week ahead and pay docked for lateness. Income moves week to week, which makes autopay dates hard to plan around.
+  - Types: economic. Rests on: H3, Medianville Works closes.
+
+**Political** (changes over decades)
+
+- **P2** · state law · State rules on check cashing and payday loans. State law lets check cashers charge 2 to 3 percent of a check and lets payday lenders charge $15 per $100 borrowed every two weeks, about 390% a year. A renewal pays the fee again without paying down the loan.
+  - Types: political.
+- **P3** · 2019 · Route 6 service cut. Facing a budget gap, the transit agency cut Route 6 from every 15 to every 30 minutes. Missing a bus now costs half an hour, and a late clock-in can cost part of a shift.
+  - Types: political.
+- **P4** · 2011 · Zoning and the missing grocery. Zoning keeps most blocks residential and allows shops only on the Larkin strip. The last supermarket closed in 2011 and none has replaced it, so daily food comes from the corner market and the dollar store.
+  - Types: political, economic. Rests on: H1, Rated “hazardous” on the 1938 appraisal map.
+
+**Built & natural** (changes over generations)
+
+- **H2** · 1961 · The interstate spur goes through. The state routed an interstate spur through the red-rated blocks, where land was cheapest and residents had the least say. It cleared about 300 homes and split the district. The nearest walkable crossing is now 0.6 miles from the Route 6 stop.
+  - Types: historical, political, environmental. Rests on: H1, Rated “hazardous” on the 1938 appraisal map.
+- **E1** · today · Cutler Run floodplain. A third of the blocks by the creek sit in the 100-year floodplain. Homes with a mortgage there must carry flood insurance, a bill most of the city never sees. These were the cheapest lots, and the ones red-rated buyers could get.
+  - Types: environmental. Rests on: H1, Rated “hazardous” on the 1938 appraisal map.
+- **E2** · today · Highway air. Homes beside the spur breathe more traffic exhaust. Childhood asthma is higher here than in the rest of the city, and an attack often means the ER rather than a scheduled visit.
+  - Types: environmental. Rests on: H2, The interstate spur goes through.
+
+**Social & cultural** (changes over generations)
+
+- **S1** · 1990s on · An immigrant gateway. Low rents after the plant closed made Larkin a first stop for new arrivals. Many households send money home every week, and many neighbors work and bank in more than one language.
+  - Types: social, cultural. Rests on: H3, Medianville Works closes.
+- **S2** · today · Church savings circles. Several congregations run rotating savings circles. Each member pays in every week and takes the whole pot in turn. With no branch nearby, the circle is the neighborhood’s savings account and emergency fund.
+  - Types: cultural, economic. Rests on: S1, An immigrant gateway; P1, The last bank branches close.
+
+**Historical** (bedrock, lasts a century)
+
+- **H1** · 1938 · Rated “hazardous” on the 1938 appraisal map. A federal appraisal map graded the Larkin Avenue blocks red, citing the race of residents and the age of the housing. For decades lenders treated red-rated blocks as too risky for mortgages and deposits, so home ownership, equity and bank branches stayed thin here.
+  - Types: historical, political. Rests on: DH1, Neighborhoods graded for lending.
+- **H3** · 1983 · Medianville Works closes. The stamping plant at the north end of the district closed in 1983. Its union jobs paid enough to own a house on one income. What replaced them was warehouse, retail and care work, most of it hourly.
+  - Types: historical, economic.
+
+## Patterns: the records the block's circumstances shape
+
+A record from the block's households that matches a pattern (the first that matches, in this order; the rules are regular expressions) carries its id in `block_pattern` and the circumstances it links to in `context_ids`. Pattern ids and loop ids are separate: pattern R1 is not loop R1.
+
+- **R8** Home and flood insurance bills (bill): links E1; tagged when job_category matches `^housing\.(home_insurance|renters_insurance)$`.
+- **R1** Missed buses (fail): links P3, H2; tagged when job_category matches `missed_bus`.
+- **R10** Groceries at the corner market (purchase): links P4; tagged when job_category matches `^food\.(convenience_store|grocery_fill_in)$`.
+- **R7** Emergency room visits (purchase): links E2; tagged when job_category matches `emergency_(department_visit|visit_uncompensated)`.
+- **R2** Paychecks cashed for a fee (income): links P1, P2; tagged when job_category matches `check_cashing|paycheck_paper_check`.
+- **R3** Payday loan renewals (bill): links P2, EC1; tagged when job_category matches `payday_loan`.
+- **R4** Overdrafts and declined cards (fail): links EC1; tagged when fee_type matches `overdraft_fee|returned_payment_fee` or job_category matches `^food\.dollar_store$` and outcome matches `^(declined|failed|partial|abandoned|rescheduled)$`.
+- **R6** Savings circle payments (unpaid): links S2; no match rule, so no record carries it.
+- **R5** Money sent abroad (bill): links S1, P1; tagged when job_category matches `remittance_sent`.
+
+## Loops (hypotheses for the next run to test)
+
+- **R1 Fee spiral** (reinforcing). A low balance lets a payment overdraw the account. The overdraft fee lowers the balance again, so the next payment is more likely to bounce.
+  - Balance after bills → Payments that overdraw (−): A lower balance means more payments overdraw.
+  - Payments that overdraw → Overdraft fees (+): More overdrafts mean more fees.
+  - Overdraft fees → Balance after bills (−): More fees mean a lower balance.
+  - Pushed + by EC1: Pay that moves week to week makes autopay dates miss.
+  - Seen in the records of pattern R4.
+- **R2 Rollover** (reinforcing). A short week leads to a payday loan. Each renewal pays the fee without paying down the loan, which leaves the next week short again.
+  - Cash left after bills → Payday renewals (−): Less cash left means more renewals.
+  - Payday renewals → Fees paid to the lender (+): More renewals mean more fees.
+  - Fees paid to the lender → Cash left after bills (−): More fees leave less cash.
+  - Pushed + by P2: State law sets the fee at $15 per $100 per renewal.
+  - Pushed + by P1: With no branch nearby there is no small-dollar loan from a bank.
+  - Seen in the records of pattern R3.
+- **R3 Time tax** (reinforcing). A missed bus means a late clock-in and docked pay. Less pay pushes back fixing the car, which keeps the household on the bus.
+  - Rides Route 6 → Late clock-ins (+): More bus trips mean more late clock-ins.
+  - Late clock-ins → Docked pay (+): More late clock-ins mean more docked pay.
+  - Docked pay → Money to fix the car (−): More docked pay leaves less for the car.
+  - Money to fix the car → Rides Route 6 (−): Less for the car means more bus trips.
+  - Pushed + by P3: Buses every 30 minutes make each miss cost more.
+  - Pushed + by H2: The spur forces a long walk to the next stop.
+  - Seen in the records of pattern R1.
+- **B1 Circle buffer** (balancing). A shortfall sends the household to its savings circle instead of a lender. The payout covers the gap, which works against the rollover loop.
+  - Shortfall this week → Turns to the circle (+): A shortfall means turning to the circle.
+  - Turns to the circle → Payout covers the gap (+): Turning to the circle brings a payout.
+  - Payout covers the gap → Shortfall this week (−): A payout shrinks the shortfall.
+  - Pushed + by S2: Congregations run the circles.
+  - Seen in the records of pattern R6.
+- **D1 Borrowing to cover borrowing** (reinforcing). A paycheck that comes up short gets covered with a payday loan or an overdraft. The fees come due out of the next paycheck, which leaves it short too, so the borrowing repeats.
+  - Short before payday → High-cost loan or overdraft (+): Coming up short means another high-cost loan or overdraft.
+  - High-cost loan or overdraft → Fees due next payday (+): More borrowing means more fees due.
+  - Fees due next payday → Short before payday (+): The fees leave the next paycheck short too.
+  - Pushed + by DW1: Storefront lenders are the nearest credit.
+  - Pushed + by DH1: Decades of lending exclusion left less family wealth to fall back on.
+  - Seen in the records of patterns R3, R4.
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts/foxhollow.md -->
+
+# D3 Outer suburbs: Fox Hollow
+
+**Composite**: an invented block drawn from documented US patterns, not a real place. Part of https://medianville.netlify.app/agents/districts.md, which explains the layers and the ids.
+
+Block id `foxhollow`, on Fox Hollow Dr. Dairy farms subdivided after 1994, reached by a private toll road, and run by homeowners’ associations instead of a city.
+
+The simulator puts 420 of the district's households on this block (`block_id = foxhollow` in households.csv and records.csv).
+
+## Across the whole district (the district tier)
+
+**Economic** (changes over years)
+
+- **DW1** · 2025 · Child care priced like rent. Across the outer suburbs, two-earner families buy child care to cover long commutes. Nationally it averaged $13,184 a year in 2025, about 10% of a two-parent household's income and a third of a single parent's.
+  - Types: economic, social. Rests on: DE1, Zoned for driving. Evidence: E081.
+
+**Political** (changes over decades)
+
+- **DW3** · 2025 · Errands that still need a counter. Government errands still mean a drive and a wait. In one state about 68% of driver's license transactions happen in person, and customers at a suburban office reported waits from half an hour to more than two hours, far above the agency's statewide average.
+  - Types: political. Rests on: DE1, Zoned for driving. Evidence: E084, E085, E086.
+
+**Built & natural** (changes over generations)
+
+- **DE1** · 2001–2016 · Zoned for driving. Farmland kept giving way to development: American Farmland Trust counts about 11 million acres of farm and ranch land converted nationally from 2001 to 2016, most of it to low-density housing. Zoning keeps homes, shops and schools in separate areas, so almost every errand needs a car.
+  - Types: environmental, political. Rests on: DH1, Interchanges reach the farms. Source: American Farmland Trust, Farms Under Threat (2020).
+
+**Social & cultural** (changes over generations)
+
+- **DW2** · 2025 · Caring for parents from a distance. Many families here care for an aging parent while both adults work. Family caregivers now spend about $11,508 a year out of pocket, about 31% of their income, and half have made a major financial sacrifice.
+  - Types: social, economic. Evidence: E048, E049.
+
+**Historical** (bedrock, lasts a century)
+
+- **DH1** · 1956 · Interchanges reach the farms. The 1956 interstate program put highway exits in farm country within commuting distance of the city. Over the following decades, land near the interchanges turned into subdivisions and shopping centers, and the outer suburbs grew around the car.
+  - Types: historical, political. Source: Federal-Aid Highway Act of 1956.
+
+## On Fox Hollow itself
+
+**Economic** (changes over years)
+
+- **EC1** · today · Jobs 13 miles away, two cars needed. Most jobs are downtown or along the interstate, 13 miles or more by the Parkway. With two earners and no bus, a family needs two cars, and car payments and insurance are the second-largest bill after the mortgage.
+  - Types: economic.
+- **EC2** · 2026 · The reassessment raises escrow. The county reassessed every home last year. Mortgage servicers recalculated escrow, and monthly payments rose about $210 with no change in the loan.
+  - Types: economic, political. Rests on: H1, The dairy farms are subdivided.
+
+**Political** (changes over decades)
+
+- **P1** · 2006 · The Parkway: a private toll road. The state leased the Parkway to a private operator for 50 years. There are no booths: cameras read plates and mail a bill, with a $4.50 administrative fee each time, and the fees double when a bill goes unpaid.
+  - Types: political, economic.
+- **P2** · 1996 · An HOA for every new subdivision. To avoid paying for new roads, pools and storm ponds, the county required each subdivision to form a homeowners' association. Dues pay for what a city would, and an association can fine and file liens.
+  - Types: political. Rests on: H1, The dairy farms are subdivided.
+- **P3** · today · Unincorporated: no city services. Fox Hollow was never annexed by a city. Trash, recycling and snow plowing come from private contractors billed to each household, and the county sheriff patrols from 13 miles away.
+  - Types: political.
+
+**Built & natural** (changes over generations)
+
+- **E1** · 1990s · Cul-de-sacs, no sidewalks or bus. The streets were laid out as loops and dead ends, with no sidewalks to the school or the shops. Every trip is a drive, including the half-mile to school.
+  - Types: environmental, political.
+
+**Social & cultural** (changes over generations)
+
+- **S1** · today · The activity economy. Children's evenings and weekends are filled with paid activities. The schedule is a status marker and a second job for whichever parent drives.
+  - Types: social, cultural.
+
+**Historical** (bedrock, lasts a century)
+
+- **H1** · 1994–2008 · The dairy farms are subdivided. Two family dairies sold out as milk prices fell and land values rose. Builders platted them into cul-de-sacs of four-bedroom houses, sold with builder financing to families moving out from the inner suburbs.
+  - Types: historical, environmental. Rests on: DH1, Interchanges reach the farms.
+
+## Patterns: the records the block's circumstances shape
+
+A record from the block's households that matches a pattern (the first that matches, in this order; the rules are regular expressions) carries its id in `block_pattern` and the circumstances it links to in `context_ids`. Pattern ids and loop ids are separate: pattern R1 is not loop R1.
+
+- **F1** Toll bills (bill): links P1; tagged when job_category matches `^transportation\.(toll|toll_account_reload)$` and outcome matches `^completed$`.
+- **F2** Unpaid tolls and fees (fail): links P1; tagged when fee_type matches `pay_by_plate` or job_category matches `^transportation\.toll` and outcome matches `^(declined|failed|partial|abandoned|rescheduled)$`.
+- **F3** HOA dues (bill): links P2; tagged when job_category matches `hoa_dues`.
+- **F4** Private trash pickup (bill): links P3; tagged when job_category matches `trash_bill`.
+- **F5** School drop-off and pickup (unpaid): links E1; tagged when job_category matches `school_(dropoff|pickup)$`.
+- **F6** Lessons and activities (bill): links S1; tagged when job_category matches `lessons_tuition|youth_sports_registration|private_school_tuition|after_school_fee`.
+- **F7** Mortgage and escrow (bill): links EC2, H1; tagged when job_category matches `property_tax_escrow|^housing\.mortgage$`.
+- **F8** Car payments (bill): links EC1, E1; tagged when job_category matches `^transportation\.car_payment$`.
+
+## Loops (hypotheses for the next run to test)
+
+- **R1 Plate-bill pileup** (reinforcing). A toll bill that goes unpaid gets a fee, and the fee doubles. The bigger bill is harder to pay on time, so more of the next bills go unpaid.
+  - Bills paid on time → Unpaid tolls (−): Fewer bills paid on time means more unpaid tolls.
+  - Unpaid tolls → Fees added (+): More unpaid tolls mean more fees.
+  - Fees added → Bills paid on time (−): More fees make the next bill harder to pay on time.
+  - Pushed + by P1: The concession sets a $4.50 fee that doubles.
+  - Seen in the records of pattern F2.
+- **B1 Carpool** (balancing). School trips by car pile up for every family. Neighbors trade drop-offs, which cuts each family's trips and eases the load.
+  - School trips by car → Carpools with neighbors (+): More trips mean more carpools.
+  - Carpools with neighbors → Trips per family (−): More carpools mean fewer trips per family.
+  - Trips per family → School trips by car (+): Fewer trips per family mean fewer school trips by car.
+  - Pushed + by E1: No sidewalks make every trip a drive.
+  - Seen in the records of pattern F5.
+- **D1 Buying back time** (reinforcing). Long drives eat the hours between work, school and home, so families pay for care and activities to cover them. Paying for those takes more hours at work, which leaves even less slack for the driving.
+  - Hours lost to driving → Paid care and activities (+): More hours in the car mean more paid care to cover them.
+  - Paid care and activities → Hours worked to pay for them (+): More paid care means more hours worked to pay for it.
+  - Hours worked to pay for them → Hours lost to driving (+): More hours at work leave less slack in the day.
+  - Pushed + by DW1: Child care priced like rent makes every covered hour expensive.
+  - Pushed + by DE1: Zoning that separates everything puts more miles in every day.
+  - Seen in the records of patterns F5, F6.
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts/ashford.md -->
+
+# D4 Satellite city: Mill Street, Ashford Mills
+
+**Composite**: an invented block drawn from documented US patterns, not a real place. Part of https://medianville.netlify.app/agents/districts.md, which explains the layers and the ids.
+
+Block id `ashford`, on Mill St. A textile town whose mill closed in 1998; the county jail went into the mill yard and the college became the biggest employer.
+
+The simulator puts 480 of the district's households on this block (`block_id = ashford` in households.csv and records.csv).
+
+## Across the whole district (the district tier)
+
+**Economic** (changes over years)
+
+- **DW2** · 2025 · Hours that won't hold still. Retail and restaurant hours change from week to week, so a monthly work report can fail even for people who work. In one state's first year, enrollees struggled to upload proof and the website sometimes went down.
+  - Types: economic, political. Rests on: DW1, Paperwork that ends coverage; DH1, The factories close. Evidence: E026, E027, E031.
+- **DW4** · 2018 · The car as collateral. Subprime car loans here often come with starter-interrupt devices. One Southeast servicer admitted disabling cars at least 5,200 times when the borrower was not in default. Lenders say the devices let them lend to people who would otherwise be turned down.
+  - Types: economic. Rests on: DH1, The factories close. Evidence: E061, E063, E064.
+
+**Political** (changes over decades)
+
+- **DW1** · 2027 · Paperwork that ends coverage. Across the satellite city, coverage depends on paperwork. In the Medicaid unwinding, two-thirds or more of disenrollments were procedural; missed interviews cause up to half of SNAP denials; and each churn costs the agency about $80. Work reporting for Medicaid starts nationally in January 2027.
+  - Types: political. Evidence: E023, E024, E025, E030.
+- **DW3** · 2024 · Raises that cost more than they pay. Benefits phase out sharply as pay rises. One restaurant worker's raise of about $200 a month would have cost her more than $800 a month in assistance, so some workers turn raises down.
+  - Types: political, economic. Evidence: E066.
+
+**Built & natural** (changes over generations)
+
+- **DE1** · ongoing · Empty mills and old ground. The closed plants left large buildings and sites that may be contaminated. The EPA puts the number of brownfields nationally at 450,000 to 1 million; cleanup costs keep many idle, so the land that once held the jobs sits empty.
+  - Types: environmental, economic. Rests on: DH1, The factories close. Source: US EPA, Brownfields (frequently asked questions; GAO's 2004 estimate).
+
+**Historical** (bedrock, lasts a century)
+
+- **DH1** · 1979–2010 · The factories close. US manufacturing employment peaked in 1979 at about 19.6 million jobs and fell by roughly a third during the 2000s alone. Mill and factory towns lost their steady, full-time work, and hourly service jobs took its place.
+  - Types: historical, economic. Source: BLS Current Employment Statistics, manufacturing employment (CES3000000001).
+
+## On Mill Street, Ashford Mills itself
+
+**Economic** (changes over years)
+
+- **EC1** · today · The college is the biggest employer. With the mill gone, Wexley College employs more people than anyone else in town, and its students fill the rentals near campus. Dining services and housekeeping are hourly work with semester breaks.
+  - Types: economic.
+- **EC2** · 2010s · Rent-to-own and pay advances on Mill Street. Where the mill workers' shops were, Mill Street now has a rent-to-own store and a pay-advance app's kiosk. Both serve people with thin credit, and both cost far more over a year than buying or borrowing from a bank.
+  - Types: economic. Rests on: H1, Ashford Mills closes.
+
+**Political** (changes over decades)
+
+- **P1** · 2004 · The county jail goes into the mill yard. The county needed a bigger jail and the mill site was cheap and already zoned industrial. It holds about 240 people, most of them waiting for trial because they could not post bail.
+  - Types: political, historical. Rests on: H1, Ashford Mills closes.
+- **P2** · contract · Jail phone and commissary contracts. The county contracts phone calls, video visits and the commissary to private vendors and keeps a share of what families pay. A 15-minute call costs $3.15, and money for snacks or soap goes through a deposit fee.
+  - Types: political, economic.
+- **P3** · 2015 · The bus to Medianville is cut. The regional bus that ran to Medianville every hour was cut in 2015. A county van runs twice a day by reservation. People without a car pay neighbors or apps for rides, or search for one each morning.
+  - Types: political.
+
+**Built & natural** (changes over generations)
+
+- **E1** · 2017 · The hospital closes; urgent care stays. The 60-bed hospital closed in 2017 after it was bought by a regional system. An urgent care clinic stayed in part of the building. Anything serious means a 19-mile trip to Medianville.
+  - Types: environmental, economic.
+
+**Social & cultural** (changes over generations)
+
+- **S1** · today · Families who visit the jail. Most people held in the jail are from Medianville and the county, so their families come in by car or not at all. Calls and deposits are how most of them stay in touch.
+  - Types: social. Rests on: P1, The county jail goes into the mill yard.
+
+**Historical** (bedrock, lasts a century)
+
+- **H1** · 1998 · Ashford Mills closes. The textile mill that gave the town its name ran for 96 years. It closed in 1998 as production moved overseas, and the mill houses along the river were sold to absentee landlords.
+  - Types: historical, economic. Rests on: DH1, The factories close.
+
+## Patterns: the records the block's circumstances shape
+
+A record from the block's households that matches a pattern (the first that matches, in this order; the rules are regular expressions) carries its id in `block_pattern` and the circumstances it links to in `context_ids`. Pattern ids and loop ids are separate: pattern R1 is not loop R1.
+
+- **M1** Dining hall meals (purchase): links EC1; tagged when job_category matches `dining_hall_meal`.
+- **M2** Calls from the jail (bill): links P2, S1; tagged when job_category matches `jail_phone_call`.
+- **M3** Commissary and deposits (purchase): links P2, P1; tagged when job_category matches `jail_commissary_purchase|jail_account_deposit`.
+- **M4** Searching for a ride (fail): links P3; tagged when job_category matches `ride_search|ride_to_work_fee`.
+- **M5** Rent-to-own payments (bill): links EC2, H1; tagged when job_category matches `rent_to_own_payment`.
+- **M6** Pay advances (income): links EC2; tagged when job_category matches `earned_wage_advance`.
+- **M7** Urgent care (purchase): links E1; tagged when job_category matches `urgent_care_visit`.
+
+## Loops (hypotheses for the next run to test)
+
+- **R1 Advance loop** (reinforcing). A pay advance covers the gap now and comes out of the next paycheck with a fee. The smaller paycheck leaves the next week short, so the next advance comes sooner.
+  - Paycheck left → Pay advances (−): A smaller paycheck means more advances.
+  - Pay advances → Fees and repayments (+): More advances mean more fees and repayments.
+  - Fees and repayments → Paycheck left (−): More repayments leave less of the paycheck.
+  - Pushed + by EC2: Mill Street storefronts make advances the nearest credit.
+  - Seen in the records of pattern M6.
+- **R2 Distance tax** (reinforcing). Without a bus, getting to work means paying for rides or searching for one. Paid rides drain the money that would go toward a car, which keeps the household paying for rides.
+  - A working car → Paid rides and searches (−): No car means more paid rides.
+  - Paid rides and searches → Cash left (−): More paid rides leave less cash.
+  - Cash left → A working car (+): More cash makes a working car possible.
+  - Pushed + by P3: With Route 14 gone there is no other way to Medianville.
+  - Seen in the records of pattern M4.
+- **D1 Churn** (reinforcing). Hours that change week to week make a monthly work report easy to miss. A missed report ends coverage, care gets put off until it is urgent, and the sick days and urgent visits move the hours again.
+  - Hours change → Report missed or rejected (+): Hours that move make a monthly report easy to miss.
+  - Report missed or rejected → Coverage lost (+): A missed or rejected report ends coverage.
+  - Coverage lost → Care put off, then urgent (+): Without coverage, care waits until it is urgent.
+  - Care put off, then urgent → Hours change (+): Sick days and urgent visits move the hours again.
+  - Pushed + by DW1: Procedural rules end coverage over one missed form.
+  - Pushed + by DW2: Retail and restaurant hours change week to week.
+  - Pushed + by DH1: Steady mill jobs gave way to hourly work whose hours move.
+  - Seen in the records of pattern M7.
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts/dunmore.md -->
+
+# D5 Rural town: Main Street, Dunmore
+
+**Composite**: an invented block drawn from documented US patterns, not a real place. Part of https://medianville.netlify.app/agents/districts.md, which explains the layers and the ids.
+
+Block id `dunmore`, on Main St. A grain-and-rail town that lost its railroad, its bank and its grocery; the mobile home park was sold to an investor in 2019.
+
+The simulator puts 380 of the district's households on this block (`block_id = dunmore` in households.csv and records.csv).
+
+## Across the whole district (the district tier)
+
+**Economic** (changes over years)
+
+- **DW1** · 2023 · Cash where the banks left. Across the rural towns, banking means a drive or a fee. About two-thirds of unbanked households use only cash, and an out-of-network ATM withdrawal averages a record $4.86.
+  - Types: economic, social. Evidence: E011, E014.
+- **DW2** · 2016 · Home care hours go unfilled. Approved home care often goes unstaffed. In one agency survey, 85% lacked staff to cover every shift and 43% left shifts unfilled at least seven times a month; one rural state counted about 11,000 approved hours unstaffed each week.
+  - Types: economic, social. Rests on: DH1, Fewer, bigger farms. Evidence: E053, E054, E055.
+- **DW3** · 2024 · Called in on a day off. The town's jobs are thin and the stores are short-staffed. Workers describe being called in at the last minute, even on days off, and scrambling for child care when they are.
+  - Types: economic. Evidence: E040, E047.
+
+**Political** (changes over decades)
+
+- **DW4** · 2026 · Dialysis an hour away. Rural residents average about 14 miles to the nearest dialysis unit, but closures stretch that fast: when one small hospital closed its unit, a patient's time on the road tripled to more than nine hours a week.
+  - Types: political, environmental. Rests on: DH1, Fewer, bigger farms. Evidence: E051, E052.
+
+**Built & natural** (changes over generations)
+
+- **DE1** · ongoing · Homes on rented land. Manufactured homes are far more common in rural towns than in cities. Many sit on rented lots in parks, so the owners own the house but not the ground under it, and moving the house is rarely practical.
+  - Types: environmental, social. Rests on: DH1, Fewer, bigger farms. Source: Census American Community Survey (housing type), with the Housing Assistance Council's rural tabulations; CFPB, Manufactured Housing Finance (2021).
+
+**Historical** (bedrock, lasts a century)
+
+- **DH1** · 1935–today · Fewer, bigger farms. The number of US farms peaked at about 6.8 million in 1935 and is now about 1.9 million, on larger acreages with fewer workers. Towns that served many small farms lost customers, rail traffic and young families as the farms consolidated.
+  - Types: historical, economic. Source: USDA Census of Agriculture; USDA ERS farm counts.
+
+## On Main Street, Dunmore itself
+
+**Economic** (changes over years)
+
+- **EC1** · 2019 · The park is sold to an investor. The family that owned Prairie View sold it to an out-of-state investment firm in 2019. Lot rent has gone up four times since. Residents own their homes but not the land, and moving a home costs more than it is worth.
+  - Types: economic.
+- **EC2** · 2016 · The last bank branch closes. The last branch closed in 2016. The two ATMs in town belong to other networks and charge $3 to $5 a withdrawal, and many older residents still pay with cash.
+  - Types: economic.
+- **EC3** · 2014 · Dollar stores replace the grocery. The independent grocery closed in 2014, a year after the second dollar store opened. Fresh food now means a 19-mile drive, so most shopping is canned and packaged food from the dollar store.
+  - Types: economic.
+
+**Political** (changes over decades)
+
+- **P1** · state program · The state pays Medicare premiums for low incomes. For older residents with low incomes, the state pays the Medicare Part B premium, about $200 a month. Enrollment takes paperwork that many eligible people never finish.
+  - Types: political.
+- **P2** · state rates · Medicaid home care rates. Medicaid pays home-care agencies about $19 an hour. Aides earn far less, with no pay for the 35-mile drive between clients, so visits are short and often cancelled.
+  - Types: political, economic.
+
+**Built & natural** (changes over generations)
+
+- **E1** · today · Thirty-five miles to the hospital. The nearest hospital and specialists are in Medianville, 35 miles on a two-lane highway. A routine appointment takes most of a day and someone to drive.
+  - Types: environmental.
+
+**Social & cultural** (changes over generations)
+
+- **S1** · today · Aging in place. Most young adults left for Medianville or farther. Older residents stay in their homes, and care comes from a spouse, a neighbor, a church member or a relative who drives in.
+  - Types: social, cultural. Rests on: H1, The railroad is abandoned.
+
+**Historical** (bedrock, lasts a century)
+
+- **H1** · 1979 · The railroad is abandoned. Dunmore grew up around a rail siding and a grain elevator. The railroad abandoned the branch in 1979, the elevator went to trucks, and Main Street lost the trade that came with the trains.
+  - Types: historical, economic. Rests on: DH1, Fewer, bigger farms.
+
+## Patterns: the records the block's circumstances shape
+
+A record from the block's households that matches a pattern (the first that matches, in this order; the rules are regular expressions) carries its id in `block_pattern` and the circumstances it links to in `context_ids`. Pattern ids and loop ids are separate: pattern R1 is not loop R1.
+
+- **N1** Lot rent (bill): links EC1; tagged when job_category matches `lot_rent`.
+- **N2** ATM fees (bill): links EC2; tagged when fee_type matches `out_of_network_atm`.
+- **N3** Dollar store groceries (purchase): links EC3; tagged when job_category matches `^food\.dollar_store$`.
+- **N4** Medicare help from the state (income): links P1; tagged when job_category matches `medicare_part_b_state_buy_in`.
+- **N5** Home-care visits (unpaid): links P2, S1; tagged when job_category matches `personal_care_aide_visit|home_health_nurse_visit`.
+- **N6** Care from neighbors and kin (unpaid): links S1, E1; tagged when job_category matches `caregiving_visit|escort_to_appointment`.
+- **N7** Car repairs (bill): links E1; tagged when job_category matches `car_repair|car_wont_start|jump_start|tow_and_roadside`.
+
+## Loops (hypotheses for the next run to test)
+
+- **R1 Lot-rent squeeze** (reinforcing). Each lot-rent increase leaves less cash. With less cash, moving the home out of the park is out of reach, so the owner can keep raising the rent.
+  - Rent increases → Cash left after rent (−): More increases leave less cash.
+  - Cash left after rent → Able to move out (+): More cash makes moving possible.
+  - Able to move out → Rent increases (−): Fewer able to leave means increases stick.
+  - Pushed + by EC1: An investor owner prices to what residents cannot escape.
+  - Seen in the records of pattern N1.
+- **B1 Neighbor care** (balancing). When an older neighbor needs care, others step in to visit and drive. Their help shrinks the unmet need, which holds the load in balance, until the helpers age too.
+  - Care needed → Neighbors and kin help (+): More need brings more help.
+  - Neighbors and kin help → Unmet care (−): More help leaves less unmet care.
+  - Unmet care → Care needed (+): Unmet care turns into more need.
+  - Pushed − by P2: Short, cancelled aide visits leave more to neighbors.
+  - Seen in the records of pattern N6.
+- **D1 The care gap** (reinforcing). When no aide comes, a family member covers the shift and loses work hours. The lost pay leaves less money for paid care, so more of the next week's shifts go unfilled too.
+  - Aide shifts unfilled → Family member covers (+): More unfilled shifts mean more care from family.
+  - Family member covers → Family work hours lost (+): More covering means more work hours lost.
+  - Family work hours lost → Money for paid care (−): Lost hours leave less money for paid care.
+  - Money for paid care → Aide shifts unfilled (−): Less money for paid care leaves more shifts unfilled.
+  - Pushed + by DW2: Approved hours often have no aide to fill them.
+  - Pushed + by DH1: Fewer working-age people stayed, so fewer are left to staff care.
+  - Seen in the records of patterns N5, N6.
+
+---
+
+<!-- https://medianville.netlify.app/agents/districts/crossroads.md -->
+
+# D6 Open country: Route 9 Crossroads
+
+**Composite**: an invented block drawn from documented US patterns, not a real place. Part of https://medianville.netlify.app/agents/districts.md, which explains the layers and the ids.
+
+Block id `crossroads`, on County Rd 12. Farm country consolidated in the 1980s, eleven miles from town, with no bus, no pharmacy and broadband that stops at Route 9.
+
+The simulator puts 360 of the district's households on this block (`block_id = crossroads` in households.csv and records.csv).
+
+## Across the whole district (the district tier)
+
+**Economic** (changes over years)
+
+- **DW2** · 2022 · Prices at the counter, debt after. When a prescription costs more than $250 out of pocket, more than half are left at the counter. 41% of adults carry health care debt, and about two-thirds of them have put off care because of cost.
+  - Types: economic. Rests on: DW1, A pharmacy desert. Evidence: E058, E059, E060.
+
+**Political** (changes over decades)
+
+- **DW4** · 2025 · Seasonal guest workers. Farms here hire seasonal crews on H-2A visas, whose minimum wage is set by federal rule and has been fought over in court. Nationally they are a small group, but in farm counties they are much of the harvest.
+  - Types: political, economic. Evidence: E087, E088.
+
+**Built & natural** (changes over generations)
+
+- **DW1** · 2024 · A pharmacy desert. Across open country, prescriptions mean a long drive. About 1 in 7 Americans lives in a pharmacy desert, and nonmetro residents average an 85-minute, 36-mile round trip. More than 7,000 pharmacies closed from 2022 through 2024.
+  - Types: environmental, economic. Rests on: DE1, Services consolidated far away. Evidence: E056, E057.
+- **DE1** · 1940–today · Services consolidated far away. Rural services were merged into fewer, farther places. The number of public school districts fell from about 117,000 in 1940 to about 13,000 today, and more than a hundred rural hospitals have closed or stopped inpatient care since 2010. Each merger added miles to ordinary trips.
+  - Types: environmental, political. Rests on: DH1, The farm crisis. Source: NCES Digest of Education Statistics, table 214.10; UNC Sheps Center rural hospital closures.
+
+**Social & cultural** (changes over generations)
+
+- **DW3** · 2024 · Caregivers on the road. Out here a treatment day can be a whole day. In one rural region, dialysis patients ride a medical transit bus more than 200 miles, three days a week, and the family members who go with them say it takes most of their free time.
+  - Types: social, economic. Rests on: DE1, Services consolidated far away. Evidence: E050.
+
+**Historical** (bedrock, lasts a century)
+
+- **DH1** · 1980s · The farm crisis. In the early 1980s high interest rates and falling export prices collapsed farmland values. From their 1982 peak to 1987 they fell by about a third nationally, and by more than half in Iowa. Many indebted farms were sold, and the people and businesses around them left too.
+  - Types: historical, economic. Source: USDA ERS farm real estate values, as reported in FDIC, History of the Eighties, vol. 1, ch. 8 (1997).
+
+## On Route 9 Crossroads itself
+
+**Economic** (changes over years)
+
+- **EC1** · today · Patchwork work. Year-round jobs are 11 miles away. Many households here piece together seasonal work at the packing shed, small self-employed jobs and gig work, paid irregularly and often through apps.
+  - Types: economic. Rests on: H1, The farm crisis.
+- **EC2** · 2018 · The pharmacy closes. The pharmacy at the crossroads closed in 2018 when its owner retired and no buyer came forward. Prescriptions come by mail now, a few days late when the mail is.
+  - Types: economic.
+
+**Political** (changes over decades)
+
+- **P1** · today · No public transit in the county. The county has no bus. A volunteer van runs to Medianville once a week by reservation for medical trips. Anyone without a car pays a neighbor for rides to work.
+  - Types: political.
+- **P2** · 2009 · School districts consolidated. The township schools merged into a county district in 2009. Children ride the bus 50 minutes each way, and the district serves breakfast to everyone because so many leave home before 6:30.
+  - Types: political.
+
+**Built & natural** (changes over generations)
+
+- **E1** · today · Broadband stops at Route 9. The cable line follows Route 9 and stops. East of the highway, internet means a phone plan, which works for deposits and payments but not much else.
+  - Types: environmental, political.
+- **E2** · today · Eleven miles to town. The nearest town is 11 miles away and the nearest city 25. Every errand, shift and appointment starts with a drive.
+  - Types: environmental.
+
+**Social & cultural** (changes over generations)
+
+- **S1** · today · Church ride lists. The church at the crossroads keeps a list of who can drive when. Rides to work are paid, a few dollars toward gas; rides to the doctor usually are not.
+  - Types: social, cultural.
+
+**Historical** (bedrock, lasts a century)
+
+- **H1** · 1980–95 · The farm crisis. High interest rates and falling land prices in the 1980s broke many family farms. Neighbors bought them out, and today four operations farm what forty families did. Former farm families stayed on and found other work.
+  - Types: historical, economic. Rests on: DH1, The farm crisis.
+
+## Patterns: the records the block's circumstances shape
+
+A record from the block's households that matches a pattern (the first that matches, in this order; the rules are regular expressions) carries its id in `block_pattern` and the circumstances it links to in `context_ids`. Pattern ids and loop ids are separate: pattern R1 is not loop R1.
+
+- **C1** Paid rides to work (bill): links P1, E2; tagged when job_category matches `ride_to_work_fee`.
+- **C2** Self-employed and seasonal pay (income): links EC1, H1; tagged when job_category matches `self_employment_receipts|self_employed_supplies`.
+- **C3** Prescriptions by mail (purchase): links EC2; tagged when job_category matches `prescription_mail_order`.
+- **C4** Instant cash-outs (income): links EC1, E1; tagged when job_category matches `p2p_instant_cash_out|gig_payout_instant`.
+- **C5** Deposits by phone (income): links E1; tagged when job_category matches `mobile_check_deposit`.
+- **C6** School breakfast (unpaid): links P2; tagged when job_category matches `school_breakfast`.
+- **C7** Care from neighbors (unpaid): links S1, E2; tagged when job_category matches `caregiving_visit|escort_to_appointment`.
+
+## Loops (hypotheses for the next run to test)
+
+- **R1 Ride debt** (reinforcing). Without a working car, getting to work means paying for rides. What goes to rides doesn't go to repairs, so the car stays broken and the rides continue.
+  - A working car → Paid rides (−): No car means more paid rides.
+  - Paid rides → Money for repairs (−): More paid rides leave less for repairs.
+  - Money for repairs → A working car (+): Money for repairs keeps the car running.
+  - Pushed + by P1: With no county transit, rides are the only option.
+  - Seen in the records of pattern C1.
+- **B1 Ride list** (balancing). When someone needs a ride, the church list finds a driver. The more drivers on the list, the fewer trips go unmade.
+  - Rides needed → Drivers on the list (+): More need recruits more drivers.
+  - Drivers on the list → Trips not made (−): More drivers mean fewer trips missed.
+  - Trips not made → Rides needed (+): Missed trips come back as more need.
+  - Pushed + by E2: Eleven miles to town makes every trip a ride.
+  - Seen in the records of pattern C7.
+- **D1 Distance and price** (reinforcing). Out here a prescription means a long drive, so some get skipped or put off. Conditions worsen, which means more trips to care, and every trip pays the distance again.
+  - Miles to the pharmacy → Prescriptions skipped or delayed (+): More miles mean more prescriptions skipped or put off.
+  - Prescriptions skipped or delayed → Condition worsens (+): Skipped doses let a condition worsen.
+  - Condition worsens → More trips to care (+): A worse condition means more trips to care.
+  - More trips to care → Miles to the pharmacy (+): More trips make the distance cost more.
+  - Pushed + by DW1: A pharmacy desert puts the counter a long drive away.
+  - Pushed + by DW2: Prices over $250 mean most are left at the counter.
+  - Pushed + by DE1: Each consolidation adds miles between people and care.
+  - Seen in the records of patterns C3, C7.
+
+---
+
+<!-- the baseline day's summary.md, from https://raw.githubusercontent.com/jas0nmjames/playground/main/mapping-synthetic-transactions/data/runs/v2/medianville_2027-03-03.zip -->
+
+# Medianville, Wednesday March 3, 2027: one simulated day
+
+Seed 20270303, weather ordinary, scale 1.00. Everything here is synthetic. Figures marked *anchor* come from the prompt; the rest are labeled estimates (see assumptions.csv).
+
+## What was generated
+
+| Table | Rows |
+|---|---|
+| records.csv | 202,402 |
+| households.csv | 43,499 (41,400 households plus 2,099 one-person group-quarters units) |
+| persons.csv | 99,743 |
+| organizations.csv | 1,820 |
+
+383 distinct job categories. 300 rows carry hand-written text (narrative starts with "[detailed]").
+
+## Records by type and district
+
+| record_type | D1 | D2 | D3 | D4 | D5 | D6 | total |
+|---|---|---|---|---|---|---|---|
+| purchase | 24,969 | 15,156 | 16,454 | 12,770 | 5,751 | 4,068 | 79,168 |
+| bill_payment | 9,472 | 5,732 | 7,428 | 4,174 | 2,390 | 1,542 | 30,738 |
+| income | 2,178 | 1,310 | 1,329 | 843 | 490 | 451 | 6,601 |
+| benefit_issuance | 1,109 | 879 | 462 | 564 | 367 | 226 | 3,607 |
+| benefit_redemption | 398 | 268 | 199 | 171 | 112 | 77 | 1,225 |
+| transfer | 2,715 | 1,639 | 1,679 | 1,191 | 753 | 576 | 8,553 |
+| tax | 1,674 | 1,103 | 1,346 | 763 | 371 | 297 | 5,554 |
+| b2b | 870 | 690 | 734 | 502 | 229 | 115 | 3,140 |
+| public_service_encounter | 15,085 | 9,127 | 6,442 | 4,401 | 2,803 | 2,213 | 40,071 |
+| insurance_claim | 1,618 | 1,240 | 916 | 850 | 544 | 334 | 5,502 |
+| non_monetary_job | 3,975 | 2,793 | 2,778 | 1,823 | 1,143 | 722 | 13,234 |
+| failed_attempt | 1,786 | 983 | 825 | 740 | 391 | 284 | 5,009 |
+| **all** | **65,849** | **40,920** | **40,592** | **28,792** | **15,344** | **10,905** | **202,402** |
+
+## Calibration against the anchors
+
+| Check | Target | Simulated | Note |
+|---|---|---|---|
+| Residents | about 100,000 | 99,743 | includes 2,099 people in group quarters |
+| Households | about 40,000 | 41,400 | excludes group quarters |
+| District shares (D1 to D6) | 31 / 20 / 22 / 13 / 8 / 6 % | 30.5 / 19.7 / 21.6 / 14.3 / 7.9 / 6.0 % | share of residents |
+| Residents with jobs | about 48,000 | 47,777 | 2,253 commute out; about 2,353 positions at Medianville employers are filled by in-commuters |
+| Industry mix | BLS shares in the prompt | largest gap 0.2 points | full table below |
+| Payments per adult per month | about 43 | 44.7 | 113,283 payments by adults today x 30.4 days; definition below |
+| Cash share of payments | about 14% | 14.2% | by count; 3.3% by value |
+| Cash higher for 55+ | yes | 17.7% vs 12.2% under 55 | |
+| Cash higher at lower incomes | yes | poverty 38.1%, ALICE 17.5%, above 10.2% | |
+| Cash higher in rural districts | yes | rural 17.3%, suburban 13.1%, urban core 14.8% | |
+| Adults who would cover a $400 emergency with cash or equivalent | 63% | 63.0% | threshold solved at $4,263 in liquid funds, or $400 free on a card paid in full |
+| Households below the ALICE survival budget | roughly 4 in 10 | 41.5% | 10.0% in poverty plus 31.5% ALICE |
+| Median household income | not anchored | $78,019 | 2027 dollars; estimate. SCF 2025 implies about $86,700. Reached by paying every worker x 1.23 their occupation's national pay (about 14% above real pay) to make up for small households; compare households, not one job's pay |
+| Births | 2.9 a day | 3 | 10.7 per 1,000 residents a year |
+| Deaths | 2.5 a day | 2 | 9.2 per 1,000 a year |
+| Marriage licenses | 2.4 a court day | 1 | 6.3 per 1,000 a year (NCHS 2024) |
+| Divorce filings | 0.9 a court day | 1 | 2.3 per 1,000 a year (NCHS 2024) |
+| Household moves | about 9 a day | 9 | 8% of residents move in a year; move-ins recorded |
+| Hospital admissions | about 24 a day | 19 | plus 100 people already inpatients |
+
+A payment here follows the Federal Reserve diary's idea: a purchase, bill or person-to-person payment made by an adult, by any instrument including EBT. It leaves out payroll deductions, credit-card bill payments (the purchases were already counted), ATM withdrawals and transfers between a person's own accounts.
+
+### Payment instruments
+
+| Instrument | Share of payments | Share of value |
+|---|---|---|
+| credit | 35.6% | 22.2% |
+| debit | 32.3% | 20.3% |
+| cash | 14.2% | 3.3% |
+| ach | 9.1% | 45.3% |
+| prepaid | 4.5% | 0.8% |
+| p2p_app | 2.8% | 2.9% |
+| check | 1.4% | 4.9% |
+| money_order | 0.0% | 0.3% |
+| ebt_cash | 0.0% | 0.0% |
+| bnpl | 0.0% | 0.0% |
+
+### Industry mix of residents' jobs
+
+| Sector | Target % | Simulated % |
+|---|---|---|
+| Health care and social assistance | 13.7 | 13.6 |
+| State and local government (including public schools) | 12.1 | 12.2 |
+| Retail trade | 9.1 | 9.0 |
+| Accommodation and food services | 8.3 | 8.2 |
+| Manufacturing | 7.4 | 7.3 |
+| Professional, scientific and technical services | 6.3 | 6.3 |
+| Self-employed | 5.8 | 5.7 |
+| Administrative and support services | 5.3 | 5.5 |
+| Construction | 4.9 | 4.7 |
+| Finance and insurance | 4.0 | 4.0 |
+| Transportation and warehousing | 3.9 | 3.7 |
+| Other services (repair, salons, religious organizations) | 3.9 | 3.9 |
+| Wholesale trade | 3.6 | 3.5 |
+| Private educational services | 2.4 | 2.4 |
+| Federal government | 1.7 | 1.8 |
+| Information | 1.7 | 1.8 |
+| Arts, entertainment and recreation | 1.6 | 1.6 |
+| Management of companies | 1.5 | 1.5 |
+| Real estate | 1.4 | 1.5 |
+| Agriculture, forestry and fishing | 0.9 | 1.0 |
+| Utilities and mining | 0.7 | 0.7 |
+
+## Spending mix against the Consumer Expenditure Survey
+
+Out-of-pocket consumer spending recorded today: $10,666,803. Shares are compared with the BLS Consumer Expenditure Survey (2025 shares for the four largest components, 2024 for the rest).
+
+| Category | CES share | Today's share | Today's dollars |
+|---|---|---|---|
+| housing | 33.9% | 37.8% | $4,037,126 |
+| transportation | 16.5% | 17.4% | $1,858,078 |
+| food | 13.0% | 14.5% | $1,545,399 |
+| insurance pensions | 12.4% | 5.1% | $548,155 |
+| healthcare | 7.9% | 7.5% | $803,962 |
+| entertainment | 4.6% | 4.6% | $492,433 |
+| contributions | 2.7% | 3.3% | $348,073 |
+| apparel | 2.5% | 2.1% | $226,068 |
+| education | 2.0% | 3.0% | $323,866 |
+| personal care | 1.2% | 1.0% | $106,662 |
+| alcohol | 0.8% | 0.5% | $49,114 |
+| tobacco | 0.5% | 0.3% | $34,721 |
+| misc | 2.0% | 2.7% | $293,146 |
+
+Housing is the largest category, followed by transportation and food, as in the survey. A single day cannot match annual shares exactly: rent and mortgages bunch in the first days of the month, only about one worker in twenty is paid on a Wednesday the 3rd (so payroll-deducted Social Security and retirement contributions run low), and vehicle purchases are counted at full price on the day of sale. Recurring obligations spread over a month come to about $3,778,226 a day.
+
+## Things that went wrong
+
+- 6,168 records are failed attempts or ended declined, abandoned, failed or rescheduled; 1,907 later records are linked retries.
+- 12.3% of households had at least one failed attempt (poverty 25.9%, ALICE 13.6%, above ALICE 9.3%).
+- Card or account declines for insufficient funds: 683; technical declines: 651; declines during the card-reader outage at one grocery store: 45; overdrafts: 149; bounced autopays: 117.
+- Purchases given up because nothing would cover them: 534. Prescriptions left at the counter over price: 86. Renewals stopped by the state portal outage: 3. Contractor no-shows: 8. Trips to a closed licensing office: 4.
+
+## Unpaid time
+
+13,234 non-monetary jobs took 12,395 hours in all (10 minutes per adult). Largest by time:
+
+| Job | Hours |
+|---|---|
+| care_and_household.caregiving_at_home | 3,532 |
+| care_and_household.caregiving_visit | 1,802 |
+| care_and_household.stayed_home_with_sick_child | 1,467 |
+| care_and_household.school_dropoff | 1,238 |
+| care_and_household.school_pickup | 1,185 |
+| work.job_applications_online | 1,020 |
+| care_and_household.escort_to_appointment | 379 |
+| civic_legal.jury_duty | 231 |
+| work.called_in_on_day_off | 220 |
+| civic_legal.court_appearance | 101 |
+
+## Fees by income group
+
+| Group | Fee records | Fees paid | Per household | Fees as share of purchases and bills | Largest fee types |
+|---|---|---|---|---|---|
+| poverty | 758 | $16,231 | $3.07 | 3.07% | tax prep and refund transfer fees ($8,044), overdraft fee ($1,893), returned payment fee ($1,545), interest charge ($1,046) |
+| alice | 2,720 | $84,683 | $6.24 | 2.89% | tax prep and refund transfer fees ($44,680), interest charge ($15,963), delivery and service fees ($3,672), card convenience fee ($2,511) |
+| above | 4,698 | $141,523 | $5.74 | 1.68% | interest charge ($79,529), tax prep and refund transfer fees ($11,762), documentation fee ($9,985), delivery and service fees ($8,800) |
+
+Fees include overdraft, late, ATM, check-cashing, money-order, convenience, delivery, card-interest and loan finance charges recorded on the day.
+
+## Public dollars
+
+| Flow | Dollars today | Largest items |
+|---|---|---|
+| Transfers in (benefit issuances and refundable credits) | $7,691,410 | social security deposit $3,878,966, refundable tax credit $3,561,982, snap issuance $135,271, child care subsidy payment to provider $43,271, unemployment benefit $38,156 |
+| Tax refunds of people's own overpayments | $1,785,529 | federal and state refunds, not counted as transfers |
+| Services delivered (public payers' share of encounters and claims) | $3,135,993 | public school day $1,496,065, medicare part b state buy in $394,279, prescription pickup $206,381, hospital admission $172,687, emergency department visit $92,076 |
+| Taxes paid by households (withholding, payroll tax, property tax, sales tax) | $1,348,913 | payroll income tax withholding $621,657, payroll fica $353,143, sales tax on purchases $153,625, property tax escrow $153,102, property tax payment $67,386 |
+| Taxes sent in by employers (matching payroll tax, deposits of earlier withholding) | $8,364,984 | federal payroll tax deposit $7,962,180, employer payroll taxes $402,804 |
+
+Monthly benefits that post on other days are not in today's transfers: SSI and VA compensation arrived March 1, and most Social Security is paid on the second to fourth Wednesdays. Today's Social Security goes to people paid on the 3rd: long-time beneficiaries, people who also get SSI, and people whose Medicare premium the state pays. public_services_context.csv gives the daily cost of the services that are not itemized (police, roads, water, and so on).
+
+## The ten costliest frictions
+
+Time is valued at $25.80 an hour, the median hourly wage of Medianville workers. Money is fees plus wages lost. A record with several tags splits its cost among them.
+
+| Friction | Records | Hours | Fees and lost wages | Combined cost | Household types hit hardest (per household) | Income group hit hardest |
+|---|---|---|---|---|---|---|
+| fee | 10,096 | 270 | $352,403 | $359,381 | multigen, single_parent | alice |
+| distance | 6,492 | 7,648 | $2,786 | $200,117 | multigen, adult_child | above |
+| wait | 3,924 | 2,706 | $4,284 | $74,100 | multigen, adult_child | poverty |
+| schedule_volatility | 723 | 661 | $20,077 | $37,130 | other_family, married_kids | above |
+| no_transit | 2,309 | 876 | $431 | $23,027 | group_quarters:college_dorm, multigen | poverty |
+| insufficient_funds | 3,615 | 393 | $3,892 | $14,040 | multigen, roommates | poverty |
+| caregiving_conflict | 2,076 | 275 | $4,907 | $12,001 | single_parent, married_kids | alice |
+| other | 1,478 | 120 | $0 | $3,097 | other_family, cohab_kids | above |
+| repeat_trip | 322 | 113 | $0 | $2,914 | other_family, multigen | above |
+| disability_access | 357 | 54 | $280 | $1,677 | adult_child, other_family | alice |
+
+## Consistency checks
+
+- Time: the busiest person has 19.6 hours of work plus in-person activity; 0 people exceed 24 hours. In-person activities are scheduled into each person's free time, so no one is in two places at once.
+- Money: opening balance plus inflows minus outflows equals closing balance for all but 0 households (household_ledger.csv). 168 checking accounts end the day overdrawn.
+- Every payroll record has linked withholding and FICA records; every Social Security deposit with a Medicare premium has a linked deduction; retries point to the attempt that failed.
