@@ -154,3 +154,14 @@ def test_robots_and_headers():
     assert blocks["/data/*"] == {"Cache-Control": "public, max-age=86400"}
     assert blocks["/robots.txt"] == {"Cache-Control": "public, max-age=3600"}
     assert not os.path.exists(os.path.join(REPO_DIR, "netlify.toml"))
+
+
+@pytest.mark.parametrize("page", ["index.html", "explorer/index.html", "systems-lens/index.html", "about/index.html", "archive/index.html"])
+def test_every_page_links_for_agents(page):
+    """A visible "For agents" link to llms.txt, beside the page's other links, and the alternate link in its head."""
+    with open(os.path.join(REPO_DIR, page), encoding="utf-8") as f:
+        html = f.read()
+    links = re.findall(r'<a [^>]*href="((?:\.\./)?llms\.txt)"[^>]*>For agents</a>', html)
+    assert links, page
+    assert all(os.path.normpath(os.path.join(REPO_DIR, os.path.dirname(page), h)) == os.path.join(REPO_DIR, "llms.txt") for h in links)
+    assert '<link rel="alternate" type="text/markdown" href="/llms.txt" title="For agents and LLMs">' in html

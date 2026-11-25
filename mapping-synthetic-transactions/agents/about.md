@@ -168,6 +168,7 @@ Every design decision, and why, is in the [decision log](https://github.com/jas0
 
 ## Links
 
+- [For agents and LLMs](https://medianville.netlify.app/llms.txt) · what to read first, the data dictionary, every day’s summary and the downloads, as plain text
 - [The repository](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions) · code, data and documents
 - [README](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/README.md) · the views, how they work, and what Claude did
 - [Decision log](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/decisions.md)
@@ -179,4 +180,4 @@ Every design decision, and why, is in the [decision log](https://github.com/jas0
 - [How the first day was built](https://github.com/jas0nmjames/playground/blob/main/mapping-synthetic-transactions/story/01-one-day/medianville-build-approach.md)
 - Earlier versions are kept in the [archive](https://medianville.netlify.app/archive/), and how the project was made is in [the story](https://github.com/jas0nmjames/playground/tree/main/mapping-synthetic-transactions/story).
 
-Built by [Jason James](https://jasonjames.works) with [Claude](https://claude.ai) · [The city](https://medianville.netlify.app/) · [Data](https://medianville.netlify.app/explorer/)
+Built by [Jason James](https://jasonjames.works) with [Claude](https://claude.ai) · [The city](https://medianville.netlify.app/) · [Data](https://medianville.netlify.app/explorer/) · [For agents](https://medianville.netlify.app/llms.txt)
