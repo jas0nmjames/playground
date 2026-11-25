@@ -27,6 +27,7 @@ The screenshots in this folder are the ones the [project README](../../README.md
 | 2026-11-23 | [`d08935d`](https://github.com/jas0nmjames/playground/commit/d08935d), [`175551d`](https://github.com/jas0nmjames/playground/commit/175551d), [`8275a2e`](https://github.com/jas0nmjames/playground/commit/8275a2e) | The README screenshots retaken; the explorer's header on one row, with labels hyphenated like the viewer |
 | 2026-11-24 | This milestone's pull request | The milestones, the story and the archive; the first viewer taken off the live pages |
 | 2026-11-25 | [#138](https://github.com/jas0nmjames/playground/pull/138) | A shorter intro; the README rewritten around the features, with seven GIFs and "Try it" links; `#record=` and `#household=` links in the viewer; the site and the agent files describe only work done to date; Jason's words in each milestone |
+| 2026-11-25 | This pull request, stacked on #138 | The systems lens keeps its three columns on laptops: in the viewer at 1280 × 800 and 1366 × 768 all six layers are in view; the lens GIF lifts all six |
 
 The Nov 23 commits went straight to `development`, so they can't be filed under a GitHub milestone; they're listed in its description. [`fae067f`](https://github.com/jas0nmjames/playground/commit/fae067f), pushed among them, is the playground's directory website, not Medianville. From here on, Medianville work goes through a pull request so it can be filed.
 
