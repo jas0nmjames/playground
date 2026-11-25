@@ -2732,7 +2732,9 @@ svg.quad .legend .pc { font-size:.26px; fill:#BC2F52; font-weight:700; }
     for (const [el, slot] of MOVES) { if (!el) continue; if (compact) slots[slot].append(el); else homes.get(el).after(el); }
     document.body.classList.toggle('compact', compact);
   }
-  btn.addEventListener('click', (e) => { e.stopPropagation(); open(menu.hidden); if (!menu.hidden) { const f = menu.querySelector('select:not([hidden]), button, a[href], input'); f && f.focus(); } });
+  // Opening from the keyboard (Enter/Space gives click detail 0) moves focus to the first control. A tap or click leaves
+  // focus on the button: on iOS, focusing the day <select> from script pops its picker open uninvited.
+  btn.addEventListener('click', (e) => { e.stopPropagation(); open(menu.hidden); if (!menu.hidden && e.detail === 0) { const f = [...menu.querySelectorAll('select:not([hidden]), button, a[href], input')].find((el) => el.getClientRects().length); f && f.focus(); } });
   document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) open(false); });
   // leaving for About, the drawer or another page closes the menu
   for (const id of ['about-btn', 'drawer-btn', 'data-link']) { const el = $(id); el && el.addEventListener('click', () => open(false)); }
