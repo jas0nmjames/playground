@@ -12,6 +12,8 @@ issue: 115
 
 # Medianville
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7162487b-5b7b-4cba-829f-bf319d02e97c/deploy-status)](https://app.netlify.com/projects/medianville/deploys)
+
 Medianville is a fictitious American city of about 100,000 people. Built with publicly available research, it simulates representative days of financial life and beyond, including government services and unpaid labor. It shows the human goal behind each transaction and maps the surrounding societal contexts.
 
 **[Open the city](https://medianville.netlify.app/)** · Simulated city, no real people
