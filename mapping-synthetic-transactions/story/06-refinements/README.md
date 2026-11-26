@@ -28,6 +28,7 @@ The screenshots in this folder are the ones the [project README](../../README.md
 | 2026-11-24 | This milestone's pull request | The milestones, the story and the archive; the first viewer taken off the live pages |
 | 2026-11-25 | [#138](https://github.com/jas0nmjames/playground/pull/138) | A shorter intro; the README rewritten around the features, with seven GIFs and "Try it" links; `#record=` and `#household=` links in the viewer; the site and the agent files describe only work done to date; Jason's words in each milestone |
 | 2026-11-25 | [#139](https://github.com/jas0nmjames/playground/pull/139) | The systems lens keeps its three columns on laptops: in the viewer at 1280 × 800 and 1366 × 768 all six layers are in view; the lens GIF lifts all six |
+| 2026-11-26 | This pull request | The Miniature's fidelity pass, first part of look 4: walking legs, trees in the wind, softer contact shadows and cloud shadows |
 
 The Nov 23 commits went straight to `development`, so they can't be filed under a GitHub milestone; they're listed in its description. [`fae067f`](https://github.com/jas0nmjames/playground/commit/fae067f), pushed among them, is the playground's directory website, not Medianville. From here on, Medianville work goes through a pull request so it can be filed.
 
