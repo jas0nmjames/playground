@@ -2797,8 +2797,6 @@ function makeGeoms() {
   G.dome = new THREE.SphereGeometry(1, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2);
   G.ball = new THREE.IcosahedronGeometry(1, 2); G.ballLo = new THREE.IcosahedronGeometry(1, 1);
   G.wheel = new THREE.CylinderGeometry(0.018, 0.018, 0.014, 16); G.wheel.rotateX(Math.PI / 2);
-  G.pegBody = new THREE.LatheGeometry([[0, 0], [0.038, 0], [0.04, 0.006], [0.031, 0.017], [0.026, 0.058], [0.031, 0.074], [0.022, 0.088], [0, 0.092]].map(([x, y]) => new THREE.Vector2(x, y)), 24);
-  G.head = new THREE.SphereGeometry(0.027, 20, 14); G.head.translate(0, 0.116, 0);
   G.plane = new THREE.PlaneGeometry(1, 1); G.plane.rotateX(-Math.PI / 2);
   G.bulb = new THREE.SphereGeometry(1, 10, 8);
 }
@@ -2847,23 +2845,47 @@ function makeRadialTex() {
 
 // ---------- materials: one per class, grain in world space so nothing is a flat colour ----------
 let NOISE, RADIAL, REAL, GROUND, carLight;
-function grainy(mat, amount, scale = 1.7) {
+// Nov 26 fidelity pass: one set of uniforms drives leg swing, tree sway and cloud shadows; all three are 0 under reduced motion
+const FID = { uTime: { value: 0 }, uWalk: { value: 1 }, uLife: { value: 1 }, uCloud: { value: 0 } };
+const CLOUD_K = 0.17; // noise cells about 6 tiles wide, so one cloud shadow spans two or three blocks
+function grainy(mat, amount, scale = 1.7, sway = false) {
   mat.userData.grain = { value: amount };
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uNoise = { value: NOISE }; sh.uniforms.uGrain = mat.userData.grain; sh.uniforms.uGScale = { value: scale };
-    sh.vertexShader = 'varying vec3 vWPos;\n' + sh.vertexShader.replace('#include <project_vertex>', `#include <project_vertex>
+    Object.assign(sh.uniforms, FID);
+    // trees in the wind (crowns only): a slow gust and a faster sway, phase from the instance's position, strongest at the top; flat pieces (crop rows) stay put
+    const swayGLSL = sway ? `#include <begin_vertex>
+      float ir = 0.0, crown = 0.0;
+      #ifdef USE_INSTANCING
+        ir = fract(sin(dot(instanceMatrix[3].xz, vec2(12.9898, 78.233))) * 43758.5453);
+        crown = smoothstep(0.03, 0.05, length(instanceMatrix[1].xyz));
+      #endif
+      float gust = 0.55 + 0.45 * sin(uTime * 0.45 + ir * 6.0);
+      transformed.x += sin(uTime * 1.9 + ir * 20.0) * 0.07 * uLife * gust * (transformed.y + 1.0) * crown;
+      transformed.z += cos(uTime * 1.4 + ir * 13.0) * 0.05 * uLife * gust * (transformed.y + 1.0) * crown;` : '#include <begin_vertex>';
+    sh.vertexShader = (sway ? 'uniform float uTime; uniform float uLife;\n' : '') + 'varying vec3 vWPos;\n' + sh.vertexShader.replace('#include <begin_vertex>', swayGLSL).replace('#include <project_vertex>', `#include <project_vertex>
       vec4 wp0 = vec4(transformed, 1.0);
       #ifdef USE_INSTANCING
         wp0 = instanceMatrix * wp0;
       #endif
       vWPos = (modelMatrix * wp0).xyz;`);
-    sh.fragmentShader = 'uniform sampler2D uNoise; uniform float uGrain; uniform float uGScale; varying vec3 vWPos;\n' + sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+    const cloudFn = `uniform float uTime; uniform float uCloud;
+      float vh(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(vh(i), vh(i + vec2(1.0, 0.0)), f.x), mix(vh(i + vec2(0.0, 1.0)), vh(i + vec2(1.0, 1.0)), f.x), f.y); }
+      float fbm(vec2 p){ return 0.55 * vn(p) + 0.3 * vn(p * 2.1 + 7.3) + 0.15 * vn(p * 4.3 + 3.1); }
+      `;
+    sh.fragmentShader = 'uniform sampler2D uNoise; uniform float uGrain; uniform float uGScale; varying vec3 vWPos;\n' + cloudFn + sh.fragmentShader.replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
+      if (uCloud > 0.001) {
+        float cl = 1.0 - uCloud * 0.58 * smoothstep(0.46, 0.66, fbm(vWPos.xz * ${CLOUD_K.toFixed(3)} + vec2(uTime * 0.03, uTime * 0.012)));
+        reflectedLight.directDiffuse *= cl; reflectedLight.directSpecular *= cl;
+      }`).replace('#include <map_fragment>', `#include <map_fragment>
       vec2 gq = vWPos.xz + vec2(vWPos.y * 0.7, vWPos.y * 1.3);
       vec3 n1 = texture2D(uNoise, gq * uGScale).rgb; vec3 n2 = texture2D(uNoise, gq * 0.23 + 0.37).rgb;
       float gr = (n1.r - 0.5) * 0.8 + (n1.g - 0.5) * 0.7 + (n2.b - 0.5) * 0.9;
       diffuseColor.rgb *= max(0.2, 1.0 + gr * uGrain);`);
   };
-  mat.customProgramCacheKey = () => 'grain' + scale;
+  mat.customProgramCacheKey = () => 'grain' + scale + (sway ? 's' : '');
   return mat;
 }
 function makeMaterials() {
@@ -2877,7 +2899,7 @@ function makeMaterials() {
     metal: std({ roughness: 0.36, metalness: 0.6, envMapIntensity: 0.9 }),
     car: std({ roughness: 0.2, metalness: 0.35, envMapIntensity: 1.4 }),
     glass: std({ roughness: 0.06, metalness: 0.9, envMapIntensity: 1.4 }),
-    leaf: grainy(std({ roughness: 0.95, envMapIntensity: 0.6 }), 0.5, 5.0),
+    leaf: grainy(std({ roughness: 0.95, envMapIntensity: 0.6 }), 0.5, 5.0, true),
     bark: std({ roughness: 0.95, envMapIntensity: 0.6 }),
     water: std({ roughness: 0.04, metalness: 0.3, envMapIntensity: 1.6 }),
     wood: grainy(std({ roughness: 0.85, envMapIntensity: 0.6 }), 0.25, 4.0),
@@ -2895,7 +2917,7 @@ function build() {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance', stencil: false });
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.NoToneMapping; renderer.info.autoReset = false;
-  scene = new THREE.Scene(); scene.background = null;
+  scene = new THREE.Scene(); scene.background = null; makeWalkers();
   camera = new THREE.PerspectiveCamera(20, 1, 1, 400);
   hemi = new THREE.HemisphereLight(0xdfe8ff, 0x5a4a3a, 0.5); scene.add(hemi);
   sun = new THREE.DirectionalLight(0xffffff, 3);
@@ -3268,7 +3290,11 @@ function makePost() {
     void main(){
       vec3 c = texture2D(tScene, vUv).rgb; float d = texture2D(tDepth, vUv).x;
       if (d < 0.99999) {
-        float ao = 0.25 * (texture2D(tAO, vUv + uAOTexel * vec2(0.75, 0.75)).r + texture2D(tAO, vUv + uAOTexel * vec2(-0.75, 0.75)).r + texture2D(tAO, vUv + uAOTexel * vec2(0.75, -0.75)).r + texture2D(tAO, vUv + uAOTexel * vec2(-0.75, -0.75)).r);
+        // nine taps about 1.5 AO texels apart (0.36 centre, 0.11 sides, 0.05 corners) so the half-resolution noise does not speckle light walls
+        vec2 ao1 = uAOTexel * 1.5;
+        float ao = 0.36 * texture2D(tAO, vUv).r
+          + 0.11 * (texture2D(tAO, vUv + vec2(ao1.x, 0.0)).r + texture2D(tAO, vUv - vec2(ao1.x, 0.0)).r + texture2D(tAO, vUv + vec2(0.0, ao1.y)).r + texture2D(tAO, vUv - vec2(0.0, ao1.y)).r)
+          + 0.05 * (texture2D(tAO, vUv + ao1).r + texture2D(tAO, vUv - ao1).r + texture2D(tAO, vUv + vec2(ao1.x, -ao1.y)).r + texture2D(tAO, vUv + vec2(-ao1.x, ao1.y)).r);
         c *= mix(1.0, pow(ao, 1.5), 0.9);
         float h = (1.0 - exp(-max(0.0, length(vpos(vUv, d)) - uHazeStart) * uHazeDensity)) * uHaze; c = mix(c, uHazeColor, h);
       }
@@ -3331,9 +3357,53 @@ function sizeTargets(w, h) {
 const MAT = {};
 const mat = (c, o = {}) => MAT[c + JSON.stringify(o)] || (MAT[c + JSON.stringify(o)] = new THREE.MeshStandardMaterial({ color: col(c), roughness: 0.5, ...o }));
 let agents = [], pinObjs = new Map(), lastWinKey = '', glowTiles = new Map(), clock = 0;
+// people (Nov 26 fidelity pass): torso and head are plain meshes in the group (so a stopped failure can still turn primer on layer 1); the two legs
+// of every walking person are one shared InstancedMesh whose swing runs in the vertex shader (see makeWalkers). Geometry is at real size in
+// metres times PM, instance scale 1, hip at the pivot.
+const PM = 0.065, HIP = 0.86, TROUSERS = ['#2f3542', '#3b4252', '#4a5568', '#6b5b4b', '#1d3557', '#5a5f6b', '#3a3226'];
+let legIM = null, legPh = null;
+const LEG_CAP = 256;
+function makeWalkers() {
+  G.torso = new THREE.BoxGeometry(0.28, 0.58, 0.44); G.torso.translate(0, HIP + 0.29, 0); G.torso.scale(PM, PM, PM);
+  G.head = new THREE.SphereGeometry(0.12, 16, 12); G.head.translate(0, HIP + 0.58 + 0.15, 0); G.head.scale(PM, PM, PM);
+  G.leg = new THREE.BoxGeometry(0.16, 0.86, 0.15); G.leg.translate(0, -0.43, 0); G.leg.scale(PM, PM, PM);
+  const geo = G.leg.clone(); legPh = new THREE.InstancedBufferAttribute(new Float32Array(LEG_CAP * 2), 2); geo.setAttribute('aPh', legPh);
+  const m = new THREE.MeshStandardMaterial({ roughness: 0.7 });
+  m.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, { uTime: FID.uTime, uWalk: FID.uWalk });
+    sh.vertexShader = 'attribute vec2 aPh; uniform float uTime; uniform float uWalk;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      float a = sin(uTime * 7.5 + aPh.x) * 0.5 * aPh.y * uWalk;
+      float c = cos(a), s = sin(a);
+      transformed.xy = vec2(transformed.x * c - transformed.y * s, transformed.x * s + transformed.y * c);`);
+  };
+  m.customProgramCacheKey = () => 'legs';
+  legIM = new THREE.InstancedMesh(geo, m, LEG_CAP); legIM.count = 0; legIM.frustumCulled = false; legIM.castShadow = true;
+  legIM.setColorAt(0, new THREE.Color(1, 1, 1)); scene.add(legIM);
+}
 function addPeg() {
-  const g = new THREE.Group(), body = new THREE.Mesh(G.pegBody, mat(pick(CLOTH))), head = new THREE.Mesh(G.head, mat(pick(SKIN), { roughness: 0.6 }));
-  body.castShadow = head.castShadow = true; g.add(body, head); g.scale.setScalar(1.12); scene.add(g); return g;
+  const g = new THREE.Group(), body = new THREE.Mesh(G.torso, mat(pick(CLOTH))), head = new THREE.Mesh(G.head, mat(pick(SKIN), { roughness: 0.6 }));
+  body.castShadow = head.castShadow = true; g.add(body, head); g.userData.leg = { col: col(pick(TROUSERS)), ph: Math.random() * 6.2832 }; scene.add(g); return g;
+}
+// a person who stops (a failed purchase, shown in primer) keeps two still legs of their own, so the shared swinging pair lets go of them
+function primerize(a) {
+  const u = a.obj.userData, lm = mat(PRIMER, { roughness: 1 });
+  if (u.leg) { u.leg = null; for (const s of [-1, 1]) { const l = new THREE.Mesh(G.leg, lm); l.position.set(0, HIP * PM, s * 0.1 * PM); a.obj.add(l); } }
+  a.obj.traverse((o) => { if (o.isMesh) { o.material = lm; o.layers.set(1); } });
+}
+function updateLegs() {
+  let n = 0; const ph = legPh.array;
+  for (const a of agents) {
+    const u = a.kind === 'peg' && !a.dead ? a.obj.userData.leg : null;
+    if (!u || n >= LEG_CAP - 1) continue;
+    const moving = a.wait <= 0 && !a.arrived ? 1 : 0;
+    tmpQ.setFromAxisAngle(UP, a.obj.rotation.y); tmpS.set(1, 1, 1);
+    for (let k = 0; k < 2; k++) {
+      tmpP.set(0, HIP * PM, (k ? 1 : -1) * 0.1 * PM).applyQuaternion(tmpQ).add(a.obj.position);
+      legIM.setMatrixAt(n, tmpM.compose(tmpP, tmpQ, tmpS)); legIM.setColorAt(n, u.col);
+      ph[n * 2] = u.ph + k * Math.PI; ph[n * 2 + 1] = moving; n++;
+    }
+  }
+  legIM.count = n; legIM.instanceMatrix.needsUpdate = true; legIM.instanceColor.needsUpdate = true; legPh.needsUpdate = true;
 }
 function addCar(kind, color, ribbon) {
   const g = new THREE.Group(), bus = kind === 'bus';
@@ -3375,9 +3445,9 @@ function onRecord(r, sampled) {
     const stop = r._stop; let far = H.randomRoad();
     for (let k = 0; k < 6 && Math.abs(far.x - stop.x) + Math.abs(far.y - stop.y) < 6; k++) far = H.randomRoad();
     spawn(H.path(stop, far), 'bus', { color: '#f2c14e', speed: 1.7, side: 0.17 });
-    spawn(trim(H.path(r._hh.tile, stop), 3), 'peg', { speed: 0.9, onArrive(a) { a.obj.traverse((o) => { if (o.isMesh) { o.material = mat(PRIMER, { roughness: 1 }); o.layers.set(1); } }); a.wait = 3.5; a.after = kill; } });
+    spawn(trim(H.path(r._hh.tile, stop), 3), 'peg', { speed: 0.9, onArrive(a) { primerize(a); a.wait = 3.5; a.after = kill; } });
   } else if (vk === 'fail' && r._place) {
-    spawn(trim(H.path(r._hh.tile, r._place), 4), 'peg', { onArrive(a) { a.obj.traverse((o) => { if (o.isMesh) { o.material = mat(PRIMER, { roughness: 1 }); o.layers.set(1); } }); a.wait = 3.5; a.after = kill; } });
+    spawn(trim(H.path(r._hh.tile, r._place), 4), 'peg', { onArrive(a) { primerize(a); a.wait = 3.5; a.after = kill; } });
   } else if (!sampled) return;
   else if (vk === 'purchase' && r._to.tile) spawn(trim(H.path(r._hh.tile, r._to.tile), 3 + Math.floor(Math.random() * 4)), 'peg', { onArrive(a) { a.wait = 0.6; a.after = kill; } });
   else if (vk === 'unpaid') spawn(trim(H.path(r._hh.tile, r._to.tile), 12), 'car', { ribbon: true, speed: 1.9, onArrive(a) { a.wait = 0.8; a.after = kill; } });
@@ -3496,7 +3566,7 @@ function skyAt(el) {
   const a = SKYK[i], b = SKYK[i + 1], f = sm(a[0], b[0], el);
   return { zen: col(a[1]).lerp(col(b[1]), f), hor: col(a[2]).lerp(col(b[2]), f), sunc: col(a[3]).lerp(col(b[3]), f), si: lerp(a[4], b[4], f) };
 }
-let LIGHT = { dk: 0, golden: 0, exposure: 1 };
+let LIGHT = { dk: 0, golden: 0, exposure: 1, sunUp: 1 };
 function light(t) {
   const { el, az } = solar(t), er = el * DEG, ar = az * DEG;
   const dk = sm(3, -8, el), golden = sm(22, 6, el) * (1 - sm(0, -5, el));
@@ -3511,7 +3581,7 @@ function light(t) {
   SKY.sunDir.copy(dir); SKY.sunCol.copy(k.sunc); skyMat.uniforms.uSunI.value = k.si * (el > -3 ? 1 : 0);
   // auto exposure from an estimate of the light reaching the ground
   const ground = (sunI >= moonI ? sunI * Math.max(0.1, Math.sin(er)) : moonI * 0.8) / Math.PI + 0.45 * (SKY.zen.r + SKY.zen.g + SKY.zen.b + 2 * (SKY.hor.r + SKY.hor.g + SKY.hor.b)) / 9 + 0.004;
-  LIGHT = { dk, golden, exposure: Math.min(2.1, Math.max(0.7, 0.7 / Math.pow(ground, 0.8))) };
+  LIGHT = { dk, golden, exposure: Math.min(2.1, Math.max(0.7, 0.7 / Math.pow(ground, 0.8))), sunUp: sm(-1, 7, el) };
   updateEnv(String(Math.round(t / 6)));
   // windows, lamps, car lights: emissive after dark
   const key = Math.round(dk * 24) + '|' + Math.floor(t);
@@ -3591,10 +3661,12 @@ function frame(S, dtAnim, dtReal = dtAnim) {
     while (a.u >= 1 && a.i < a.path.length - 1) { a.u -= 1; a.i++; }
     if (a.i >= a.path.length - 1) { a.u = 0; a.arrived = true; if (a.onArrive) a.onArrive(a); else kill(a); continue; }
     const [x, z] = pathPos(a);
-    if (a.kind !== 'peg' && a.dir) a.obj.rotation.y = Math.atan2(-a.dir[1], a.dir[0]);
+    if (a.dir) a.obj.rotation.y = Math.atan2(-a.dir[1], a.dir[0]);
     a.obj.position.set(x, Y0 + (a.kind === 'peg' ? Math.abs(Math.sin(clock * 11 + a.side * 9)) * 0.012 : 0), z);
   }
   agents = agents.filter((a) => !a.dead);
+  FID.uTime.value = clock; FID.uWalk.value = FID.uLife.value = S.rm ? 0 : 1; FID.uCloud.value = S.rm ? 0 : LIGHT.sunUp;
+  updateLegs();
   if (dtAnim > 0) { ambient(dtAnim, S.t); castersMoved = true; }
   // a paycheck lands: the employer's windows flash
   let gc = false;
