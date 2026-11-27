@@ -86,6 +86,20 @@ The new windows carry no footprint, so the Map's night occupancy is unchanged. A
 
 The only change to the base is the 61 plain centre dashes on the main roads, which the double yellow line replaces.
 
+## Fidelity pass, Nov 2026
+
+The first part of look 4, "Photographed, alive" ([decisions 3.12](../decisions.md)). Render time only: the plan, its parts and their order are untouched, and there are no new random draws in the plan.
+
+What landed, all in `index.html`:
+
+- **Walking legs.** A person is a box torso and a head (plain meshes in a group, so a stopped failure can still turn primer on layer 1) and two legs. The legs of every walker are one shared `InstancedMesh` (256 legs at most): a box 0.16 × 0.86 × 0.15 m, pivoted at the hip, scaled to viewer units once in the geometry (instance scale 1, so the swing doesn't distort). A per-instance attribute `aPh` (x = phase, y = 1 if walking) feeds a vertex-shader swing, `sin(uTime * 7.5 + aPh.x) * 0.5 * aPh.y * uWalk`, with the two legs π apart. People now face their direction of travel. A stopped failure keeps two still legs in primer.
+- **Trees in the wind.** A patch to the leaf material only: a slow gust and a faster sway in the vertex shader, phase from the instance's position, stronger toward the top. Flat leaf pieces (crop rows) are excluded by their instance height.
+- **Softer contact shadows.** The light composite takes nine AO taps (0.36 centre, 0.11 sides, 0.05 corners) 1.5 AO texels apart, in place of four.
+- **Cloud shadows.** In the shared material patch, a three-octave value-noise `fbm` of world position, drifting slowly, multiplies the direct light after `lights_fragment_end` (uniform branch skips it when `uCloud` is 0). Cells are about 6 tiles wide.
+- **Reduced motion and night.** One set of uniforms (`FID`: time, walk, life, cloud) drives all three; walk, sway and cloud are 0 under `prefers-reduced-motion`, and clouds fade with sun height, so they are off at night.
+
+Known limits: the depth pre-pass and the sun's shadow map draw the straight legs and the still crowns, so the shadow of a leg doesn't swing. Not done in this pass: half-full lots and loose placement, the handheld camera.
+
 ## Not yet verified
 
 - Frame rate on real GPUs. The container renders in software at about a frame a second.

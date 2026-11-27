@@ -269,6 +269,21 @@ New decisions go at the end of their section with a date. A reversed decision st
 - **Considered:** Holding for any focus inside the list. A mouse click leaves focus on the clicked row, which kept the feed held after the mouse had left, so only keyboard focus (`:focus-visible`) counts.
 - **Who:** Jason, on a proposal. **When:** 2026-11-23.
 
+### 3.12 The Miniature's direction: look 4, "Photographed, alive"
+- **Milestone:** [M6 Refinements](06-refinements/)
+- **Decided:** The Miniature moves toward look 4, "Photographed, alive": a real town seen from above. Jason singled out walking legs as what made it read as real. This fidelity pass is its first part: walking people, trees in the wind, softer contact shadows and cloud shadows. Surfaces, building variety, the city expansion and quality levels come later.
+- **Who:** Jason. **When:** 2026-11-26.
+
+### 3.13 The tilt-shift lens comes back as a setting, off by default
+- **Milestone:** [M6 Refinements](06-refinements/)
+- **Decided:** The lens blur dropped in [3.6](#36-a-photographic-miniature-without-lens-blur) returns as a setting, off by default. This revises 3.6. Not built yet.
+- **Who:** Jason. **When:** 2026-11-26.
+
+### 3.14 The minimum phone is an iPhone 14 or newer
+- **Milestone:** [M6 Refinements](06-refinements/)
+- **Decided:** The Miniature targets an iPhone 14 or newer, at about 30 fps on the Balanced or Light quality level. The quality levels don't exist yet.
+- **Who:** Jason. **When:** 2026-11-26.
+
 ---
 
 ## 4. The systems lens
