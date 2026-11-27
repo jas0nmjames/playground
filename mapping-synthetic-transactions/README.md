@@ -52,7 +52,7 @@ A simulator produces the records. People, households, employers and bills come f
 
 ## The city
 
-**Miniature and map.** Switch between a miniature town and a printed map (M). Turn, tilt and zoom the miniature. Sound is off until you turn it on.
+**Miniature and map.** Switch between a miniature town and a printed map (M). Turn, tilt and zoom the miniature. People walk on two legs, trees sway in the wind, contact shadows are softer, and clouds cast slow shadows by day (all still under reduced motion). Sound is off until you turn it on.
 
 [Try it: miniature →](https://medianville.netlify.app/?intro=0) · [Try it: map →](https://medianville.netlify.app/?intro=0#view=map)
 
